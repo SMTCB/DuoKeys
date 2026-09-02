@@ -1,0 +1,467 @@
+# DuoKeys — Functional Specification
+
+**Document ID:** FUNC
+**Version:** 1.0
+**Date:** 2 September 2026
+**Status:** Baselined
+**Companion to:** [01-TECHNICAL-ARCHITECTURE.md](01-TECHNICAL-ARCHITECTURE.md)
+
+---
+
+## How to read this document
+
+Each requirement has a stable ID, a priority, and a reference to the technical
+component that realises it. User stories (`US-*`) implement these; test scenarios
+(`TS-*`) verify them.
+
+**Module prefixes:**
+
+| Prefix | Module |
+|---|---|
+| `FR-EXP-*` | Explorer — the child's experience |
+| `FR-STU-*` | Studio — the adult's experience |
+| `FR-DUO-*` | Duet — four hands together |
+| `FR-PRO-*` | Profiles, progression and rewards |
+| `FR-CON-*` | Content and repertoire |
+| `FR-SYN-*` | Accounts and sync |
+| `FR-SYS-*` | System, device, settings, shell |
+
+**Priorities:** `M` must-have (v1 is not v1 without it) · `S` should-have ·
+`C` could-have · `W` won't-have this round.
+
+---
+
+## 0. Product definition
+
+**DuoKeys** is a local-first web application that connects to a digital piano over
+USB MIDI and turns daily practice into something a six-year-old will choose to do
+and an adult beginner will not outgrow within a month.
+
+**Two users, two experiences, one instrument:**
+
+- **Explorer** (child, 6) — a game. Falling notes, quests, stars, a ninja
+  flashcard mini-game. Wait mode by default: nothing moves until the right key is
+  down, so there is no failure state, only "not yet".
+- **Studio** (adult) — a practice tool. Real notation, A/B looping,
+  hands-separate, tempo ramping, Hanon with evenness scoring, generated
+  sight-reading, and a dashboard that says *which bar* rushes.
+- **Duet** — the reason the project exists. Both sit at the same instrument and
+  play four hands, each graded on their own part.
+
+**Explicitly not in scope for v1** (`W`): audio-input pitch detection, multiple
+households, a content marketplace, social features, teacher accounts, Android or
+iOS shells (see ADR-002 for the iPad path).
+
+---
+
+## 1. Explorer — the child's experience
+
+> Design constraint running through this whole module: the child reads simple
+> words, so short text labels are permitted, but icons, colour, animation and
+> audio still carry the interface. Reading ability at six is far behind listening
+> ability, and the mode must stay usable on a bad day. (`NFR-008`, ADR-008)
+
+### FR-EXP-001 — Quest map (`M`)
+
+**Realised by:** `TA-APP-003`, `TA-DAT-001`
+
+A visual map of available pieces as a progression of nodes. Each node shows: an
+icon, a short title, its star rating (0–3), and whether it is locked. Locked nodes
+are visible but greyed — the child should see where they are going.
+
+Unlocking follows the `Section` graph (`TA-DAT-001`): completing a section at ≥ 1
+star unlocks the next.
+
+### FR-EXP-002 — Falling-notes practice (`M`)
+
+**Realised by:** `TA-REN-001`, `TA-REN-002`, `TA-MAT-002`
+
+Coloured bars descend toward a hit line drawn directly above an on-screen keybed.
+The keybed highlights the key each bar will land on. Left and right hands are
+distinguished by colour **and** by bar shape (`NFR-008`).
+
+The spatial mapping from screen to hands requires no music reading — this is the
+on-ramp that makes notation learnable later rather than being a prerequisite now.
+
+### FR-EXP-003 — Wait mode is the default (`M`)
+
+**Realised by:** `TA-MAT-002`
+
+The stream freezes at the hit line until every note of the current group is down.
+No timer, no timeout, no penalty. A beginner may take thirty seconds to find F♯.
+
+Timed mode exists (`TA-MAT-003`) but is opt-in and should not be offered to the
+child for the first months.
+
+### FR-EXP-004 — Micro-quests (`M`)
+
+**Realised by:** `TA-DAT-001` (`Section`)
+
+Practice is offered in two-bar sections, not whole pieces. A section is a
+completable unit in under a minute. Whole-piece play is a reward that unlocks after
+its sections are cleared, not the default demand.
+
+### FR-EXP-005 — Note Ninja (`S`)
+
+**Realised by:** `TA-DAT-003` (`flashcards`)
+
+A flashcard mini-game: a note appears on a simplified staff, the child plays it.
+
+**Response-time bands replace the spec's 5-second timer:**
+
+| Response | Result |
+|---|---|
+| Under 2 s | Streak continues, bonus |
+| 2–6 s | Correct |
+| Over 6 s | Hint revealed (key highlights on the keybed), still counts as correct |
+
+Wrong answers show the correct key and re-queue the card. There is no losing.
+A countdown timer teaches a six-year-old that reading music is frightening.
+
+Cards are scheduled by a simple spaced-repetition pool (Leitner-style boxes are
+sufficient; SM-2 is over-engineered here).
+
+### FR-EXP-006 — Free play (`S`)
+
+An unstructured mode where every key press triggers a visual and a sound with no
+grading whatsoever. This is not filler — it is where a six-year-old discovers that
+the instrument responds to them, and it costs almost nothing to build.
+
+### FR-EXP-007 — Generous grading (`M`)
+
+**Realised by:** `TA-GRD-002`, `TA-MAT-006`
+
+- Tolerance windows scaled by `Profile.toleranceScale` (default 1.6).
+- Any *completed* attempt earns at least 1 star.
+- Errors are shown as "try this one again", never as a score deduction.
+
+### FR-EXP-008 — Rewards and session shape (`S`)
+
+**Realised by:** `TA-AUD-001`, `NFR-011`
+
+A session has a deliberate arc: a short warm-up, two or three quests, then a
+wind-down (free play or a favourite piece) so practice ends on enjoyment rather
+than on the hardest thing attempted.
+
+Rewards are immediate and audio-visual: a sound, a particle burst (suppressed under
+`prefers-reduced-motion`), a star landing on the map. No currency, no streak-loss
+anxiety, no artificial scarcity (`NFR-012`).
+
+### FR-EXP-009 — Session length guidance (`C`)
+
+A gentle suggestion to stop after a target bench time (default 10 minutes),
+presented as a celebration of finishing, never as a lockout.
+
+---
+
+## 2. Studio — the adult's experience
+
+### FR-STU-001 — Notation practice view (`M`)
+
+**Realised by:** `TA-REN-003`
+
+Real notation rendered by OSMD with a cursor driven by the matcher. The cursor
+advances as notes are matched; it does not run on a timer in wait mode.
+
+### FR-STU-002 — Post-attempt note colouring (`M`)
+
+**Realised by:** `TA-REN-003`, `TA-GRD-001`
+
+After an attempt, each note in the score is coloured by result: correct, wrong
+pitch, missed, extra, late, early. Applied **after** the attempt, not during —
+repainting the SVG mid-performance drops frames (`NFR-002`).
+
+### FR-STU-003 — A/B loop (`M`)
+
+Select a start and end measure; loop that range indefinitely. The single most
+useful feature in any practice tool and the reason an adult will keep opening it.
+
+### FR-STU-004 — Tempo scaling with auto-ramp (`M`)
+
+**Realised by:** `TA-CLK-002`
+
+Tempo adjustable 30–100% of written. **Auto-ramp:** on a clean pass, raise tempo
+5% and repeat; on a failed pass, drop back one step. That single behaviour turns a
+set of controls into an actual practice method, and it is about thirty lines on top
+of the loop.
+
+### FR-STU-005 — Hands separate (`M`)
+
+**Realised by:** `TA-AUD-002`, `TA-DAT-001` (`Track.hand`)
+
+Practise one hand while the other is muted, silent, or played back by the sampler.
+Played-back accompaniment is what makes hands-separate practice musical rather than
+lonely.
+
+### FR-STU-006 — Articulation and duration feedback (`S`)
+
+**Realised by:** `TA-MID-004`
+
+Using the PedalTracker's distinction between key-up and note-stopped-sounding,
+report notes held too short (staccato where legato was written) or too long.
+
+### FR-STU-007 — Hanon generator with evenness scoring (`S`)
+
+**Realised by:** `TA-GRD-003`, `TA-CNT-004`
+
+Hanon 1–20 generated from patterns rather than authored. Graded on
+`evennessCv` — the coefficient of variation of inter-onset intervals — which is
+the only thing that makes this practice measurable rather than merely endured.
+
+### FR-STU-008 — Rush/drag reporting (`M`)
+
+**Realised by:** `TA-GRD-001`
+
+The dashboard reports the **signed** mean offset: "you are 40 ms ahead of the
+beat". Not RMS, which is kept for the consistency trend but is not actionable
+advice.
+
+### FR-STU-009 — Per-measure breakdown (`S`)
+
+**Realised by:** `TA-GRD-004`
+
+A bar-by-bar strip showing accuracy and rush/drag per measure, so the answer is
+"your left hand rushes bar 5", not "you played it".
+
+### FR-STU-010 — Generated sight-reading (`S`)
+
+**Realised by:** `TA-CNT-004`
+
+Constrained random generation: pick a key, a range, a rhythmic vocabulary and a
+difficulty, emit an eight-bar phrase never seen before. Unlimited material at
+exactly the right level, and the cheapest content in the project.
+
+> Note: **Sight Reading Factory**, listed in the original spec, is a paid
+> commercial product with no public API. It can inspire this feature; it cannot be
+> a dependency.
+
+### FR-STU-011 — Real repertoire ingest (`C`)
+
+**Realised by:** `TA-CNT-001`, `TA-CNT-004`
+
+Import from Mutopia and OpenScore through the build pipeline, with the licence
+gate (`TA-CNT-005`) enforced.
+
+---
+
+## 3. Duet — four hands
+
+### FR-DUO-001 — Split keyboard with octave transposition (`M`)
+
+**Realised by:** `TA-DAT-001` (`Track.role`)
+
+The keyboard splits at a configurable point (default MIDI 60). Critically, this is
+**split plus transposition**, not split alone: each half is transposed so both
+players get their own middle C in the middle of their own region. Splitting without
+transposing gives the child a part in the wrong octave and it will feel wrong to
+them without their being able to say why.
+
+If the instrument has a native Duo/Twin mode, prefer it and disable the app-side
+transposition — but do not depend on it (`ADR-009` did not confirm one).
+
+### FR-DUO-002 — Dual independent matchers (`M`)
+
+**Realised by:** `TA-MAT-001`
+
+Two matcher instances, one per part, each fed only the notes from its own keyboard
+region. Each player is graded on their own part; one player's mistakes never fail
+the other.
+
+### FR-DUO-003 — Asymmetric difficulty (`M`)
+
+**Realised by:** `TA-DAT-001` (`Track.role`)
+
+The primo part is five notes in one hand position; the secondo carries the harmony
+and the pulse. Modelled as two `Track`s in one `Arrangement` with a `role` field,
+so the same piece can also be practised alone by either player.
+
+### FR-DUO-004 — Shared result screen (`S`)
+
+Both players see their own accuracy and stars side by side, plus a single "together"
+score. The together score is celebratory, not competitive.
+
+---
+
+## 4. Profiles, progression and rewards
+
+### FR-PRO-001 — Multiple local profiles (`M`)
+
+**Realised by:** `TA-DAT-004`
+
+Two to four profiles, each with a name, avatar, role (`explorer` | `student`),
+calibration offset and tolerance scale. Switching is one tap from the home screen,
+with no password — this is a family device.
+
+### FR-PRO-002 — Per-profile progression (`M`)
+
+**Realised by:** `TA-DAT-003` (`progression`)
+
+Unlock state, best grade per section, and spaced-repetition schedules are all
+per-profile. Progression is **derived from attempts**, never stored as primary
+state (`TA-SYN-003`) — it can always be recomputed.
+
+### FR-PRO-003 — Practice history (`M`)
+
+**Realised by:** `TA-DAT-002`
+
+Every attempt is recorded immutably with its full per-note event array. This is
+what makes the dashboard possible and what makes sync trivial.
+
+### FR-PRO-004 — Dashboard (`S`)
+
+Streaks, bench time per day/week, accuracy trend per piece, and the per-measure
+rush/drag strip (`FR-STU-009`). Explorer sees a simplified, celebratory version;
+Studio sees the numbers.
+
+### FR-PRO-005 — Recording and playback (`C`)
+
+Capture a performance as a note stream and play it back through the sampler, with
+the score or falling notes following along. Useful for "listen to what you did"
+and delightful for a child.
+
+---
+
+## 5. Content
+
+### FR-CON-001 — Static versioned content (`M`)
+
+**Realised by:** `TA-DAT-005`, `TA-CNT-001`
+
+Arrangements ship as immutable versioned JSON. No database read is ever required to
+start practising.
+
+### FR-CON-002 — Beginner catalogue, v1 (`M`)
+
+**Realised by:** `TA-CNT-003`, `TA-CNT-004`
+
+Eight to twelve hand-authored pieces spanning difficulty 1–2, sequenced per
+ADR-008's four-stage progression. Traditional and folk melodies, public domain by
+age.
+
+### FR-CON-003 — Section segmentation (`M`)
+
+**Realised by:** `TA-CNT-001` (stage 5)
+
+Every arrangement is segmented into playable sections at phrase boundaries, falling
+back to two bars. This is the unit `FR-EXP-004` operates on.
+
+### FR-CON-004 — Licence provenance (`M`)
+
+**Realised by:** `TA-CNT-005`
+
+Every piece has a licence entry with source URL and verification date. The build
+fails without one.
+
+### FR-CON-005 — Fingering annotations (`C`)
+
+Where the source provides them, carry fingerings through to the renderer. Do not
+invent them algorithmically — bad fingering advice is worse than none.
+
+---
+
+## 6. Accounts and sync
+
+### FR-SYN-001 — Passwordless adult account (`M`)
+
+**Realised by:** `TA-SYN-002`
+
+Email magic link. One account per household, owned by the adult. The child never
+has credentials.
+
+### FR-SYN-002 — Background sync (`M`)
+
+**Realised by:** `TA-SYN-001`, `TA-SYN-004`
+
+Attempts, settings and profiles sync in the background when online. Sync never
+blocks, interrupts or delays a practice session. Failure is silent and retried.
+
+### FR-SYN-003 — Restore on a new device (`M`)
+
+**Realised by:** `TA-SYN-001` (pull)
+
+Signing in on a fresh device pulls all profiles and history. This is the entire
+point of ADR-004 — a lost laptop must not cost a year of progress.
+
+### FR-SYN-004 — Sync status visibility (`S`)
+
+A quiet indicator in settings: last synced, pending items, signed-in identity.
+Never a modal, never a blocking spinner.
+
+### FR-SYN-005 — Offline is not an error state (`M`)
+
+**Realised by:** `ADR-003`, `NFR-005`
+
+No warning banner, no degraded-mode messaging. The app is designed to be offline;
+the network is the exception.
+
+---
+
+## 7. System, device and settings
+
+### FR-SYS-001 — MIDI device selection (`M`)
+
+**Realised by:** `TA-PORT-002`, `TA-MID-005`
+
+List available inputs, remember the chosen one per profile, reconnect automatically
+on next launch.
+
+### FR-SYS-002 — Latency calibration wizard (`M`)
+
+**Realised by:** `TA-CLK-004`
+
+Tap-along against a click for sixteen beats; store the median offset. Offered on
+first run, on instrument change, and on demand.
+
+### FR-SYS-003 — First-run setup (`M`)
+
+Connect instrument → choose or create profile → calibrate → play something within
+three minutes. Nothing else is asked before the first note.
+
+### FR-SYS-004 — Graceful disconnect handling (`M`)
+
+**Realised by:** `TA-MID-005`
+
+On mid-session disconnect: pause, preserve the in-progress attempt, show a calm
+reconnect prompt. Never lose work, never show a stack trace.
+
+### FR-SYS-005 — Missing Web MIDI support (`M`)
+
+If `navigator.requestMIDIAccess` is absent (Safari, Firefox without the flag), show
+a plain explanation and the list of browsers that work. Do not let a child arrive
+at a blank screen.
+
+### FR-SYS-006 — PWA install and wake lock (`S`)
+
+**Realised by:** `TA-APP-004`
+
+Installable to the desktop; screen wake lock held during an active session so the
+display never sleeps mid-piece.
+
+### FR-SYS-007 — Accessibility baseline (`M`)
+
+**Realised by:** `NFR-008`, `NFR-009`, `NFR-011`
+
+Colour is never the only signal. Touch targets ≥ 44 px. `prefers-reduced-motion`
+honoured. Keyboard focus visible.
+
+### FR-SYS-008 — Privacy posture (`M`)
+
+**Realised by:** `NFR-010`
+
+First names only, no child email address, no third-party analytics, no audio ever
+leaves the device.
+
+---
+
+## 8. Requirement summary
+
+| Module | Must | Should | Could | Total |
+|---|---|---|---|---|
+| Explorer | 5 | 3 | 1 | 9 |
+| Studio | 6 | 4 | 1 | 11 |
+| Duet | 3 | 1 | 0 | 4 |
+| Profiles | 3 | 1 | 1 | 5 |
+| Content | 4 | 0 | 1 | 5 |
+| Sync | 4 | 1 | 0 | 5 |
+| System | 6 | 1 | 0 | 8 |
+| **Total** | **31** | **11** | **4** | **47** |

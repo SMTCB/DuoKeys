@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuoKeys · Document Set</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="_doc.css">
+</head>
+<body data-doc="index.html">
+<div class="shell">
+
+<aside class="rail">
+  <div class="brand">
+    <span class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i></span>
+    <b>DuoKeys</b>
+  </div>
+  <div class="docid">INDEX · v1.0</div>
+  <div class="switch">
+    <a href="index.html" aria-current="page">Index</a>
+    <a href="architecture.html">Tech</a>
+    <a href="functional.html">Func</a>
+    <a href="sprints.html">Sprints</a>
+  </div>
+  <input id="filter" type="search" placeholder="Filter  ( / )" aria-label="Filter">
+  <div id="filterMeta"></div>
+  <nav id="toc" aria-label="Contents"></nav>
+  <div class="foot">
+    Open <code>docs/html/index.html</code><br>directly from disk — no server needed<br>
+    <button id="themeBtn" type="button">auto</button>
+  </div>
+</aside>
+
+<main>
+  <div class="mast">
+    <h1>The document <em>set</em></h1>
+    <p class="lede">Six documents, one ID scheme. Every ID on every page is a link — click a <code>TA-</code>, <code>FR-</code> or <code>US-</code> anywhere and it jumps to where it is defined.</p>
+    <div class="meta">
+      <span>Version <b>1.0</b></span><span>2 September 2026</span><span>Status <b>Ready to build</b></span>
+    </div>
+  </div>
+
+  <h2 id="docs" data-toc="The documents"><span class="num">01</span>The documents</h2>
+
+  <div class="cards">
+    <div class="card">
+      <div class="st">TECH · rendered</div>
+      <h4><a href="architecture.html">Technical architecture</a></h4>
+      <p>Nine ADRs, five ports, three time domains, the matcher and grading rules, the data model, sync, the content pipeline, twelve NFRs and eight risks. Source: <code>docs/01-TECHNICAL-ARCHITECTURE.md</code>.</p>
+    </div>
+    <div class="card">
+      <div class="st">FUNC · rendered</div>
+      <h4><a href="functional.html">Functional specification</a></h4>
+      <p>47 requirements across seven modules, each with a MoSCoW priority and the component that realises it. Source: <code>docs/02-FUNCTIONAL-SPECIFICATION.md</code>.</p>
+    </div>
+    <div class="card">
+      <div class="st">SPRINT · rendered</div>
+      <h4><a href="sprints.html">Sprint plan &amp; user stories</a></h4>
+      <p>67 stories across six sprints, 174 points to v1. Sprint 0 is the go/no-go hardware gate. Source: <code>docs/03-SPRINT-PLAN.md</code>.</p>
+    </div>
+    <div class="card">
+      <div class="st">TEST · markdown only</div>
+      <h4>Test scenarios</h4>
+      <p>~130 scenarios in five tiers — unit, integration, golden fixture, end-to-end, manual. <code>docs/04-TEST-SCENARIOS.md</code>.</p>
+    </div>
+    <div class="card">
+      <div class="st">ENG · markdown only</div>
+      <h4>Engineering handbook</h4>
+      <p>Pre-flight checklist, repo scaffold, Definition of Done, TypeScript conventions, CI pipeline, content authoring guide. <code>docs/05-ENGINEERING-HANDBOOK.md</code>.</p>
+    </div>
+    <div class="card">
+      <div class="st">INDEX · markdown only</div>
+      <h4>Index &amp; traceability matrix</h4>
+      <p>The full <code>TA-*</code> → <code>FR-*</code> → <code>US-*</code> → <code>TS-*</code> matrix and the open questions. <code>docs/00-INDEX.md</code>.</p>
+    </div>
+  </div>
+
+  <div class="note"><p><span class="k">Why only three are rendered</span><code>TEST</code>, <code>ENG</code> and <code>INDEX</code> exist as Markdown only, so <code>TS-*</code> and <code>PRE-*</code> IDs are deliberately left unlinked in <code>_doc.js</code>'s <code>TARGET</code> map rather than pointed at a page that does not exist. If either gets an HTML rendering later, add it to that map — <code>CLAUDE.md</code> records this.</p></div>
+
+  <h2 id="scheme" data-toc="ID scheme"><span class="num">02</span>ID scheme</h2>
+
+  <div class="tw"><table>
+    <thead><tr><th>Prefix</th><th>Means</th><th>Defined in</th></tr></thead>
+    <tbody>
+      <tr><td><code>ADR-nnn</code></td><td>Architecture decision</td><td><a href="architecture.html#adr">Tech § 0</a></td></tr>
+      <tr><td><code>TA-XXX-nnn</code></td><td>Technical component</td><td><a href="architecture.html">Tech § 1–11</a></td></tr>
+      <tr><td><code>NFR-nnn</code></td><td>Non-functional budget</td><td><a href="architecture.html#nfr">Tech § 12</a></td></tr>
+      <tr><td><code>RISK-nnn</code></td><td>Risk register entry</td><td><a href="architecture.html#risks">Tech § 13</a></td></tr>
+      <tr><td><code>FR-XXX-nnn</code></td><td>Functional requirement</td><td><a href="functional.html">Func</a></td></tr>
+      <tr><td><code>US-s.nn</code></td><td>User story</td><td><a href="sprints.html">Sprint</a></td></tr>
+      <tr><td><code>TS-T-XXX-nnn</code></td><td>Test scenario</td><td><code>04-TEST-SCENARIOS.md</code></td></tr>
+      <tr><td><code>PRE-nnn</code></td><td>Pre-flight item</td><td><code>05-ENGINEERING-HANDBOOK.md</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <p><strong>Direction of reference.</strong> Requirements point at components; stories point at both; tests point at all three. Nothing points forward — a component never names the requirement that uses it, so adding a requirement never edits the architecture.</p>
+
+  <h2 id="sprint1-deferred" data-toc="Sprint 1 deferred checks">Sprint 1 — deferred manual verification</h2>
+
+  <div class="warn"><p><span class="k">Needs the physical instrument</span>Sprint 1's code is complete and green (typecheck, lint, boundary lint, unit tests, <code>docs-check</code>, production build). Four items are bookmarked rather than treated as done, since piano access wasn't available when the code was finished: <code>TS-M-005</code> (a child completes 8 bars in wait mode, unassisted — Sprint 1's actual exit criterion), <code>TS-M-004</code> (60 fps for a full 5-minute session), <code>NFR-004</code> (cold start under 3 s, timed by hand), and a still-owed fix for <code>US-1.07</code> — the chosen MIDI input is not yet persisted to the <code>settings</code> store, so it doesn't survive a reload. The first three need the piano; the fourth doesn't.</p></div>
+
+  <h2 id="next" data-toc="Next action"><span class="num">03</span>Next action</h2>
+
+  <div class="warn"><p><span class="k">Sprint 2 kickoff</span>See <code>docs/03-SPRINT-PLAN.md</code>. Sprint 2 has three largely independent tracks — profiles &amp; sync, content pipeline, and the child's loop. <code>US-1.03</code> (a real Supabase project) is still not created — that's the user's action, not Claude's — so the sync stories (<code>US-2.02</code>–<code>US-2.06</code>) stay blocked until it exists; the other two tracks do not depend on it.</p></div>
+
+  <p>Working rules — including exactly which files each kind of change obliges you to update — are in <code>CLAUDE.md</code> at the repo root.</p>
+
+  <div class="empty">Nothing matches that filter.</div>
+</main>
+
+</div>
+<script src="_doc.js"></script>
+</body>
+</html>

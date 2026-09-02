@@ -1,0 +1,753 @@
+<title>DuoKeys Build Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --ground:      #E9E9E4;
+    --surface:     #FCFCFA;
+    --surface-2:   #F3F3EE;
+    --ink:         #15181C;
+    --ink-2:       #3D444C;
+    --muted:       #6B7178;
+    --hairline:    #D6D6CF;
+    --hairline-2:  #C2C2B9;
+    --felt:        #9C2F2A;
+    --felt-soft:   #F2E2E0;
+    --brass:       #7E6222;
+    --brass-soft:  #F0EADA;
+    --sage:        #40614A;
+    --sage-soft:   #E2EAE2;
+    --shadow:      0 1px 2px rgba(21,24,28,.05), 0 8px 24px -14px rgba(21,24,28,.22);
+    --key-white:   #FFFFFF;
+    --key-black:   #1A1D21;
+
+    --f-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+    --f-body:    "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --f-mono:    "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#101215; --surface:#191C20; --surface-2:#22262B;
+      --ink:#E7E7E1; --ink-2:#B9BEC4; --muted:#8B9299;
+      --hairline:#2C3137; --hairline-2:#3C424A;
+      --felt:#E08079; --felt-soft:#33211F;
+      --brass:#C7A758; --brass-soft:#2A2519;
+      --sage:#8FBF9E; --sage-soft:#1B2620;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -16px rgba(0,0,0,.8);
+      --key-white:#464C54; --key-black:#0A0C0F;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:#101215; --surface:#191C20; --surface-2:#22262B;
+    --ink:#E7E7E1; --ink-2:#B9BEC4; --muted:#8B9299;
+    --hairline:#2C3137; --hairline-2:#3C424A;
+    --felt:#E08079; --felt-soft:#33211F;
+    --brass:#C7A758; --brass-soft:#2A2519;
+    --sage:#8FBF9E; --sage-soft:#1B2620;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -16px rgba(0,0,0,.8);
+    --key-white:#464C54; --key-black:#0A0C0F;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink-2);
+    font-family: var(--f-body);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  ::selection { background: var(--felt); color: var(--surface); }
+  :focus-visible { outline: 2px solid var(--felt); outline-offset: 2px; border-radius: 2px; }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px 96px; }
+
+  /* ---------- masthead ---------- */
+  header.mast {
+    padding: 56px 0 0;
+    display: grid; gap: 20px;
+  }
+  .keybed { display: flex; height: 26px; width: 168px; border: 1px solid var(--hairline-2); border-radius: 2px; overflow: hidden; }
+  .keybed i { flex: 1; background: var(--key-white); border-right: 1px solid var(--hairline-2); }
+  .keybed i:last-child { border-right: 0; }
+  .keybed i.b { background: var(--key-black); flex: .62; }
+  h1 {
+    font-family: var(--f-display); font-weight: 400;
+    font-size: clamp(40px, 6.2vw, 68px); line-height: .98;
+    color: var(--ink); margin: 0; letter-spacing: -.015em; text-wrap: balance;
+  }
+  h1 em { font-style: italic; color: var(--felt); }
+  .standfirst { max-width: 62ch; font-size: 17px; color: var(--ink-2); margin: 0; }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 8px 20px;
+    font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--muted);
+    border-top: 1px solid var(--hairline); padding-top: 14px;
+  }
+  .meta b { color: var(--ink); font-weight: 500; }
+
+  /* ---------- tabs ---------- */
+  nav.tabs {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; gap: 2px; overflow-x: auto;
+    background: var(--ground); border-bottom: 1px solid var(--hairline-2);
+    margin: 36px 0 0; padding-top: 8px;
+  }
+  nav.tabs button {
+    appearance: none; border: 0; background: transparent; cursor: pointer;
+    font-family: var(--f-mono); font-size: 12px; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 11px 15px; white-space: nowrap;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    transition: color .13s;
+  }
+  nav.tabs button:hover { color: var(--ink); }
+  nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--felt); }
+  nav.tabs button span { color: var(--hairline-2); margin-left: 6px; }
+  nav.tabs button[aria-selected="true"] span { color: var(--felt); }
+
+  .panel { padding-top: 40px; }
+  .panel > section + section { margin-top: 52px; }
+
+  h2 {
+    font-family: var(--f-display); font-weight: 400; font-size: 30px;
+    color: var(--ink); margin: 0 0 6px; letter-spacing: -.01em;
+  }
+  h3 {
+    font-size: 13px; font-family: var(--f-mono); font-weight: 600;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--ink);
+    margin: 34px 0 12px;
+  }
+  .sub { color: var(--muted); font-size: 14.5px; margin: 0 0 20px; max-width: 68ch; }
+  p { max-width: 70ch; }
+
+  /* ---------- id chips ---------- */
+  code, .id {
+    font-family: var(--f-mono); font-size: .875em;
+    letter-spacing: -.01em;
+  }
+  .id { color: var(--felt); font-weight: 500; white-space: nowrap; }
+  .id.b { color: var(--brass); }
+  .id.s { color: var(--sage); }
+
+  /* ---------- tables ---------- */
+  .tw { overflow-x: auto; border: 1px solid var(--hairline); border-radius: 3px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th {
+    text-align: left; font-family: var(--f-mono); font-weight: 500;
+    font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--muted); padding: 11px 14px;
+    border-bottom: 1px solid var(--hairline-2); background: var(--surface-2);
+    white-space: nowrap;
+  }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: var(--surface-2); }
+  td.n { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .pri { font-family: var(--f-mono); font-size: 11px; font-weight: 600; }
+  .pri.M { color: var(--felt); }
+  .pri.S { color: var(--brass); }
+  .pri.C { color: var(--muted); }
+
+  /* ---------- decision cards ---------- */
+  .adrs { display: grid; gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); border-radius: 3px; overflow: hidden; }
+  .adr { background: var(--surface); padding: 16px 18px; display: grid; grid-template-columns: 76px 1fr; gap: 18px; align-items: start; }
+  .adr .k { font-family: var(--f-mono); font-size: 12px; font-weight: 600; color: var(--felt); padding-top: 2px; }
+  .adr h4 { margin: 0 0 4px; font-size: 15px; color: var(--ink); font-weight: 600; }
+  .adr p { margin: 0; font-size: 13.5px; max-width: 78ch; }
+  @media (max-width: 620px) { .adr { grid-template-columns: 1fr; gap: 6px; } }
+
+  /* ---------- sprint board ---------- */
+  .board { display: grid; gap: 14px; }
+  .sp {
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 3px; overflow: hidden;
+  }
+  .sp > .hd {
+    display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+    padding: 14px 18px; border-bottom: 1px solid var(--hairline);
+    background: var(--surface-2);
+  }
+  .sp .no {
+    font-family: var(--f-display); font-size: 30px; line-height: 1;
+    color: var(--felt);
+  }
+  .sp .ti { font-size: 16px; font-weight: 600; color: var(--ink); }
+  .sp .du {
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--muted); margin-left: auto;
+  }
+  .sp ol { margin: 0; padding: 6px 0; list-style: none; }
+  .sp li {
+    display: grid; grid-template-columns: 82px 1fr auto; gap: 14px;
+    padding: 8px 18px; font-size: 13.5px; align-items: baseline;
+  }
+  .sp li + li { border-top: 1px solid var(--hairline); }
+  .sp li .us { font-family: var(--f-mono); font-size: 11.5px; color: var(--brass); font-weight: 500; }
+  .sp li .rf { font-family: var(--f-mono); font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+  @media (max-width: 720px) {
+    .sp li { grid-template-columns: 1fr; gap: 2px; }
+    .sp li .rf { justify-self: start; }
+  }
+  .gate {
+    margin: 0; padding: 12px 18px; background: var(--sage-soft);
+    border-top: 1px solid var(--hairline);
+    font-size: 13.5px; color: var(--ink-2);
+  }
+  .gate b {
+    font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--sage); display: block; margin-bottom: 3px;
+  }
+  .gate.stop { background: var(--felt-soft); }
+  .gate.stop b { color: var(--felt); }
+
+  /* ---------- callouts ---------- */
+  .note {
+    background: var(--brass-soft); border-left: 2px solid var(--brass);
+    padding: 14px 18px; border-radius: 0 3px 3px 0; margin: 22px 0;
+  }
+  .note p { margin: 0; font-size: 13.5px; }
+  .note b.k {
+    display: block; font-family: var(--f-mono); font-size: 10.5px;
+    letter-spacing: .07em; text-transform: uppercase; color: var(--brass);
+    margin-bottom: 4px;
+  }
+  .note.open { background: var(--felt-soft); border-left-color: var(--felt); }
+  .note.open b.k { color: var(--felt); }
+
+  /* ---------- stat strip ---------- */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); border-radius: 3px; overflow: hidden; margin: 24px 0; }
+  .stat { background: var(--surface); padding: 15px 16px; }
+  .stat .v { font-family: var(--f-display); font-size: 32px; line-height: 1; color: var(--ink); }
+  .stat .l { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: 5px; }
+
+  /* ---------- doc cards ---------- */
+  .docs { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .doc { background: var(--surface); border: 1px solid var(--hairline); border-radius: 3px; padding: 16px 18px; }
+  .doc .f { font-family: var(--f-mono); font-size: 11px; color: var(--brass); }
+  .doc h4 { margin: 6px 0 5px; font-size: 15px; color: var(--ink); font-weight: 600; }
+  .doc p { margin: 0; font-size: 13px; color: var(--muted); }
+
+  footer {
+    margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--hairline);
+    font-size: 12.5px; color: var(--muted);
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h1>DuoKeys <em>build board</em></h1>
+  <p class="standfirst">Five baselined documents, one ID scheme, and a seven-week route from an empty folder to a parent and a six-year-old playing four hands at the same piano. Every requirement traces to a component, every story to a requirement, every test to a story.</p>
+  <div class="meta">
+    <span>Version <b>1.0</b></span>
+    <span>2 September 2026</span>
+    <span>Status <b>Baselined — ready to build</b></span>
+    <span>Next action <b>Sprint 0 spike</b></span>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" aria-selected="true"  data-p="p-over">Overview</button>
+  <button role="tab" aria-selected="false" data-p="p-adr">Decisions <span>9</span></button>
+  <button role="tab" aria-selected="false" data-p="p-req">Requirements <span>47</span></button>
+  <button role="tab" aria-selected="false" data-p="p-spr">Sprints <span>63</span></button>
+  <button role="tab" aria-selected="false" data-p="p-tst">Tests <span>130</span></button>
+  <button role="tab" aria-selected="false" data-p="p-trc">Traceability</button>
+</nav>
+
+<!-- ============ OVERVIEW ============ -->
+<div class="panel" id="p-over">
+  <section>
+    <h2>The document set</h2>
+    <p class="sub">Written as Markdown in <code>docs/</code> so the build can reference them directly. This page is the cross-cutting reading view.</p>
+    <div class="docs">
+      <div class="doc"><div class="f">01-TECHNICAL-ARCHITECTURE.md</div><h4>Technical Architecture</h4><p>9 decision records, five ports, clock, MIDI pipeline, matcher, grading, data model, sync, content pipeline. 12 NFRs, 8 risks.</p></div>
+      <div class="doc"><div class="f">02-FUNCTIONAL-SPECIFICATION.md</div><h4>Functional Specification</h4><p>47 requirements across seven modules, prioritised MoSCoW, each pointing at the component that realises it.</p></div>
+      <div class="doc"><div class="f">03-SPRINT-PLAN.md</div><h4>Sprint Plan</h4><p>Six sprints, 63 user stories, each mapped to its requirement and component IDs, with hard exit gates.</p></div>
+      <div class="doc"><div class="f">04-TEST-SCENARIOS.md</div><h4>Test Scenarios</h4><p>~130 scenarios across five tiers — unit, integration, golden fixture, end-to-end, manual — plus a coverage matrix.</p></div>
+      <div class="doc"><div class="f">05-ENGINEERING-HANDBOOK.md</div><h4>Engineering Handbook</h4><p>Pre-build checklist, repo scaffold, Definition of Done, conventions, content authoring guide, Sprint 0 kit.</p></div>
+      <div class="doc"><div class="f">00-INDEX.md</div><h4>Index</h4><p>The ID scheme, the nine decisions, and the full traceability matrix in one place.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Build sequence</h2>
+    <p class="sub">Vertical slices, riskiest first. Every sprint ends with something playable at the piano, never with a completed layer.</p>
+    <div class="stats">
+      <div class="stat"><div class="v">7</div><div class="l">weeks to v1</div></div>
+      <div class="stat"><div class="v">174</div><div class="l">points, sprints 0–4</div></div>
+      <div class="stat"><div class="v">31</div><div class="l">must-have reqs</div></div>
+      <div class="stat"><div class="v">80%</div><div class="l">of risk in pure core</div></div>
+      <div class="stat"><div class="v">0</div><div class="l">hardware needed by CI</div></div>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Sprint</th><th>Focus</th><th>Length</th><th>Gate to pass before moving on</th></tr></thead>
+        <tbody>
+          <tr><td class="n">0</td><td>Hardware spike</td><td class="n">1–2 days</td><td><strong>Go / no-go.</strong> Real latency measured on the real instrument, under ~80 ms after calibration</td></tr>
+          <tr><td class="n">1</td><td>Walking skeleton</td><td class="n">~1 week</td><td>A child plays eight bars in wait mode and sees stars, unassisted</td></tr>
+          <tr><td class="n">2</td><td>The child's loop</td><td class="n">~2 weeks</td><td>A week of daily unsupervised use — and at least one designed feature discarded</td></tr>
+          <tr><td class="n">3</td><td>The adult's loop</td><td class="n">~2 weeks</td><td>You prefer it to your current practice method for a full week</td></tr>
+          <tr><td class="n">4</td><td>Duet &amp; dashboard</td><td class="n">~2 weeks</td><td>Four hands together, both results feel fair. <strong>v1 delivered</strong></td></tr>
+          <tr><td class="n">5</td><td>iPad <em>(optional)</em></td><td class="n">~1 week</td><td>Identical grades on iPad and laptop from the same fixtures. Needs a Mac</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Before the first commit</h2>
+    <p class="sub">Eleven pre-build activities, all cheap, all the kind of thing that becomes a week-three surprise if skipped.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>ID</th><th>Activity</th><th>Blocks</th></tr></thead>
+        <tbody>
+          <tr><td><span class="id b">PRE-001</span></td><td>Confirm the piano's model and that Windows enumerates it as class-compliant USB MIDI</td><td class="n">Sprint 0</td></tr>
+          <tr><td><span class="id b">PRE-002</span></td><td>Obtain a <strong>data-capable</strong> USB cable — not a charge-only one</td><td class="n">Sprint 0</td></tr>
+          <tr><td><span class="id b">PRE-003</span></td><td>Verify <code>navigator.requestMIDIAccess</code> exists in your Chrome or Edge</td><td class="n">Sprint 0</td></tr>
+          <tr><td><span class="id b">PRE-004</span></td><td>Install Node LTS 22.x, pnpm, Git</td><td class="n">Sprint 1</td></tr>
+          <tr><td><span class="id b">PRE-005</span></td><td>Create the private GitHub repository</td><td class="n">Sprint 1</td></tr>
+          <tr><td><span class="id b">PRE-006</span></td><td>Create the Supabase project, record URL and anon key</td><td class="n">Sprint 2</td></tr>
+          <tr><td><span class="id b">PRE-007</span></td><td>Create the Vercel project, connect the repo</td><td class="n">—</td></tr>
+          <tr><td><span class="id b">PRE-008</span></td><td>Decide headphones vs. instrument speakers as the default audio path</td><td class="n">Sprint 1</td></tr>
+          <tr><td><span class="id b">PRE-009</span></td><td>Decide styling approach once — Tailwind or CSS Modules — and never revisit</td><td class="n">Sprint 1</td></tr>
+          <tr><td><span class="id b">PRE-010</span></td><td>Record the child's baseline: what they can already do at the piano</td><td class="n">Sprint 2</td></tr>
+          <tr><td><span class="id b">PRE-011</span></td><td>Choose rented vs. cloud Mac; confirm an Apple Developer account is obtainable</td><td class="n">Sprint 5</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note open">
+      <p><b class="k">Two questions still open — neither blocks Sprint 0</b>
+      <strong>Headphones or the instrument's own speakers?</strong> Assumed: the instrument's speakers, which relaxes the audio-latency budget considerably. Headphones would move app audio onto the critical path. — <strong>Ever shared beyond the family?</strong> Assumed no. Yes turns licensing rigour, privacy posture and Vercel's non-commercial Hobby terms from footnotes into requirements.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ============ DECISIONS ============ -->
+<div class="panel" id="p-adr" hidden>
+  <section>
+    <h2>The nine decisions everything rests on</h2>
+    <p class="sub">Each is closed. Reopening one is a deliberate act, not a drift — every component in the architecture cites the decision it descends from.</p>
+    <div class="adrs">
+      <div class="adr"><div class="k">ADR-001</div><div>
+        <h4>Desktop browser, not iPad</h4>
+        <p>The Web MIDI API is not implemented in Safari or any WebKit-backed browser on any platform — WebKit bug #107250 has been open since January 2013 with no roadmap. This is a different thing from native CoreMIDI, which iOS has had since 2010 and which is what GarageBand and every other iPad MIDI app uses. A web app on iPad cannot reach the piano; a native app can. Build on a Windows laptop in Chrome or Edge.</p></div></div>
+      <div class="adr"><div class="k">ADR-002</div><div>
+        <h4>Keep the iPad door open at near-zero cost</h4>
+        <p>Two constraints the architecture wants anyway preserve the path: all MIDI through the single <code>MidiBackend</code> port, enforced by a lint rule; and no Next.js server-only features on the runtime path. Extension later is a Capacitor shell plus a Swift CoreMIDI plugin — 90–95% of the code transfers unchanged. <strong>Blocker to note now:</strong> Xcode is macOS-only, so iOS builds need a rented or cloud Mac. Arrange it before Sprint 5, not during.</p></div></div>
+      <div class="adr"><div class="k">ADR-003</div><div>
+        <h4>Local-first storage, cloud sync additive</h4>
+        <p>Practice happens wherever the piano is, often on the worst Wi-Fi in the house; a spinner between "sit down" and "play" kills the habit faster than any missing feature. IndexedDB is the source of truth, every practice feature works offline, and content ships as static JSON needing no database at all.</p></div></div>
+      <div class="adr"><div class="k">ADR-004</div><div>
+        <h4>Cloud sync is built in Sprint 2, not deferred</h4>
+        <p>Revises the earlier "optional, Sprint 4" position. The failure mode being guarded against is a lost or reset laptop taking a year of progress with it. The Supabase project is created in Sprint 1 so the seven-day free-tier pause clock never becomes a surprise; auth and the outbox land in Sprint 2 alongside profiles.</p></div></div>
+      <div class="adr"><div class="k">ADR-005</div><div>
+        <h4>Pure core, thin adapters</h4>
+        <p><code>core/</code> holds the clock, matcher, grader and progression as pure TypeScript with zero imports from React, the DOM, Web MIDI, Web Audio, IndexedDB or Supabase. This is the single decision that lets CI test the hard parts with no piano, no audio hardware and no six-year-old.</p></div></div>
+      <div class="adr"><div class="k">ADR-006</div><div>
+        <h4>The audio clock is master</h4>
+        <p><code>AudioContext.currentTime</code> is canonical; wall time is corrected toward it via an EMA. Grading against the wall clock while sounding against the audio clock accumulates drift that surfaces as "the app says I'm late and I know I wasn't."</p></div></div>
+      <div class="adr"><div class="k">ADR-007</div><div>
+        <h4>Tempo-relative tolerance with an absolute floor</h4>
+        <p>The original flat ±150 ms is a generous ninth of a beat at 60 bpm and nearly half a beat at 160, where it grades a wrong subdivision as correct. Instead: <code>max(floorMs, beatMs × fraction)</code> per tier, scaled by 1.6 for the child.</p></div></div>
+      <div class="adr"><div class="k">ADR-008</div><div>
+        <h4>Follow mainstream beginner pedagogy</h4>
+        <p>No lessons are booked, but the app should not invent a teaching order that would conflict if they start. Difficulty 1–5 maps onto the four stages Faber, Alfred and Bastien broadly agree on: pre-staff five-finger at middle C → neighbouring positions → landmark-note reading → full grand staff. Re-keying to a specific book later is a lookup table, not a rewrite.</p></div></div>
+      <div class="adr"><div class="k">ADR-009</div><div>
+        <h4>88 keys, sustain pedal, class-compliant USB</h4>
+        <p>Full range confirmed, so no content filtering or forced transposition is needed. <code>keyboardRange</code> stays in the profile as a safety net for a future second instrument.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Risk register</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>ID</th><th>Risk</th><th>Impact</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td><span class="id">RISK-001</span></td><td>Latency feels wrong even after calibration</td><td class="n">Critical</td><td>Sprint 0 answers this before anything is built</td></tr>
+          <tr><td><span class="id">RISK-002</span></td><td>Child loses interest within weeks</td><td class="n">High</td><td>Sprint 2 exit is a week of unsupervised real use; expect to discard a designed feature</td></tr>
+          <tr><td><span class="id">RISK-003</span></td><td>Web MIDI enumeration flaky on Windows</td><td class="n">Medium</td><td>Detected in Sprint 0; the <code>MidiBackend</code> port isolates any workaround</td></tr>
+          <tr><td><span class="id">RISK-004</span></td><td>MusicXML conversion quality poor</td><td class="n">Low</td><td>Hand-authored JSON is the primary child source anyway</td></tr>
+          <tr><td><span class="id">RISK-005</span></td><td>Scope creep from the adult module</td><td class="n">Medium</td><td>Sprint 3 is gated on Sprint 2's exit criteria actually being met</td></tr>
+          <tr><td><span class="id">RISK-006</span></td><td>Supabase project paused during a holiday</td><td class="n">Low</td><td>ADR-003 makes this "sync is behind", not an outage</td></tr>
+          <tr><td><span class="id">RISK-007</span></td><td>iPad path silently closes through a stray import</td><td class="n">Medium</td><td>Boundary lint rule fails CI</td></tr>
+          <tr><td><span class="id">RISK-008</span></td><td>No Mac available when Sprint 5 arrives</td><td class="n">Medium</td><td>Decide rented vs. cloud before starting, not during</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- ============ REQUIREMENTS ============ -->
+<div class="panel" id="p-req" hidden>
+  <section>
+    <h2>Functional requirements</h2>
+    <p class="sub">Forty-seven across seven modules. <span class="pri M">M</span> must-have · <span class="pri S">S</span> should-have · <span class="pri C">C</span> could-have. Each cites the component that realises it.</p>
+
+    <h3>Explorer — the child</h3>
+    <div class="tw"><table>
+      <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th><th>Realised by</th></tr></thead>
+      <tbody>
+        <tr><td><span class="id">FR-EXP-001</span></td><td>Quest map — pieces as nodes with stars and visible locks</td><td class="pri M">M</td><td class="n">TA-APP-003</td></tr>
+        <tr><td><span class="id">FR-EXP-002</span></td><td>Falling notes descending to a hit line above an on-screen keybed</td><td class="pri M">M</td><td class="n">TA-REN-001/2</td></tr>
+        <tr><td><span class="id">FR-EXP-003</span></td><td>Wait mode is the default — no timer, no timeout, no failure state</td><td class="pri M">M</td><td class="n">TA-MAT-002</td></tr>
+        <tr><td><span class="id">FR-EXP-004</span></td><td>Micro-quests — two-bar sections, completable in under a minute</td><td class="pri M">M</td><td class="n">TA-DAT-001</td></tr>
+        <tr><td><span class="id">FR-EXP-005</span></td><td>Note Ninja — response-time bands, hint at 6 s, never a countdown</td><td class="pri S">S</td><td class="n">TA-DAT-003</td></tr>
+        <tr><td><span class="id">FR-EXP-006</span></td><td>Free play — every key responds, nothing is graded</td><td class="pri S">S</td><td class="n">TA-AUD-001</td></tr>
+        <tr><td><span class="id">FR-EXP-007</span></td><td>Generous grading — 1.6× tolerance, minimum one star on completion</td><td class="pri M">M</td><td class="n">TA-GRD-002</td></tr>
+        <tr><td><span class="id">FR-EXP-008</span></td><td>Rewards and session arc — warm-up, quests, wind-down</td><td class="pri S">S</td><td class="n">TA-AUD-001</td></tr>
+        <tr><td><span class="id">FR-EXP-009</span></td><td>Session-length guidance as celebration, never lockout</td><td class="pri C">C</td><td class="n">—</td></tr>
+      </tbody></table></div>
+
+    <h3>Studio — the adult</h3>
+    <div class="tw"><table>
+      <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th><th>Realised by</th></tr></thead>
+      <tbody>
+        <tr><td><span class="id">FR-STU-001</span></td><td>Notation practice with a matcher-driven cursor</td><td class="pri M">M</td><td class="n">TA-REN-003</td></tr>
+        <tr><td><span class="id">FR-STU-002</span></td><td>Post-attempt note colouring — applied after, never during</td><td class="pri M">M</td><td class="n">TA-REN-003</td></tr>
+        <tr><td><span class="id">FR-STU-003</span></td><td>A/B loop by measure</td><td class="pri M">M</td><td class="n">TA-CLK-002</td></tr>
+        <tr><td><span class="id">FR-STU-004</span></td><td>Tempo 30–100% with auto-ramp on clean passes</td><td class="pri M">M</td><td class="n">TA-CLK-002</td></tr>
+        <tr><td><span class="id">FR-STU-005</span></td><td>Hands separate, muted hand optionally played by the sampler</td><td class="pri M">M</td><td class="n">TA-AUD-002</td></tr>
+        <tr><td><span class="id">FR-STU-006</span></td><td>Articulation feedback — notes held too short or too long</td><td class="pri S">S</td><td class="n">TA-MID-004</td></tr>
+        <tr><td><span class="id">FR-STU-007</span></td><td>Hanon generated from patterns, graded on evenness</td><td class="pri S">S</td><td class="n">TA-GRD-003</td></tr>
+        <tr><td><span class="id">FR-STU-008</span></td><td>Signed rush/drag in ms — not an RMS number</td><td class="pri M">M</td><td class="n">TA-GRD-001</td></tr>
+        <tr><td><span class="id">FR-STU-009</span></td><td>Per-measure breakdown — "your left hand rushes bar 5"</td><td class="pri S">S</td><td class="n">TA-GRD-004</td></tr>
+        <tr><td><span class="id">FR-STU-010</span></td><td>Generated sight-reading, constrained by key, range, rhythm</td><td class="pri S">S</td><td class="n">TA-CNT-004</td></tr>
+        <tr><td><span class="id">FR-STU-011</span></td><td>Mutopia / OpenScore repertoire ingest</td><td class="pri C">C</td><td class="n">TA-CNT-001</td></tr>
+      </tbody></table></div>
+
+    <h3>Duet — four hands</h3>
+    <div class="tw"><table>
+      <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th><th>Realised by</th></tr></thead>
+      <tbody>
+        <tr><td><span class="id">FR-DUO-001</span></td><td>Split <em>and transpose</em> — both players get their own middle C</td><td class="pri M">M</td><td class="n">TA-DAT-001</td></tr>
+        <tr><td><span class="id">FR-DUO-002</span></td><td>Two independent matchers — one player never fails the other</td><td class="pri M">M</td><td class="n">TA-MAT-001</td></tr>
+        <tr><td><span class="id">FR-DUO-003</span></td><td>Asymmetric parts — primo five notes, secondo harmony and pulse</td><td class="pri M">M</td><td class="n">TA-DAT-001</td></tr>
+        <tr><td><span class="id">FR-DUO-004</span></td><td>Shared result screen, celebratory not competitive</td><td class="pri S">S</td><td class="n">TA-GRD-001</td></tr>
+      </tbody></table></div>
+
+    <h3>Profiles, content, sync, system</h3>
+    <div class="tw"><table>
+      <thead><tr><th>ID</th><th>Requirement</th><th>Pri</th><th>Realised by</th></tr></thead>
+      <tbody>
+        <tr><td><span class="id">FR-PRO-001</span></td><td>Two to four local profiles, switched in one tap, no password</td><td class="pri M">M</td><td class="n">TA-DAT-004</td></tr>
+        <tr><td><span class="id">FR-PRO-002</span></td><td>Per-profile progression, derived from attempts not stored</td><td class="pri M">M</td><td class="n">TA-DAT-003</td></tr>
+        <tr><td><span class="id">FR-PRO-003</span></td><td>Immutable practice history with per-note events</td><td class="pri M">M</td><td class="n">TA-DAT-002</td></tr>
+        <tr><td><span class="id">FR-PRO-004</span></td><td>Dashboard — streaks, bench time, accuracy trend</td><td class="pri S">S</td><td class="n">TA-GRD-004</td></tr>
+        <tr><td><span class="id">FR-PRO-005</span></td><td>Recording and playback with the score following along</td><td class="pri C">C</td><td class="n">TA-DAT-002</td></tr>
+        <tr><td><span class="id">FR-CON-001</span></td><td>Static versioned content JSON — no DB read to start practising</td><td class="pri M">M</td><td class="n">TA-DAT-005</td></tr>
+        <tr><td><span class="id">FR-CON-002</span></td><td>8–12 hand-authored beginner pieces on the standard progression</td><td class="pri M">M</td><td class="n">TA-CNT-003</td></tr>
+        <tr><td><span class="id">FR-CON-003</span></td><td>Section segmentation on phrase boundaries, 2-bar fallback</td><td class="pri M">M</td><td class="n">TA-CNT-001</td></tr>
+        <tr><td><span class="id">FR-CON-004</span></td><td>Licence provenance — the build fails without an entry</td><td class="pri M">M</td><td class="n">TA-CNT-005</td></tr>
+        <tr><td><span class="id">FR-CON-005</span></td><td>Carry source fingerings; never invent them algorithmically</td><td class="pri C">C</td><td class="n">—</td></tr>
+        <tr><td><span class="id">FR-SYN-001</span></td><td>Passwordless adult account; the child never has credentials</td><td class="pri M">M</td><td class="n">TA-SYN-002</td></tr>
+        <tr><td><span class="id">FR-SYN-002</span></td><td>Background sync that never blocks or interrupts a session</td><td class="pri M">M</td><td class="n">TA-SYN-001/4</td></tr>
+        <tr><td><span class="id">FR-SYN-003</span></td><td>Restore everything on a new device — the point of ADR-004</td><td class="pri M">M</td><td class="n">TA-SYN-001</td></tr>
+        <tr><td><span class="id">FR-SYN-004</span></td><td>Quiet sync status in settings — never a modal</td><td class="pri S">S</td><td class="n">TA-SYN-004</td></tr>
+        <tr><td><span class="id">FR-SYN-005</span></td><td>Offline is not an error state — no banner, no degraded messaging</td><td class="pri M">M</td><td class="n">ADR-003</td></tr>
+        <tr><td><span class="id">FR-SYS-001</span></td><td>MIDI device selection, remembered and auto-reconnected</td><td class="pri M">M</td><td class="n">TA-PORT-003</td></tr>
+        <tr><td><span class="id">FR-SYS-002</span></td><td>Latency calibration wizard — median of 16 taps</td><td class="pri M">M</td><td class="n">TA-CLK-004</td></tr>
+        <tr><td><span class="id">FR-SYS-003</span></td><td>First run: connect → profile → calibrate → play, under 3 minutes</td><td class="pri M">M</td><td class="n">—</td></tr>
+        <tr><td><span class="id">FR-SYS-004</span></td><td>Graceful disconnect — pause, preserve, calm reconnect prompt</td><td class="pri M">M</td><td class="n">TA-MID-005</td></tr>
+        <tr><td><span class="id">FR-SYS-005</span></td><td>Unsupported browser gets an explanation, not a blank screen</td><td class="pri M">M</td><td class="n">—</td></tr>
+        <tr><td><span class="id">FR-SYS-006</span></td><td>PWA install and wake lock during sessions</td><td class="pri S">S</td><td class="n">TA-APP-004</td></tr>
+        <tr><td><span class="id">FR-SYS-007</span></td><td>Accessibility — colour never the only signal, 44 px targets</td><td class="pri M">M</td><td class="n">NFR-008/9</td></tr>
+        <tr><td><span class="id">FR-SYS-008</span></td><td>Privacy — first names only, no analytics, no audio leaves device</td><td class="pri M">M</td><td class="n">NFR-010</td></tr>
+      </tbody></table></div>
+  </section>
+
+  <section>
+    <h2>Budgets</h2>
+    <div class="tw"><table>
+      <thead><tr><th>ID</th><th>Requirement</th><th>Target</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><span class="id s">NFR-001</span></td><td>Input → visual latency</td><td class="n">&lt; 30 ms p95</td><td>Above this the keybed feels detached from the hands</td></tr>
+        <tr><td><span class="id s">NFR-002</span></td><td>Frame rate during falling notes</td><td class="n">60 fps</td><td>A dropped frame reads as a timing error</td></tr>
+        <tr><td><span class="id s">NFR-003</span></td><td>Input → app-audio latency</td><td class="n">&lt; 60 ms p95</td><td>Relaxed because the instrument makes its own sound</td></tr>
+        <tr><td><span class="id s">NFR-004</span></td><td>Cold start to playable</td><td class="n">&lt; 3 s</td><td>The gap between "sit down" and "play" is where habits die</td></tr>
+        <tr><td><span class="id s">NFR-005</span></td><td>Offline capability</td><td class="n">100%</td><td>Of every practice feature</td></tr>
+        <tr><td><span class="id s">NFR-006</span></td><td>Explorer route bundle</td><td class="n">&lt; 200 KB gz</td><td>OSMD must never load on the child's path</td></tr>
+        <tr><td><span class="id s">NFR-007</span></td><td>Data loss on crash</td><td class="n">0 attempts</td><td>Flush per section, not per session</td></tr>
+        <tr><td><span class="id s">NFR-010</span></td><td>Privacy</td><td class="n">—</td><td>Keeps COPPA and GDPR-K entirely out of scope</td></tr>
+      </tbody></table></div>
+  </section>
+</div>
+
+<!-- ============ SPRINTS ============ -->
+<div class="panel" id="p-spr" hidden>
+  <section>
+    <h2>Sixty-three stories, six sprints</h2>
+    <p class="sub">Every story names the requirement it delivers. Gates are hard — a sprint is not finished because its stories are done, but because its exit criterion is observed.</p>
+
+    <div class="board">
+
+      <div class="sp">
+        <div class="hd"><span class="no">0</span><span class="ti">Hardware spike</span><span class="du">1–2 days · 6 pts</span></div>
+        <ol>
+          <li><span class="us">US-0.01</span><span>Open the piano's MIDI input in Chrome and log note-on events with timestamps</span><span class="rf">FR-SYS-001</span></li>
+          <li><span class="us">US-0.02</span><span>A rectangle lights up within one frame of a key press — judge visual latency by eye</span><span class="rf">TA-REN-001</span></li>
+          <li><span class="us">US-0.03</span><span>Trigger a Tone.js note on key press — judge audio latency by ear</span><span class="rf">TA-AUD-001</span></li>
+          <li><span class="us">US-0.04</span><span>Measure round-trip latency numerically by tapping to a click and reading the median</span><span class="rf">FR-SYS-002</span></li>
+          <li><span class="us">US-0.05</span><span>Confirm the instrument's real quirks: CC64, velocity-0 note-off, active sensing rate</span><span class="rf">TA-MID-002</span></li>
+        </ol>
+        <p class="gate stop"><b>Go / no-go gate</b>Latency is measured and recorded. If it stays above ~80 ms after calibration and cannot be reduced, stop and reconsider before building anything at all.</p>
+      </div>
+
+      <div class="sp">
+        <div class="hd"><span class="no">1</span><span class="ti">Walking skeleton</span><span class="du">~1 week · 34 pts</span></div>
+        <ol>
+          <li><span class="us">US-1.01</span><span>Next.js + TypeScript repo, four-layer structure, boundary lint failing CI on violation</span><span class="rf">TA-PORT-005</span></li>
+          <li><span class="us">US-1.02</span><span>Five port interfaces defined, with a deterministic fake for each</span><span class="rf">TA-PORT-002</span></li>
+          <li><span class="us">US-1.03</span><span>Supabase project created so the seven-day pause clock never surprises Sprint 2</span><span class="rf">FR-SYN-001</span></li>
+          <li><span class="us">US-1.04</span><span>One <code>MasterClock</code> converting wall, audio and musical time</span><span class="rf">TA-CLK-002</span></li>
+          <li><span class="us">US-1.05</span><span>EMA drift correction so a ten-minute session accumulates no perceptible offset</span><span class="rf">TA-CLK-003</span></li>
+          <li><span class="us">US-1.06</span><span>Tap-along calibration storing a per-profile latency offset</span><span class="rf">FR-SYS-002</span></li>
+          <li><span class="us">US-1.07</span><span>Select a MIDI input from a list and have it remembered</span><span class="rf">FR-SYS-001</span></li>
+          <li><span class="us">US-1.08</span><span>Decode note-on/off, velocity-0-as-off and CC64; swallow active sensing silently</span><span class="rf">TA-MID-002</span></li>
+          <li><span class="us">US-1.09</span><span>Track sustain — distinguish "key up" from "note stopped sounding"</span><span class="rf">FR-STU-006</span></li>
+          <li><span class="us">US-1.10</span><span>Falling bars descending to a hit line above an on-screen keybed at 60 fps</span><span class="rf">FR-EXP-002</span></li>
+          <li><span class="us">US-1.11</span><span>The stream waits at the hit line — no timer, no penalty, no failure state</span><span class="rf">FR-EXP-003</span></li>
+          <li><span class="us">US-1.12</span><span>Notes within 30 ticks count as one chord decision, not three errors</span><span class="rf">TA-MAT-004</span></li>
+          <li><span class="us">US-1.13</span><span>Play one hard-coded eight-bar tune end to end and receive 0–3 stars</span><span class="rf">FR-EXP-007</span></li>
+          <li><span class="us">US-1.14</span><span>The attempt saves to IndexedDB and survives a browser restart</span><span class="rf">FR-PRO-003</span></li>
+        </ol>
+        <p class="gate"><b>Exit</b>A child sits at the piano, plays eight bars in wait mode and sees stars, unassisted. Every hard problem in the project has now been touched exactly once.</p>
+      </div>
+
+      <div class="sp">
+        <div class="hd"><span class="no">2</span><span class="ti">The child's loop, for real</span><span class="du">~2 weeks · 60 pts</span></div>
+        <ol>
+          <li><span class="us">US-2.01</span><span>Separate profiles with names, avatars and calibration, switched in one tap</span><span class="rf">FR-PRO-001</span></li>
+          <li><span class="us">US-2.02</span><span>Adult signs in with an email magic link</span><span class="rf">FR-SYN-001</span></li>
+          <li><span class="us">US-2.03</span><span>Outbox queues every syncable write and flushes in the background</span><span class="rf">FR-SYN-002</span></li>
+          <li><span class="us">US-2.04</span><span>Signing in on a new laptop restores all profiles and history</span><span class="rf">FR-SYN-003</span></li>
+          <li><span class="us">US-2.05</span><span>Row-level security on every table</span><span class="rf">FR-SYS-008</span></li>
+          <li><span class="us">US-2.06</span><span>The app works identically offline and shows no error state for it</span><span class="rf">FR-SYN-005</span></li>
+          <li><span class="us">US-2.07</span><span>Build script ingests sources into normalised, segmented, scored arrangement JSON</span><span class="rf">FR-CON-001</span></li>
+          <li><span class="us">US-2.08</span><span>The build fails if any piece lacks a licence entry with source and date</span><span class="rf">FR-CON-004</span></li>
+          <li><span class="us">US-2.09</span><span>8–12 pieces at difficulty 1–2 on the standard beginner progression</span><span class="rf">FR-CON-002</span></li>
+          <li><span class="us">US-2.10</span><span>A map of pieces as nodes with stars and locks</span><span class="rf">FR-EXP-001</span></li>
+          <li><span class="us">US-2.11</span><span>Practise two-bar sections rather than whole pieces</span><span class="rf">FR-EXP-004</span></li>
+          <li><span class="us">US-2.12</span><span>Completing a section at ≥ 1 star unlocks the next</span><span class="rf">FR-PRO-002</span></li>
+          <li><span class="us">US-2.13</span><span>Note Ninja with response-time bands and a hint after six seconds</span><span class="rf">FR-EXP-005</span></li>
+          <li><span class="us">US-2.14</span><span>Wrong answers re-queue via spaced repetition rather than ending the game</span><span class="rf">FR-EXP-005</span></li>
+          <li><span class="us">US-2.15</span><span>Timed mode grades on tempo-relative windows with an absolute floor</span><span class="rf">ADR-007</span></li>
+          <li><span class="us">US-2.16</span><span>Any completed attempt earns a star; errors read as "try again"</span><span class="rf">FR-EXP-007</span></li>
+          <li><span class="us">US-2.17</span><span>A session has a warm-up, two or three quests, and a wind-down</span><span class="rf">FR-EXP-008</span></li>
+          <li><span class="us">US-2.18</span><span>Immediate audio-visual reward, suppressed under reduced-motion</span><span class="rf">FR-EXP-008</span></li>
+          <li><span class="us">US-2.19</span><span>Free play — every key responds, nothing graded</span><span class="rf">FR-EXP-006</span></li>
+          <li><span class="us">US-2.20</span><span>Golden fixture suite replaying recorded performances and asserting exact grades</span><span class="rf">TA-PORT-004</span></li>
+        </ol>
+        <p class="gate"><b>Exit — behavioural, not technical</b>The child uses it daily for a week with no developer present, and <strong>at least one designed feature is observed unused and removed</strong>. If nothing is discarded, the observation was not honest.</p>
+      </div>
+
+      <div class="sp">
+        <div class="hd"><span class="no">3</span><span class="ti">The adult's loop</span><span class="du">~2 weeks · 39 pts</span></div>
+        <ol>
+          <li><span class="us">US-3.01</span><span>Practise from real notation with a cursor driven by what you actually play</span><span class="rf">FR-STU-001</span></li>
+          <li><span class="us">US-3.02</span><span>OSMD loads on Studio routes only, never in the Explorer bundle</span><span class="rf">NFR-006</span></li>
+          <li><span class="us">US-3.03</span><span>Each note coloured by result after the attempt, not during</span><span class="rf">FR-STU-002</span></li>
+          <li><span class="us">US-3.04</span><span>Select a start and end measure and loop indefinitely</span><span class="rf">FR-STU-003</span></li>
+          <li><span class="us">US-3.05</span><span>Scale tempo from 30–100% of written</span><span class="rf">FR-STU-004</span></li>
+          <li><span class="us">US-3.06</span><span>Auto-ramp: +5% after a clean pass, one step back after a failure</span><span class="rf">FR-STU-004</span></li>
+          <li><span class="us">US-3.07</span><span>Practise one hand while the other is muted, silent, or sampler-played</span><span class="rf">FR-STU-005</span></li>
+          <li><span class="us">US-3.08</span><span>Be told when notes are held too short or too long for the articulation</span><span class="rf">FR-STU-006</span></li>
+          <li><span class="us">US-3.09</span><span>Hanon 1–20 generated from patterns and graded on evenness</span><span class="rf">FR-STU-007</span></li>
+          <li><span class="us">US-3.10</span><span>Unlimited generated sight-reading constrained by key, range and rhythm</span><span class="rf">FR-STU-010</span></li>
+          <li><span class="us">US-3.11</span><span>See signed rush/drag in milliseconds rather than an RMS number</span><span class="rf">FR-STU-008</span></li>
+          <li><span class="us">US-3.12</span><span>Ingest Mutopia and OpenScore MusicXML through the build pipeline</span><span class="rf">FR-STU-011</span></li>
+        </ol>
+        <p class="gate"><b>Exit</b>You use it for your own practice for a week and prefer it to the alternative. If you don't, fix that before adding anything else. <em>This sprint is gated on Sprint 2's exit actually being met — don't start it to avoid confronting a child's-loop problem.</em></p>
+      </div>
+
+      <div class="sp">
+        <div class="hd"><span class="no">4</span><span class="ti">Together, and looking back</span><span class="du">~2 weeks · 35 pts</span></div>
+        <ol>
+          <li><span class="us">US-4.01</span><span>Keyboard splits and each half transposes so both players get their own middle C</span><span class="rf">FR-DUO-001</span></li>
+          <li><span class="us">US-4.02</span><span>Two independent matchers — one person's mistakes never fail the other</span><span class="rf">FR-DUO-002</span></li>
+          <li><span class="us">US-4.03</span><span>Primo is five notes in one position; secondo carries harmony and pulse</span><span class="rf">FR-DUO-003</span></li>
+          <li><span class="us">US-4.04</span><span>Side-by-side results plus one celebratory "together" score</span><span class="rf">FR-DUO-004</span></li>
+          <li><span class="us">US-4.05</span><span>Record a performance and play it back with the score following</span><span class="rf">FR-PRO-005</span></li>
+          <li><span class="us">US-4.06</span><span>Dashboard: streaks, bench time, accuracy trend, per-measure rush/drag</span><span class="rf">FR-PRO-004</span></li>
+          <li><span class="us">US-4.07</span><span>A simplified, celebratory dashboard for the child</span><span class="rf">FR-PRO-004</span></li>
+          <li><span class="us">US-4.08</span><span>Install to the desktop; the screen never sleeps mid-piece</span><span class="rf">FR-SYS-006</span></li>
+          <li><span class="us">US-4.09</span><span>A mid-session disconnect pauses cleanly and preserves the attempt</span><span class="rf">FR-SYS-004</span></li>
+          <li><span class="us">US-4.10</span><span>Unsupported browsers get a plain explanation and a list that works</span><span class="rf">FR-SYS-005</span></li>
+          <li><span class="us">US-4.11</span><span>Quiet sync status showing last-synced and pending items</span><span class="rf">FR-SYN-004</span></li>
+        </ol>
+        <p class="gate"><b>Exit — v1 delivered</b>Parent and child play four hands together and both see their own result. The original brief is complete.</p>
+      </div>
+
+      <div class="sp">
+        <div class="hd"><span class="no">5</span><span class="ti">The iPad, if it still matters</span><span class="du">optional · ~1 week · 16 pts</span></div>
+        <ol>
+          <li><span class="us">US-5.01</span><span>The app builds under <code>output: 'export'</code> with no server-only runtime features</span><span class="rf">ADR-002</span></li>
+          <li><span class="us">US-5.02</span><span>A Capacitor shell wraps the exported app and runs it on an iPad</span><span class="rf">ADR-002</span></li>
+          <li><span class="us">US-5.03</span><span>A Swift CoreMIDI plugin implements <code>MidiBackend</code> with identical semantics</span><span class="rf">TA-PORT-002</span></li>
+          <li><span class="us">US-5.04</span><span>Swapping the MIDI adapter is one line in the composition root</span><span class="rf">TA-APP-002</span></li>
+          <li><span class="us">US-5.05</span><span>Provisioned and installable on the family iPad</span><span class="rf">—</span></li>
+        </ol>
+        <p class="gate stop"><b>Prerequisite — arrange before starting</b>A Mac. Xcode is macOS-only: rent one (MacinCloud), use a cloud build service (Codemagic), or borrow hardware. An Apple Developer account is also required.</p>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<!-- ============ TESTS ============ -->
+<div class="panel" id="p-tst" hidden>
+  <section>
+    <h2>How you test a piano app with no piano</h2>
+    <p class="sub">This is the payoff for the pure core. CI has no MIDI device, no audio hardware and no six-year-old, and needs none of them — roughly 80% of the risk lives in code that runs in plain node.</p>
+
+    <div class="tw"><table>
+      <thead><tr><th>Tier</th><th>Prefix</th><th>Runner</th><th>Hardware</th><th>Runs</th><th>Count</th></tr></thead>
+      <tbody>
+        <tr><td>Unit — pure core</td><td><span class="id">TS-U-*</span></td><td>Vitest (node)</td><td class="n">none</td><td>every commit</td><td class="n">~70</td></tr>
+        <tr><td>Integration — adapters</td><td><span class="id">TS-I-*</span></td><td>Vitest + fakes</td><td class="n">none</td><td>every commit</td><td class="n">21</td></tr>
+        <tr><td>Golden fixtures</td><td><span class="id">TS-G-*</span></td><td>Vitest</td><td class="n">none</td><td>every commit</td><td class="n">10</td></tr>
+        <tr><td>End-to-end</td><td><span class="id">TS-E-*</span></td><td>Playwright</td><td class="n">mock MIDI</td><td>pre-merge</td><td class="n">16</td></tr>
+        <tr><td>Manual — hardware and human</td><td><span class="id">TS-M-*</span></td><td>you, at the piano</td><td class="n"><strong>yes</strong></td><td>sprint exit</td><td class="n">14</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Coverage targets</h3>
+    <div class="tw"><table>
+      <thead><tr><th>Area</th><th>Target</th><th>Rationale</th></tr></thead>
+      <tbody>
+        <tr><td><code>core/clock</code></td><td class="n">100% branch</td><td>Silent drift is undebuggable in production</td></tr>
+        <tr><td><code>core/matcher</code></td><td class="n">100% branch</td><td>The correctness heart of the product</td></tr>
+        <tr><td><code>core/grading</code></td><td class="n">100% branch</td><td>Wrong stars destroy a child's trust in the app</td></tr>
+        <tr><td><code>core/content</code></td><td class="n">95%</td><td>Build-time, so failures are loud</td></tr>
+        <tr><td><code>adapters/</code></td><td class="n">70%</td><td>Thin by design; end-to-end covers the rest</td></tr>
+        <tr><td><code>ui/</code></td><td class="n">smoke only</td><td>Presentational, changes constantly</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>The scenarios worth naming</h3>
+    <div class="tw"><table>
+      <thead><tr><th>ID</th><th>Scenario</th><th>Guards</th></tr></thead>
+      <tbody>
+        <tr><td><span class="id">TS-U-MID-003</span></td><td>A note-on with velocity 0 decodes as a <em>note-off</em></td><td>Many instruments never send 0x80 at all</td></tr>
+        <tr><td><span class="id">TS-U-MID-004</span></td><td>100 active-sensing messages emit zero events</td><td>Some instruments send these 3× per second</td></tr>
+        <tr><td><span class="id">TS-U-CLK-007</span></td><td>Calibration over 16 taps, one of them 400 ms late, is unaffected</td><td>Median, not mean — one fumble must not skew it</td></tr>
+        <tr><td><span class="id">TS-U-MAT-005</span></td><td><strong>No timeout ever fires</strong> — 60 s of silence leaves wait mode unchanged</td><td>The whole promise of wait mode</td></tr>
+        <tr><td><span class="id">TS-U-MAT-013</span></td><td>A late note cannot match a slot earlier than one already matched</td><td>The monotonic constraint; without it errors cascade</td></tr>
+        <tr><td><span class="id">TS-U-MAT-016</span></td><td>Tolerance at 60 bpm is wider than at 160 bpm</td><td>ADR-007 — the reason flat windows were rejected</td></tr>
+        <tr><td><span class="id">TS-U-GRD-005</span></td><td>A completed attempt at 50% accuracy still yields ≥ 1 star</td><td>Sitting down and finishing is the behaviour being reinforced</td></tr>
+        <tr><td><span class="id">TS-U-GRD-006</span></td><td>Consistently 40 ms early gives <code>rushDragMs</code> = −40, <em>signed</em></td><td>Signed is actionable; RMS is not</td></tr>
+        <tr><td><span class="id">TS-U-PED-002</span></td><td>Key released with pedal down → key-up true, stopped-sounding false</td><td>Grading and rendering need different events</td></tr>
+        <tr><td><span class="id">TS-U-CNT-009</span></td><td>A missing licence entry exits the build non-zero</td><td>The only thing making the catalogue safe to share</td></tr>
+        <tr><td><span class="id">TS-I-SYN-004</span></td><td>A second authenticated user cannot read the first user's rows</td><td>RLS, verified rather than assumed</td></tr>
+        <tr><td><span class="id">TS-I-SYN-009</span></td><td>With the network hung, a full session completes at normal speed</td><td>Sync must never block practice</td></tr>
+        <tr><td><span class="id">TS-E-016</span></td><td>Boundary lint fails on a deliberate <code>react</code> import in <code>core/</code></td><td>The rule that keeps the iPad path open</td></tr>
+        <tr><td><span class="id">TS-M-006</span></td><td>The child uses the app daily for a week with no developer present</td><td>The only test that can fail the product rather than the code</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="note">
+      <p><b class="k">The rule that makes tuning safe</b>Golden fixtures are recorded real performances replayed through decode → pedal → matcher → grade, asserting the <em>exact</em> resulting grade. Any change to the tolerance constants must come with deliberate, reviewed updates to their expected values. A silent fixture update in a diff is a review blocker.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ============ TRACEABILITY ============ -->
+<div class="panel" id="p-trc" hidden>
+  <section>
+    <h2>Traceability</h2>
+    <p class="sub">Tests cite stories, stories cite requirements, requirements cite components, components cite decisions. Never the other way round — so a change anywhere can be followed everywhere.</p>
+
+    <div class="note">
+      <p><b class="k">Direction of reference</b><code>TS-*</code> → <code>US-*</code> → <code>FR-*</code> → <code>TA-*</code> → <code>ADR-*</code></p>
+    </div>
+
+    <div class="tw"><table>
+      <thead><tr><th>Requirement</th><th>Realised by</th><th>Delivered in</th><th>Verified by</th></tr></thead>
+      <tbody>
+        <tr><td><span class="id">FR-EXP-001</span> quest map</td><td class="n">TA-APP-003</td><td class="n">US-2.10</td><td class="n">TS-E-003</td></tr>
+        <tr><td><span class="id">FR-EXP-002</span> falling notes</td><td class="n">TA-REN-001/2</td><td class="n">US-1.10</td><td class="n">TS-U-REN-001…6 · TS-M-004</td></tr>
+        <tr><td><span class="id">FR-EXP-003</span> wait mode</td><td class="n">TA-MAT-002</td><td class="n">US-1.11</td><td class="n">TS-U-MAT-001…8 · TS-M-005</td></tr>
+        <tr><td><span class="id">FR-EXP-004</span> micro-quests</td><td class="n">TA-DAT-001</td><td class="n">US-2.11</td><td class="n">TS-U-CNT-007 · TS-E-003</td></tr>
+        <tr><td><span class="id">FR-EXP-005</span> Note Ninja</td><td class="n">TA-DAT-003</td><td class="n">US-2.13/14</td><td class="n">TS-E-006/007</td></tr>
+        <tr><td><span class="id">FR-EXP-007</span> generous grading</td><td class="n">TA-GRD-002</td><td class="n">US-1.13, 2.15/16</td><td class="n">TS-U-GRD-001…5</td></tr>
+        <tr><td><span class="id">FR-STU-001</span> notation</td><td class="n">TA-REN-003</td><td class="n">US-3.01</td><td class="n">TS-M-010</td></tr>
+        <tr><td><span class="id">FR-STU-003</span> A/B loop</td><td class="n">TA-CLK-002</td><td class="n">US-3.04</td><td class="n">TS-E-010</td></tr>
+        <tr><td><span class="id">FR-STU-004</span> tempo + ramp</td><td class="n">TA-CLK-002</td><td class="n">US-3.05/06</td><td class="n">TS-U-CLK-003 · TS-E-011</td></tr>
+        <tr><td><span class="id">FR-STU-005</span> hands separate</td><td class="n">TA-AUD-002</td><td class="n">US-3.07</td><td class="n">TS-M-009</td></tr>
+        <tr><td><span class="id">FR-STU-006</span> articulation</td><td class="n">TA-MID-004</td><td class="n">US-1.09, 3.08</td><td class="n">TS-U-PED-001…6</td></tr>
+        <tr><td><span class="id">FR-STU-007</span> Hanon evenness</td><td class="n">TA-GRD-003</td><td class="n">US-3.09</td><td class="n">TS-G-007/008</td></tr>
+        <tr><td><span class="id">FR-STU-008</span> rush/drag</td><td class="n">TA-GRD-001</td><td class="n">US-3.11</td><td class="n">TS-U-GRD-006/007</td></tr>
+        <tr><td><span class="id">FR-DUO-001</span> split + transpose</td><td class="n">TA-DAT-001</td><td class="n">US-4.01</td><td class="n">TS-E-015 · TS-M-012</td></tr>
+        <tr><td><span class="id">FR-DUO-002</span> dual matchers</td><td class="n">TA-MAT-001</td><td class="n">US-4.02</td><td class="n">TS-U-MAT-021 · TS-G-010</td></tr>
+        <tr><td><span class="id">FR-PRO-001</span> profiles</td><td class="n">TA-DAT-004</td><td class="n">US-2.01</td><td class="n">TS-I-DAT-006 · TS-E-005</td></tr>
+        <tr><td><span class="id">FR-PRO-002</span> progression</td><td class="n">TA-DAT-003</td><td class="n">US-2.12</td><td class="n">TS-I-DAT-004 · TS-E-004</td></tr>
+        <tr><td><span class="id">FR-PRO-003</span> history</td><td class="n">TA-DAT-002</td><td class="n">US-1.14</td><td class="n">TS-I-DAT-001/002</td></tr>
+        <tr><td><span class="id">FR-CON-001</span> static content</td><td class="n">TA-DAT-005</td><td class="n">US-2.07</td><td class="n">TS-U-CNT-001…4</td></tr>
+        <tr><td><span class="id">FR-CON-002</span> beginner catalogue</td><td class="n">TA-CNT-003</td><td class="n">US-2.09</td><td class="n">TS-U-CNT-012 · TS-M-006</td></tr>
+        <tr><td><span class="id">FR-CON-004</span> licence gate</td><td class="n">TA-CNT-005</td><td class="n">US-2.08</td><td class="n">TS-U-CNT-009/010</td></tr>
+        <tr><td><span class="id">FR-SYN-001</span> auth</td><td class="n">TA-SYN-002</td><td class="n">US-1.03, 2.02</td><td class="n">TS-I-SYN-004</td></tr>
+        <tr><td><span class="id">FR-SYN-002</span> background sync</td><td class="n">TA-SYN-001/4</td><td class="n">US-2.03</td><td class="n">TS-I-SYN-001…3, 009</td></tr>
+        <tr><td><span class="id">FR-SYN-003</span> device restore</td><td class="n">TA-SYN-001</td><td class="n">US-2.04</td><td class="n">TS-I-SYN-005 · TS-E-009</td></tr>
+        <tr><td><span class="id">FR-SYN-005</span> offline normal</td><td class="n">ADR-003</td><td class="n">US-2.06</td><td class="n">TS-E-008 · TS-I-SYN-010</td></tr>
+        <tr><td><span class="id">FR-SYS-001</span> device select</td><td class="n">TA-PORT-003</td><td class="n">US-0.01, 1.07</td><td class="n">TS-I-MID-001/002</td></tr>
+        <tr><td><span class="id">FR-SYS-002</span> calibration</td><td class="n">TA-CLK-004</td><td class="n">US-0.04, 1.06</td><td class="n">TS-U-CLK-007/8 · TS-M-001</td></tr>
+        <tr><td><span class="id">FR-SYS-004</span> disconnect</td><td class="n">TA-MID-005</td><td class="n">US-4.09</td><td class="n">TS-I-MID-003/4 · TS-M-013</td></tr>
+        <tr><td><span class="id">FR-SYS-007</span> accessibility</td><td class="n">NFR-008/9/11</td><td class="n">ongoing</td><td class="n">TS-E-013/014</td></tr>
+        <tr><td><span class="id">FR-SYS-008</span> privacy</td><td class="n">NFR-010</td><td class="n">US-2.05</td><td class="n">TS-I-SYN-004</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Definition of Done</h2>
+    <p class="sub">A story is done when all nine hold. No partial credit.</p>
+    <div class="tw"><table>
+      <thead><tr><th>#</th><th>Condition</th></tr></thead>
+      <tbody>
+        <tr><td class="n">1</td><td>Acceptance criteria in the story are met</td></tr>
+        <tr><td class="n">2</td><td>The <code>TS-*</code> scenarios the story references pass</td></tr>
+        <tr><td class="n">3</td><td>Coverage targets for any touched <code>core/</code> module still hold</td></tr>
+        <tr><td class="n">4</td><td>Boundary lint passes — no platform import in <code>core/</code>, no <code>ui/</code> import in <code>adapters/</code></td></tr>
+        <tr><td class="n">5</td><td>TypeScript compiles under <code>strict</code> and <code>noUncheckedIndexedAccess</code>, with no <code>any</code> added</td></tr>
+        <tr><td class="n">6</td><td>The feature works with the network off, unless it is itself a sync feature</td></tr>
+        <tr><td class="n">7</td><td>If it touches the render loop, a five-minute session holds 60 fps</td></tr>
+        <tr><td class="n">8</td><td>If it touches tolerance or grading, golden fixtures are updated deliberately and reviewed</td></tr>
+        <tr><td class="n">9</td><td><strong>It has been played at the actual piano at least once</strong></td></tr>
+      </tbody>
+    </table></div>
+    <p style="margin-top:16px">That last one is not ceremony. A grading change that passes every fixture and feels wrong under the hands is still wrong.</p>
+  </section>
+</div>
+
+<footer>
+  DuoKeys documentation set v1.0 · 2 September 2026 · Canonical Markdown in <code>docs/</code>.
+  Supersedes the original project specification and the architecture review, both retained as the record of how these decisions were reached.
+</footer>
+
+</div>
+
+<script>
+  (function () {
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('nav.tabs button'));
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () {
+        tabs.forEach(function (o) {
+          var on = o === t;
+          o.setAttribute('aria-selected', on ? 'true' : 'false');
+          document.getElementById(o.dataset.p).hidden = !on;
+        });
+        window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      });
+    });
+  })();
+</script>

@@ -1,0 +1,1532 @@
+<title>DuoKeys Build Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  /* ---------- tokens: light (bare :root = complete palette) ---------- */
+  :root {
+    --ground:      #E9E9E4;
+    --surface:     #FCFCFA;
+    --surface-2:   #F3F3EE;
+    --ink:         #15181C;
+    --ink-2:       #3D444C;
+    --muted:       #6B7178;
+    --hairline:    #D6D6CF;
+    --hairline-2:  #C2C2B9;
+    --felt:        #9C2F2A;
+    --felt-soft:   #F2E2E0;
+    --brass:       #7E6222;
+    --brass-soft:  #F0EADA;
+    --sage:        #40614A;
+    --sage-soft:   #E2EAE2;
+    --shadow:      0 1px 2px rgba(21,24,28,.05), 0 8px 24px -14px rgba(21,24,28,.22);
+
+    --f-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+    --f-body:    "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --f-mono:    "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+    --key-white:   #FFFFFF;
+    --key-black:   #1A1D21;
+
+    --measure: 70ch;
+    --rail: 246px;
+    color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:     #101215;
+      --surface:    #191C20;
+      --surface-2:  #22262B;
+      --ink:        #E7E7E1;
+      --ink-2:      #B9BEC4;
+      --muted:      #8B9299;
+      --hairline:   #2C3137;
+      --hairline-2: #3C424A;
+      --felt:       #E08079;
+      --felt-soft:  #33211F;
+      --brass:      #C7A758;
+      --brass-soft: #2A2519;
+      --sage:       #8FBF9E;
+      --sage-soft:  #1B2620;
+      --shadow:     0 1px 2px rgba(0,0,0,.4), 0 10px 28px -16px rgba(0,0,0,.8);
+      --key-white:  #464C54;
+      --key-black:  #0A0C0F;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:     #101215;
+    --surface:    #191C20;
+    --surface-2:  #22262B;
+    --ink:        #E7E7E1;
+    --ink-2:      #B9BEC4;
+    --muted:      #8B9299;
+    --hairline:   #2C3137;
+    --hairline-2: #3C424A;
+    --felt:       #E08079;
+    --felt-soft:  #33211F;
+    --brass:      #C7A758;
+    --brass-soft: #2A2519;
+    --sage:       #8FBF9E;
+    --sage-soft:  #1B2620;
+    --shadow:     0 1px 2px rgba(0,0,0,.4), 0 10px 28px -16px rgba(0,0,0,.8);
+    --key-white:  #464C54;
+    --key-black:  #0A0C0F;
+    color-scheme: dark;
+  }
+
+  /* ---------- base ---------- */
+  body {
+    background: var(--ground);
+    color: var(--ink-2);
+    font-family: var(--f-body);
+    font-size: 15.5px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--felt); color: var(--surface); }
+  a { color: var(--ink); text-decoration-color: var(--hairline-2); text-underline-offset: 3px; }
+  a:hover { text-decoration-color: var(--felt); }
+  :focus-visible { outline: 2px solid var(--felt); outline-offset: 3px; border-radius: 2px; }
+
+  /* ---------- shell ---------- */
+  .shell { display: block; max-width: 1360px; margin: 0 auto; padding: 0 22px 120px; }
+  @media (min-width: 1120px) {
+    .shell { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); gap: 60px; padding: 0 40px 140px; }
+  }
+
+  /* ---------- rail ---------- */
+  .rail { display: none; }
+  @media (min-width: 1120px) {
+    .rail {
+      display: block; position: sticky; top: 0; align-self: start;
+      height: 100vh; overflow-y: auto; padding: 44px 0 40px;
+      border-right: 1px solid var(--hairline);
+    }
+  }
+  .rail-mark { font-family: var(--f-display); font-size: 25px; color: var(--ink); line-height: 1; margin: 0 0 4px; }
+  .rail-sub { font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 26px; }
+  .rail nav { display: flex; flex-direction: column; gap: 1px; padding-right: 22px; }
+  .rail nav a {
+    display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: baseline;
+    font-size: 13.5px; color: var(--muted); text-decoration: none;
+    padding: 5px 8px 5px 0; border-radius: 3px;
+  }
+  .rail nav a span { font-family: var(--f-mono); font-size: 10.5px; color: var(--hairline-2); }
+  .rail nav a:hover { color: var(--ink); }
+  .rail nav a:hover span { color: var(--felt); }
+
+  /* ---------- masthead ---------- */
+  .masthead { padding: 58px 0 30px; max-width: var(--measure); }
+  .eyebrow {
+    font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--felt); margin: 0 0 18px;
+  }
+  h1 {
+    font-family: var(--f-display); font-weight: 400; font-size: clamp(46px, 7vw, 76px);
+    line-height: .98; letter-spacing: -.015em; color: var(--ink);
+    margin: 0 0 20px; text-wrap: balance;
+  }
+  h1 em { font-style: italic; color: var(--felt); }
+  .standfirst { font-size: 18.5px; line-height: 1.5; color: var(--ink-2); margin: 0 0 26px; text-wrap: pretty; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 22px; font-family: var(--f-mono); font-size: 11px; color: var(--muted); letter-spacing: .04em; padding-top: 20px; border-top: 1px solid var(--hairline); }
+  .meta b { color: var(--ink); font-weight: 500; }
+
+  /* ---------- keybed rule (2-3 black key motif) ---------- */
+  .keybed { display: flex; align-items: flex-start; gap: 2px; height: 14px; margin: 0 0 16px; }
+  .keybed i { display: block; width: 8px; height: 100%; border: 1px solid var(--hairline-2); border-radius: 0 0 1px 1px; background: var(--key-white); }
+  .keybed i.b { background: var(--key-black); border-color: var(--key-black); height: 62%; width: 5px; margin: 0 -4.5px; position: relative; z-index: 1; }
+
+  /* ---------- sections ---------- */
+  section { padding-top: 56px; scroll-margin-top: 24px; }
+  h2 {
+    font-family: var(--f-display); font-weight: 400; font-size: clamp(30px, 3.6vw, 40px);
+    line-height: 1.08; letter-spacing: -.01em; color: var(--ink); margin: 0 0 12px; text-wrap: balance;
+  }
+  h2 .num { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .12em; color: var(--felt); display: block; margin-bottom: 10px; text-transform: uppercase; }
+  h3 {
+    font-family: var(--f-body); font-weight: 600; font-size: 16.5px; letter-spacing: -.005em;
+    color: var(--ink); margin: 34px 0 8px; text-wrap: balance;
+  }
+  h4 {
+    font-family: var(--f-mono); font-weight: 500; font-size: 11px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--muted); margin: 26px 0 8px;
+  }
+  p, ul, ol { max-width: var(--measure); }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 16px; padding-left: 20px; }
+  li { margin-bottom: 7px; }
+  li::marker { color: var(--hairline-2); }
+  strong { color: var(--ink); font-weight: 600; }
+  .lede { font-size: 17px; color: var(--ink-2); max-width: var(--measure); margin-bottom: 22px; }
+
+  code {
+    font-family: var(--f-mono); font-size: .87em; background: var(--surface-2);
+    border: 1px solid var(--hairline); border-radius: 3px; padding: .08em .32em; color: var(--ink);
+  }
+
+  /* ---------- code blocks ---------- */
+  .code {
+    background: var(--surface); border: 1px solid var(--hairline); border-radius: 6px;
+    margin: 14px 0 22px; overflow: hidden; box-shadow: var(--shadow); max-width: 940px;
+  }
+  .code-head {
+    font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .08em; color: var(--muted);
+    padding: 8px 14px; border-bottom: 1px solid var(--hairline); background: var(--surface-2);
+  }
+  .code pre {
+    margin: 0; padding: 14px 16px; overflow-x: auto;
+    font-family: var(--f-mono); font-size: 12.4px; line-height: 1.62; color: var(--ink-2);
+  }
+  .code pre b  { color: var(--ink); font-weight: 500; }
+  .code pre i  { color: var(--muted); font-style: normal; }
+  .code pre u  { color: var(--felt); text-decoration: none; }
+  .code pre s  { color: var(--brass); text-decoration: none; }
+
+  /* ---------- findings ---------- */
+  .findings { display: flex; flex-direction: column; gap: 10px; margin: 20px 0 26px; max-width: 940px; }
+  .finding {
+    display: grid; grid-template-columns: 4px 1fr;
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 5px; overflow: hidden; box-shadow: var(--shadow);
+  }
+  .finding .stripe { background: var(--hairline-2); }
+  .finding.blocker .stripe { background: var(--felt); }
+  .finding.gap .stripe { background: var(--brass); }
+  .finding .body { padding: 13px 16px 14px; }
+  .finding .top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; margin-bottom: 5px; }
+  .finding .top h3 { margin: 0; font-size: 15.5px; }
+  .finding p { margin: 0; font-size: 14.2px; max-width: 80ch; }
+  .finding p + p { margin-top: 8px; }
+  .chip {
+    font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 3px; white-space: nowrap; font-weight: 500;
+    background: var(--surface-2); color: var(--muted); border: 1px solid var(--hairline);
+  }
+  .chip.b { background: var(--felt-soft); color: var(--felt); border-color: transparent; }
+  .chip.g { background: var(--brass-soft); color: var(--brass); border-color: transparent; }
+  .chip.ok { background: var(--sage-soft); color: var(--sage); border-color: transparent; }
+  .fix { margin-top: 9px; padding-top: 9px; border-top: 1px dashed var(--hairline-2); font-size: 14px; }
+  .fix b { font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--felt); margin-right: 8px; }
+
+  /* ---------- tables ---------- */
+  .tw { overflow-x: auto; margin: 16px 0 26px; border: 1px solid var(--hairline); border-radius: 6px; background: var(--surface); box-shadow: var(--shadow); max-width: 940px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.8px; min-width: 560px; }
+  th {
+    text-align: left; font-family: var(--f-mono); font-weight: 500; font-size: 10px;
+    letter-spacing: .11em; text-transform: uppercase; color: var(--muted);
+    padding: 11px 14px; border-bottom: 1px solid var(--hairline-2); background: var(--surface-2); white-space: nowrap;
+  }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--hairline); color: var(--ink-2); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  td strong { color: var(--ink); }
+  .nums { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.pick td { background: var(--sage-soft); }
+
+  /* ---------- layer diagram ---------- */
+  .stack { max-width: 940px; margin: 20px 0 28px; display: flex; flex-direction: column; gap: 8px; }
+  .layer { border: 1px solid var(--hairline); border-radius: 6px; background: var(--surface); padding: 12px 14px 14px; box-shadow: var(--shadow); }
+  .layer > .lbl { font-family: var(--f-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .layer > .lbl em { font-style: normal; color: var(--hairline-2); text-transform: none; letter-spacing: 0; font-size: 11px; }
+  .boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 8px; }
+  .box { border: 1px solid var(--hairline-2); border-radius: 4px; padding: 9px 11px; background: var(--surface-2); }
+  .box b { display: block; font-size: 13.5px; color: var(--ink); font-weight: 600; }
+  .box span { display: block; font-family: var(--f-mono); font-size: 10.5px; color: var(--muted); margin-top: 3px; line-height: 1.45; }
+  .layer.core { border-color: var(--felt); }
+  .layer.core > .lbl { color: var(--felt); }
+  .layer.core .box { background: var(--felt-soft); border-color: transparent; }
+  .flow { text-align: center; font-family: var(--f-mono); font-size: 11px; color: var(--hairline-2); letter-spacing: .16em; }
+
+  /* ---------- callout ---------- */
+  .note {
+    border-left: 3px solid var(--brass); background: var(--brass-soft);
+    padding: 12px 16px; border-radius: 0 5px 5px 0; margin: 18px 0 24px; max-width: 900px;
+  }
+  .note p { margin: 0; font-size: 14.2px; max-width: 80ch; }
+  .note p + p { margin-top: 8px; }
+  .note b.k { font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--brass); display: block; margin-bottom: 5px; }
+
+  /* ---------- sprint cards ---------- */
+  .sprints { display: flex; flex-direction: column; gap: 12px; margin: 20px 0 24px; max-width: 940px; }
+  .sprint { display: grid; grid-template-columns: 78px 1fr; gap: 18px; background: var(--surface); border: 1px solid var(--hairline); border-radius: 6px; padding: 15px 18px; box-shadow: var(--shadow); }
+  .sprint .tag { border-right: 1px solid var(--hairline); padding-right: 16px; }
+  .sprint .tag b { display: block; font-family: var(--f-display); font-size: 30px; line-height: 1; color: var(--felt); }
+  .sprint .tag span { display: block; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-top: 5px; }
+  .sprint h3 { margin: 0 0 5px; }
+  .sprint p { margin: 0 0 9px; font-size: 14.2px; }
+  .sprint .exit { font-size: 13.5px; color: var(--muted); }
+  .sprint .exit b { font-family: var(--f-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--sage); margin-right: 8px; }
+  @media (max-width: 560px) {
+    .sprint { grid-template-columns: 1fr; gap: 10px; }
+    .sprint .tag { border-right: none; border-bottom: 1px solid var(--hairline); padding: 0 0 10px; display: flex; align-items: baseline; gap: 10px; }
+    .sprint .tag span { margin-top: 0; }
+  }
+
+  /* ---------- panels ---------- */
+  .duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 12px; margin: 18px 0 24px; max-width: 940px; }
+  .panel { background: var(--surface); border: 1px solid var(--hairline); border-radius: 6px; padding: 15px 17px; box-shadow: var(--shadow); }
+  .panel h3 { margin: 0 0 8px; }
+  .panel ul { margin-bottom: 0; font-size: 14.2px; }
+  .panel p { font-size: 14.2px; }
+  .panel p:last-child { margin-bottom: 0; }
+
+  footer { margin-top: 72px; padding-top: 22px; border-top: 1px solid var(--hairline); font-family: var(--f-mono); font-size: 11px; color: var(--muted); max-width: 940px; line-height: 1.75; }
+  footer a { color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="shell">
+
+<aside class="rail">
+  <p class="rail-mark">DuoKeys</p>
+  <p class="rail-sub">Build Architecture</p>
+  <nav>
+    <a href="#verdict"><span>00</span>Verdict</a>
+    <a href="#findings"><span>01</span>Review findings</a>
+    <a href="#platform"><span>02</span>The iPad decision</a>
+    <a href="#functional"><span>03</span>Functional architecture</a>
+    <a href="#technical"><span>04</span>Technical architecture</a>
+    <a href="#clock"><span>05</span>The clock</a>
+    <a href="#midi"><span>06</span>MIDI pipeline</a>
+    <a href="#matcher"><span>07</span>Matcher &amp; grading</a>
+    <a href="#render"><span>08</span>Renderers</a>
+    <a href="#data"><span>09</span>Data model</a>
+    <a href="#content"><span>10</span>Content pipeline</a>
+    <a href="#testing"><span>11</span>Testing</a>
+    <a href="#nfr"><span>12</span>Budgets &amp; NFRs</a>
+    <a href="#roadmap"><span>13</span>Revised roadmap</a>
+    <a href="#open"><span>14</span>Open questions</a>
+  </nav>
+</aside>
+
+<main>
+
+<header class="masthead">
+  <p class="eyebrow">Technical review &amp; developer handoff — v2</p>
+  <h1>A piano tutor for two, <em>rebuilt around the clock</em></h1>
+  <p class="standfirst">The DuoKeys brief is a strong product idea with one fatal platform assumption and one missing subsystem. This document fixes both, then lays out the functional and technical architecture in enough detail to start writing code.</p>
+  <div class="meta">
+    <span><b>Source</b> DuoKeys_Project_Specification.html</span>
+    <span><b>Verdict</b> Proceed — with a platform change</span>
+    <span><b>Date</b> 2 Sep 2026</span>
+  </div>
+</header>
+
+<!-- ==================== 00 VERDICT ==================== -->
+<section id="verdict">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">00 — Verdict</span>What survives, what has to change</h2>
+  <p class="lede">The product thinking is sound: two genuinely different learners on one instrument, a gamified loop for the child and an analytical loop for the adult, all driven by real key presses rather than taps on glass. Keep all of it. Three things need to change before any code is written.</p>
+
+  <div class="findings">
+    <div class="finding blocker">
+      <div class="stripe"></div>
+      <div class="body">
+        <div class="top"><h3>The iPad cannot do Web MIDI. It never has.</h3><span class="chip b">Blocker</span></div>
+        <p>Safari does not implement the Web MIDI API on iOS or iPadOS in any version, and Apple requires every iOS browser to use WebKit — so Chrome and Firefox on the iPad inherit the same gap. The entire hardware path in the spec (<em>iPad + USB-C + Web MIDI API</em>) does not exist. This is not a polyfill problem; there is no JavaScript that can reach a USB MIDI device from Safari.</p>
+        <div class="fix"><b>Fix</b>Change the device, or add a native shell. Section 02 lays out the four options with costs. Recommendation: run on any laptop or Android tablet for now, and put every MIDI call behind a <code>MidiBackend</code> port so the decision stays reversible.</div>
+      </div>
+    </div>
+
+    <div class="finding blocker">
+      <div class="stripe"></div>
+      <div class="body">
+        <div class="top"><h3>There is no timing subsystem, and timing is the whole product</h3><span class="chip b">Blocker</span></div>
+        <p>Every feature in the brief — falling notes, wait mode, &plusmn;150 ms star ratings, A/B looping, duet evaluation — is a statement about <em>when</em> a key was pressed relative to when it should have been. But MIDI events arrive stamped in the <code>performance.now()</code> domain, audio is scheduled in the <code>AudioContext.currentTime</code> domain, and the score lives in musical ticks. Three clocks, no mapping.</p>
+        <p>If this is improvised per-feature you get a system where the falling notes look right but the score says you were late, and nobody can tell whether the bug is in the game or in the player.</p>
+        <div class="fix"><b>Fix</b>One <code>MasterClock</code> owned by the core, plus a per-device latency calibration wizard. Section 05.</div>
+      </div>
+    </div>
+
+    <div class="finding gap">
+      <div class="stripe"></div>
+      <div class="body">
+        <div class="top"><h3>The hardest component gets one line</h3><span class="chip g">Major gap</span></div>
+        <p>"Parsing note-on events against target audio schedules" is the score follower — the component that decides whether a performance matched a score. It has to handle chords played slightly spread, ornaments, repeated notes, wrong notes next to right ones, skipped notes, and a six-year-old who stops for four seconds mid-bar. It is roughly 40% of the engineering effort in this project and needs a specified algorithm, not a reference repo.</p>
+        <div class="fix"><b>Fix</b>Two explicit matching modes with defined tolerance maths and error taxonomy. Section 07.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <p><b class="k">The shape of the fix</b>All three problems point the same way: <strong>put the musical logic in a pure, platform-free core, and treat MIDI, audio, storage and rendering as replaceable adapters around it.</strong> That single decision downgrades the iPad question from a blocker to a configuration choice, makes the score follower unit-testable without hardware, and gives the clock one owner. The rest of this document is that architecture.</p>
+  </div>
+</section>
+
+<!-- ==================== 01 FINDINGS ==================== -->
+<section id="findings">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">01 — Review findings</span>The rest of the review</h2>
+  <p class="lede">Ordered by how much rework they cause if discovered late. Everything not listed here — the stack choices, the two-persona split, the phase themes — I would keep as written.</p>
+
+  <h3>Design gaps</h3>
+  <div class="findings">
+    <div class="finding gap">
+      <div class="stripe"></div>
+      <div class="body">
+        <div class="top"><h3>The synthesiser will fight the piano</h3><span class="chip g">Gap</span></div>
+        <p>The digital piano already makes sound, instantly, in hardware. Layering a Tone.js sampler on top gives you every note twice, the second one 20–60 ms late. Tone.js is still needed — for the metronome, backing tracks, the muted hand in hands-separate practice, and rewards — but it must never double the piano's own voice by default.</p>
+        <div class="fix"><b>Fix</b>Ship an <em>Audio source</em> setting: <code>piano</code> (default, app plays only accompaniment), <code>app</code> (for headphone practice with Local Control off on the instrument), <code>both</code> (off by default, opt-in).</div>
+      </div>
+    </div>
+
+    <div class="finding gap">
+      <div class="stripe"></div>
+      <div class="body">
+        <div class="top"><h3>The sustain pedal is not mentioned anywhere</h3><span class="chip g">Gap</span></div>
+        <p>CC64 changes what a note-off means. With the pedal down a released key keeps sounding; a player who holds the pedal through a whole exercise produces a legitimate performance that a naive matcher scores as one giant held chord. It also produces "hung notes" in any visualiser that keys off audio rather than key state.</p>
+        <div class="fix"><b>Fix</b>A <code>PedalTracker</code> stage in the MIDI pipeline that separates <em>key released</em> from <em>note stopped sounding</em>. Grade on key state; render decay on sound state. Section 06.</div>
+      </div>
+    </div>
+
+    <div class="finding gap">
+      <div class="stripe"></div>
+      <div class="body">
+        <div class="top"><h3>A fixed &plusmn;150 ms window is the wrong tolerance</h3><span class="chip g">Gap</span></div>
+        <p>At 60 BPM, 150 ms is 15% of a beat — generous. At 132 BPM it is a third of a beat, which will pass performances that are audibly wrong. Beginners practise slowly, so the window is loosest exactly where accuracy matters most for habit forming.</p>
+        <div class="fix"><b>Fix</b>Tempo-relative windows with an absolute floor: <code>tolerance = max(floorMs, beatMs &times; fraction)</code>, three tiers rather than one pass/fail. Section 07.</div>
+      </div>
+    </div>
+
+    <div class="finding gap">
+      <div class="stripe"></div>
+      <div class="body">
+        <div class="top"><h3>Three tables will not hold this product</h3><span class="chip g">Gap</span></div>
+        <p><code>profiles</code>, <code>lessons</code>, <code>progress_logs</code> has no room for the distinction between a piece, an arrangement of that piece at a difficulty level, and a two-bar segment of that arrangement — which is exactly what the micro-quest feature is built on. There is also nowhere to record a per-note result, so the practice dashboard can only ever show "you played it" rather than "your left hand rushes bar 5".</p>
+        <div class="fix"><b>Fix</b>Piece → Arrangement → Section, plus an <code>Attempt</code> with an embedded per-note event array. Section 09.</div>
+      </div>
+    </div>
+
+    <div class="finding gap">
+      <div class="stripe"></div>
+      <div class="body">
+        <div class="top"><h3>Cloud-first is the wrong default for a device on a music stand</h3><span class="chip g">Gap</span></div>
+        <p>Two independent problems. First, practice happens wherever the piano is, which is often the worst Wi-Fi in the house; a spinner between "sit down" and "play" will kill the habit faster than any missing feature. Second, Supabase pauses free-tier projects after seven days without API traffic — go on holiday, come back, and the app is down until someone logs into a dashboard.</p>
+        <div class="fix"><b>Fix</b>Local-first. IndexedDB is the source of truth; Supabase becomes an optional, additive sync target. Content ships as static JSON with the app and needs no database at all.</div>
+      </div>
+    </div>
+
+    <div class="finding gap">
+      <div class="stripe"></div>
+      <div class="body">
+        <div class="top"><h3>Duet mode ignores how twin-piano actually works</h3><span class="chip g">Gap</span></div>
+        <p>Splitting at MIDI 55/56 gives the child the top three-and-a-half octaves and the parent the bottom four, each in the wrong register for normal repertoire. Real digital pianos solve this with a Duo/Twin mode that splits the keyboard <em>and transposes each half</em> so both players get their own middle C. Without transposition the child reads a treble part and plays it two octaves high.</p>
+        <div class="fix"><b>Fix</b>Model the split as <code>{ splitPoint, lowerTranspose, upperTranspose }</code>, default &plusmn;2 octaves, and detect whether the instrument's own Duo mode is already doing it — if so the app must not transpose twice.</div>
+      </div>
+    </div>
+
+    <div class="finding gap">
+      <div class="stripe"></div>
+      <div class="body">
+        <div class="top"><h3>The roadmap is horizontal, so nothing is playable until Phase 2</h3><span class="chip g">Gap</span></div>
+        <p>Infrastructure → kid → adult → shared means the first moment anyone can actually sit at the piano and use the thing is somewhere in the middle of the second phase, after the riskiest components have all been built on assumptions. For a project whose core risk is "does the timing feel right", that is the wrong order.</p>
+        <div class="fix"><b>Fix</b>Vertical slices. One hard-coded eight-bar piece playable end-to-end — MIDI in, notes falling, stars out, saved locally — before any content pipeline, auth or second module exists. Section 13.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Corrections and smaller notes</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>In the spec</th><th>Correction</th></tr></thead>
+      <tbody>
+        <tr><td>OpenSheetMusicDisplay — <strong>MIT</strong></td><td>OSMD is <strong>BSD-3-Clause</strong>. Still permissive and fine to use; the third clause just forbids using the project's name to endorse your app. VexFlow underneath it is MIT.</td></tr>
+        <tr><td><strong>Sight Reading Factory</strong> listed as a tag on P2.1</td><td>A paid commercial product with no public API. It can be an <em>inspiration</em> for Note Ninja but cannot be a dependency. The flashcard generator is ~200 lines of your own code.</td></tr>
+        <tr><td><strong>IMSLP</strong> as a MusicXML source</td><td>IMSLP is overwhelmingly scanned PDFs, not machine-readable scores. For MusicXML use Mutopia (LilyPond source, exportable), OpenScore, and the public-domain corner of MuseScore.com. Budget for hand-authoring the beginner material — it barely exists.</td></tr>
+        <tr><td><strong>GiantMIDI-Piano</strong> as lesson content</td><td>Automatic transcriptions of virtuoso concert recordings. Wrong difficulty by several orders of magnitude, unedited note data, and provenance worth checking before redistribution. Useful as a test corpus; not as a curriculum.</td></tr>
+        <tr><td>Popular children's songs implied as content</td><td>Most of what a six-year-old recognises is still in copyright. <em>Twinkle</em>, <em>Frère Jacques</em>, <em>Ode to Joy</em>, <em>Old MacDonald</em> are safe; anything from a film soundtrack is not. Keep a per-piece licence field from day one so this stays checkable.</td></tr>
+        <tr><td>Pitch range 21–108 assumed</td><td>Confirmed — the instrument is a full 88-key. <code>keyboardRange</code> stays in the profile as a safety net for a future second instrument, but content does not need to be filtered for this one.</td></tr>
+        <tr><td>Vercel Hobby + Supabase Free = $0</td><td>Correct for personal use, with the pause caveat above. Note that Vercel Hobby forbids commercial use, so this stack is fine for a family app and would need revisiting if it ever ships.</td></tr>
+        <tr><td>Recharts for three charts</td><td>Works, but it is a large dependency for a streak bar and a line. Hand-drawn SVG or a canvas sparkline is lighter and keeps the visual language consistent with the game renderer.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Missing from the feature set entirely</h4>
+  <ul>
+    <li><strong>Latency calibration wizard.</strong> Without it the &plusmn;150 ms judgement is measuring your Bluetooth stack, not the player. Non-negotiable; ~half a day of work.</li>
+    <li><strong>Device picker and connection state.</strong> What the app does when the cable is unplugged mid-song, when two devices are present, when the browser denies permission.</li>
+    <li><strong>Metronome and count-in.</strong> A timed mode with no count-in is unplayable — the first note is always wrong.</li>
+    <li><strong>Screen Wake Lock and orientation lock.</strong> The screen going to sleep four bars in is the single most likely reason this gets abandoned.</li>
+    <li><strong>Session shape for a six-year-old.</strong> A soft session length (8–12 minutes), a natural stopping point, and no failure states in the first weeks. Design the loop to end well, not to maximise time.</li>
+    <li><strong>An on-screen fallback keyboard.</strong> Needed for development, for testing, and for the evening the cable is missing.</li>
+  </ul>
+</section>
+
+<!-- ==================== 02 PLATFORM ==================== -->
+<section id="platform">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">02 — The iPad decision</span>Four ways out, one recommendation</h2>
+  <p class="lede">This is the only decision in the document that has to be made before Sprint 0 ends, because it determines what "run the app" means. All four options keep the same codebase; they differ in what sits between the browser and the cable.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Option</th><th>What it means</th><th class="nums">Cost</th><th>Effort</th><th>Risk</th></tr></thead>
+      <tbody>
+        <tr class="pick">
+          <td><strong>A. Change the device</strong><br><span class="chip ok">Recommended</span></td>
+          <td>Run in desktop Chrome or Edge on any laptop, or Chrome on an Android tablet, propped on the music stand. Web MIDI works natively and has since 2015.</td>
+          <td class="nums">£0 – £150</td>
+          <td>None — zero code change</td>
+          <td>Lowest. Also the best dev experience: DevTools on the same machine as the piano.</td>
+        </tr>
+        <tr>
+          <td><strong>B. Keep the iPad, add a native shell</strong></td>
+          <td>Wrap the same web app in Capacitor and write a small Swift plugin bridging CoreMIDI into the WebView, exposing a <code>MidiBackend</code>-shaped JS API.</td>
+          <td class="nums">$99/yr</td>
+          <td>3–5 days of Swift + ongoing build/signing</td>
+          <td>Medium. Breaks the "$0/mo, no app store" premise. Free provisioning re-signs every 7 days, which is worse than paying.</td>
+        </tr>
+        <tr>
+          <td><strong>C. Keep the iPad, use a third-party MIDI browser</strong></td>
+          <td>Open the deployed URL inside an App Store browser that bundles its own CoreMIDI-to-Web-MIDI shim.</td>
+          <td class="nums">~£5</td>
+          <td>Hours</td>
+          <td>High. No home-screen PWA, no wake lock control, no fullscreen guarantees, and you are betting the project on one small app staying maintained.</td>
+        </tr>
+        <tr>
+          <td><strong>D. Listen through the microphone</strong></td>
+          <td>Drop MIDI; use <code>getUserMedia</code> and pitch detection.</td>
+          <td class="nums">£0</td>
+          <td>Weeks</td>
+          <td>Unacceptable. Polyphonic transcription is unsolved at this accuracy; no velocity, no pedal, no note-off. It would make the grading dishonest.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Take A, and build so that B stays cheap.</strong> The recommendation is not "abandon the iPad" so much as "do not let the hardest platform gate the first working version". If the iPad on the stand matters to the family experience — and it plausibly does — build the whole app against the port interface, get the product right on a laptop, and treat the Capacitor bridge as a two-file adapter you write later, once the thing is worth putting in front of a child every day.</p>
+
+  <div class="note">
+    <p><b class="k">Decided — 2 Sep 2026</b>Option A. Development and daily practice both run in a desktop browser (Windows laptop, Chrome/Edge) for now. The iPad shell (Option B, ~1 week, needs a Mac to build — rented or cloud) stays a scoped later addition, contingent on keeping the port boundary clean per the note below.</p>
+  </div>
+
+  <div class="note">
+    <p><b class="k">Consequence for the code</b>Nothing in <code>core/</code> or <code>ui/</code> may import <code>navigator.requestMIDIAccess</code>. The only file that knows Web MIDI exists is <code>adapters/midi-webmidi/</code>. Enforce it with an ESLint <code>no-restricted-imports</code> boundary rule on day one, not day ninety.</p>
+  </div>
+</section>
+
+<!-- ==================== 03 FUNCTIONAL ==================== -->
+<section id="functional">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">03 — Functional architecture</span>What the product does</h2>
+
+  <h3>One household, two profiles, no passwords</h3>
+  <p>A six-year-old should never see a login screen, and a family piano app has no reason to hold an email address for a child. The model is a <strong>household</strong> that owns <strong>profiles</strong>. The household may optionally be linked to a single adult account for cloud backup; profile switching is a tap on an avatar in the top bar and touches no credentials at all. Everything a child produces stays on the device unless the adult opts into sync.</p>
+
+  <h4>Profile shape</h4>
+  <div class="code">
+    <div class="code-head">core/src/domain/profile.ts</div>
+<pre><i>// A profile is a set of preferences and a progress ledger, not an identity.</i>
+<b>export interface</b> Profile {
+  id: ProfileId;
+  displayName: string;              <i>// "Mia", "Dad"</i>
+  <u>mode</u>: <s>'explorer'</s> | <s>'student'</s>;      <i>// drives UI density + reward loop, not age</i>
+  avatar: AvatarKey;
+
+  keyboardRange: { low: MidiPitch; high: MidiPitch };   <i>// 61-key safety</i>
+  handSpan: number;                 <i>// white keys reachable; gates repertoire</i>
+  audioSource: <s>'piano'</s> | <s>'app'</s> | <s>'both'</s>;
+  calibration: Calibration;         <i>// per profile: headphones differ per person</i>
+
+  sessionTargetMinutes: number;     <i>// soft, used for the wind-down prompt</i>
+  createdAt: IsoDate;
+}</pre>
+  </div>
+  <p><code>mode</code> is deliberately not <code>'kid' | 'adult'</code>. It describes the <em>kind of practice loop</em> a person wants, so a nine-year-old can graduate into student mode and an adult can drop into explorer mode for fun without the app calling them a child.</p>
+
+  <h3>The activity model</h3>
+  <p>Every screen where a person plays is one <strong>Activity</strong>. Activities differ in presentation and in which matcher mode they run, but they all take an <code>ExerciseSpec</code> and emit an <code>Attempt</code>. This is what stops the kid module and the adult module from becoming two apps in one repository.</p>
+
+  <div class="code">
+    <div class="code-head">core/src/domain/activity.ts</div>
+<pre><b>export interface</b> ExerciseSpec {
+  id: ExerciseId;
+  source: { arrangementId: ArrangementId; sectionId?: SectionId };
+  <u>matchMode</u>: <s>'wait'</s> | <s>'timed'</s>;         <i>// section 07</i>
+  hands: <s>'left'</s> | <s>'right'</s> | <s>'both'</s>;
+  tempoScale: number;                    <i>// 0.3 – 1.0 of the notated tempo</i>
+  transpose: number;                     <i>// semitones, for range-limited keyboards</i>
+  loop?: { fromMeasure: number; toMeasure: number; count: number | <s>'until-clean'</s> };
+  accompaniment: <s>'none'</s> | <s>'metronome'</s> | <s>'backing'</s> | <s>'other-hand'</s>;
+  passCriteria: PassCriteria;
+}
+
+<b>export interface</b> Attempt {
+  id: AttemptId; profileId: ProfileId; exerciseId: ExerciseId;
+  startedAt: IsoDate; durationSec: number;
+  grade: Grade;                          <i>// section 07</i>
+  events: MatchResult[];                 <i>// per-note, for the dashboard and replay</i>
+  contextHash: string;                   <i>// tempo + hands + transpose, so grades compare like-for-like</i>
+}</pre>
+  </div>
+
+  <h3>Explorer mode — the child's loop</h3>
+  <div class="duo">
+    <div class="panel">
+      <h3>Note Ninja</h3>
+      <p>Single note on a grand staff, play it, next. The engine is a weighted sampler over a note pool, not a random one: notes the player has recently missed come back sooner. Store per-pitch ease factors and use a simplified Leitner schedule — the same machinery later drives interval and chord drills for the adult.</p>
+      <p>Replace the 5-second timer with a <em>response-time band</em>: under 2 s is a streak, 2–6 s is correct, over 6 s reveals a hint. Timers that fail a six-year-old teach them that reading music is frightening.</p>
+    </div>
+    <div class="panel">
+      <h3>Falling notes + Wait Mode</h3>
+      <p>Bars descend toward a hit line drawn directly above an on-screen keybed, so the mapping from screen to hands is spatial and needs no reading. Wait mode is the default and, in practice, the <em>only</em> mode a beginner should use for the first months: the stream freezes at the hit line until the correct keys are down.</p>
+      <p>Wait mode is not a pause of the transport — it is a different matcher (section 07). Treating it as "timed mode with pauses" causes the tempo-map drift bug that plagues most implementations.</p>
+    </div>
+    <div class="panel">
+      <h3>Micro-quests</h3>
+      <p>A piece is auto-segmented into 1–2 bar Sections at ingest. A quest is a Section plus a <code>PassCriteria</code>. Stars come from the three tolerance tiers rather than a single window, so improvement is visible before mastery is reached.</p>
+      <p>Unlock rule: clearing a Section unlocks the next <em>and</em> the "join" exercise covering both. Chaining backwards from the end of a phrase is how the piece gets learned rather than the first two bars getting learned twenty times.</p>
+    </div>
+    <div class="panel">
+      <h3>Reward and stopping</h3>
+      <p>Reward on effort as well as outcome: a "you fixed bar 3" event is more motivating and more honest than confetti for a lucky pass. The app should propose an ending — a favourite piece played once, then a summary the parent can see — at the session target, and never nag past it.</p>
+    </div>
+  </div>
+
+  <h3>Student mode — the adult's loop</h3>
+  <div class="duo">
+    <div class="panel">
+      <h3>Score view</h3>
+      <p>OSMD renders the MusicXML; the cursor is driven <em>by the matcher</em>, not by wall-clock playback. In practice mode the score waits for you, in performance mode it does not. Same component, different matcher — again the mode split earns its keep.</p>
+      <p>Per-note colouring on the rendered score (late / early / wrong / missed) after an attempt is the single highest-value feature for an adult re-learner and comes almost free once <code>Attempt.events</code> exists.</p>
+    </div>
+    <div class="panel">
+      <h3>Practice suite</h3>
+      <p>A/B loop by measure, hands-separate with the muted hand optionally played by Tone.js, tempo 30–100%. Add <strong>auto-ramp</strong>: on a clean pass, raise tempo 5% and repeat; on a failed pass, drop back one step. That one behaviour turns a set of controls into an actual practice method and is maybe thirty lines on top of the loop.</p>
+    </div>
+    <div class="panel">
+      <h3>Technical drills</h3>
+      <p>Hanon 1–20 is public domain and small enough to author directly as JSON rather than parse. Grade these on <em>evenness</em> — the standard deviation of inter-onset intervals and of velocity — rather than accuracy, because the notes are trivially correct and the whole point is the consistency.</p>
+    </div>
+    <div class="panel">
+      <h3>Generated sight-reading</h3>
+      <p>A constrained generator, not a random one: pick a key, a range, a rhythm vocabulary and an interval budget, then emit four bars that never repeat the previous exercise's opening. Seed it so a good exercise can be replayed or shared, and never generate something unplayable by the profile's hand span.</p>
+    </div>
+  </div>
+
+  <h3>Duet mode</h3>
+  <p>One instrument, two players, one score, two evaluation zones. The mechanics that matter:</p>
+  <ul>
+    <li><strong>Split with transposition.</strong> <code>{ splitPoint: 60, lowerTranspose: +12, upperTranspose: -12 }</code> by default, so both players have a middle C. Ask at setup whether the piano's own Duo mode is engaged; if it is, the app transposes by zero and lets the hardware do it.</li>
+    <li><strong>Two matchers, one transport.</strong> Each zone runs its own matcher against its own part, sharing the clock. Grades are reported separately — a child should never lose a star because the parent rushed.</li>
+    <li><strong>Asymmetric difficulty.</strong> The primo part is five notes in one hand position; the secondo carries the harmony and the pulse. Model this as two Tracks in one Arrangement with a <code>role</code> field, so the same piece can be practised alone by either player.</li>
+    <li><strong>Grace, not gates.</strong> If one player stops, wait mode should follow the player who is still going for a bar before pausing. Nothing kills a shared moment faster than a hard stop.</li>
+  </ul>
+</section>
+
+<!-- ==================== 04 TECHNICAL ==================== -->
+<section id="technical">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">04 — Technical architecture</span>Ports, adapters, and a pure core</h2>
+  <p class="lede">Four layers. The rule that makes it work: dependencies only ever point inward. The core knows nothing about React, the DOM, Supabase or Web MIDI, which is what lets it be tested exhaustively without a piano and ported to a native shell without a rewrite.</p>
+
+  <div class="stack">
+    <div class="layer">
+      <div class="lbl"><span>Hardware &amp; platform</span><em>outside the app</em></div>
+      <div class="boxes">
+        <div class="box"><b>Digital piano</b><span>USB-C · class compliant</span></div>
+        <div class="box"><b>Browser / WebView</b><span>Chrome, Edge, or Capacitor</span></div>
+        <div class="box"><b>Speakers</b><span>instrument or headphones</span></div>
+      </div>
+    </div>
+
+    <div class="flow">&#9660;</div>
+
+    <div class="layer">
+      <div class="lbl"><span>Adapters — the only platform-aware code</span><em>swappable, thin, untested logic-free</em></div>
+      <div class="boxes">
+        <div class="box"><b>midi-webmidi</b><span>navigator.requestMIDIAccess</span></div>
+        <div class="box"><b>midi-native</b><span>Capacitor → CoreMIDI (later)</span></div>
+        <div class="box"><b>midi-virtual</b><span>on-screen keys, QWERTY</span></div>
+        <div class="box"><b>midi-replay</b><span>fixture playback for tests</span></div>
+        <div class="box"><b>audio-tone</b><span>Tone.js sampler + transport</span></div>
+        <div class="box"><b>store-idb</b><span>IndexedDB, source of truth</span></div>
+        <div class="box"><b>sync-supabase</b><span>optional, additive</span></div>
+      </div>
+    </div>
+
+    <div class="flow">&#9660;</div>
+
+    <div class="layer core">
+      <div class="lbl"><span>Core — pure TypeScript, zero imports from above</span><em>where the product lives</em></div>
+      <div class="boxes">
+        <div class="box"><b>clock</b><span>one timeline, three domains</span></div>
+        <div class="box"><b>midi</b><span>decode · pedal · note stream</span></div>
+        <div class="box"><b>score</b><span>arrangement, tempo map, ticks</span></div>
+        <div class="box"><b>match</b><span>wait + timed followers</span></div>
+        <div class="box"><b>grade</b><span>tolerance tiers, stars, evenness</span></div>
+        <div class="box"><b>progress</b><span>scheduling, unlocks, streaks</span></div>
+        <div class="box"><b>generate</b><span>sight-reading, drills</span></div>
+      </div>
+    </div>
+
+    <div class="flow">&#9650;</div>
+
+    <div class="layer">
+      <div class="lbl"><span>UI — React, presentational, reads core state</span><em>Next.js app router</em></div>
+      <div class="boxes">
+        <div class="box"><b>FallingNotes</b><span>canvas, rAF, 60 fps</span></div>
+        <div class="box"><b>Keybed</b><span>canvas, pitch → geometry</span></div>
+        <div class="box"><b>ScoreView</b><span>OSMD wrapper + cursor</span></div>
+        <div class="box"><b>Activity shells</b><span>quest, drill, duet, dashboard</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>The ports</h3>
+  <p>Five interfaces are the entire contract between the core and the world. Write these first; they will not change much.</p>
+
+  <div class="code">
+    <div class="code-head">core/src/ports/index.ts</div>
+<pre><b>export interface</b> <u>MidiBackend</u> {
+  readonly kind: <s>'webmidi'</s> | <s>'native'</s> | <s>'virtual'</s> | <s>'replay'</s>;
+  isAvailable(): boolean;                       <i>// false on iPadOS Safari for 'webmidi'</i>
+  requestAccess(): Promise&lt;<s>'granted'</s> | <s>'denied'</s>&gt;;
+  listInputs(): Promise&lt;MidiDeviceInfo[]&gt;;
+  open(deviceId: string): Promise&lt;MidiPort&gt;;
+  onDeviceChange(fn: () =&gt; void): Unsubscribe;   <i>// cable pulled mid-song</i>
+}
+
+<b>export interface</b> MidiPort {
+  readonly info: MidiDeviceInfo;
+  <i>/** timeStamp is in the performance.now() domain — the core converts it. */</i>
+  subscribe(fn: (msg: { data: Uint8Array; timeStamp: Millis }) =&gt; void): Unsubscribe;
+  close(): void;
+}
+
+<b>export interface</b> <u>AudioBackend</u> {
+  readonly context: BaseAudioContext;           <i>// the clock's reference</i>
+  loadInstrument(id: InstrumentId): Promise&lt;void&gt;;
+  play(pitch: MidiPitch, velocity: number, at: Seconds, dur?: Seconds): void;
+  stop(pitch: MidiPitch, at: Seconds): void;
+  click(at: Seconds, accent: boolean): void;
+  cue(sound: CueSound): void;                   <i>// rewards, page turns</i>
+  setOutputMode(mode: <s>'piano'</s> | <s>'app'</s> | <s>'both'</s>): void;
+}
+
+<b>export interface</b> <u>Store</u> {                          <i>// implemented by IndexedDB first</i>
+  profiles: Repo&lt;Profile&gt;;
+  attempts: Repo&lt;Attempt&gt;;
+  arrangements: ReadRepo&lt;Arrangement&gt;;
+  settings: KeyValue;
+}
+
+<b>export interface</b> <u>SyncTarget</u> {                     <i>// entirely optional</i>
+  push(changes: ChangeSet): Promise&lt;void&gt;;
+  pull(since: IsoDate): Promise&lt;ChangeSet&gt;;
+}
+
+<b>export interface</b> <u>Telemetry</u> {                      <i>// local only, never network by default</i>
+  frame(msSincePrev: number): void;
+  event(name: string, data?: Record&lt;string, unknown&gt;): void;
+}</pre>
+  </div>
+
+  <h3>Repository layout</h3>
+  <p>A single Next.js app with enforced internal boundaries, not a monorepo — a family project does not need Turborepo's overhead, and the boundary is a lint rule either way.</p>
+
+  <div class="code">
+    <div class="code-head">directory structure</div>
+<pre>duokeys/
+├── src/
+│   ├── core/                 <u>← pure TS. No React, no DOM, no fetch.</u>
+│   │   ├── clock/            masterClock.ts, calibration.ts
+│   │   ├── midi/             decode.ts, pedalTracker.ts, noteStream.ts
+│   │   ├── score/            arrangement.ts, tempoMap.ts, sections.ts
+│   │   ├── match/            waitMatcher.ts, timedMatcher.ts, tolerance.ts
+│   │   ├── grade/            grade.ts, evenness.ts, stars.ts
+│   │   ├── progress/         scheduler.ts, unlocks.ts, streaks.ts
+│   │   ├── generate/         sightReading.ts, hanon.ts
+│   │   ├── ports/            index.ts        <i>← the five interfaces above</i>
+│   │   └── domain/           types shared by everything
+│   ├── adapters/
+│   │   ├── midi/             webmidi.ts, virtual.ts, replay.ts, native.ts
+│   │   ├── audio/            tone.ts
+│   │   └── store/            idb.ts, supabase.ts
+│   ├── ui/
+│   │   ├── canvas/           fallingNotes.ts, keybed.ts, layout.ts
+│   │   ├── score/            OsmdView.tsx, cursorBinding.ts
+│   │   └── components/
+│   ├── app/                  Next.js routes
+│   └── runtime/              composition root: wires adapters into core
+├── content/
+│   ├── sources/              .musicxml, .ly, hand-authored .json
+│   ├── build/                ingest.ts → normalised arrangements
+│   └── licences.json         one entry per piece, checked in CI
+├── fixtures/                 recorded performances for matcher tests
+├── public/content/           generated: versioned arrangement JSON
+└── tests/</pre>
+  </div>
+
+  <div class="note">
+    <p><b class="k">The one lint rule that protects all of this</b><code>src/core/**</code> may import only from <code>src/core/**</code>. <code>src/ui/**</code> may not import from <code>src/adapters/**</code>. Only <code>src/runtime/**</code> may import from both. Add it to <code>eslint.config.js</code> in the first commit — retrofitting a boundary after six months of convenience imports is a rewrite.</p>
+  </div>
+</section>
+
+<!-- ==================== 05 CLOCK ==================== -->
+<section id="clock">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">05 — The clock</span>Three time domains, one timeline</h2>
+  <p class="lede">The most important two hundred lines in the project. Get this right and every timing feature becomes straightforward; get it wrong and you will chase phantom bugs in the renderer, the matcher and the audio scheduler for months.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Domain</th><th>Unit</th><th>Produced by</th><th>Used for</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Wall</strong></td><td class="nums">Millis</td><td><code>performance.now()</code> — Web MIDI <code>timeStamp</code>, rAF</td><td>Nothing. Converted on entry.</td></tr>
+        <tr><td><strong>Audio</strong></td><td class="nums">Seconds</td><td><code>AudioContext.currentTime</code></td><td><strong>The master.</strong> All matching, scheduling and rendering.</td></tr>
+        <tr><td><strong>Musical</strong></td><td class="nums">Ticks</td><td>The score, at 480 PPQ</td><td>Notation, loops, tempo scaling. Mapped to audio via the tempo map.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The audio clock is the master because it is the only one guaranteed monotonic, drift-free relative to actual sound output, and shared with the scheduler. <code>performance.now()</code> can be throttled in background tabs and is not locked to the audio hardware; rAF timestamps are frame-quantised. Convert once, at the boundary, and never let a wall-clock number past the adapter.</p>
+
+  <div class="code">
+    <div class="code-head">core/src/clock/masterClock.ts</div>
+<pre><b>export type</b> Millis  = number;   <i>// performance.now() domain</i>
+<b>export type</b> Seconds = number;   <i>// AudioContext.currentTime domain — canonical</i>
+<b>export type</b> Ticks   = number;   <i>// musical, PPQ = 480</i>
+
+<b>export interface</b> MasterClock {
+  now(): Seconds;
+  fromWall(t: Millis): Seconds;    <i>// MIDI timeStamp → canonical, latency-corrected</i>
+  readonly inputLatency: Seconds;
+  dispose(): void;
+}
+
+<b>export function</b> <u>createMasterClock</u>(
+  ctx: AudioContext,
+  cal: Calibration,
+): MasterClock {
+  <i>// offset maps the wall clock onto the audio clock. Both advance at ~1s/s but</i>
+  <i>// they are not locked, so we re-estimate and let an EMA absorb the drift</i>
+  <i>// while rejecting the jitter of any single sample.</i>
+  <b>let</b> offset = ctx.currentTime - performance.now() / 1000;
+  <b>const</b> ALPHA = 0.02;
+
+  <b>const</b> resync = () =&gt; {
+    <b>const</b> sample = ctx.currentTime - performance.now() / 1000;
+    offset += ALPHA * (sample - offset);
+  };
+  <b>const</b> timer = setInterval(resync, 1000);
+
+  <b>return</b> {
+    now: () =&gt; ctx.currentTime,
+    fromWall: (t) =&gt; t / 1000 + offset - cal.inputLatency,
+    inputLatency: cal.inputLatency,
+    dispose: () =&gt; clearInterval(timer),
+  };
+}</pre>
+  </div>
+
+  <h3>Calibration — why it is not optional</h3>
+  <p>Between the key going down and the app knowing about it sit the instrument's own scan rate, the USB stack, the browser's MIDI thread and the event loop. Between the app deciding to make a sound and the sound existing sit the audio graph and the output buffer. Neither is knowable in advance, and both vary by tens of milliseconds across devices. Judging a performance to &plusmn;50 ms without measuring them is judging the hardware.</p>
+
+  <div class="code">
+    <div class="code-head">core/src/clock/calibration.ts</div>
+<pre><b>export interface</b> Calibration {
+  inputLatency: Seconds;    <i>// key down → event received</i>
+  outputLatency: Seconds;   <i>// schedule → audible</i>
+  visualLead: Seconds;      <i>// how far ahead to draw, = outputLatency + display lag</i>
+  measuredAt: IsoDate;
+  method: <s>'tap'</s> | <s>'default'</s>;
+}
+
+<i>/**
+ * Wizard: play a click on the beat for 16 beats; ask the player to play any
+ * key exactly with it. Discard the first 4 (entrainment), take the median of
+ * the signed offsets — median, not mean, because one distracted late tap
+ * would drag an average by 20ms and there is no second chance to notice.
+ */</i>
+<b>export function</b> <u>estimateInputLatency</u>(
+  clickTimes: Seconds[],
+  keyTimes: Seconds[],
+): Seconds {
+  <b>const</b> deltas = keyTimes
+    .map((k) =&gt; k - nearest(clickTimes, k))
+    .filter((d) =&gt; Math.abs(d) &lt; 0.25);        <i>// reject non-attempts</i>
+  <b>return</b> median(deltas.slice(4));
+}
+
+<i>// AudioContext exposes its own estimate; use it as the starting point and</i>
+<i>// as a sanity bound on what the wizard is allowed to return.</i>
+<b>export function</b> baselineOutputLatency(ctx: AudioContext): Seconds {
+  <b>return</b> (ctx.outputLatency ?? 0) + (ctx.baseLatency ?? 0);
+}</pre>
+  </div>
+
+  <p>Run the wizard once per profile per audio route, store it on the profile, and re-prompt if the output device changes. Ninety seconds of setup buys every grade in the app its credibility.</p>
+
+  <h3>Tempo mapping</h3>
+  <p>Ticks convert to seconds through a piecewise-linear tempo map, scaled by the exercise's <code>tempoScale</code>. Keep the map immutable per attempt: changing tempo mid-attempt invalidates the grade and should end the attempt, not silently rescale it.</p>
+
+  <div class="code">
+    <div class="code-head">core/src/score/tempoMap.ts</div>
+<pre><b>export interface</b> TempoEvent { atTicks: Ticks; bpm: number; }
+
+<b>export class</b> <u>TempoMap</u> {
+  constructor(<b>private</b> events: TempoEvent[], <b>private</b> ppq = 480) {}
+
+  <i>/** Musical position → seconds from the start of the piece. */</i>
+  toSeconds(ticks: Ticks, scale = 1): Seconds {
+    <b>let</b> sec = 0, cursor = 0, bpm = this.events[0].bpm;
+    <b>for</b> (<b>const</b> ev <b>of</b> this.events) {
+      <b>if</b> (ev.atTicks &gt;= ticks) <b>break</b>;
+      sec += ((ev.atTicks - cursor) / this.ppq) * (60 / (bpm * scale));
+      cursor = ev.atTicks; bpm = ev.bpm;
+    }
+    <b>return</b> sec + ((ticks - cursor) / this.ppq) * (60 / (bpm * scale));
+  }
+}</pre>
+  </div>
+</section>
+
+<!-- ==================== 06 MIDI ==================== -->
+<section id="midi">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">06 — MIDI pipeline</span>From raw bytes to musical intent</h2>
+  <p class="lede">Four stages, each a pure function of the previous one. Everything downstream — matcher, renderer, recorder — consumes the same <code>PerformanceEvent</code> stream, which is why the virtual keyboard and the fixture replayer are indistinguishable from a real piano to the rest of the app.</p>
+
+  <div class="code">
+    <div class="code-head">core/src/midi/ — the stream</div>
+<pre><i>//  raw bytes ─▶ decode ─▶ pedalTracker ─▶ noteStream ─▶ PerformanceEvent</i>
+
+<b>export type</b> PerformanceEvent =
+  | { kind: <s>'noteOn'</s>;  pitch: MidiPitch; velocity: number; at: Seconds }
+  | { kind: <s>'noteOff'</s>; pitch: MidiPitch; at: Seconds; <u>stillSounding</u>: boolean }
+  | { kind: <s>'pedal'</s>;   pedal: Pedal; value: number; down: boolean; at: Seconds }
+  | { kind: <s>'sounded'</s>; pitch: MidiPitch; at: Seconds };  <i>// released by pedal lift</i>
+
+<b>export function</b> decode(data: Uint8Array, at: Seconds): RawEvent | null {
+  <b>const</b> status = data[0] &amp; 0xf0;
+  <b>switch</b> (status) {
+    <b>case</b> 0x90: <b>return</b> data[2] === 0
+      ? { type: <s>'off'</s>, pitch: data[1], at }        <i>// note-on velocity 0 IS a note-off</i>
+      : { type: <s>'on'</s>, pitch: data[1], velocity: data[2] / 127, at };
+    <b>case</b> 0x80: <b>return</b> { type: <s>'off'</s>, pitch: data[1], at };
+    <b>case</b> 0xb0: <b>return</b> { type: <s>'cc'</s>, cc: data[1], value: data[2], at };
+    <b>default</b>:   <b>return</b> null;   <i>// aftertouch, bend, clock — ignored, not an error</i>
+  }
+}</pre>
+  </div>
+
+  <div class="note">
+    <p><b class="k">The three bugs everyone writes</b><strong>1.</strong> Treating note-on with velocity 0 as a note-on — many instruments send this instead of note-off, and you get permanently held notes. <strong>2.</strong> Assuming channel 1 — pianos in Duo mode often send the two halves on different channels, which you can actually exploit for duet mode. <strong>3.</strong> Assuming events arrive in timestamp order — under load they do not, so buffer briefly and sort rather than trusting arrival order.</p>
+  </div>
+
+  <h3>The pedal tracker</h3>
+  <p>Its whole job is to keep two facts apart: <em>the key is up</em> (a fact about the player, which is what gets graded) and <em>the note has stopped sounding</em> (a fact about the instrument, which is what gets rendered).</p>
+
+  <div class="code">
+    <div class="code-head">core/src/midi/pedalTracker.ts</div>
+<pre><b>export class</b> <u>PedalTracker</u> {
+  <b>private</b> sustainDown = false;
+  <b>private</b> heldByPedal = <b>new</b> Set&lt;MidiPitch&gt;();
+
+  process(ev: RawEvent, emit: (e: PerformanceEvent) =&gt; void): void {
+    <b>if</b> (ev.type === <s>'cc'</s> &amp;&amp; ev.cc === 64) {
+      <b>const</b> down = ev.value &gt;= 64;                <i>// half-pedal: treat &gt;=64 as down</i>
+      <b>if</b> (this.sustainDown &amp;&amp; !down) {
+        <i>// lift: everything the pedal was holding stops sounding now</i>
+        <b>for</b> (<b>const</b> p <b>of</b> this.heldByPedal) emit({ kind: <s>'sounded'</s>, pitch: p, at: ev.at });
+        this.heldByPedal.clear();
+      }
+      this.sustainDown = down;
+      <b>return</b> emit({ kind: <s>'pedal'</s>, pedal: <s>'sustain'</s>, value: ev.value, down, at: ev.at });
+    }
+
+    <b>if</b> (ev.type === <s>'off'</s>) {
+      <i>// The KEY is up regardless of the pedal. That is what the matcher needs.</i>
+      <b>if</b> (this.sustainDown) this.heldByPedal.add(ev.pitch);
+      <b>return</b> emit({ kind: <s>'noteOff'</s>, pitch: ev.pitch, at: ev.at,
+                     <u>stillSounding</u>: this.sustainDown });
+    }
+
+    <b>if</b> (ev.type === <s>'on'</s>) {
+      this.heldByPedal.delete(ev.pitch);           <i>// re-struck</i>
+      <b>return</b> emit({ kind: <s>'noteOn'</s>, pitch: ev.pitch, velocity: ev.velocity, at: ev.at });
+    }
+  }
+}</pre>
+  </div>
+
+  <h3>Connection lifecycle</h3>
+  <p>Hardware disappears. The UI needs four explicit states, and an activity in progress must survive a brief disconnection rather than losing the attempt:</p>
+  <ul>
+    <li><code>unsupported</code> — the backend reports <code>isAvailable() === false</code>. Show the platform explanation and offer the on-screen keyboard, do not show a broken connect button.</li>
+    <li><code>needs-permission</code> — <code>requestMIDIAccess</code> not yet granted. Must be triggered by a user gesture; note that Chrome's permission prompt does not appear on insecure origins, so local development needs HTTPS or <code>localhost</code>.</li>
+    <li><code>no-device</code> / <code>connected</code> — with a live device picker, because a laptop may see the piano, a virtual port and an audio interface at once.</li>
+    <li><code>lost</code> — device removed mid-attempt. Pause, hold the attempt open for 30 s, reconnect silently if the same device ID returns.</li>
+  </ul>
+</section>
+
+<!-- ==================== 07 MATCHER ==================== -->
+<section id="matcher">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">07 — Matcher &amp; grading</span>Deciding whether that was right</h2>
+  <p class="lede">Two matchers, one interface. Wait mode asks "are the right keys down?" and ignores time entirely. Timed mode asks "was each key down close enough to when it should have been?" Conflating them is the single most common way these apps go wrong.</p>
+
+  <div class="code">
+    <div class="code-head">core/src/match/types.ts</div>
+<pre><b>export interface</b> ExpectedNote {
+  id: NoteId;
+  pitch: MidiPitch;
+  at: Seconds;              <i>// resolved through the tempo map at attempt start</i>
+  durationSec: Seconds;
+  <u>groupId</u>: GroupId;        <i>// notes sharing a group are one chord / one decision</i>
+  hand: <s>'left'</s> | <s>'right'</s>;
+  measure: number;
+}
+
+<b>export type</b> MatchResult =
+  | { kind: <s>'hit'</s>;   noteId: NoteId; deltaSec: number; velocity: number; tier: Tier }
+  | { kind: <s>'miss'</s>;  noteId: NoteId }
+  | { kind: <s>'extra'</s>; pitch: MidiPitch; at: Seconds; why: ExtraKind };
+
+<b>export type</b> Tier = <s>'perfect'</s> | <s>'good'</s> | <s>'ok'</s>;
+<b>export type</b> ExtraKind =
+  | <s>'neighbour'</s>   <i>// within 2 semitones of an expected pitch — a slip</i>
+  | <s>'octave'</s>      <i>// right pitch class, wrong octave — a reading error</i>
+  | <s>'repeat'</s>      <i>// re-striking a note just played — hesitation, forgive it</i>
+  | <s>'foreign'</s>;    <i>// unrelated — lost their place</i>
+
+<b>export interface</b> Matcher {
+  feed(ev: PerformanceEvent): MatchResult[];
+  tick(now: Seconds): MatchResult[];   <i>// emits misses as their windows expire</i>
+  readonly cursor: GroupId | null;     <i>// drives the OSMD cursor and the wait line</i>
+  readonly results: readonly MatchResult[];
+}</pre>
+  </div>
+
+  <h3>Tolerance: relative to the beat, floored in milliseconds</h3>
+  <p>Replaces the spec's flat &plusmn;150 ms. A fraction of a beat keeps the judgement musically meaningful across tempi; the floor stops it becoming unachievably strict at slow tempi, where it would otherwise be measuring the calibration error rather than the player.</p>
+
+  <div class="code">
+    <div class="code-head">core/src/match/tolerance.ts</div>
+<pre><b>const</b> FRACTION = { perfect: 0.08, good: 0.16, ok: 0.32 };   <i>// of one beat</i>
+<b>const</b> FLOOR_MS = { perfect: 45,   good: 90,   ok: 160  };   <i>// absolute, ms</i>
+
+<b>export function</b> <u>toleranceSec</u>(bpm: number, tier: Tier): Seconds {
+  <b>const</b> beatMs = 60_000 / bpm;
+  <b>return</b> Math.max(FLOOR_MS[tier], beatMs * FRACTION[tier]) / 1000;
+}
+
+<i>// At 60 BPM  → perfect 80ms  · good 160ms · ok 320ms</i>
+<i>// At 120 BPM → perfect 45ms  · good 90ms  · ok 160ms   (floors bind)</i>
+<i>// Chord spread is separate and generous: notes of one group played within</i>
+<i>// CHORD_WINDOW count as simultaneous. Beginners roll chords; that is fine.</i>
+<b>export const</b> CHORD_WINDOW: Seconds = 0.09;</pre>
+  </div>
+
+  <h3>Wait mode — the child's matcher</h3>
+  <p>No clock. The matcher holds a cursor on one group and advances when the set of currently-depressed keys contains every pitch in that group. Extra keys produce gentle feedback but never advance or fail. There is no way to lose.</p>
+
+  <div class="code">
+    <div class="code-head">core/src/match/waitMatcher.ts</div>
+<pre><b>export function</b> <u>createWaitMatcher</u>(groups: NoteGroup[]): Matcher {
+  <b>let</b> index = 0;
+  <b>const</b> down = <b>new</b> Set&lt;MidiPitch&gt;();
+  <b>const</b> results: MatchResult[] = [];
+
+  <b>function</b> feed(ev: PerformanceEvent): MatchResult[] {
+    <b>if</b> (ev.kind === <s>'noteOff'</s>) { down.delete(ev.pitch); <b>return</b> []; }
+    <b>if</b> (ev.kind !== <s>'noteOn'</s>) <b>return</b> [];
+    down.add(ev.pitch);
+
+    <b>const</b> group = groups[index];
+    <b>if</b> (!group) <b>return</b> [];
+    <b>const</b> out: MatchResult[] = [];
+
+    <b>const</b> satisfied = group.pitches.every((p) =&gt; down.has(p));
+    <b>if</b> (satisfied) {
+      <b>for</b> (<b>const</b> n <b>of</b> group.notes) {
+        out.push({ kind: <s>'hit'</s>, noteId: n.id, deltaSec: 0, velocity: ev.velocity, tier: <s>'perfect'</s> });
+      }
+      index++;
+      <i>// Do NOT clear `down`: legato means the next group may share held keys.</i>
+    } <b>else if</b> (!group.pitches.includes(ev.pitch)) {
+      out.push({ kind: <s>'extra'</s>, pitch: ev.pitch, at: ev.at, why: classify(ev.pitch, group) });
+    }
+    results.push(...out);
+    <b>return</b> out;
+  }
+
+  <b>return</b> { feed, tick: () =&gt; [], <b>get</b> cursor() { <b>return</b> groups[index]?.id ?? null; }, results };
+}</pre>
+  </div>
+
+  <h3>Timed mode — greedy nearest-match under a monotonic constraint</h3>
+  <p>Each incoming note is matched to the nearest unmatched expected note of the same pitch inside the widest window. "Nearest" rather than "first" matters for repeated notes; the monotonic constraint — never match backwards past an already-matched note — is what stops a hesitant player's late note from stealing the next bar's slot and cascading.</p>
+
+  <div class="code">
+    <div class="code-head">core/src/match/timedMatcher.ts</div>
+<pre><b>export function</b> <u>createTimedMatcher</u>(expected: ExpectedNote[], bpm: number): Matcher {
+  <b>const</b> W = toleranceSec(bpm, <s>'ok'</s>);          <i>// widest acceptance window</i>
+  <b>const</b> open = <b>new</b> Set(expected.map((e) =&gt; e.id));
+  <b>let</b> lastMatchedAt = -Infinity;
+  <b>const</b> results: MatchResult[] = [];
+
+  <b>function</b> feed(ev: PerformanceEvent): MatchResult[] {
+    <b>if</b> (ev.kind !== <s>'noteOn'</s>) <b>return</b> [];
+
+    <b>const</b> candidates = expected.filter(
+      (e) =&gt; open.has(e.id)
+          &amp;&amp; e.pitch === ev.pitch
+          &amp;&amp; Math.abs(e.at - ev.at) &lt;= W
+          &amp;&amp; e.at &gt;= lastMatchedAt - CHORD_WINDOW,   <i>// monotonic, chord-tolerant</i>
+    );
+
+    <b>if</b> (candidates.length === 0) {
+      <b>const</b> r: MatchResult = { kind: <s>'extra'</s>, pitch: ev.pitch, at: ev.at,
+                                why: classifyAgainst(ev, expected, ev.at, W) };
+      results.push(r); <b>return</b> [r];
+    }
+
+    <b>const</b> best = candidates.reduce((a, b) =&gt;
+      Math.abs(a.at - ev.at) &lt;= Math.abs(b.at - ev.at) ? a : b);
+    <b>const</b> delta = ev.at - best.at;
+
+    open.delete(best.id);
+    lastMatchedAt = Math.max(lastMatchedAt, best.at);
+    <b>const</b> r: MatchResult = { kind: <s>'hit'</s>, noteId: best.id, deltaSec: delta,
+                              velocity: ev.velocity, tier: tierFor(Math.abs(delta), bpm) };
+    results.push(r); <b>return</b> [r];
+  }
+
+  <i>// A note whose window has fully passed is a miss. Emitted from the render</i>
+  <i>// loop so feedback appears at the moment it is musically true, not at the end.</i>
+  <b>function</b> tick(now: Seconds): MatchResult[] {
+    <b>const</b> out: MatchResult[] = [];
+    <b>for</b> (<b>const</b> e <b>of</b> expected) {
+      <b>if</b> (open.has(e.id) &amp;&amp; now &gt; e.at + W) {
+        open.delete(e.id);
+        out.push({ kind: <s>'miss'</s>, noteId: e.id });
+      }
+    }
+    results.push(...out);
+    <b>return</b> out;
+  }
+
+  <b>return</b> { feed, tick, <b>get</b> cursor() { <b>return</b> currentGroup(expected, open); }, results };
+}</pre>
+  </div>
+
+  <h3>Grading</h3>
+  <p>One <code>Grade</code> per attempt, computed from the result list. Keeping grading separate from matching means you can re-grade a stored attempt under new criteria without re-recording it — useful when you inevitably tune the thresholds.</p>
+
+  <div class="code">
+    <div class="code-head">core/src/grade/grade.ts</div>
+<pre><b>export interface</b> Grade {
+  accuracy: number;       <i>// hits / (hits + misses + penalised extras)</i>
+  timingRmsMs: number;    <i>// root-mean-square of |delta| over hits</i>
+  <u>rushDragMs</u>: number;    <i>// SIGNED mean delta — the actionable number</i>
+  evenness: number;       <i>// 1 - normalised stddev of inter-onset intervals</i>
+  dynamics: number;       <i>// velocity spread; flags "hammering everything"</i>
+  stars: 0 | 1 | 2 | 3;
+  worstMeasures: number[];<i>// bottom 3 by local accuracy → "practise bar 5"</i>
+}
+
+<i>// 'repeat' extras are hesitation, not error, and are excluded from accuracy.</i>
+<i>// This one exemption is the difference between a scorer that feels fair</i>
+<i>// and one a six-year-old learns to resent.</i>
+<b>const</b> PENALISED: ExtraKind[] = [<s>'neighbour'</s>, <s>'octave'</s>, <s>'foreign'</s>];
+
+<b>export function</b> starsFor(g: Omit&lt;Grade, <s>'stars'</s>&gt;, c: PassCriteria): 0|1|2|3 {
+  <b>if</b> (g.accuracy &lt; c.minAccuracy) <b>return</b> 0;
+  <b>if</b> (g.accuracy &gt;= 0.98 &amp;&amp; g.timingRmsMs &lt;= c.rmsPerfectMs) <b>return</b> 3;
+  <b>if</b> (g.accuracy &gt;= 0.90 &amp;&amp; g.timingRmsMs &lt;= c.rmsGoodMs)    <b>return</b> 2;
+  <b>return</b> 1;
+}</pre>
+  </div>
+
+  <div class="note">
+    <p><b class="k">Report rush/drag, not just RMS</b>RMS timing error tells a player they were inconsistent. Signed mean error tells them <em>they rush</em> — which is a thing they can actually fix, and which almost every returning adult does in exactly the same places. Surfacing <code>rushDragMs</code> per hand and per measure is a genuinely useful feature that costs one extra accumulator.</p>
+  </div>
+</section>
+
+<!-- ==================== 08 RENDER ==================== -->
+<section id="render">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">08 — Renderers</span>Canvas for the game, OSMD for the score</h2>
+
+  <h3>Falling notes</h3>
+  <p>Position is a pure function of time, never an accumulator — no <code>y += velocity * dt</code>, which drifts against the audio clock within seconds and is why so many rhythm games feel subtly wrong.</p>
+
+  <div class="code">
+    <div class="code-head">ui/src/canvas/fallingNotes.ts</div>
+<pre><i>// One frame. Read the clock once; derive everything from it.</i>
+<b>function</b> drawFrame(ctx2d: CanvasRenderingContext2D, s: RenderState) {
+  <b>const</b> t = s.clock.now() + s.cal.visualLead;   <i>// draw the future we will hear</i>
+  <b>const</b> pxPerSec = s.hitLineY / s.leadSeconds;  <i>// leadSeconds ≈ 2.5s for beginners</i>
+
+  ctx2d.clearRect(0, 0, s.w, s.h);
+
+  <b>for</b> (<b>const</b> n <b>of</b> s.notes) {
+    <b>if</b> (n.at &gt; t + s.leadSeconds || n.at + n.dur &lt; t - 0.4) <b>continue</b>;  <i>// cull</i>
+    <b>const</b> y = s.hitLineY - (n.at - t) * pxPerSec;
+    <b>const</b> { x, w } = s.layout.rect(n.pitch);      <i>// pitch → keybed geometry</i>
+    ctx2d.fillStyle = s.palette[n.hand][n.state];  <i>// pending | hit | missed</i>
+    roundRect(ctx2d, x, y - n.dur * pxPerSec, w, n.dur * pxPerSec, 4);
+  }
+}
+
+<i>// Two stacked canvases: the keybed and gridlines are static and drawn once
+// on the lower one; only the note layer is cleared and repainted per frame.
+// On a 4K display that is the difference between 60fps and 35fps.</i></pre>
+  </div>
+
+  <h4>Layout</h4>
+  <p>The pitch→x mapping is worth isolating and testing: white keys tile uniformly, black keys are inset and overlap, and the pattern repeats every octave with the 2–3 grouping. Derive it once from the profile's <code>keyboardRange</code> so a 61-key instrument renders a 61-key keybed rather than a scaled-down 88.</p>
+
+  <h3>Score view</h3>
+  <ul>
+    <li><strong>Instantiate OSMD once per arrangement</strong> and re-use it; construction and layout are expensive and re-rendering on every state change will drop frames.</li>
+    <li><strong>Drive the cursor from <code>matcher.cursor</code></strong>, not from a timer. One binding, both modes.</li>
+    <li><strong>Colour notes from <code>Attempt.events</code></strong> after the attempt, using OSMD's note-to-SVG mapping. This is the adult module's payoff feature.</li>
+    <li><strong>Render at a fixed zoom and scroll by transform</strong>, not by re-layout — OSMD re-layout on scroll is the usual cause of stutter.</li>
+    <li><strong>Pre-render off-thread where possible.</strong> Sections are known ahead of time; laying out the next page during the current one keeps page turns invisible.</li>
+  </ul>
+</section>
+
+<!-- ==================== 09 DATA ==================== -->
+<section id="data">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">09 — Data model</span>Local first, cloud optional</h2>
+
+  <h3>Domain types</h3>
+  <div class="code">
+    <div class="code-head">core/src/domain/score.ts</div>
+<pre><i>// Piece: the work.  Arrangement: one playable realisation at a difficulty.</i>
+<i>// Section: a practisable slice — the micro-quest.  Keeping these three apart</i>
+<i>// is what lets "Ode to Joy" exist at five difficulties without duplication.</i>
+
+<b>export interface</b> Piece {
+  id: PieceId; title: string; composer: string;
+  <u>licence</u>: { kind: <s>'public-domain'</s> | <s>'cc-by'</s> | <s>'original'</s> | <s>'licensed'</s>;
+              source: string; verifiedAt: IsoDate };
+  tags: string[];                     <i>// 'christmas', 'five-finger', 'duet'</i>
+}
+
+<b>export interface</b> Arrangement {
+  id: ArrangementId; pieceId: PieceId;
+  difficulty: 1 | 2 | 3 | 4 | 5;
+  ppq: 480; tempoMap: TempoEvent[];
+  keySignature: number; timeSignature: [number, number];
+  range: { low: MidiPitch; high: MidiPitch };   <i>// filter by keyboard size</i>
+  requiresHandSpan: number;
+  tracks: Track[];
+  sections: Section[];
+  version: number;                    <i>// bump invalidates cached grades</i>
+}
+
+<b>export interface</b> Track {
+  id: TrackId; hand: <s>'left'</s> | <s>'right'</s>;
+  role: <s>'melody'</s> | <s>'accompaniment'</s> | <s>'primo'</s> | <s>'secondo'</s>;
+  notes: ScoreNote[];
+}
+
+<b>export interface</b> ScoreNote {
+  id: NoteId; pitch: MidiPitch;
+  onTicks: Ticks; durTicks: Ticks;
+  measure: number; beat: number;
+  groupId: GroupId;                   <i>// precomputed at ingest, not at runtime</i>
+  finger?: 1|2|3|4|5;
+}
+
+<b>export interface</b> Section {
+  id: SectionId; label: string;       <i>// "Bars 1–2"</i>
+  fromMeasure: number; toMeasure: number;
+  requires: SectionId[];              <i>// unlock graph</i>
+}</pre>
+  </div>
+
+  <h3>Local store — IndexedDB is the source of truth</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Object store</th><th>Key</th><th>Indexes</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><code>profiles</code></td><td class="nums">id</td><td>—</td><td>Two or three rows. Includes calibration.</td></tr>
+        <tr><td><code>attempts</code></td><td class="nums">id</td><td><span class="nums">profileId+startedAt, exerciseId</span></td><td>The ledger. Never mutated, only appended — makes sync trivially conflict-free.</td></tr>
+        <tr><td><code>arrangements</code></td><td class="nums">id</td><td><span class="nums">pieceId, difficulty</span></td><td>Cache of the static JSON, populated on first use.</td></tr>
+        <tr><td><code>progress</code></td><td class="nums">profileId+sectionId</td><td><span class="nums">profileId</span></td><td>Derived from attempts; a cache you can rebuild. Stars, unlocks, ease factors.</td></tr>
+        <tr><td><code>recordings</code></td><td class="nums">id</td><td><span class="nums">profileId+createdAt</span></td><td>Compact event arrays as Blobs. Cap total size and evict oldest.</td></tr>
+        <tr><td><code>outbox</code></td><td class="nums">seq</td><td>—</td><td>Pending sync operations. Empty and unused until cloud sync is switched on.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Use <code>idb</code> or Dexie — not raw IndexedDB, whose event API will cost you a day. Store attempts append-only: because an attempt is an immutable historical fact, sync never has a real conflict to resolve and the whole "last write wins" problem disappears.</p>
+
+  <h3>Optional cloud schema</h3>
+  <p>If and when backup matters. Note that this is <em>additive</em> — the app must remain fully functional with the network off and with sync never enabled.</p>
+
+  <div class="code">
+    <div class="code-head">supabase/migrations/0001_init.sql</div>
+<pre><b>create table</b> households (
+  id uuid <b>primary key default</b> gen_random_uuid(),
+  owner_id uuid <b>not null references</b> auth.users(id) <b>on delete cascade</b>,
+  created_at timestamptz <b>not null default</b> now()
+);
+
+<b>create table</b> profiles (
+  id uuid <b>primary key</b>,                       <i>-- client-generated, matches local id</i>
+  household_id uuid <b>not null references</b> households(id) <b>on delete cascade</b>,
+  display_name text <b>not null</b>,
+  mode text <b>not null check</b> (mode <b>in</b> (<s>'explorer'</s>, <s>'student'</s>)),
+  settings jsonb <b>not null default</b> <s>'{}'</s>,
+  updated_at timestamptz <b>not null default</b> now()
+);
+
+<b>create table</b> attempts (
+  id uuid <b>primary key</b>,
+  profile_id uuid <b>not null references</b> profiles(id) <b>on delete cascade</b>,
+  exercise_id text <b>not null</b>,
+  started_at timestamptz <b>not null</b>,
+  duration_sec int <b>not null</b>,
+  grade jsonb <b>not null</b>,
+  events jsonb,                                 <i>-- nullable: drop on old rows to save space</i>
+  context_hash text <b>not null</b>
+);
+<b>create index on</b> attempts (profile_id, started_at <b>desc</b>);
+
+<i>-- RLS: everything is reachable only through a household you own.</i>
+<b>alter table</b> households <b>enable row level security</b>;
+<b>alter table</b> profiles   <b>enable row level security</b>;
+<b>alter table</b> attempts   <b>enable row level security</b>;
+
+<b>create policy</b> own_household <b>on</b> households
+  <b>for all using</b> (owner_id = auth.uid());
+
+<b>create policy</b> own_profiles <b>on</b> profiles <b>for all using</b> (
+  household_id <b>in</b> (<b>select</b> id <b>from</b> households <b>where</b> owner_id = auth.uid())
+);
+
+<b>create policy</b> own_attempts <b>on</b> attempts <b>for all using</b> (
+  profile_id <b>in</b> (<b>select</b> p.id <b>from</b> profiles p
+                 <b>join</b> households h <b>on</b> h.id = p.household_id
+                 <b>where</b> h.owner_id = auth.uid())
+);</pre>
+  </div>
+
+  <p><strong>Content does not go in the database.</strong> Arrangements are static, versioned JSON served from <code>public/content/</code> with immutable cache headers. That removes a whole class of loading states, works offline through the service worker, costs nothing, and means the Supabase pause problem can never take the lessons down.</p>
+</section>
+
+<!-- ==================== 10 CONTENT ==================== -->
+<section id="content">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">10 — Content pipeline</span>From MusicXML to playable quests</h2>
+  <p class="lede">A build-time script, not a runtime import. Parsing MusicXML in the browser on a music stand is slow, failure-prone and unnecessary when the catalogue changes once a month.</p>
+
+  <div class="code">
+    <div class="code-head">content/build/ingest.ts — the stages</div>
+<pre>1. <b>collect</b>    <i>content/sources/**.{musicxml,mxl,mid,json}</i>
+2. <b>parse</b>      <i>→ notes, tempo map, key/time signatures, part→hand mapping</i>
+3. <b>normalise</b>  <i>→ 480 PPQ, absolute ticks, ties merged, grace notes resolved</i>
+4. <b>group</b>      <i>→ assign groupId: notes within 30 ticks are one decision</i>
+5. <b>segment</b>    <i>→ Sections on phrase boundaries, falling back to 2 bars</i>
+6. <b>analyse</b>    <i>→ range, hand span, difficulty 1–5, tags</i>
+7. <b>licence</b>    <i>→ join content/licences.json; FAIL THE BUILD if unmatched</i>
+8. <b>emit</b>       <i>→ public/content/&lt;pieceId&gt;/&lt;arrangementId&gt;.v&lt;n&gt;.json + index.json</i></pre>
+  </div>
+
+  <h4>Difficulty scoring</h4>
+  <p>A transparent heuristic beats a magic number, because you will need to argue with it. Score each arrangement on five axes and take a weighted sum: pitch range, hand-position changes (how often the thumb must move), rhythmic vocabulary (shortest subdivision and presence of ties across beats), hand independence (how often the hands play different rhythms), and accidental density. Publish the sub-scores in the JSON so a piece that lands wrong can be diagnosed rather than hand-overridden.</p>
+
+  <div class="note">
+    <p><b class="k">Sequence to a known method, don't invent one</b>No lessons are booked yet, but the child module should still track the beginner sequence mainstream method books (Faber Piano Adventures, Alfred, Bastien) largely agree on, not a bespoke order: <b>1</b> pre-staff five-finger position centred on middle C, notes read by direction and interval rather than named pitch; <b>2</b> the same five-finger shape moved to a couple of neighbouring positions (D, G); <b>3</b> landmark-note reading — middle C, bass F, treble G as anchors, everything else read by distance from them; <b>4</b> full grand-staff reading once those anchors are solid. Map <code>difficulty 1–5</code> onto these four stages now, so that if a specific method book is chosen later, re-keying the ladder to its exact page order is a lookup-table change, not a content rewrite.</p>
+  </div>
+
+  <h4>Where the beginner material actually comes from</h4>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Source</th><th>Format</th><th>Realistic yield</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Hand-authored JSON</strong></td><td>Your own</td><td>Where nearly all the first-year child content will come from. Five-finger tunes are 20 notes; writing them directly is faster than sourcing them.</td></tr>
+        <tr><td><strong>Traditional / folk melodies</strong></td><td>Author from memory</td><td>Public domain by age. The core of the child curriculum.</td></tr>
+        <tr><td><strong>Hanon 1–20</strong></td><td>Generate</td><td>Each exercise is one pattern sequenced up the scale — write the generator, not the notes.</td></tr>
+        <tr><td><strong>Mutopia Project</strong></td><td>LilyPond → MusicXML</td><td>Good for the adult module. Conversion is imperfect; expect to fix articulations.</td></tr>
+        <tr><td><strong>OpenScore</strong></td><td>MuseScore / MusicXML</td><td>CC0 editions of standard repertoire, cleanly engraved. The best single source for real MusicXML.</td></tr>
+        <tr><td><strong>Generated exercises</strong></td><td>Runtime</td><td>Unlimited sight-reading material at exactly the right difficulty. Cheapest content you will ever ship.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <p><b class="k">Make the licence check a build failure</b>Every piece needs an entry in <code>licences.json</code> with a source URL and a verification date, and <code>ingest</code> must exit non-zero without one. It costs nothing now and it is the only thing that makes this catalogue safe to ever share with another family.</p>
+  </div>
+</section>
+
+<!-- ==================== 11 TESTING ==================== -->
+<section id="testing">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">11 — Testing</span>How you test a piano app with no piano</h2>
+  <p class="lede">This is the payoff for the pure core. CI has no MIDI device, no audio hardware and no six-year-old, and needs none of them.</p>
+
+  <div class="duo">
+    <div class="panel">
+      <h3>Unit — the core, exhaustively</h3>
+      <p>The matcher, tolerance maths, tempo map, pedal tracker and grader are pure functions over event arrays. Test them the way you would test a parser: many small cases, no mocks, no framework beyond Vitest.</p>
+      <p>Property tests earn their place here. <em>A perfect performance always grades 3 stars at every tempo. Adding a constant offset to every note changes rushDrag but not RMS. No permutation of chord notes within CHORD_WINDOW changes the grade.</em></p>
+    </div>
+    <div class="panel">
+      <h3>Golden fixtures — the real safety net</h3>
+      <p>Record actual performances through <code>midi-replay</code> as JSON: one clean, one rushed, one with two wrong notes, one with heavy pedal, one that stops halfway, one from the child. Assert the exact grade. When you tune a threshold, the diff across the fixture set shows you precisely who it helps and who it hurts.</p>
+      <p>Twenty minutes of recording buys you the confidence to change the matcher for the next two years.</p>
+    </div>
+    <div class="panel">
+      <h3>Integration — the runtime wiring</h3>
+      <p>Compose the real core with <code>midi-replay</code>, a stub <code>AudioBackend</code> and fake-indexeddb. Run a whole attempt headlessly and assert the stored <code>Attempt</code>. Catches the composition-root bugs unit tests structurally cannot.</p>
+    </div>
+    <div class="panel">
+      <h3>End-to-end — Playwright</h3>
+      <p>Expose <code>window.__duokeys.midi.emit(bytes, t)</code> in test builds so Playwright drives the virtual backend. Cover: connect flow, permission denial, device-lost-mid-song, profile switch, quest completion, offline reload.</p>
+      <p>Screenshot-test the canvas at fixed clock values by injecting a deterministic clock — a frozen <code>now()</code> makes the renderer as testable as any component.</p>
+    </div>
+  </div>
+
+  <h4>What you still have to test by hand</h4>
+  <p>Perceived latency, whether the falling-note lead time feels right, whether wait mode is forgiving enough, and whether a six-year-old wants to come back tomorrow. Nothing automates these. Budget a real session at the piano at the end of every sprint — it is the only test that measures the actual product.</p>
+</section>
+
+<!-- ==================== 12 NFR ==================== -->
+<section id="nfr">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">12 — Budgets &amp; non-functionals</span>Numbers to hold the build to</h2>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Property</th><th class="nums">Budget</th><th>Why this number</th></tr></thead>
+      <tbody>
+        <tr><td>App-added input latency</td><td class="nums">&lt; 15 ms</td><td>Above ~20 ms total the instrument stops feeling connected to the screen. The piano's own sound is instant, so any app feedback that lags is immediately obvious.</td></tr>
+        <tr><td>Frame time, falling notes</td><td class="nums">&lt; 8 ms</td><td>Half the 16.7 ms frame, leaving headroom for GC and OSMD. Measure the 99th percentile, not the mean.</td></tr>
+        <tr><td>Cold start to playable</td><td class="nums">&lt; 3 s</td><td>Measured from tapping the icon to the first note being accepted, offline, on the actual target device.</td></tr>
+        <tr><td>Time from sitting down to playing</td><td class="nums">&lt; 3 taps</td><td>Profile → continue → play. Everything else is a settings screen. This is the retention metric that matters.</td></tr>
+        <tr><td>Offline capability</td><td class="nums">100%</td><td>Every practice feature works with the network off. Sync and new content are the only things that need it.</td></tr>
+        <tr><td>JS bundle, first route</td><td class="nums">&lt; 200 KB gz</td><td>OSMD is large — load it only on student-mode routes, never on the child's path.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Accessibility and child-appropriateness</h3>
+  <ul>
+    <li><strong>Explorer mode stays icon-and-audio-led even though the child reads.</strong> The confirmed reader can take short text labels (§12) as a bonus channel, but icons, colour, animation and spoken prompts still carry the interface — a six-year-old's reading is far behind their listening, and it keeps the mode usable by a younger sibling or a bad day.</li>
+    <li><strong>Do not encode meaning in colour alone</strong> — note state needs shape or position too. Colour-blindness in the family is likelier than you would guess, and the hand colours are the first thing to break.</li>
+    <li><strong>Touch targets 44 px minimum</strong>, and nothing important within a thumb's reach of the screen edge where a small hand will rest it.</li>
+    <li><strong>Respect <code>prefers-reduced-motion</code></strong> — the falling notes themselves stay, the celebratory particle effects do not.</li>
+    <li><strong>No dark patterns.</strong> No streak-loss anxiety, no timed pressure in the first weeks, no artificial scarcity. This is a six-year-old's relationship with music.</li>
+  </ul>
+
+  <h3>Privacy</h3>
+  <p>Local-first makes this nearly free, and it is worth keeping deliberately: no third-party analytics, no audio ever leaving the device, no child email address, first names only. If sync is enabled, the adult's account is the only credential in the system. Should the app ever go beyond the family, that posture is also what keeps COPPA and GDPR-K from becoming a project of their own.</p>
+
+  <h3>Platform housekeeping</h3>
+  <ul>
+    <li><strong>Screen Wake Lock</strong> acquired on entering an activity, released on leaving. Re-acquire on visibility change — the lock is dropped when the tab is hidden.</li>
+    <li><strong>AudioContext resume on user gesture</strong>, and a visible "tap to start" if it is suspended. Autoplay policy will otherwise silently kill the metronome.</li>
+    <li><strong>Secure context.</strong> Web MIDI needs HTTPS or localhost. Point a dev tunnel at the machine or run the dev server on the same device as the piano.</li>
+    <li><strong>Service worker</strong> caching the app shell and all content JSON, with a version-bumped cache and an explicit "new lessons available" prompt rather than a silent swap mid-song.</li>
+    <li><strong>Kiosk the device.</strong> Guided Access on iPad, screen pinning on Android. The single most effective feature for a six-year-old's focus is not being able to leave the app.</li>
+  </ul>
+</section>
+
+<!-- ==================== 13 ROADMAP ==================== -->
+<section id="roadmap">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">13 — Revised roadmap</span>Vertical slices, riskiest first</h2>
+  <p class="lede">Same destination as the original four phases, reordered so that something is playable at the piano at the end of every sprint and the two genuinely uncertain things — hardware and feel — are resolved first.</p>
+
+  <div class="sprints">
+    <div class="sprint">
+      <div class="tag"><b>0</b><span>1–2 days</span></div>
+      <div>
+        <h3>Hardware spike — go / no-go</h3>
+        <p>A single HTML file. Open the MIDI device, log note-on events with timestamps, light up a rectangle, play a Tone.js note. Run it on every candidate device you own. Measure round-trip latency by ear and by clock.</p>
+        <p class="exit"><b>Exit</b>You have chosen a device from section 02 and know its real latency. Nothing else is built until this is answered.</p>
+      </div>
+    </div>
+
+    <div class="sprint">
+      <div class="tag"><b>1</b><span>~1 week</span></div>
+      <div>
+        <h3>Walking skeleton</h3>
+        <p>Next.js app, the five ports, <code>MasterClock</code>, calibration wizard, MIDI pipeline with pedal tracking, wait matcher, canvas keybed and falling notes, one hard-coded eight-bar tune, stars, IndexedDB save. Supabase project created (so the pause clock never becomes a Sprint 2 surprise) but auth and sync wait. No content pipeline, no second module, no styling beyond legible.</p>
+        <p class="exit"><b>Exit</b>A child can sit at the piano, play eight bars in wait mode, and see stars. Every hard problem in the project has now been touched once.</p>
+      </div>
+    </div>
+
+    <div class="sprint">
+      <div class="tag"><b>2</b><span>~2 weeks</span></div>
+      <div>
+        <h3>The child's loop, for real</h3>
+        <p>Profiles and switching. Auth (passwordless email link) and Supabase sync — outbox flush, append-only attempts, last-write-wins on profile settings — wired in behind the local-first design, so a lost laptop stops being able to lose progress. Content pipeline v1 with eight to twelve hand-authored tunes. Section segmentation and the unlock graph. Note Ninja with the spaced-repetition pool. Timed matcher and the tolerance tiers. Session shape, rewards, wind-down. Golden fixture suite.</p>
+        <p class="exit"><b>Exit</b>A week of real daily use by the child with no developer present. Watch what they actually do; expect to throw away at least one designed feature.</p>
+      </div>
+    </div>
+
+    <div class="sprint">
+      <div class="tag"><b>3</b><span>~2 weeks</span></div>
+      <div>
+        <h3>The adult's loop</h3>
+        <p>OSMD integration, matcher-driven cursor, per-note colouring after an attempt. A/B loop, hands-separate, tempo scaling with auto-ramp. Hanon generator with evenness grading. Constrained sight-reading generator. Mutopia/OpenScore ingest for real repertoire.</p>
+        <p class="exit"><b>Exit</b>You practise with it yourself for a week and prefer it to the alternative. If you don't, fix that before adding anything.</p>
+      </div>
+    </div>
+
+    <div class="sprint">
+      <div class="tag"><b>4</b><span>~2 weeks</span></div>
+      <div>
+        <h3>Together, and looking back</h3>
+        <p>Duet mode with split, transposition and dual matchers. Recording and playback. Practice dashboard: streaks, bench time, accuracy trend, per-measure rush/drag, now pulling from synced history across devices. PWA install, wake lock, offline hardening.</p>
+        <p class="exit"><b>Exit</b>Parent and child play four hands together and both see their own result. The original brief is delivered.</p>
+      </div>
+    </div>
+
+    <div class="sprint">
+      <div class="tag"><b>5</b><span>optional</span></div>
+      <div>
+        <h3>The iPad, if it still matters</h3>
+        <p>Capacitor shell, Swift CoreMIDI plugin implementing <code>MidiBackend</code>, App Store provisioning. Roughly a week, entirely additive, and by now you know whether the family actually wants it on the stand or is happy with the laptop.</p>
+        <p class="exit"><b>Exit</b>The same build runs on the iPad with one adapter swapped and no change to core, ui or content.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 14 OPEN ==================== -->
+<section id="open">
+  <div class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i></div>
+  <h2><span class="num">14 — Open questions</span>What I had to assume</h2>
+  <p class="lede">None of these block Sprint 0. All of them change something concrete, so they are worth answering before Sprint 1 ends.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Question</th><th>Assumed</th><th>What changes if different</th></tr></thead>
+      <tbody>
+        <tr class="pick"><td>Which device, from section 02?</td><td><strong>Decided — Option A.</strong> Windows laptop now; iPad shell (Option B) later if wanted, needs a rented/cloud Mac to build</td><td>Closed. Capacitor-readiness checklist in §04's boundary note is what keeps Option B available.</td></tr>
+        <tr class="pick"><td>What is the instrument? Make, key count, does it have Duo mode?</td><td><strong>Decided — 88 keys</strong>, sustain pedal, class-compliant USB</td><td>Closed. Full range, so no content or transposition filtering is needed for a smaller keybed — <code>keyboardRange</code> stays a safety net, not a load-bearing constraint.</td></tr>
+        <tr><td>Headphones or speakers?</td><td>The instrument's own speakers</td><td>Headphones make the app-audio path primary and raise the latency budget's importance considerably.</td></tr>
+        <tr class="pick"><td>Does the child read yet?</td><td><strong>Decided — yes</strong>, reads simple words</td><td>Closed. Explorer mode can carry short text labels alongside icons/audio in §12; nothing there is load-bearing on reading, so this only simplifies UI work, it doesn't gate it.</td></tr>
+        <tr><td>Formal lessons alongside this?</td><td>Not decided — no lessons booked, but the app should track general/standard beginner piano pedagogy rather than an invented sequence, so it stays compatible if lessons start later</td><td>If a specific teacher/method book is chosen later, the <code>difficulty 1–5</code> tag in §10's pipeline should re-key to that book's order — a re-sequencing of existing content, not a rebuild.</td></tr>
+        <tr class="pick"><td>Is cloud sync actually wanted?</td><td><strong>Decided — yes</strong>, from the start</td><td>Closed. Supabase project, auth and the outbox move from Sprint 4 into Sprint 2 — see §13. Local-first stays the architecture; this only changes when sync is wired, not whether IndexedDB stays the source of truth.</td></tr>
+        <tr><td>Ever shared beyond the family?</td><td>No</td><td>Yes turns licensing, privacy and Vercel's commercial-use terms from footnotes into requirements.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Where I would start tomorrow</h3>
+  <p>Sprint 0, on whatever laptop is nearest the piano, in one file. Everything in this document is a bet on how the timing will feel; an afternoon of playing notes into a browser and watching timestamps is what turns those bets into facts. The architecture above is designed so that afternoon's answer — whatever it is — costs you nothing to act on.</p>
+</section>
+
+<footer>
+  <p>DuoKeys build architecture · revision of DuoKeys_Project_Specification.html · 2 September 2026<br>
+  Platform support verified against <a href="https://caniuse.com/midi">caniuse.com/midi</a> — Web MIDI is unsupported in Safari on iOS/iPadOS in all versions to date, and on macOS Safari through version 27/TP.<br>
+  Supabase free-tier pause behaviour per <a href="https://supabase.com/docs/guides/platform/free-project-pausing">Supabase project-pausing documentation</a>. OSMD licence per the project's <a href="https://github.com/opensheetmusicdisplay/opensheetmusicdisplay/blob/develop/LICENSE">LICENSE file</a> (BSD-3-Clause).</p>
+</footer>
+
+</main>
+</div>

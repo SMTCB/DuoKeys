@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuoKeys · Functional Specification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="_doc.css">
+</head>
+<body data-doc="functional.html">
+<div class="shell">
+
+<aside class="rail">
+  <div class="brand">
+    <span class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i></span>
+    <b>DuoKeys</b>
+  </div>
+  <div class="docid">FUNC · v1.0</div>
+  <div class="switch">
+    <a href="index.html">Index</a>
+    <a href="architecture.html">Tech</a>
+    <a href="functional.html" aria-current="page">Func</a>
+    <a href="sprints.html">Sprints</a>
+  </div>
+  <input id="filter" type="search" placeholder="Filter  ( / )" aria-label="Filter requirements">
+  <div id="filterMeta"></div>
+  <nav id="toc" aria-label="Contents"></nav>
+  <div class="foot">
+    47 requirements<br>31 must · 11 should · 4 could<br>
+    <button id="themeBtn" type="button">auto</button>
+  </div>
+</aside>
+
+<main>
+  <div class="mast">
+    <h1>Functional <em>specification</em></h1>
+    <p class="lede">What DuoKeys does, stated so that each behaviour can be built, argued with, and tested independently of how it is built.</p>
+    <div class="meta">
+      <span>Doc <b>FUNC</b></span><span>Version <b>1.0</b></span><span>2 September 2026</span><span>Status <b>Baselined</b></span>
+    </div>
+  </div>
+
+  <p class="sub">Every requirement carries a stable ID, a MoSCoW priority, and a reference to the technical component that realises it. User stories implement these; test scenarios verify them. IDs throughout this page are links — click any one to jump to its definition, in this document or another.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Prefix</th><th>Module</th><th>Count</th></tr></thead>
+      <tbody>
+        <tr><td><code>FR-EXP-*</code></td><td><a href="#explorer">Explorer — the child's experience</a></td><td class="n">9</td></tr>
+        <tr><td><code>FR-STU-*</code></td><td><a href="#studio">Studio — the adult's experience</a></td><td class="n">11</td></tr>
+        <tr><td><code>FR-DUO-*</code></td><td><a href="#duet">Duet — four hands together</a></td><td class="n">4</td></tr>
+        <tr><td><code>FR-PRO-*</code></td><td><a href="#profiles">Profiles, progression and rewards</a></td><td class="n">5</td></tr>
+        <tr><td><code>FR-CON-*</code></td><td><a href="#content">Content and repertoire</a></td><td class="n">5</td></tr>
+        <tr><td><code>FR-SYN-*</code></td><td><a href="#sync">Accounts and sync</a></td><td class="n">5</td></tr>
+        <tr><td><code>FR-SYS-*</code></td><td><a href="#system">System, device, settings, shell</a></td><td class="n">8</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><span class="pri M">M</span> must-have — v1 is not v1 without it &nbsp; <span class="pri S">S</span> should-have &nbsp; <span class="pri C">C</span> could-have &nbsp; <span class="pri W">W</span> won't-have this round.</p>
+
+  <!-- ================================================================ -->
+  <h2 id="product" data-toc="Product definition"><span class="num">00</span>Product definition</h2>
+
+  <p><strong>DuoKeys</strong> is a local-first web application that connects to a digital piano over USB MIDI and turns daily practice into something a six-year-old will choose to do and an adult beginner will not outgrow within a month.</p>
+
+  <h4>Two users, two experiences, one instrument</h4>
+  <ul>
+    <li><strong>Explorer</strong> (child, 6) — a game. Falling notes, quests, stars, a ninja flashcard mini-game. Wait mode by default: nothing moves until the right key is down, so there is no failure state, only "not yet".</li>
+    <li><strong>Studio</strong> (adult) — a practice tool. Real notation, A/B looping, hands-separate, tempo ramping, Hanon with evenness scoring, generated sight-reading, and a dashboard that says <em>which bar</em> rushes.</li>
+    <li><strong>Duet</strong> — the reason the project exists. Both sit at the same instrument and play four hands, each graded on their own part.</li>
+  </ul>
+
+  <div class="warn">
+    <p><span class="k">Explicitly out of scope for v1</span>Audio-input pitch detection · multiple households · a content marketplace · social features · teacher accounts · Android and iOS shells. The iPad path is ADR-002 and is a later, additive sprint, not a v1 commitment.</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="explorer" data-toc="Explorer — the child"><span class="num">01</span>Explorer — the child's experience</h2>
+
+  <blockquote><p>Design constraint running through this whole module: the child reads simple words, so short text labels are permitted, but icons, colour, animation and audio still carry the interface. Reading ability at six is far behind listening ability, and the mode must stay usable on a bad day. (NFR-008, ADR-008)</p></blockquote>
+
+  <div class="req">
+    <h3 id="FR-EXP-001" data-toc="Quest map"><span class="aid">FR-EXP-001</span> Quest map <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-APP-003 · TA-DAT-001</p>
+    <p>A visual map of available pieces as a progression of nodes. Each node shows an icon, a short title, its star rating (0–3), and whether it is locked. Locked nodes are visible but greyed — the child should see where they are going.</p>
+    <p>Unlocking follows the <code>Section</code> graph: completing a section at ≥ 1 star unlocks the next.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-EXP-002" data-toc="Falling-notes practice"><span class="aid">FR-EXP-002</span> Falling-notes practice <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-REN-001 · TA-REN-002 · TA-MAT-002</p>
+    <p>Coloured bars descend toward a hit line drawn directly above an on-screen keybed. The keybed highlights the key each bar will land on. Left and right hands are distinguished by colour <strong>and</strong> by bar shape (NFR-008).</p>
+    <p>The spatial mapping from screen to hands requires no music reading — this is the on-ramp that makes notation learnable later rather than being a prerequisite now.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-EXP-003" data-toc="Wait mode is the default"><span class="aid">FR-EXP-003</span> Wait mode is the default <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-MAT-002</p>
+    <p>The stream freezes at the hit line until every note of the current group is down. No timer, no timeout, no penalty. A beginner may take thirty seconds to find F♯.</p>
+    <p>Timed mode exists (TA-MAT-003) but is opt-in and should not be offered to the child for the first months.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-EXP-004" data-toc="Micro-quests"><span class="aid">FR-EXP-004</span> Micro-quests <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-DAT-001 (<code>Section</code>)</p>
+    <p>Practice is offered in two-bar sections, not whole pieces. A section is a completable unit in under a minute. Whole-piece play is a reward that unlocks after its sections are cleared, not the default demand.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-EXP-005" data-toc="Note Ninja"><span class="aid">FR-EXP-005</span> Note Ninja <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-DAT-003 (<code>flashcards</code>)</p>
+    <p>A flashcard mini-game: a note appears on a simplified staff, the child plays it. <strong>Response-time bands replace the original spec's five-second timer:</strong></p>
+    <div class="tw"><table>
+      <thead><tr><th>Response</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td class="n">under 2 s</td><td>Streak continues, bonus</td></tr>
+        <tr><td class="n">2–6 s</td><td>Correct</td></tr>
+        <tr><td class="n">over 6 s</td><td>Hint revealed — the key highlights on the keybed — still counts as correct</td></tr>
+      </tbody>
+    </table></div>
+    <p>Wrong answers show the correct key and re-queue the card. There is no losing. A countdown timer teaches a six-year-old that reading music is frightening.</p>
+    <p>Cards are scheduled by a simple spaced-repetition pool; Leitner-style boxes are sufficient and SM-2 is over-engineered here.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-EXP-006" data-toc="Free play"><span class="aid">FR-EXP-006</span> Free play <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-AUD-001</p>
+    <p>An unstructured mode where every key press triggers a visual and a sound with no grading whatsoever. This is not filler — it is where a six-year-old discovers that the instrument responds to them, and it costs almost nothing to build.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-EXP-007" data-toc="Generous grading"><span class="aid">FR-EXP-007</span> Generous grading <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-GRD-002 · TA-MAT-006</p>
+    <ul>
+      <li>Tolerance windows scaled by <code>Profile.toleranceScale</code>, default 1.6.</li>
+      <li>Any <em>completed</em> attempt earns at least 1 star.</li>
+      <li>Errors are shown as "try this one again", never as a score deduction.</li>
+    </ul>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-EXP-008" data-toc="Rewards and session shape"><span class="aid">FR-EXP-008</span> Rewards and session shape <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-AUD-001 · NFR-011</p>
+    <p>A session has a deliberate arc: a short warm-up, two or three quests, then a wind-down — free play or a favourite piece — so practice ends on enjoyment rather than on the hardest thing attempted.</p>
+    <p>Rewards are immediate and audio-visual: a sound, a particle burst (suppressed under <code>prefers-reduced-motion</code>), a star landing on the map. No currency, no streak-loss anxiety, no artificial scarcity (NFR-012).</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-EXP-009" data-toc="Session length guidance"><span class="aid">FR-EXP-009</span> Session length guidance <span class="pri C">C</span></h3>
+    <p>A gentle suggestion to stop after a target bench time, default 10 minutes, presented as a celebration of finishing and never as a lockout.</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="studio" data-toc="Studio — the adult"><span class="num">02</span>Studio — the adult's experience</h2>
+
+  <div class="req">
+    <h3 id="FR-STU-001" data-toc="Notation practice view"><span class="aid">FR-STU-001</span> Notation practice view <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-REN-003</p>
+    <p>Real notation rendered by OpenSheetMusicDisplay with a cursor driven by the matcher. The cursor advances as notes are matched; it does not run on a timer in wait mode.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-002" data-toc="Post-attempt note colouring"><span class="aid">FR-STU-002</span> Post-attempt note colouring <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-REN-003 · TA-GRD-001</p>
+    <p>After an attempt, each note in the score is coloured by result: correct, wrong pitch, missed, extra, late, early. Applied <strong>after</strong> the attempt, not during — repainting the SVG mid-performance drops frames (NFR-002).</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-003" data-toc="A/B loop"><span class="aid">FR-STU-003</span> A/B loop <span class="pri M">M</span></h3>
+    <p>Select a start and end measure; loop that range indefinitely. The single most useful feature in any practice tool and the reason an adult will keep opening it.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-004" data-toc="Tempo scaling with auto-ramp"><span class="aid">FR-STU-004</span> Tempo scaling with auto-ramp <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-CLK-002</p>
+    <p>Tempo adjustable 30–100% of written. <strong>Auto-ramp:</strong> on a clean pass, raise tempo 5% and repeat; on a failed pass, drop back one step. That single behaviour turns a set of controls into an actual practice method, and it is about thirty lines on top of the loop.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-005" data-toc="Hands separate"><span class="aid">FR-STU-005</span> Hands separate <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-AUD-002 · TA-DAT-001 (<code>Track.hand</code>)</p>
+    <p>Practise one hand while the other is muted, silent, or played back by the sampler. Played-back accompaniment is what makes hands-separate practice musical rather than lonely.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-006" data-toc="Articulation and duration feedback"><span class="aid">FR-STU-006</span> Articulation and duration feedback <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-MID-004</p>
+    <p>Using the PedalTracker's distinction between key-up and note-stopped-sounding, report notes held too short — staccato where legato was written — or too long.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-007" data-toc="Hanon generator with evenness"><span class="aid">FR-STU-007</span> Hanon generator with evenness scoring <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-GRD-003 · TA-CNT-004</p>
+    <p>Hanon 1–20 generated from patterns rather than authored. Graded on <code>evennessCv</code> — the coefficient of variation of inter-onset intervals — which is the only thing that makes this practice measurable rather than merely endured.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-008" data-toc="Rush/drag reporting"><span class="aid">FR-STU-008</span> Rush/drag reporting <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-GRD-001</p>
+    <p>The dashboard reports the <strong>signed</strong> mean offset: "you are 40 ms ahead of the beat". Not RMS, which is kept for the consistency trend but is not actionable advice.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-009" data-toc="Per-measure breakdown"><span class="aid">FR-STU-009</span> Per-measure breakdown <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-GRD-004</p>
+    <p>A bar-by-bar strip showing accuracy and rush/drag per measure, so the answer is "your left hand rushes bar 5", not "you played it".</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-010" data-toc="Generated sight-reading"><span class="aid">FR-STU-010</span> Generated sight-reading <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-CNT-004</p>
+    <p>Constrained random generation: pick a key, a range, a rhythmic vocabulary and a difficulty, emit an eight-bar phrase never seen before. Unlimited material at exactly the right level, and the cheapest content in the project.</p>
+    <div class="note"><p><span class="k">On the original spec's dependency</span><strong>Sight Reading Factory</strong> is a paid commercial product with no public API. It can inspire this feature; it cannot be a dependency.</p></div>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-011" data-toc="Real repertoire ingest"><span class="aid">FR-STU-011</span> Real repertoire ingest <span class="pri C">C</span></h3>
+    <p class="by"><b>Realised by</b> TA-CNT-001 · TA-CNT-004</p>
+    <p>Import from Mutopia and OpenScore through the build pipeline, with the licence gate (TA-CNT-005) enforced.</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="duet" data-toc="Duet — four hands"><span class="num">03</span>Duet — four hands</h2>
+
+  <div class="req">
+    <h3 id="FR-DUO-001" data-toc="Split keyboard with transposition"><span class="aid">FR-DUO-001</span> Split keyboard with octave transposition <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-DAT-001 (<code>Track.role</code>)</p>
+    <p>The keyboard splits at a configurable point, default MIDI 60. Critically this is <strong>split plus transposition</strong>, not split alone: each half is transposed so both players get their own middle C in the middle of their own region. Splitting without transposing gives the child a part in the wrong octave, and it will feel wrong to them without their being able to say why.</p>
+    <p>If the instrument has a native Duo/Twin mode, prefer it and disable the app-side transposition — but do not depend on it; ADR-009 did not confirm one.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-DUO-002" data-toc="Dual independent matchers"><span class="aid">FR-DUO-002</span> Dual independent matchers <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-MAT-001</p>
+    <p>Two matcher instances, one per part, each fed only the notes from its own keyboard region. Each player is graded on their own part; one player's mistakes never fail the other.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-DUO-003" data-toc="Asymmetric difficulty"><span class="aid">FR-DUO-003</span> Asymmetric difficulty <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-DAT-001 (<code>Track.role</code>)</p>
+    <p>The primo part is five notes in one hand position; the secondo carries the harmony and the pulse. Modelled as two <code>Track</code>s in one <code>Arrangement</code> with a <code>role</code> field, so the same piece can also be practised alone by either player.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-DUO-004" data-toc="Shared result screen"><span class="aid">FR-DUO-004</span> Shared result screen <span class="pri S">S</span></h3>
+    <p>Both players see their own accuracy and stars side by side, plus a single "together" score. The together score is celebratory, not competitive.</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="profiles" data-toc="Profiles and progression"><span class="num">04</span>Profiles, progression and rewards</h2>
+
+  <div class="req">
+    <h3 id="FR-PRO-001" data-toc="Multiple local profiles"><span class="aid">FR-PRO-001</span> Multiple local profiles <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-DAT-004</p>
+    <p>Two to four profiles, each with a name, avatar, role (<code>explorer</code> | <code>student</code>), calibration offset and tolerance scale. Switching is one tap from the home screen, with no password — this is a family device.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-PRO-002" data-toc="Per-profile progression"><span class="aid">FR-PRO-002</span> Per-profile progression <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-DAT-003 (<code>progression</code>)</p>
+    <p>Unlock state, best grade per section, and spaced-repetition schedules are all per-profile. Progression is <strong>derived from attempts</strong>, never stored as primary state (TA-SYN-003) — it can always be recomputed.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-PRO-003" data-toc="Practice history"><span class="aid">FR-PRO-003</span> Practice history <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-DAT-002</p>
+    <p>Every attempt is recorded immutably with its full per-note event array. This is what makes the dashboard possible and what makes sync trivial.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-PRO-004" data-toc="Dashboard"><span class="aid">FR-PRO-004</span> Dashboard <span class="pri S">S</span></h3>
+    <p>Streaks, bench time per day and week, accuracy trend per piece, and the per-measure rush/drag strip (FR-STU-009). Explorer sees a simplified, celebratory version; Studio sees the numbers.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-PRO-005" data-toc="Recording and playback"><span class="aid">FR-PRO-005</span> Recording and playback <span class="pri C">C</span></h3>
+    <p class="by"><b>Realised by</b> TA-DAT-002</p>
+    <p>Capture a performance as a note stream and play it back through the sampler, with the score or falling notes following along. Useful for "listen to what you did" and delightful for a child.</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="content" data-toc="Content"><span class="num">05</span>Content</h2>
+
+  <div class="req">
+    <h3 id="FR-CON-001" data-toc="Static versioned content"><span class="aid">FR-CON-001</span> Static versioned content <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-DAT-005 · TA-CNT-001</p>
+    <p>Arrangements ship as immutable versioned JSON. No database read is ever required to start practising.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-CON-002" data-toc="Beginner catalogue, v1"><span class="aid">FR-CON-002</span> Beginner catalogue, v1 <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-CNT-003 · TA-CNT-004</p>
+    <p>Eight to twelve hand-authored pieces spanning difficulty 1–2, sequenced per ADR-008's four-stage progression. Traditional and folk melodies, public domain by age.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-CON-003" data-toc="Section segmentation"><span class="aid">FR-CON-003</span> Section segmentation <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-CNT-001 (stage 5)</p>
+    <p>Every arrangement is segmented into playable sections at phrase boundaries, falling back to two bars. This is the unit FR-EXP-004 operates on.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-CON-004" data-toc="Licence provenance"><span class="aid">FR-CON-004</span> Licence provenance <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-CNT-005</p>
+    <p>Every piece has a licence entry with source URL and verification date. The build fails without one.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-CON-005" data-toc="Fingering annotations"><span class="aid">FR-CON-005</span> Fingering annotations <span class="pri C">C</span></h3>
+    <p>Where the source provides them, carry fingerings through to the renderer. Do not invent them algorithmically — bad fingering advice is worse than none.</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="sync" data-toc="Accounts and sync"><span class="num">06</span>Accounts and sync</h2>
+
+  <div class="req">
+    <h3 id="FR-SYN-001" data-toc="Passwordless adult account"><span class="aid">FR-SYN-001</span> Passwordless adult account <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-SYN-002</p>
+    <p>Email magic link. One account per household, owned by the adult. The child never has credentials.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-SYN-002" data-toc="Background sync"><span class="aid">FR-SYN-002</span> Background sync <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-SYN-001 · TA-SYN-004</p>
+    <p>Attempts, settings and profiles sync in the background when online. Sync never blocks, interrupts or delays a practice session. Failure is silent and retried.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-SYN-003" data-toc="Restore on a new device"><span class="aid">FR-SYN-003</span> Restore on a new device <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-SYN-001 (pull)</p>
+    <p>Signing in on a fresh device pulls all profiles and history. This is the entire point of ADR-004 — a lost laptop must not cost a year of progress.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-SYN-004" data-toc="Sync status visibility"><span class="aid">FR-SYN-004</span> Sync status visibility <span class="pri S">S</span></h3>
+    <p>A quiet indicator in settings: last synced, pending items, signed-in identity. Never a modal, never a blocking spinner.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-SYN-005" data-toc="Offline is not an error state"><span class="aid">FR-SYN-005</span> Offline is not an error state <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> ADR-003 · NFR-005</p>
+    <p>No warning banner, no degraded-mode messaging. The app is designed to be offline; the network is the exception.</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="system" data-toc="System and device"><span class="num">07</span>System, device and settings</h2>
+
+  <div class="req">
+    <h3 id="FR-SYS-001" data-toc="MIDI device selection"><span class="aid">FR-SYS-001</span> MIDI device selection <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-PORT-002 · TA-MID-005</p>
+    <p>List available inputs, remember the chosen one per profile, reconnect automatically on next launch.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-SYS-002" data-toc="Latency calibration wizard"><span class="aid">FR-SYS-002</span> Latency calibration wizard <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-CLK-004</p>
+    <p>Tap-along against a click for sixteen beats; store the median offset. Offered on first run, on instrument change, and on demand.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-SYS-003" data-toc="First-run setup"><span class="aid">FR-SYS-003</span> First-run setup <span class="pri M">M</span></h3>
+    <p>Connect instrument → choose or create profile → calibrate → play something, within three minutes. Nothing else is asked before the first note.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-SYS-004" data-toc="Graceful disconnect handling"><span class="aid">FR-SYS-004</span> Graceful disconnect handling <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-MID-005</p>
+    <p>On mid-session disconnect: pause, preserve the in-progress attempt, show a calm reconnect prompt. Never lose work, never show a stack trace.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-SYS-005" data-toc="Missing Web MIDI support"><span class="aid">FR-SYS-005</span> Missing Web MIDI support <span class="pri M">M</span></h3>
+    <p>If <code>navigator.requestMIDIAccess</code> is absent — Safari, or Firefox without the flag — show a plain explanation and the list of browsers that work. Do not let a child arrive at a blank screen.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-SYS-006" data-toc="PWA install and wake lock"><span class="aid">FR-SYS-006</span> PWA install and wake lock <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-APP-004</p>
+    <p>Installable to the desktop; screen wake lock held during an active session so the display never sleeps mid-piece.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-SYS-007" data-toc="Accessibility baseline"><span class="aid">FR-SYS-007</span> Accessibility baseline <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> NFR-008 · NFR-009 · NFR-011</p>
+    <p>Colour is never the only signal. Touch targets ≥ 44 px. <code>prefers-reduced-motion</code> honoured. Keyboard focus visible.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-SYS-008" data-toc="Privacy posture"><span class="aid">FR-SYS-008</span> Privacy posture <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> NFR-010</p>
+    <p>First names only, no child email address, no third-party analytics, no audio ever leaves the device.</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="summary" data-toc="Requirement summary"><span class="num">08</span>Requirement summary</h2>
+
+  <div class="tw"><table>
+    <thead><tr><th>Module</th><th>Must</th><th>Should</th><th>Could</th><th>Total</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#explorer">Explorer</a></td><td class="n">5</td><td class="n">3</td><td class="n">1</td><td class="n">9</td></tr>
+      <tr><td><a href="#studio">Studio</a></td><td class="n">6</td><td class="n">4</td><td class="n">1</td><td class="n">11</td></tr>
+      <tr><td><a href="#duet">Duet</a></td><td class="n">3</td><td class="n">1</td><td class="n">0</td><td class="n">4</td></tr>
+      <tr><td><a href="#profiles">Profiles</a></td><td class="n">3</td><td class="n">1</td><td class="n">1</td><td class="n">5</td></tr>
+      <tr><td><a href="#content">Content</a></td><td class="n">4</td><td class="n">0</td><td class="n">1</td><td class="n">5</td></tr>
+      <tr><td><a href="#sync">Sync</a></td><td class="n">4</td><td class="n">1</td><td class="n">0</td><td class="n">5</td></tr>
+      <tr><td><a href="#system">System</a></td><td class="n">6</td><td class="n">1</td><td class="n">0</td><td class="n">8</td></tr>
+      <tr class="tot"><td><strong>Total</strong></td><td class="n">31</td><td class="n">11</td><td class="n">4</td><td class="n">47</td></tr>
+    </tbody>
+  </table></div>
+
+  <p class="sub">Delivery of each requirement is planned in <a href="sprints.html">the sprint plan</a>; the components realising them are specified in <a href="architecture.html">the technical architecture</a>.</p>
+
+  <div class="empty">No requirement matches that filter.</div>
+</main>
+
+</div>
+<script src="_doc.js"></script>
+</body>
+</html>

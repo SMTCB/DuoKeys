@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DuoKeys - Project Specification & Developer Handoff Document</title>
+<style>
+  @page {
+    size: A4;
+    margin: 15mm 12mm;
+    background-color: #f8fafc;
+  }
+  
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    background-color: #f8fafc;
+    line-height: 1.5;
+    font-size: 10pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  .header-card {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+    color: #ffffff;
+    padding: 24px 28px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(30, 27, 75, 0.15);
+  }
+
+  .header-card h1 {
+    font-size: 20pt;
+    margin: 0 0 6px 0;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+    border: none;
+    padding: 0;
+  }
+
+  .header-card p {
+    font-size: 11pt;
+    margin: 0;
+    color: #c7d2fe;
+    font-weight: 400;
+  }
+
+  .badge-container {
+    margin-top: 12px;
+  }
+
+  .badge {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #e0e7ff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 8pt;
+    font-weight: 600;
+    margin-right: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  h2 {
+    font-size: 13pt;
+    color: #1e1b4b;
+    border-left: 4px solid #4f46e5;
+    padding-left: 10px;
+    margin-top: 22px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 11pt;
+    color: #312e81;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    page-break-after: avoid;
+  }
+
+  p, li {
+    color: #334155;
+    font-size: 9.5pt;
+  }
+
+  ul, ol {
+    margin-top: 4px;
+    margin-bottom: 10px;
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+
+  .grid-2 {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    margin-bottom: 14px;
+  }
+
+  .col {
+    display: table-cell;
+    vertical-align: top;
+    padding-right: 10px;
+  }
+
+  .col:last-child {
+    padding-right: 0;
+    padding-left: 10px;
+  }
+
+  .card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 14px 16px;
+    height: 100%;
+  }
+
+  .card h4 {
+    margin: 0 0 6px 0;
+    font-size: 10pt;
+    color: #1e1b4b;
+    font-weight: 700;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    font-size: 9pt;
+  }
+
+  th {
+    background-color: #f1f5f9;
+    color: #334155;
+    text-align: left;
+    padding: 8px 12px;
+    font-weight: 600;
+    border-bottom: 1px solid #cbd5e1;
+  }
+
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #475569;
+    vertical-align: top;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:nth-child(even) td {
+    background-color: #fafafa;
+  }
+
+  .architecture-diagram {
+    background-color: #0f172a;
+    color: #38bdf8;
+    padding: 14px;
+    border-radius: 8px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 8pt;
+    line-height: 1.4;
+    white-space: pre;
+    overflow-x: auto;
+    margin: 10px 0 16px 0;
+    border: 1px solid #1e293b;
+  }
+
+  .roadmap-phase {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #6366f1;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    page-break-inside: avoid;
+  }
+
+  .roadmap-phase.p1 { border-left-color: #3b82f6; }
+  .roadmap-phase.p2 { border-left-color: #ec4899; }
+  .roadmap-phase.p3 { border-left-color: #8b5cf6; }
+  .roadmap-phase.p4 { border-left-color: #10b981; }
+
+  .phase-header {
+    display: table;
+    width: 100%;
+    margin-bottom: 6px;
+  }
+
+  .phase-title {
+    display: table-cell;
+    font-weight: 700;
+    font-size: 10.5pt;
+    color: #0f172a;
+  }
+
+  .phase-goal {
+    font-style: italic;
+    color: #64748b;
+    font-size: 8.5pt;
+    margin-bottom: 8px;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 7.5pt;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background-color: #e0e7ff;
+    color: #3730a3;
+    margin-right: 4px;
+  }
+
+  .code-block {
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-family: ui-monospace, monospace;
+    font-size: 8.5pt;
+    color: #0f172a;
+  }
+
+  .sprint-list {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 16px;
+  }
+
+  .sprint-list ol {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  .sprint-list li {
+    margin-bottom: 8px;
+  }
+
+  .sprint-list li:last-child {
+    margin-bottom: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-card">
+  <h1>DuoKeys</h1>
+  <p>Project Specification & Developer Handoff Document</p>
+  <div class="badge-container">
+    <span class="badge">Target: iPad / PWA</span>
+    <span class="badge">Stack: Next.js + Supabase</span>
+    <span class="badge">Hardware: USB-C MIDI</span>
+    <span class="badge">Cost: $0/mo Tier</span>
+  </div>
+</div>
+
+<h2>1. Platform Overview & Description</h2>
+
+<p><strong>DuoKeys</strong> is an interactive web application designed to run seamlessly on an iPad positioned on a piano music stand. Connecting directly to a digital piano via a USB-C MIDI cable, it provides a tailored dual-learning platform for both a 6-year-old child beginner and an adult returning to piano.</p>
+
+<div class="grid-2">
+  <div class="col">
+    <div class="card">
+      <h4>Child User Experience (Age 6)</h4>
+      <p>Focused on high-dopamine visual engagement, single-note flashcards ("Note Ninja"), vertical falling-note games, 1–2 measure mini-quests, and immediate audio-visual praise.</p>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <h4>Adult User Experience (Parent / Re-learner)</h4>
+      <p>Tailored for analytical practice featuring full MusicXML sheet rendering, A/B measure looping, hands-separate practice controls, BPM speed scaling, and technical exercise generators (Hanon).</p>
+    </div>
+  </div>
+</div>
+
+<h2>2. Technical Stack & Architecture</h2>
+
+<p>The system utilizes 100% open-source software and standard browser web APIs operating within free tier allocations for zero monthly overhead.</p>
+
+<div class="architecture-diagram">
++-----------------------------------------------------------------------+
+|                    Physical MIDI Piano (USB-C)                         |
++-----------------------------------+-----------------------------------+
+                                    | Web MIDI API (Native Browser)
+                                    v
++-----------------------------------------------------------------------+
+|                        Next.js PWA (Vercel)                           |
++-----------------------------------+-----------------------------------+
+                                    |
+     +------------------------------+------------------------------+
+     |                              |                              |
+     v                              v                              v
++------------------+      +------------------+          +------------------+
+|   Tone.js Synth  |      | HTML5 Canvas /   |          |     Supabase     |
+|  (Audio Sampler) |      |   OSMD Engine    |          | (PostgreSQL & DB)|
++------------------+      +------------------+          +------------------+
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Technology / Tool</th>
+      <th>License & Cost</th>
+      <th>Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Frontend</strong></td>
+      <td>Next.js (React, TypeScript)</td>
+      <td>MIT / Free</td>
+      <td>Application framework & page routing.</td>
+    </tr>
+    <tr>
+      <td><strong>Hosting</strong></td>
+      <td>Vercel (Hobby)</td>
+      <td>Free Tier</td>
+      <td>Deployment and hosting for personal single-user app.</td>
+    </tr>
+    <tr>
+      <td><strong>Backend / DB</strong></td>
+      <td>Supabase</td>
+      <td>Free Tier</td>
+      <td>PostgreSQL database, storage for <code>.mid</code>/<code>.xml</code> files.</td>
+    </tr>
+    <tr>
+      <td><strong>Styling</strong></td>
+      <td>Tailwind CSS + Lucide Icons</td>
+      <td>MIT / Free</td>
+      <td>Responsive, high-contrast UI design.</td>
+    </tr>
+    <tr>
+      <td><strong>MIDI Input</strong></td>
+      <td>Web MIDI API</td>
+      <td>Native Standard</td>
+      <td>Direct browser link to USB-C keyboard keypresses.</td>
+    </tr>
+    <tr>
+      <td><strong>Audio Output</strong></td>
+      <td>Tone.js</td>
+      <td>MIT / Free</td>
+      <td>Web Audio synthesizer and soundfont sampler.</td>
+    </tr>
+    <tr>
+      <td><strong>Sheet Rendering</strong></td>
+      <td>OpenSheetMusicDisplay (OSMD)</td>
+      <td>MIT / Free</td>
+      <td>MusicXML parsing and VexFlow vector rendering.</td>
+    </tr>
+    <tr>
+      <td><strong>Game Visualizer</strong></td>
+      <td>HTML5 Canvas API</td>
+      <td>Native Standard</td>
+      <td>60 FPS vertical falling notes renderer.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>3. Reference Libraries, Source Materials & Datasets</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Domain</th>
+      <th>Resource / Repository</th>
+      <th>Description & Integration Target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Sheet Engine</strong></td>
+      <td><a href="https://github.com/opensheetmusicdisplay/opensheetmusicdisplay">OpenSheetMusicDisplay</a></td>
+      <td>Renders standard <code>.musicxml</code> files to interactive vectors on screen.</td>
+    </tr>
+    <tr>
+      <td><strong>Audio Engine</strong></td>
+      <td><a href="https://github.com/Tonejs/Tone.js">Tone.js Engine</a></td>
+      <td>Manages audio synthesis, audio context playback, and tempo timing.</td>
+    </tr>
+    <tr>
+      <td><strong>UI Component</strong></td>
+      <td><a href="https://github.com/kevinsqi/react-piano">React-Piano</a></td>
+      <td>Reference implementation for interactive on-screen 88-key piano layouts.</td>
+    </tr>
+    <tr>
+      <td><strong>Practice Systems</strong></td>
+      <td><a href="https://github.com/musetrainer/musetrainer.github.io">MuseTrainer</a> / <a href="https://github.com/piano-ml/piano-ml">PianoML</a></td>
+      <td>Reference repos for parsing note-on events against target audio schedules.</td>
+    </tr>
+    <tr>
+      <td><strong>Classical Scores</strong></td>
+      <td>Mutopia Project & IMSLP</td>
+      <td>Massive public-domain score collection in digital MusicXML/MIDI formats.</td>
+    </tr>
+    <tr>
+      <td><strong>Curated Datasets</strong></td>
+      <td>GiantMIDI-Piano & PianoCoRe</td>
+      <td>Cleaned, high-quality open-source piano datasets.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>4. Detailed Features & Development Roadmap</h2>
+
+<div class="roadmap-phase p1">
+  <div class="phase-header">
+    <div class="phase-title">Phase 1: Core Infrastructure & Web MIDI Engine</div>
+  </div>
+  <div class="phase-goal">Objective: Establish USB-C hardware connectivity, profile switching, and sound generation.</div>
+  <ul>
+    <li><strong>P1.1 — Database Schema & Auth Setup <span class="tag">Supabase</span></strong>
+      <br>Setup <code>profiles</code> (kid/adult toggle), <code>lessons</code>, and <code>progress_logs</code> PostgreSQL tables with Row-Level Security policies.
+    </li>
+    <li><strong>P1.2 — Core MIDI Service (<code>useWebMidi</code>) <span class="tag">Web MIDI API</span></strong>
+      <br>React hook capturing USB-C device inputs, normalizing <code>noteOn</code>, <code>noteOff</code>, pitch integers (21–108), and velocity values.
+    </li>
+    <li><strong>P1.3 — Sound Sampler & Profile Switcher <span class="tag">Tone.js</span></strong>
+      <br>Integrate piano soundfont sampler responding to physical keypresses with profile switching in top navigation bar.
+    </li>
+  </ul>
+</div>
+
+<div class="roadmap-phase p2">
+  <div class="phase-header">
+    <div class="phase-title">Phase 2: Kid Module (Gamified 6yo Experience)</div>
+  </div>
+  <div class="phase-goal">Objective: High-dopamine activities centered around 5-finger scales and note visualizer games.</div>
+  <ul>
+    <li><strong>P2.1 — Note Ninja (Flashcard Engine) <span class="tag">React</span> <span class="tag">Sight Reading Factory</span></strong>
+      <br>Single-note flashcards on grand staff with 5-second timers and instant USB-C MIDI note verification.
+    </li>
+    <li><strong>P2.2 — Vertical Falling Notes Engine <span class="tag">HTML5 Canvas</span></strong>
+      <br>60 FPS canvas displaying colored bars descending toward matching on-screen keys.
+    </li>
+    <li><strong>P2.3 — Wait Mode Engine <span class="tag">Event Loop</span></strong>
+      <br>Pauses falling note stream at key threshold line until the matching physical key is played.
+    </li>
+    <li><strong>P2.4 — Micro-Quest Song Chunks <span class="tag">Supabase Storage</span></strong>
+      <br>Songs segmented into 1–2 measure practice levels rewarded with 1 to 3 star ratings based on timing windows (&plusmn;150ms).
+    </li>
+  </ul>
+</div>
+
+<div class="roadmap-phase p3">
+  <div class="phase-header">
+    <div class="phase-title">Phase 3: Adult Module (Sight-Reading & Intermediate Practice)</div>
+  </div>
+  <div class="phase-goal">Objective: Standard notation rendering, looping tools, and technical drills for adult re-learning.</div>
+  <ul>
+    <li><strong>P3.1 — OSMD MusicXML Renderer <span class="tag">OpenSheetMusicDisplay</span></strong>
+      <br>Loads and renders vector sheet music with an active auto-scrolling playback cursor.
+    </li>
+    <li><strong>P3.2 — Practice Suite & Looper <span class="tag">Tone.js Transport</span></strong>
+      <br>Provides A/B measure looping, hands-separate mutes (Bass vs Treble), and tempo adjustment sliders (30%–100% BPM).
+    </li>
+    <li><strong>P3.3 — Technical Drills (Hanon & Algorithmic Sight-Reading) <span class="tag">Mutopia Project</span></strong>
+      <br>JSON-based loader for Hanon Exercises 1–20 paired with an algorithmic 4-measure melody generator for randomized sight-reading.
+    </li>
+  </ul>
+</div>
+
+<div class="roadmap-phase p4">
+  <div class="phase-header">
+    <div class="phase-title">Phase 4: Shared & Advanced Features (Co-Op & Analytics)</div>
+  </div>
+  <div class="phase-goal">Objective: Joint parent-child activities, session recordings, and long-term practice tracking.</div>
+  <ul>
+    <li><strong>P4.1 — Duet Mode (Split Keyboard) <span class="tag">Custom Logic</span></strong>
+      <br>Splits 88 keys into Zone A (Kid: Treble keys 56–108) and Zone B (Parent: Bass keys 21–55) for simultaneous four-hand score evaluation.
+    </li>
+    <li><strong>P4.2 — MIDI Session Recorder <span class="tag">Supabase Storage</span></strong>
+      <br>Captures note-on/off events and timing offsets to save recorded performances for playback review.
+    </li>
+    <li><strong>P4.3 — Practice Dashboard & Streak Logger <span class="tag">Recharts</span></strong>
+      <br>Displays weekly bench time, active daily streaks, and accuracy growth graphs per profile.
+    </li>
+  </ul>
+</div>
+
+<h2>5. Development Execution Plan for Claude Code</h2>
+
+<div class="sprint-list">
+  <ol>
+    <li><strong>Sprint 1 (Infrastructure):</strong> Initialize Next.js PWA repository, configure Supabase tables/client, and build the core <code>useWebMidi</code> hook.</li>
+    <li><strong>Sprint 2 (Kid Core):</strong> Develop the HTML5 Canvas vertical falling-notes renderer, build "Wait Mode" mechanics, and create the "Note Ninja" flashcard component.</li>
+    <li><strong>Sprint 3 (Adult Core):</strong> Integrate OpenSheetMusicDisplay, construct the A/B measure looper and tempo UI, and load the Hanon drill dataset.</li>
+    <li><strong>Sprint 4 (Polishing & Duet):</strong> Implement split-keyboard evaluation for Duet Mode, set up MIDI recording to Supabase Storage, and finalize the shared dashboard.</li>
+  </ol>
+</div>
+
+</body>
+</html>

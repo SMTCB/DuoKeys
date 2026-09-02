@@ -1,0 +1,343 @@
+# DuoKeys — Test Scenarios
+
+**Document ID:** TEST
+**Version:** 1.0
+**Date:** 2 September 2026
+**References:** [01-TECHNICAL-ARCHITECTURE.md](01-TECHNICAL-ARCHITECTURE.md) ·
+[02-FUNCTIONAL-SPECIFICATION.md](02-FUNCTIONAL-SPECIFICATION.md) ·
+[03-SPRINT-PLAN.md](03-SPRINT-PLAN.md)
+
+---
+
+## Testing strategy
+
+The payoff for the pure core (ADR-005) is that CI has no MIDI device, no audio
+hardware and no six-year-old, and needs none of them. Roughly 80% of the risk in
+this product lives in `core/`, which is 100% testable in node.
+
+| Tier | ID prefix | Runner | Hardware | Runs |
+|---|---|---|---|---|
+| Unit — pure core | `TS-U-*` | Vitest (node) | none | every commit |
+| Integration — adapters + core | `TS-I-*` | Vitest (jsdom / fake backends) | none | every commit |
+| Golden fixtures — recorded performances | `TS-G-*` | Vitest | none | every commit |
+| End-to-end — full app | `TS-E-*` | Playwright | none (mock MIDI) | pre-merge |
+| Manual — hardware and human | `TS-M-*` | human at the piano | **yes** | per sprint exit |
+
+### Fixture strategy
+
+A `PerformanceFixture` is a recorded or hand-authored stream of `RawMidiMessage`
+with timestamps, replayed by `FakeMidiBackend` against a `FakeClock`. Fixtures are
+captured from real sessions in Sprint 0–1 and checked into the repo. This is what
+makes `TS-G-*` possible and what stops matcher tuning from silently regressing
+grading.
+
+### Coverage targets
+
+| Area | Target | Rationale |
+|---|---|---|
+| `core/clock` | 100% branch | Silent drift is undebuggable in production |
+| `core/matcher` | 100% branch | The correctness heart of the product |
+| `core/grading` | 100% branch | Wrong stars destroy a child's trust in the app |
+| `core/content` | 95% | Build-time, so failures are loud |
+| `adapters/` | 70% | Thin by design; e2e covers the rest |
+| `ui/` | smoke only | Presentational, changes constantly |
+
+---
+
+## 1. Clock — `TS-U-CLK-*`
+
+| ID | Scenario | Given / When / Then | Verifies |
+|---|---|---|---|
+| `TS-U-CLK-001` | Tick↔second conversion round-trips | Given a 120 bpm constant tempo map, when converting 480 ticks to seconds and back, then the result equals 480 ticks exactly | TA-CLK-001 |
+| `TS-U-CLK-002` | Tempo changes are honoured | Given a map with 120 bpm for 4 bars then 60 bpm, when converting a tick in bar 6, then the elapsed seconds reflect both segments | TA-CLK-002 |
+| `TS-U-CLK-003` | Tempo scaling is applied | Given tempo scale 0.5, when converting ticks to audio time, then durations double | FR-STU-004 |
+| `TS-U-CLK-004` | EMA converges on a constant offset | Given a fake audio clock offset by a fixed 12 ms, when 50 events are observed, then `wallToAudio` is within 0.5 ms of truth | TA-CLK-003 |
+| `TS-U-CLK-005` | EMA rejects a single outlier | Given a converged EMA, when one event arrives 200 ms out, then the correction shifts by less than 10 ms | TA-CLK-003 |
+| `TS-U-CLK-006` | Drift over a long session stays bounded | Given clocks drifting at 1 ms/minute, when 30 simulated minutes elapse, then correction error stays under 5 ms | TA-CLK-003, RISK-001 |
+| `TS-U-CLK-007` | Calibration uses median not mean | Given 16 taps of which one is 400 ms late, when computing the offset, then the result is unaffected by the outlier | TA-CLK-004 |
+| `TS-U-CLK-008` | Calibration rejects too few samples | Given fewer than 8 usable taps, when computing, then calibration reports failure rather than a bad number | TA-CLK-004 |
+| `TS-U-CLK-009` | Branded types prevent domain mixing | Given `Millis` and `Seconds`, when mixed without conversion, then it is a compile error | TA-CLK-001 |
+| `TS-U-CLK-010` | Pause and resume do not advance musical time | Given a running clock, when paused for 5 s and resumed, then tick position is unchanged | TA-CLK-002 |
+
+---
+
+## 2. MIDI pipeline — `TS-U-MID-*`
+
+| ID | Scenario | Given / When / Then | Verifies |
+|---|---|---|---|
+| `TS-U-MID-001` | Note on decoded | Given `0x90 3C 64`, then a NoteOn at pitch 60 velocity 100 | TA-MID-002 |
+| `TS-U-MID-002` | Note off decoded | Given `0x80 3C 40`, then a NoteOff at pitch 60 | TA-MID-002 |
+| `TS-U-MID-003` | **Velocity-0 note-on is a note-off** | Given `0x90 3C 00`, then a NoteOff, not a NoteOn | TA-MID-002 |
+| `TS-U-MID-004` | Active sensing is swallowed | Given 100 × `0xFE`, then zero events are emitted | TA-MID-002 |
+| `TS-U-MID-005` | CC64 threshold | Given CC64 value 63 then 64, then pedal reads up then down | TA-MID-004 |
+| `TS-U-MID-006` | Running status handled | Given a running-status stream, then all notes decode correctly | TA-MID-002 |
+| `TS-U-MID-007` | Unknown message ignored safely | Given a SysEx or unhandled status byte, then no crash and no event | TA-MID-002 |
+| `TS-U-MID-008` | Latency offset applied | Given `latencyOffsetMs` of 30, when an event arrives at t, then the graded timestamp is t − 30 | TA-CLK-004 |
+| `TS-U-MID-009` | Note-on/off paired into duration | Given on at 0 ms and off at 250 ms, then one NoteEvent of 250 ms | TA-MID-001 |
+| `TS-U-MID-010` | Unmatched note-off ignored | Given a note-off with no preceding note-on, then no crash and no event | TA-MID-001 |
+| `TS-U-MID-011` | Repeated note-on without note-off | Given two note-ons for the same pitch, then the first is closed and a new one opens | TA-MID-001 |
+
+### PedalTracker — `TS-U-PED-*`
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-U-PED-001` | Key released with pedal up → `keyUp: true, stoppedSounding: true` | TA-MID-004 |
+| `TS-U-PED-002` | Key released with pedal down → `keyUp: true, stoppedSounding: false` | TA-MID-004 |
+| `TS-U-PED-003` | Pedal up after sustained release → note-off emitted for each sustained pitch | TA-MID-004 |
+| `TS-U-PED-004` | Note re-pressed while sustained → moves back to held, not double-counted | TA-MID-004 |
+| `TS-U-PED-005` | Pedal down with no notes held → no events, no error | TA-MID-004 |
+| `TS-U-PED-006` | Half-pedal (CC64 = 64 exactly) treated as down | TA-MID-004 |
+
+---
+
+## 3. Matcher — `TS-U-MAT-*`
+
+### Wait mode
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-U-MAT-001` | Correct single note advances the stream | TA-MAT-002, FR-EXP-003 |
+| `TS-U-MAT-002` | Wrong note does not advance and does not fail the attempt | TA-MAT-002 |
+| `TS-U-MAT-003` | Three-note chord advances only when all three are down | TA-MAT-002, TA-MAT-004 |
+| `TS-U-MAT-004` | Chord notes arriving 500 ms apart still count as one group | TA-MAT-004 |
+| `TS-U-MAT-005` | **No timeout ever fires** — 60 s of silence leaves state unchanged | FR-EXP-003 |
+| `TS-U-MAT-006` | Extra notes are reported but never block advancement | TA-MAT-002 |
+| `TS-U-MAT-007` | Notes below velocity 12 are ignored | TA-MAT-005 |
+| `TS-U-MAT-008` | Reset returns the matcher to the first group | TA-MAT-001 |
+
+### Timed mode
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-U-MAT-010` | Note within `perfect` window scores perfect | TA-MAT-003, TA-MAT-006 |
+| `TS-U-MAT-011` | Note within `good` but outside `perfect` scores good | TA-MAT-006 |
+| `TS-U-MAT-012` | Note outside `loose` counts as extra, and the expected note as missed | TA-MAT-003 |
+| `TS-U-MAT-013` | **Monotonic constraint** — a late note cannot match an expected slot earlier than one already matched | TA-MAT-003 |
+| `TS-U-MAT-014` | Greedy nearest-match picks the closer of two candidate expectations | TA-MAT-003 |
+| `TS-U-MAT-015` | Expected note past its window is reported missed exactly once | TA-MAT-003 |
+| `TS-U-MAT-016` | Tolerance at 60 bpm is wider than at 160 bpm | TA-MAT-006, ADR-007 |
+| `TS-U-MAT-017` | Tolerance never drops below the absolute floor at very high tempo | TA-MAT-006 |
+| `TS-U-MAT-018` | `toleranceScale` 1.6 widens all windows proportionally | FR-EXP-007 |
+| `TS-U-MAT-019` | Octave error is classified `octave`, not `other` | TA-MAT-001 |
+| `TS-U-MAT-020` | Semitone error is classified `neighbour` | TA-MAT-001 |
+| `TS-U-MAT-021` | Two matcher instances fed disjoint pitch ranges do not interfere | FR-DUO-002 |
+
+---
+
+## 4. Grading — `TS-U-GRD-*`
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-U-GRD-001` | Perfect performance → accuracy 1.0, completion 1.0, 3 stars | TA-GRD-002 |
+| `TS-U-GRD-002` | 90% accuracy, full completion → 2 stars | TA-GRD-002 |
+| `TS-U-GRD-003` | 70% completion → 1 star | TA-GRD-002 |
+| `TS-U-GRD-004` | 40% completion → 0 stars | TA-GRD-002 |
+| `TS-U-GRD-005` | **Explorer floor** — completed attempt with 50% accuracy still yields ≥ 1 star | FR-EXP-007 |
+| `TS-U-GRD-006` | Consistently 40 ms early → `rushDragMs` = −40, signed | TA-GRD-001, FR-STU-008 |
+| `TS-U-GRD-007` | Alternating ±40 ms → `rushDragMs` ≈ 0 but `timingRmsMs` ≈ 40 | TA-GRD-001 |
+| `TS-U-GRD-008` | Perfectly even intervals → `evennessCv` = 0 | TA-GRD-003 |
+| `TS-U-GRD-009` | Lumpy intervals → `evennessCv` > 0.20 | TA-GRD-003, FR-STU-007 |
+| `TS-U-GRD-010` | Per-measure aggregation attributes errors to the correct bar | TA-GRD-004, FR-STU-009 |
+| `TS-U-GRD-011` | Empty attempt (no notes played) grades 0 without dividing by zero | TA-GRD-001 |
+| `TS-U-GRD-012` | Grade is deterministic — same fixture, same grade, every run | TA-GRD-001 |
+
+---
+
+## 5. Content pipeline — `TS-U-CNT-*`
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-U-CNT-001` | MusicXML parses to notes with correct pitch, start and duration | TA-CNT-001 |
+| `TS-U-CNT-002` | Ties are merged into a single note | TA-CNT-001 |
+| `TS-U-CNT-003` | Grace notes are resolved, not dropped | TA-CNT-001 |
+| `TS-U-CNT-004` | Output is normalised to 480 PPQ regardless of source division | TA-CNT-001 |
+| `TS-U-CNT-005` | Notes within 30 ticks share a `groupId` | TA-MAT-004 |
+| `TS-U-CNT-006` | Notes 31 ticks apart get different `groupId`s | TA-MAT-004 |
+| `TS-U-CNT-007` | Sections split on phrase boundaries where present | FR-CON-003 |
+| `TS-U-CNT-008` | Sections fall back to 2 bars where no phrase marks exist | FR-CON-003 |
+| `TS-U-CNT-009` | **Missing licence entry exits non-zero** | TA-CNT-005, FR-CON-004 |
+| `TS-U-CNT-010` | Licence entry without a verification date fails the build | TA-CNT-005 |
+| `TS-U-CNT-011` | Difficulty sub-scores are published in the output JSON | TA-CNT-002 |
+| `TS-U-CNT-012` | A five-finger middle-C tune scores difficulty 1 | TA-CNT-003, ADR-008 |
+| `TS-U-CNT-013` | A grand-staff piece with accidentals scores 4 or above | TA-CNT-003 |
+| `TS-U-CNT-014` | Part→hand mapping assigns treble/bass staves correctly | TA-CNT-001 |
+| `TS-U-CNT-015` | Malformed MusicXML fails with a message naming the file | TA-CNT-001 |
+| `TS-U-CNT-016` | A note starting exactly on a section's `endTick` belongs to the next section, not this one (half-open range) | TA-DAT-001 |
+| `TS-U-CNT-017` | An arrangement's quest sections partition its full tick range with no gaps or overlaps, and its one reward section spans the whole piece | TA-DAT-001, FR-EXP-004 |
+
+---
+
+## 6. Progression — `TS-U-PRO-*`
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-U-PRO-001` | With no attempts, only the first quest section is unlocked | FR-PRO-002 |
+| `TS-U-PRO-002` | A quest section unlocks once the previous quest's best attempt earns ≥ 1 star | FR-PRO-002, FR-EXP-007 |
+| `TS-U-PRO-003` | The reward section stays locked until every quest section has ≥ 1 star, then unlocks | FR-PRO-002, FR-EXP-004 |
+| `TS-U-PRO-004` | `bestStars` for a section is the maximum `grade.stars` across all attempts for that section, not the most recent | FR-PRO-002 |
+| `TS-U-PRO-005` | An attempt tagged with one section's id does not affect another section's unlock state or star count | FR-PRO-002 |
+
+---
+
+## 7. Renderer geometry — `TS-U-REN-*`
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-U-REN-001` | White keys tile uniformly across the range | TA-REN-002 |
+| `TS-U-REN-002` | Black keys are inset and overlap their neighbours | TA-REN-002 |
+| `TS-U-REN-003` | The 2–3 black-key grouping repeats correctly every octave | TA-REN-002 |
+| `TS-U-REN-004` | Pitch 21 maps to x = 0 and pitch 108 to the right edge for an 88-key range | TA-REN-002, ADR-009 |
+| `TS-U-REN-005` | A 61-key range renders 61 keys, not a scaled 88 | TA-REN-002 |
+| `TS-U-REN-006` | Note y-position derives from clock time, not a frame counter | TA-REN-001 |
+
+---
+
+## 8. Data and sync — `TS-I-*`
+
+### Persistence
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-I-DAT-001` | An attempt written to IndexedDB survives a page reload | TA-DAT-003, FR-PRO-003 |
+| `TS-I-DAT-002` | Attempts are flushed per section, so a crash mid-piece loses at most one section | NFR-007 |
+| `TS-I-DAT-003` | Querying by `profileId+startedAt` returns attempts in order | TA-DAT-003 |
+| `TS-I-DAT-004` | Progression state recomputes identically from an attempt history | FR-PRO-002, TA-SYN-003 |
+| `TS-I-DAT-005` | Schema migration from v1 to v2 preserves all attempts | TA-DAT-003 |
+| `TS-I-DAT-006` | Two profiles' data never cross-read | FR-PRO-001 |
+
+### Sync
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-I-SYN-001` | A local write appends an outbox op | TA-SYN-004 |
+| `TS-I-SYN-002` | Outbox flushes when the network returns and empties | TA-SYN-004, FR-SYN-002 |
+| `TS-I-SYN-003` | A failed push is retried and does not lose the op | TA-SYN-004 |
+| `TS-I-SYN-004` | **RLS** — a second authenticated user cannot read the first user's rows | TA-SYN-005, FR-SYS-008 |
+| `TS-I-SYN-005` | Pull on a fresh device restores all profiles and attempts | FR-SYN-003 |
+| `TS-I-SYN-006` | The same attempt pushed twice does not duplicate (idempotent on client uuid) | TA-SYN-003 |
+| `TS-I-SYN-007` | Settings conflict resolves last-write-wins on `updatedAt` | TA-SYN-003 |
+| `TS-I-SYN-008` | Two devices appending different attempts both survive — no conflict | TA-SYN-003 |
+| `TS-I-SYN-009` | **Sync never blocks practice** — with the network hung, a full session completes at normal speed | FR-SYN-002, ADR-003 |
+| `TS-I-SYN-010` | A paused Supabase project degrades to "sync behind", not an app outage | TA-SYN-006 |
+
+### MIDI adapter
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-I-MID-001` | `WebMidiBackend` enumerates inputs and opens the selected one | FR-SYS-001 |
+| `TS-I-MID-002` | Chosen input is remembered and reopened on next launch | FR-SYS-001 |
+| `TS-I-MID-003` | Mid-session disconnect pauses and preserves the in-progress attempt | FR-SYS-004, TA-MID-005 |
+| `TS-I-MID-004` | Reconnect resumes without losing state | FR-SYS-004 |
+| `TS-I-MID-005` | Absent `requestMIDIAccess` shows the unsupported-browser explanation | FR-SYS-005 |
+
+---
+
+## 9. Golden fixtures — `TS-G-*`
+
+Recorded real performances replayed end-to-end through decode → pedal → matcher →
+grade, asserting the **exact** resulting `Grade`. These are the regression net that
+makes tolerance tuning safe.
+
+| ID | Fixture | Asserts |
+|---|---|---|
+| `TS-G-001` | Adult, clean run of an 8-bar tune at 100% tempo | 3 stars, accuracy 1.0, \|rushDrag\| < 20 ms |
+| `TS-G-002` | Adult, same tune consistently rushing | 3 stars, `rushDragMs` negative and > 25 ms in magnitude |
+| `TS-G-003` | Child, wait mode, long pauses between notes | Completion 1.0, ≥ 1 star, no timeout artefacts |
+| `TS-G-004` | Child, several wrong notes then corrections | Extras recorded, stream still completes |
+| `TS-G-005` | Heavy sustain pedal use throughout | Note durations graded on key-up, not on sound-stop |
+| `TS-G-006` | Rolled chords played over ~200 ms | Each chord scores as one group, not three errors |
+| `TS-G-007` | Hanon exercise, deliberately uneven | `evennessCv` > 0.20 |
+| `TS-G-008` | Hanon exercise, even | `evennessCv` < 0.08 |
+| `TS-G-009` | Attempt abandoned halfway | Completion ≈ 0.5, stars per threshold, no crash |
+| `TS-G-010` | Duet fixture, two players, overlapping timing | Two independent grades, neither affected by the other |
+
+**Rule:** any change to `TA-MAT-006` tolerance constants must be accompanied by
+reviewed, intentional updates to these fixtures' expected values. A silent fixture
+update in a diff is a review blocker.
+
+---
+
+## 10. End-to-end — `TS-E-*`
+
+Playwright, with a mock MIDI backend injected at the composition root.
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-E-001` | First run: connect → create profile → calibrate → play, in under 3 minutes | FR-SYS-003 |
+| `TS-E-002` | Cold start to playable under 3 s | NFR-004 |
+| `TS-E-003` | Child completes a section and sees a star land on the map | FR-EXP-001, FR-EXP-004 |
+| `TS-E-004` | Completing a section unlocks the next node | FR-PRO-002 |
+| `TS-E-005` | Profile switch in one tap with no password | FR-PRO-001 |
+| `TS-E-006` | Note Ninja: correct answer under 2 s continues a streak | FR-EXP-005 |
+| `TS-E-007` | Note Ninja: no answer for 6 s reveals a hint and does not fail | FR-EXP-005 |
+| `TS-E-008` | Full session runs with the network disabled and shows no error state | FR-SYN-005, NFR-005 |
+| `TS-E-009` | Sign in, practise, sign in on a second browser profile, history is present | FR-SYN-003 |
+| `TS-E-010` | Studio A/B loop repeats the selected measures | FR-STU-003 |
+| `TS-E-011` | Auto-ramp raises tempo after a clean pass | FR-STU-004 |
+| `TS-E-012` | Explorer route bundle contains no OSMD | NFR-006 |
+| `TS-E-013` | `prefers-reduced-motion` suppresses particle effects but keeps falling notes | NFR-011 |
+| `TS-E-014` | All interactive targets are ≥ 44 px | NFR-009 |
+| `TS-E-015` | Duet: split point and transposition give each side its own middle C | FR-DUO-001 |
+| `TS-E-016` | Boundary lint fails on a deliberate `react` import in `core/` | TA-PORT-005 |
+
+---
+
+## 11. Manual and hardware — `TS-M-*`
+
+These cannot be automated. Run at each sprint exit.
+
+| ID | Scenario | Sprint | Verifies |
+|---|---|---|---|
+| `TS-M-001` | Round-trip latency measured on the real instrument is under 80 ms after calibration | 0 | RISK-001 |
+| `TS-M-002` | Key press to rectangle lighting up feels immediate to the eye | 0 | NFR-001 |
+| `TS-M-003` | Instrument's real MIDI quirks documented (velocity-0, active sensing rate, CC behaviour) | 0 | TA-MID-002 |
+| `TS-M-004` | Falling notes hold 60 fps for a full 5-minute session with no visible stutter | 1 | NFR-002 |
+| `TS-M-005` | A child completes 8 bars in wait mode unassisted | 1 | FR-EXP-003 |
+| `TS-M-006` | **The child uses the app daily for a week with no developer present** | 2 | RISK-002 |
+| `TS-M-007` | At least one designed feature is observed to be unused and is removed | 2 | RISK-002 |
+| `TS-M-008` | Sync round-trips between two physical machines | 2 | FR-SYN-003 |
+| `TS-M-009` | The adult prefers this to their existing practice method for a full week | 3 | RISK-005 |
+| `TS-M-010` | Notation cursor tracking feels correct while playing, not just in fixtures | 3 | FR-STU-001 |
+| `TS-M-011` | Parent and child play four hands and both results feel fair | 4 | FR-DUO-002 |
+| `TS-M-012` | Duet transposition feels right to the child — their part sounds where they expect | 4 | FR-DUO-001 |
+| `TS-M-013` | Cable disconnected mid-piece: recovery is calm and nothing is lost | 4 | FR-SYS-004 |
+| `TS-M-014` | Same golden fixtures produce identical grades on iPad and laptop | 5 | US-5.04 |
+
+---
+
+## 12. Coverage matrix
+
+Every `M`-priority requirement has at least one automated scenario, and every
+critical-path behaviour has a manual confirmation.
+
+| Requirement | Automated | Manual |
+|---|---|---|
+| FR-EXP-002 | TS-U-REN-001…006, TS-E-003 | TS-M-004 |
+| FR-EXP-003 | TS-U-MAT-001…008 | TS-M-005 |
+| FR-EXP-004 | TS-U-CNT-007, TS-U-CNT-016, 017, TS-E-003 | TS-M-006 |
+| FR-EXP-005 | TS-E-006, TS-E-007 | TS-M-006 |
+| FR-EXP-007 | TS-U-GRD-001…005, TS-U-MAT-018 | TS-M-006 |
+| FR-STU-001 | TS-E-010 | TS-M-010 |
+| FR-STU-003 | TS-E-010 | TS-M-009 |
+| FR-STU-004 | TS-U-CLK-003, TS-E-011 | TS-M-009 |
+| FR-STU-007 | TS-U-GRD-008, 009, TS-G-007, 008 | TS-M-009 |
+| FR-STU-008 | TS-U-GRD-006, 007 | — |
+| FR-DUO-001 | TS-E-015 | TS-M-012 |
+| FR-DUO-002 | TS-U-MAT-021, TS-G-010 | TS-M-011 |
+| FR-PRO-001 | TS-I-DAT-006, TS-E-005 | — |
+| FR-PRO-002 | TS-U-PRO-001…005, TS-I-DAT-004, TS-E-004 | — |
+| FR-PRO-003 | TS-I-DAT-001, 002 | — |
+| FR-CON-001 | TS-U-CNT-001…004 | — |
+| FR-CON-003 | TS-U-CNT-007, 008 | — |
+| FR-CON-004 | TS-U-CNT-009, 010 | — |
+| FR-SYN-001 | TS-I-SYN-004 | — |
+| FR-SYN-002 | TS-I-SYN-001…003, 009 | TS-M-008 |
+| FR-SYN-003 | TS-I-SYN-005, TS-E-009 | TS-M-008 |
+| FR-SYN-005 | TS-E-008, TS-I-SYN-010 | — |
+| FR-SYS-001 | TS-I-MID-001, 002 | TS-M-003 |
+| FR-SYS-002 | TS-U-CLK-007, 008 | TS-M-001 |
+| FR-SYS-003 | TS-E-001 | — |
+| FR-SYS-004 | TS-I-MID-003, 004 | TS-M-013 |
+| FR-SYS-005 | TS-I-MID-005 | — |
+| FR-SYS-007 | TS-E-013, TS-E-014 | — |
+| FR-SYS-008 | TS-I-SYN-004 | — |

@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuoKeys · Sprint Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="_doc.css">
+</head>
+<body data-doc="sprints.html">
+<div class="shell">
+
+<aside class="rail">
+  <div class="brand">
+    <span class="keybed" aria-hidden="true"><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i></i><i class="b"></i><i></i></span>
+    <b>DuoKeys</b>
+  </div>
+  <div class="docid">SPRINT · v1.0</div>
+  <div class="switch">
+    <a href="index.html">Index</a>
+    <a href="architecture.html">Tech</a>
+    <a href="functional.html">Func</a>
+    <a href="sprints.html" aria-current="page">Sprints</a>
+  </div>
+  <input id="filter" type="search" placeholder="Filter  ( / )" aria-label="Filter stories">
+  <div id="filterMeta"></div>
+  <nav id="toc" aria-label="Contents"></nav>
+  <div class="foot">
+    67 stories · 190 points<br>v1 is sprints 0–4<br>
+    <button id="themeBtn" type="button">auto</button>
+  </div>
+</aside>
+
+<main>
+  <div class="mast">
+    <h1>Sprint plan &amp; <em>user stories</em></h1>
+    <p class="lede">Six sprints of vertical slices, riskiest first. Every one of them ends with something that can be played at the piano — not with a completed layer.</p>
+    <div class="meta">
+      <span>Doc <b>SPRINT</b></span><span>Version <b>1.0</b></span><span>2 September 2026</span><span>v1 <b>~7 weeks</b></span>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div><span class="v">67</span><span class="l">stories</span></div>
+    <div><span class="v">174</span><span class="l">points to v1</span></div>
+    <div><span class="v">6</span><span class="l">sprints</span></div>
+    <div><span class="v">1</span><span class="l">go/no-go gate</span></div>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="strategy" data-toc="Strategy"><span class="num">00</span>Strategy</h2>
+
+  <p><strong>Vertical slices, riskiest first.</strong> The reason is RISK-001: the entire project rests on whether the timing <em>feels</em> right, and no amount of architecture makes that question answerable from a desk. So the hardware spike comes before the repo, and the child's real week of use comes before the adult's features.</p>
+
+  <p><strong>Story IDs</strong> are <code>US-&lt;sprint&gt;.&lt;nn&gt;</code>. Each story names the FR it delivers and the TA it builds against — both are clickable throughout this page. Estimates are in points where <strong>1 point ≈ half a focused day</strong>.</p>
+
+  <div class="note">
+    <p><span class="k">Definition of Ready</span>The story names its FR and TA references, its acceptance criteria are testable without a human judgement call, and its test scenarios already exist in <code>04-TEST-SCENARIOS.md</code>. A story that fails any of the three does not enter a sprint.</p>
+  </div>
+
+  <p><strong>Definition of Done</strong> is the nine-point list in <code>05-ENGINEERING-HANDBOOK.md</code>, and it includes the documentation clause — see <code>CLAUDE.md</code> for exactly which files each kind of change obliges you to touch.</p>
+
+  <!-- ================================================================ -->
+  <h2 id="sprint-0" data-toc="Sprint 0 — Hardware spike"><span class="num">S0</span>Hardware spike</h2>
+
+  <div class="sp">
+    <div class="hd"><span class="no">Sprint 0</span><span class="ti">Hardware spike</span><span class="du">1–2 days · 6 pts</span></div>
+    <div class="body">
+      <blockquote><p><strong>The only sprint with a go/no-go gate.</strong> Nothing else is built until this is answered. One HTML file, no framework, no repo structure.</p></blockquote>
+      <p><strong>Goal:</strong> know the real latency of the real instrument on the real laptop.</p>
+
+      <div class="tw"><table>
+        <thead><tr><th>ID</th><th>Story</th><th>FR</th><th>TA</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr id="US-0.01"><td class="us">US-0.01</td><td class="story">As the developer, I can open the piano's MIDI input in Chrome and see note-on events logged with timestamps, so that I know Web MIDI works with this instrument at all.</td><td>FR-SYS-001</td><td>TA-PORT-002, TA-MID-002</td><td class="n">1</td></tr>
+          <tr id="US-0.02"><td class="us">US-0.02</td><td class="story">As the developer, I can see a rectangle light up within one frame of pressing a key, so that I can judge visual latency by eye.</td><td>—</td><td>TA-REN-001</td><td class="n">1</td></tr>
+          <tr id="US-0.03"><td class="us">US-0.03</td><td class="story">As the developer, I can trigger a Tone.js note on key press, so that I can judge audio latency by ear.</td><td>—</td><td>TA-AUD-001</td><td class="n">1</td></tr>
+          <tr id="US-0.04"><td class="us">US-0.04</td><td class="story">As the developer, I can measure round-trip latency numerically by tapping along to a click and reading the median offset, so that the calibration approach is proven before it is built properly.</td><td>FR-SYS-002</td><td>TA-CLK-004</td><td class="n">2</td></tr>
+          <tr id="US-0.05"><td class="us">US-0.05</td><td class="story">As the developer, I can confirm the instrument sends CC64 sustain and note-on-velocity-0, so that TA-MID-002 and TA-MID-004 are built against reality rather than assumption.</td><td>—</td><td>TA-MID-002, TA-MID-004</td><td class="n">1</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="note"><p><span class="k">Ready to run</span>The spike is already built: open <code>sprint-0-spike.html</code> at the repo root. It measures everything above, renders the go/no-go verdict itself, and emits a pre-filled <code>docs/sprint-0-findings.md</code>.</p></div>
+    </div>
+
+    <div class="exit stop">
+      <p><span class="k">Exit criteria</span></p>
+      <ul>
+        <li>Measured latency is known and recorded in the repo.</li>
+        <li>The instrument's MIDI quirks — velocity-0 note-off, active sensing rate, CC behaviour — are documented.</li>
+        <li><strong>Go/no-go:</strong> if latency after calibration is above ~80 ms and cannot be reduced, <strong>stop and reconsider before building anything</strong>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="sprint-1" data-toc="Sprint 1 — Walking skeleton"><span class="num">S1</span>Walking skeleton</h2>
+
+  <div class="sp">
+    <div class="hd"><span class="no">Sprint 1</span><span class="ti">Walking skeleton</span><span class="du">~1 week · 34 pts</span></div>
+    <div class="body">
+      <blockquote><p>Every hard problem in the project gets touched exactly once. Nothing is polished. Styling is "legible" and no further.</p></blockquote>
+      <p><strong>Goal:</strong> a child can sit at the piano, play eight bars in wait mode, and see stars.</p>
+
+      <div class="grp">Foundation</div>
+      <div class="tw"><table>
+        <thead><tr><th>ID</th><th>Story</th><th>FR</th><th>TA</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr id="US-1.01"><td class="us">US-1.01</td><td class="story">As the developer, I have a Next.js + TypeScript repo with the four-layer structure and the boundary lint rule failing CI on violation, so that the iPad path cannot silently close.</td><td>—</td><td>TA-PORT-001, TA-PORT-005, TA-APP-001</td><td class="n">2</td></tr>
+          <tr id="US-1.02"><td class="us">US-1.02</td><td class="story">As the developer, I have the five port interfaces defined and a fake implementation of each, so that core logic is testable with no hardware.</td><td>—</td><td>TA-PORT-002, TA-PORT-004</td><td class="n">2</td></tr>
+          <tr id="US-1.03"><td class="us">US-1.03</td><td class="story">As the developer, I have a Supabase project created and its credentials in env, so that the seven-day pause clock never becomes a Sprint 2 surprise.</td><td>FR-SYN-001</td><td>TA-SYN-006, ADR-004</td><td class="n">1</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="grp">Clock</div>
+      <div class="tw"><table>
+        <thead><tr><th>ID</th><th>Story</th><th>FR</th><th>TA</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr id="US-1.04"><td class="us">US-1.04</td><td class="story">As the system, I convert between wall, audio and musical time through one <code>MasterClock</code>, so that grading and playback never disagree.</td><td>—</td><td>TA-CLK-001, TA-CLK-002, ADR-006</td><td class="n">3</td></tr>
+          <tr id="US-1.05"><td class="us">US-1.05</td><td class="story">As the system, I correct wall-clock drift toward the audio clock with an EMA, so that a ten-minute session does not accumulate a perceptible offset.</td><td>—</td><td>TA-CLK-003</td><td class="n">2</td></tr>
+          <tr id="US-1.06"><td class="us">US-1.06</td><td class="story">As a player, I can run a tap-along calibration and have my latency offset stored, so that the app grades what I actually played.</td><td>FR-SYS-002</td><td>TA-CLK-004</td><td class="n">3</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="grp">MIDI</div>
+      <div class="tw"><table>
+        <thead><tr><th>ID</th><th>Story</th><th>FR</th><th>TA</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr id="US-1.07"><td class="us">US-1.07</td><td class="story">As a player, I can select my piano from a list of MIDI inputs and have it remembered, so that I do not reconfigure every session.</td><td>FR-SYS-001</td><td>TA-PORT-003, TA-MID-001</td><td class="n">2</td></tr>
+          <tr id="US-1.08"><td class="us">US-1.08</td><td class="story">As the system, I decode note-on, note-off, velocity-0-as-note-off and CC64, and silently swallow active sensing, so that the event stream is clean.</td><td>—</td><td>TA-MID-002, TA-MID-003</td><td class="n">2</td></tr>
+          <tr id="US-1.09"><td class="us">US-1.09</td><td class="story">As the system, I track sustain pedal state and distinguish "key up" from "note stopped sounding", so that grading and rendering each get the event they need.</td><td>FR-STU-006</td><td>TA-MID-004</td><td class="n">3</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="grp">Play loop</div>
+      <div class="tw"><table>
+        <thead><tr><th>ID</th><th>Story</th><th>FR</th><th>TA</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr id="US-1.10"><td class="us">US-1.10</td><td class="story">As a player, I see falling bars descend toward a hit line above an on-screen keybed at 60 fps, so that the mapping from screen to hands is spatial.</td><td>FR-EXP-002</td><td>TA-REN-001, TA-REN-002, NFR-002</td><td class="n">5</td></tr>
+          <tr id="US-1.11"><td class="us">US-1.11</td><td class="story">As a beginner, the stream waits at the hit line until I play the right notes, with no timer and no penalty, so that there is no failure state.</td><td>FR-EXP-003</td><td>TA-MAT-001, TA-MAT-002</td><td class="n">3</td></tr>
+          <tr id="US-1.12"><td class="us">US-1.12</td><td class="story">As a player, notes within 30 ticks of each other count as one chord decision, so that a rolled chord is not three errors.</td><td>—</td><td>TA-MAT-004</td><td class="n">2</td></tr>
+          <tr id="US-1.13"><td class="us">US-1.13</td><td class="story">As a player, I can play one hard-coded eight-bar tune end to end and receive 0–3 stars.</td><td>FR-EXP-007</td><td>TA-GRD-001, TA-GRD-002</td><td class="n">3</td></tr>
+          <tr id="US-1.14"><td class="us">US-1.14</td><td class="story">As a player, my attempt is saved to IndexedDB and survives a browser restart.</td><td>FR-PRO-003</td><td>TA-DAT-002, TA-DAT-003, NFR-007</td><td class="n">2</td></tr>
+        </tbody>
+      </table></div>
+
+      <p><strong>Out of scope this sprint:</strong> auth, sync flush, content pipeline, second module, Note Ninja, styling.</p>
+
+    </div>
+
+    <div class="exit">
+      <p><span class="k">Exit criteria</span></p>
+      <ul>
+        <li>A child completes eight bars in wait mode and sees stars, unassisted.</li>
+        <li>CI is green, boundary lint passes, <code>TS-U-*</code> fixtures run without hardware.</li>
+        <li>Cold start to playable is under 3 s (NFR-004).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="sprint-2" data-toc="Sprint 2 — The child's loop"><span class="num">S2</span>The child's loop, for real</h2>
+
+  <div class="sp">
+    <div class="hd"><span class="no">Sprint 2</span><span class="ti">The child's loop, for real</span><span class="du">~2 weeks · 60 pts</span></div>
+    <div class="body">
+      <blockquote><p>The sprint that decides whether the product exists. Its exit criterion is behavioural, not technical.</p></blockquote>
+      <p><strong>Goal:</strong> a week of real daily use by the child with no developer present.</p>
+
+      <div class="grp">Profiles and sync</div>
+      <div class="tw"><table>
+        <thead><tr><th>ID</th><th>Story</th><th>FR</th><th>TA</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr id="US-2.01"><td class="us">US-2.01</td><td class="story">As a family, we have separate profiles with our own names, avatars and calibration, switchable in one tap without a password.</td><td>FR-PRO-001</td><td>TA-DAT-004</td><td class="n">3</td></tr>
+          <tr id="US-2.02"><td class="us">US-2.02</td><td class="story">As the adult, I sign in with an email magic link, so that the household has an account without the child having credentials.</td><td>FR-SYN-001</td><td>TA-SYN-002</td><td class="n">3</td></tr>
+          <tr id="US-2.03"><td class="us">US-2.03</td><td class="story">As the system, I queue every syncable write to an outbox and flush it in the background when online, never blocking a practice session.</td><td>FR-SYN-002</td><td>TA-SYN-001, TA-SYN-004</td><td class="n">5</td></tr>
+          <tr id="US-2.04"><td class="us">US-2.04</td><td class="story">As the adult, signing in on a new laptop restores all profiles and practice history, so that a lost machine does not cost a year of progress.</td><td>FR-SYN-003</td><td>TA-SYN-001, TA-SYN-003</td><td class="n">3</td></tr>
+          <tr id="US-2.05"><td class="us">US-2.05</td><td class="story">As the household, my data is protected by row-level security on every table, so that no other account can read it.</td><td>FR-SYS-008</td><td>TA-SYN-005</td><td class="n">2</td></tr>
+          <tr id="US-2.06"><td class="us">US-2.06</td><td class="story">As a player, the app works identically with the network off and shows no error state for being offline.</td><td>FR-SYN-005</td><td>ADR-003, NFR-005</td><td class="n">2</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="grp">Content</div>
+      <div class="tw"><table>
+        <thead><tr><th>ID</th><th>Story</th><th>FR</th><th>TA</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr id="US-2.07"><td class="us">US-2.07</td><td class="story">As the developer, a build script ingests source files and emits normalised, grouped, segmented, difficulty-scored arrangement JSON.</td><td>FR-CON-001, FR-CON-003</td><td>TA-CNT-001, TA-CNT-002</td><td class="n">5</td></tr>
+          <tr id="US-2.08"><td class="us">US-2.08</td><td class="story">As the developer, the build fails if any piece lacks a licence entry with a source URL and verification date.</td><td>FR-CON-004</td><td>TA-CNT-005</td><td class="n">1</td></tr>
+          <tr id="US-2.09"><td class="us">US-2.09</td><td class="story">As a child, I have 8–12 pieces at difficulty 1–2 sequenced along the standard beginner progression, so that the order matches what a teacher would do.</td><td>FR-CON-002</td><td>TA-CNT-003, ADR-008</td><td class="n">5</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="grp">The loop</div>
+      <div class="tw"><table>
+        <thead><tr><th>ID</th><th>Story</th><th>FR</th><th>TA</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr id="US-2.10"><td class="us">US-2.10</td><td class="story">As a child, I see a map of pieces as nodes with stars and locks, so that I can see where I am going.</td><td>FR-EXP-001</td><td>TA-APP-003, TA-DAT-001</td><td class="n">3</td></tr>
+          <tr id="US-2.11"><td class="us">US-2.11</td><td class="story">As a child, I practise two-bar sections rather than whole pieces, so that something is completable in under a minute.</td><td>FR-EXP-004</td><td>TA-DAT-001, TA-CNT-001</td><td class="n">3</td></tr>
+          <tr id="US-2.12"><td class="us">US-2.12</td><td class="story">As a child, completing a section at ≥ 1 star unlocks the next one.</td><td>FR-PRO-002</td><td>TA-DAT-003</td><td class="n">2</td></tr>
+          <tr id="US-2.13"><td class="us">US-2.13</td><td class="story">As a child, I play Note Ninja where a note appears and I play it, with response-time bands instead of a countdown and a hint after 6 s.</td><td>FR-EXP-005</td><td>TA-DAT-003</td><td class="n">5</td></tr>
+          <tr id="US-2.14"><td class="us">US-2.14</td><td class="story">As a child, wrong answers in Note Ninja re-queue the card via spaced repetition rather than ending the game.</td><td>FR-EXP-005</td><td>TA-DAT-003</td><td class="n">3</td></tr>
+          <tr id="US-2.15"><td class="us">US-2.15</td><td class="story">As a player, timed mode grades against tempo-relative tolerance windows with an absolute floor, so that the same setting feels right at 60 and 160 bpm.</td><td>FR-EXP-007</td><td>TA-MAT-003, TA-MAT-006, ADR-007</td><td class="n">3</td></tr>
+          <tr id="US-2.16"><td class="us">US-2.16</td><td class="story">As a child, any completed attempt earns at least one star and errors are phrased as "try again", never as a deduction.</td><td>FR-EXP-007</td><td>TA-GRD-002</td><td class="n">1</td></tr>
+          <tr id="US-2.17"><td class="us">US-2.17</td><td class="story">As a child, a session has a warm-up, two or three quests and a wind-down, so that practice ends on enjoyment.</td><td>FR-EXP-008</td><td>—</td><td class="n">3</td></tr>
+          <tr id="US-2.18"><td class="us">US-2.18</td><td class="story">As a child, I get an immediate sound and animation reward on success, suppressed under <code>prefers-reduced-motion</code>.</td><td>FR-EXP-008</td><td>TA-AUD-001, NFR-011</td><td class="n">2</td></tr>
+          <tr id="US-2.19"><td class="us">US-2.19</td><td class="story">As a child, I can play freely with no grading and hear every key respond.</td><td>FR-EXP-006</td><td>TA-AUD-001</td><td class="n">2</td></tr>
+          <tr id="US-2.20"><td class="us">US-2.20</td><td class="story">As the developer, a golden fixture suite replays recorded performances through the matcher and asserts exact grades, so that tuning tolerance never silently breaks grading.</td><td>—</td><td>TA-PORT-004</td><td class="n">3</td></tr>
+        </tbody>
+      </table></div>
+
+    </div>
+
+    <div class="exit stop">
+      <p><span class="k">Exit criteria</span></p>
+      <ul>
+        <li>The child uses it daily for a week with no developer present.</li>
+        <li><strong>Expect to discard at least one designed feature.</strong> If nothing is discarded, the observation was not honest.</li>
+        <li>Sync round-trips between two browsers.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="sprint-3" data-toc="Sprint 3 — The adult's loop"><span class="num">S3</span>The adult's loop</h2>
+
+  <div class="sp">
+    <div class="hd"><span class="no">Sprint 3</span><span class="ti">The adult's loop</span><span class="du">~2 weeks · 39 pts</span></div>
+    <div class="body">
+      <blockquote><p><strong>Gated on Sprint 2's exit criteria actually being met</strong> (RISK-005). Do not start this to avoid confronting a child's-loop problem.</p></blockquote>
+      <p><strong>Goal:</strong> you practise with it yourself for a week and prefer it to the alternative.</p>
+
+      <div class="tw"><table>
+        <thead><tr><th>ID</th><th>Story</th><th>FR</th><th>TA</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr id="US-3.01"><td class="us">US-3.01</td><td class="story">As an adult, I practise from real notation with a cursor driven by what I actually play.</td><td>FR-STU-001</td><td>TA-REN-003</td><td class="n">5</td></tr>
+          <tr id="US-3.02"><td class="us">US-3.02</td><td class="story">As an adult, OSMD loads only on Studio routes and never appears in the Explorer bundle.</td><td>—</td><td>TA-REN-004, NFR-006</td><td class="n">2</td></tr>
+          <tr id="US-3.03"><td class="us">US-3.03</td><td class="story">As an adult, after an attempt each note is coloured by result, applied after rather than during the performance.</td><td>FR-STU-002</td><td>TA-REN-003, TA-GRD-001</td><td class="n">3</td></tr>
+          <tr id="US-3.04"><td class="us">US-3.04</td><td class="story">As an adult, I select a start and end measure and loop that range indefinitely.</td><td>FR-STU-003</td><td>TA-CLK-002</td><td class="n">3</td></tr>
+          <tr id="US-3.05"><td class="us">US-3.05</td><td class="story">As an adult, I scale tempo from 30–100% of written.</td><td>FR-STU-004</td><td>TA-CLK-002</td><td class="n">2</td></tr>
+          <tr id="US-3.06"><td class="us">US-3.06</td><td class="story">As an adult, auto-ramp raises tempo 5% after a clean pass and drops one step after a failed pass, so that the controls become a practice method.</td><td>FR-STU-004</td><td>TA-CLK-002</td><td class="n">3</td></tr>
+          <tr id="US-3.07"><td class="us">US-3.07</td><td class="story">As an adult, I practise one hand while the other is muted, silent, or played by the sampler.</td><td>FR-STU-005</td><td>TA-AUD-002, TA-DAT-001</td><td class="n">3</td></tr>
+          <tr id="US-3.08"><td class="us">US-3.08</td><td class="story">As an adult, I am told when notes are held too short or too long relative to the written articulation.</td><td>FR-STU-006</td><td>TA-MID-004</td><td class="n">3</td></tr>
+          <tr id="US-3.09"><td class="us">US-3.09</td><td class="story">As an adult, Hanon exercises 1–20 are generated from patterns and graded on evenness.</td><td>FR-STU-007</td><td>TA-GRD-003, TA-CNT-004</td><td class="n">5</td></tr>
+          <tr id="US-3.10"><td class="us">US-3.10</td><td class="story">As an adult, I get unlimited generated sight-reading constrained by key, range, rhythm and difficulty.</td><td>FR-STU-010</td><td>TA-CNT-004</td><td class="n">5</td></tr>
+          <tr id="US-3.11"><td class="us">US-3.11</td><td class="story">As an adult, I see my signed rush/drag in milliseconds rather than an RMS number.</td><td>FR-STU-008</td><td>TA-GRD-001</td><td class="n">2</td></tr>
+          <tr id="US-3.12"><td class="us">US-3.12</td><td class="story">As an adult, I can ingest Mutopia and OpenScore MusicXML through the build pipeline.</td><td>FR-STU-011</td><td>TA-CNT-001, TA-CNT-004</td><td class="n">3</td></tr>
+        </tbody>
+      </table></div>
+
+    </div>
+
+    <div class="exit">
+      <p><span class="k">Exit criteria</span></p>
+      <ul>
+        <li>You use it for your own practice for a week and prefer it to the alternative.</li>
+        <li>If you don't, fix that before adding anything else.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="sprint-4" data-toc="Sprint 4 — Together"><span class="num">S4</span>Together, and looking back</h2>
+
+  <div class="sp">
+    <div class="hd"><span class="no">Sprint 4</span><span class="ti">Together, and looking back</span><span class="du">~2 weeks · 35 pts</span></div>
+    <div class="body">
+      <p><strong>Goal:</strong> parent and child play four hands and both see their own result. The original brief is delivered.</p>
+
+      <div class="tw"><table>
+        <thead><tr><th>ID</th><th>Story</th><th>FR</th><th>TA</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr id="US-4.01"><td class="us">US-4.01</td><td class="story">As two players, the keyboard splits at a configurable point and each half is transposed so we both get our own middle C.</td><td>FR-DUO-001</td><td>TA-DAT-001</td><td class="n">5</td></tr>
+          <tr id="US-4.02"><td class="us">US-4.02</td><td class="story">As two players, we are graded by two independent matchers so one person's mistakes never fail the other.</td><td>FR-DUO-002</td><td>TA-MAT-001</td><td class="n">3</td></tr>
+          <tr id="US-4.03"><td class="us">US-4.03</td><td class="story">As two players, the primo part is five notes in one position while the secondo carries harmony and pulse, and either part can also be practised alone.</td><td>FR-DUO-003</td><td>TA-DAT-001</td><td class="n">3</td></tr>
+          <tr id="US-4.04"><td class="us">US-4.04</td><td class="story">As two players, we see our own results side by side plus one celebratory "together" score.</td><td>FR-DUO-004</td><td>TA-GRD-001</td><td class="n">3</td></tr>
+          <tr id="US-4.05"><td class="us">US-4.05</td><td class="story">As a player, I can record a performance and play it back with the score or falling notes following along.</td><td>FR-PRO-005</td><td>TA-DAT-002, TA-AUD-002</td><td class="n">5</td></tr>
+          <tr id="US-4.06"><td class="us">US-4.06</td><td class="story">As an adult, I see streaks, bench time, accuracy trend and per-measure rush/drag, drawn from synced history across devices.</td><td>FR-PRO-004, FR-STU-009</td><td>TA-GRD-004, TA-SYN-001</td><td class="n">5</td></tr>
+          <tr id="US-4.07"><td class="us">US-4.07</td><td class="story">As a child, I see a simplified, celebratory version of the dashboard.</td><td>FR-PRO-004</td><td>—</td><td class="n">2</td></tr>
+          <tr id="US-4.08"><td class="us">US-4.08</td><td class="story">As a player, I can install the app to my desktop and the screen never sleeps mid-piece.</td><td>FR-SYS-006</td><td>TA-APP-004</td><td class="n">3</td></tr>
+          <tr id="US-4.09"><td class="us">US-4.09</td><td class="story">As a player, a mid-session disconnect pauses cleanly, preserves the attempt and offers a calm reconnect.</td><td>FR-SYS-004</td><td>TA-MID-005</td><td class="n">3</td></tr>
+          <tr id="US-4.10"><td class="us">US-4.10</td><td class="story">As a visitor on an unsupported browser, I see a plain explanation and a list of browsers that work.</td><td>FR-SYS-005</td><td>—</td><td class="n">1</td></tr>
+          <tr id="US-4.11"><td class="us">US-4.11</td><td class="story">As a player, I see a quiet sync status in settings showing last-synced and pending items.</td><td>FR-SYN-004</td><td>TA-SYN-004</td><td class="n">2</td></tr>
+        </tbody>
+      </table></div>
+
+    </div>
+
+    <div class="exit">
+      <p><span class="k">Exit criteria</span></p>
+      <ul>
+        <li>Parent and child play four hands together and both see their own result.</li>
+        <li>The v1 brief is complete.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="sprint-5" data-toc="Sprint 5 — The iPad (optional)"><span class="num">S5</span>The iPad, if it still matters</h2>
+
+  <div class="sp">
+    <div class="hd"><span class="no">Sprint 5</span><span class="ti">The iPad, if it still matters</span><span class="du">optional · ~1 week · 16 pts</span></div>
+    <div class="body">
+      <div class="warn"><p><span class="k">Prerequisite — arrange before starting</span>A Mac (RISK-008). Xcode is macOS-only. Options are a rented Mac (MacinCloud), a cloud build service (Codemagic), or borrowed hardware. Also required: an Apple Developer account.</p></div>
+      <p><strong>Goal:</strong> the same build runs on the iPad with one adapter swapped.</p>
+
+      <div class="tw"><table>
+        <thead><tr><th>ID</th><th>Story</th><th>FR</th><th>TA</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr id="US-5.01"><td class="us">US-5.01</td><td class="story">As the developer, the Next.js app builds under <code>output: 'export'</code> with no server-only features on the runtime path.</td><td>—</td><td>ADR-002, TA-APP-001</td><td class="n">2</td></tr>
+          <tr id="US-5.02"><td class="us">US-5.02</td><td class="story">As the developer, a Capacitor shell wraps the exported app and runs it on an iPad.</td><td>—</td><td>ADR-002</td><td class="n">2</td></tr>
+          <tr id="US-5.03"><td class="us">US-5.03</td><td class="story">As the developer, a Swift CoreMIDI Capacitor plugin implements the <code>MidiBackend</code> port with identical semantics to the Web MIDI adapter.</td><td>FR-SYS-001</td><td>TA-PORT-002, TA-PORT-003</td><td class="n">8</td></tr>
+          <tr id="US-5.04"><td class="us">US-5.04</td><td class="story">As the developer, swapping the MIDI adapter is a one-line change in the composition root with no change to <code>core/</code>, <code>ui/</code> or content.</td><td>—</td><td>TA-APP-002</td><td class="n">1</td></tr>
+          <tr id="US-5.05"><td class="us">US-5.05</td><td class="story">As the family, the app is provisioned and installable on our own iPad.</td><td>—</td><td>—</td><td class="n">3</td></tr>
+        </tbody>
+      </table></div>
+
+    </div>
+
+    <div class="exit">
+      <p><span class="k">Exit criteria</span></p>
+      <ul><li>Identical behaviour on iPad and laptop, verified against the same golden fixtures.</li></ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <h2 id="effort" data-toc="Effort summary"><span class="num">06</span>Effort summary</h2>
+
+  <div class="tw"><table>
+    <thead><tr><th>Sprint</th><th>Focus</th><th>Points</th><th>Calendar</th></tr></thead>
+    <tbody>
+      <tr><td class="n">0</td><td><a href="#sprint-0">Hardware spike</a></td><td class="n">6</td><td>1–2 days</td></tr>
+      <tr><td class="n">1</td><td><a href="#sprint-1">Walking skeleton</a></td><td class="n">34</td><td>~1 week</td></tr>
+      <tr><td class="n">2</td><td><a href="#sprint-2">Child's loop</a></td><td class="n">60</td><td>~2 weeks</td></tr>
+      <tr><td class="n">3</td><td><a href="#sprint-3">Adult's loop</a></td><td class="n">39</td><td>~2 weeks</td></tr>
+      <tr><td class="n">4</td><td><a href="#sprint-4">Duet &amp; dashboard</a></td><td class="n">35</td><td>~2 weeks</td></tr>
+      <tr><td class="n">5</td><td><a href="#sprint-5">iPad (optional)</a></td><td class="n">16</td><td>~1 week</td></tr>
+      <tr class="tot"><td></td><td><strong>v1 total (0–4)</strong></td><td class="n"><strong>174</strong></td><td><strong>~7 weeks</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Points are load-bearing only <em>within</em> a sprint; the calendar estimates assume part-time evening work, which is the realistic mode for this project.</p>
+
+  <!-- ================================================================ -->
+  <h2 id="coverage" data-toc="Coverage check"><span class="num">07</span>Coverage check</h2>
+
+  <p>Every <span class="pri M">M</span>-priority functional requirement is delivered by at least one story.</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>FR</th><th>Sprint</th><th>FR</th><th>Sprint</th></tr></thead>
+    <tbody>
+      <tr><td>FR-EXP-001</td><td class="n">2</td><td>FR-DUO-003</td><td class="n">4</td></tr>
+      <tr><td>FR-EXP-002</td><td class="n">1</td><td>FR-PRO-001</td><td class="n">2</td></tr>
+      <tr><td>FR-EXP-003</td><td class="n">1</td><td>FR-PRO-002</td><td class="n">2</td></tr>
+      <tr><td>FR-EXP-004</td><td class="n">2</td><td>FR-PRO-003</td><td class="n">1</td></tr>
+      <tr><td>FR-EXP-007</td><td class="n">1, 2</td><td>FR-CON-001</td><td class="n">2</td></tr>
+      <tr><td>FR-STU-001</td><td class="n">3</td><td>FR-CON-002</td><td class="n">2</td></tr>
+      <tr><td>FR-STU-002</td><td class="n">3</td><td>FR-CON-003</td><td class="n">2</td></tr>
+      <tr><td>FR-STU-003</td><td class="n">3</td><td>FR-CON-004</td><td class="n">2</td></tr>
+      <tr><td>FR-STU-004</td><td class="n">3</td><td>FR-SYN-001</td><td class="n">1, 2</td></tr>
+      <tr><td>FR-STU-005</td><td class="n">3</td><td>FR-SYN-002</td><td class="n">2</td></tr>
+      <tr><td>FR-STU-008</td><td class="n">3</td><td>FR-SYN-003</td><td class="n">2</td></tr>
+      <tr><td>FR-DUO-001</td><td class="n">4</td><td>FR-SYN-005</td><td class="n">2</td></tr>
+      <tr><td>FR-DUO-002</td><td class="n">4</td><td>FR-SYS-001</td><td class="n">0, 1</td></tr>
+      <tr><td>FR-SYS-002</td><td class="n">0, 1</td><td>FR-SYS-003</td><td class="n">1</td></tr>
+      <tr><td>FR-SYS-004</td><td class="n">4</td><td>FR-SYS-005</td><td class="n">4</td></tr>
+      <tr><td>FR-SYS-007</td><td class="n">1–4 (ongoing)</td><td>FR-SYS-008</td><td class="n">2</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="empty">No story matches that filter.</div>
+</main>
+
+</div>
+<script src="_doc.js"></script>
+</body>
+</html>

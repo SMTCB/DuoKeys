@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DuoKeys · Sprint 0 Spike</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#E9E9E4; --surface:#FCFCFA; --surface-2:#F3F3EE;
+    --ink:#15181C; --ink-2:#3D444C; --muted:#6B7178;
+    --hairline:#D6D6CF; --hairline-2:#C2C2B9;
+    --felt:#9C2F2A; --felt-soft:#F2E2E0;
+    --brass:#7E6222; --brass-soft:#F0EADA;
+    --sage:#40614A; --sage-soft:#E2EAE2;
+    --lit:#2FBF71;
+    --f-display:"Instrument Serif",Georgia,serif;
+    --f-body:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+    --ground:#101215; --surface:#191C20; --surface-2:#22262B;
+    --ink:#E7E7E1; --ink-2:#B9BEC4; --muted:#8B9299;
+    --hairline:#2C3137; --hairline-2:#3C424A;
+    --felt:#E08079; --felt-soft:#33211F;
+    --brass:#C7A758; --brass-soft:#2A2519;
+    --sage:#8FBF9E; --sage-soft:#1B2620;
+    --lit:#4FE39B;
+    color-scheme:dark;
+  }}
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink-2);font-family:var(--f-body);font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 22px 80px}
+  h1{font-family:var(--f-display);font-weight:400;font-size:40px;line-height:1;color:var(--ink);margin:0 0 6px}
+  h1 em{font-style:normal;color:var(--felt)}
+  .sub{color:var(--muted);max-width:74ch;margin:0 0 22px;font-size:14px}
+  h2{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;display:flex;align-items:center;gap:8px}
+  h2::before{content:"";width:14px;height:1px;background:var(--hairline-2)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--hairline);border-radius:4px;padding:16px 18px}
+  button{font-family:var(--f-mono);font-size:12px;font-weight:500;letter-spacing:.03em;padding:8px 14px;border-radius:3px;border:1px solid var(--hairline-2);background:var(--surface-2);color:var(--ink);cursor:pointer}
+  button:hover:not(:disabled){border-color:var(--felt);color:var(--felt)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+  button.pri{background:var(--felt);border-color:var(--felt);color:#fff}
+  button.pri:hover:not(:disabled){opacity:.88;color:#fff}
+  select{font-family:var(--f-mono);font-size:12px;padding:7px 9px;border-radius:3px;border:1px solid var(--hairline-2);background:var(--surface-2);color:var(--ink);max-width:100%}
+  label.chk{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-2);display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  /* readouts */
+  .ro{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:1px;background:var(--hairline);border:1px solid var(--hairline);border-radius:4px;overflow:hidden;margin-top:12px}
+  .ro>div{background:var(--surface);padding:11px 13px}
+  .ro .v{font-family:var(--f-mono);font-size:21px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.15}
+  .ro .v.on{color:var(--lit)}
+  .ro .v.warn{color:var(--felt)}
+  .ro .l{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+  /* latency block */
+  #vis{width:100%;height:150px;display:block;border-radius:4px;border:1px solid var(--hairline);background:var(--surface)}
+  /* log */
+  #log{font-family:var(--f-mono);font-size:11.5px;line-height:1.5;height:270px;overflow-y:auto;background:var(--surface-2);border:1px solid var(--hairline);border-radius:3px;padding:9px 11px;white-space:pre;margin-top:12px}
+  #log b{color:var(--felt);font-weight:500}
+  #log i{color:var(--muted);font-style:normal}
+  #log u{color:var(--sage);text-decoration:none}
+  /* calibration */
+  .taps{display:flex;gap:3px;margin-top:12px;flex-wrap:wrap}
+  .taps i{width:15px;height:26px;border-radius:2px;background:var(--surface-2);border:1px solid var(--hairline-2);display:block}
+  .taps i.done{background:var(--sage);border-color:var(--sage)}
+  .beat{width:11px;height:11px;border-radius:50%;background:var(--hairline-2);display:inline-block;vertical-align:-1px}
+  .beat.on{background:var(--felt)}
+  .note{background:var(--brass-soft);border-left:2px solid var(--brass);padding:11px 14px;border-radius:0 3px 3px 0;font-size:13px;margin:14px 0 0}
+  .note b{font-family:var(--f-mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--brass);display:block;margin-bottom:3px}
+  .bad{background:var(--felt-soft);border-left-color:var(--felt)}
+  .bad b{color:var(--felt)}
+  .good{background:var(--sage-soft);border-left-color:var(--sage)}
+  .good b{color:var(--sage)}
+  textarea{width:100%;height:230px;font-family:var(--f-mono);font-size:11.5px;line-height:1.55;padding:11px;border-radius:3px;border:1px solid var(--hairline);background:var(--surface-2);color:var(--ink-2);resize:vertical}
+  code{font-family:var(--f-mono);font-size:.9em;color:var(--felt)}
+  .full{grid-column:1/-1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Sprint 0 · <em>hardware spike</em></h1>
+  <p class="sub">Throwaway diagnostic. Its only job is to answer <code>RISK-001</code> — what the real round-trip latency is on the real instrument — plus the handful of MIDI-dialect questions that would otherwise become week-two surprises. Nothing here becomes product code. Open it, connect the piano, work down the panels, then paste the findings block into <code>docs/sprint-0-findings.md</code>.</p>
+
+  <div class="grid">
+
+    <!-- ============ 1. CONNECTION ============ -->
+    <section class="card">
+      <h2>1 · Connection <span style="color:var(--hairline-2)">US-0.01</span></h2>
+      <div class="row">
+        <button id="btnConnect" class="pri">Request MIDI access</button>
+        <select id="devices" disabled><option>— no devices —</option></select>
+      </div>
+      <div id="connNote"></div>
+      <div class="ro">
+        <div><div class="v" id="roState">idle</div><div class="l">status</div></div>
+        <div><div class="v" id="roMsgs">0</div><div class="l">messages</div></div>
+        <div><div class="v" id="roSense">0.0</div><div class="l">0xFE / sec</div></div>
+        <div><div class="v" id="roCC64">up</div><div class="l">CC64 sustain</div></div>
+      </div>
+    </section>
+
+    <!-- ============ 2. AUDIO ============ -->
+    <section class="card">
+      <h2>2 · Audio <span style="color:var(--hairline-2)">US-0.03</span></h2>
+      <div class="row">
+        <button id="btnAudio">Enable Tone.js</button>
+        <label class="chk"><input type="checkbox" id="chkSynth" checked> play note on key press</label>
+      </div>
+      <div class="ro">
+        <div><div class="v" id="roAudio">off</div><div class="l">context</div></div>
+        <div><div class="v" id="roBase">—</div><div class="l">baseLatency ms</div></div>
+        <div><div class="v" id="roOut">—</div><div class="l">outputLatency ms</div></div>
+        <div><div class="v" id="roRate">—</div><div class="l">sample rate</div></div>
+      </div>
+      <div class="note"><b>Judge this by ear, not by number</b>Play with the instrument's own speakers on. If the app's note sounds like a flam against the piano's, that is the audio latency you will be fighting. <code>PRE-008</code> — decide here whether headphones or the instrument's speakers are the default path.</div>
+    </section>
+
+    <!-- ============ 3. VISUAL ============ -->
+    <section class="card full">
+      <h2>3 · Visual latency <span style="color:var(--hairline-2)">US-0.02</span></h2>
+      <canvas id="vis" width="1120" height="150"></canvas>
+      <p class="sub" style="margin:10px 0 0">The block lights on note-on and clears on note-off, one frame after the message arrives. Watch your hands, not the screen — if the light feels like it trails the key, that gap is <code>NFR-001</code> failing, and no calibration offset can fix it.</p>
+    </section>
+
+    <!-- ============ 4. CALIBRATION ============ -->
+    <section class="card">
+      <h2>4 · Round-trip latency <span style="color:var(--hairline-2)">US-0.04 · the go/no-go number</span></h2>
+      <div class="row">
+        <button id="btnCal" class="pri" disabled>Start · 16 taps @ 100 bpm</button>
+        <button id="btnCalStop" disabled>Stop</button>
+        <span class="beat" id="beat"></span>
+      </div>
+      <div class="taps" id="taps"></div>
+      <div class="ro">
+        <div><div class="v" id="roMedian">—</div><div class="l">median ms</div></div>
+        <div><div class="v" id="roSpread">—</div><div class="l">IQR spread</div></div>
+        <div><div class="v" id="roMin">—</div><div class="l">min</div></div>
+        <div><div class="v" id="roMax">—</div><div class="l">max</div></div>
+      </div>
+      <div id="calVerdict"></div>
+      <div class="note"><b>Why median and not mean</b>One fumbled tap at +400 ms drags a mean far enough to mis-calibrate every session afterwards. <code>TS-U-CLK-007</code> exists to keep this honest in the real code.</div>
+    </section>
+
+    <!-- ============ 5. MESSAGE LOG ============ -->
+    <section class="card">
+      <h2>5 · Message log <span style="color:var(--hairline-2)">US-0.05</span></h2>
+      <div class="row">
+        <button id="btnClear">Clear</button>
+        <label class="chk"><input type="checkbox" id="chkSense"> show active sensing</label>
+        <label class="chk"><input type="checkbox" id="chkClock"> show clock 0xF8</label>
+      </div>
+      <div id="log">Waiting for MIDI access…</div>
+    </section>
+
+    <!-- ============ 6. FINDINGS ============ -->
+    <section class="card full">
+      <h2>6 · Findings <span style="color:var(--hairline-2)">→ docs/sprint-0-findings.md</span></h2>
+      <div class="row" style="margin-bottom:11px">
+        <button id="btnGen" class="pri">Generate findings</button>
+        <button id="btnCopy">Copy to clipboard</button>
+        <span id="copyOk" style="font-family:var(--f-mono);font-size:11.5px;color:var(--sage)"></span>
+      </div>
+      <textarea id="findings" spellcheck="false" placeholder="Work down panels 1–5, then generate. Fill in the prose answers by hand — especially the last one."></textarea>
+    </section>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<script>
+(function(){
+"use strict";
+
+/* ---------------- state ---------------- */
+var access=null, input=null, synth=null, audioOn=false;
+var msgCount=0, senseStamps=[], sustain=false, held=Object.create(null), heldCount=0;
+var lastNote=null, noteOffStyle=null, sawRunningStatus=false, minVel=127, maxVel=0;
+var logLines=[], LOG_MAX=260;
+
+var el=function(id){return document.getElementById(id);};
+var pad=function(n){return n.toString(16).toUpperCase().padStart(2,"0");};
+var NOTE=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+var nameOf=function(p){return NOTE[p%12]+(Math.floor(p/12)-1);};
+
+/* ---------------- log ---------------- */
+function log(kind,raw,txt,ts){
+  logLines.push("<i>"+ts.toFixed(1).padStart(10)+"</i>  <b>"+raw+"</b>  "+(kind==="ok"?"<u>"+txt+"</u>":txt));
+  if(logLines.length>LOG_MAX) logLines.shift();
+  var n=el("log"); n.innerHTML=logLines.join("\n"); n.scrollTop=n.scrollHeight;
+}
+
+/* ---------------- MIDI ---------------- */
+el("btnConnect").addEventListener("click",function(){
+  if(!navigator.requestMIDIAccess){
+    el("roState").textContent="absent"; el("roState").className="v warn";
+    el("connNote").innerHTML='<div class="note bad"><b>No Web MIDI in this browser</b>'+
+      'If this is Chrome or Edge opened from the filesystem, serve the file over localhost instead '+
+      '(<code>npx serve .</code>, then open <code>http://localhost:3000/sprint-0-spike.html</code>) and retry. '+
+      'If it is Safari or any iPad browser, this is <code>ADR-001</code> in the flesh — Web MIDI has never shipped in WebKit.</div>';
+    return;
+  }
+  navigator.requestMIDIAccess({sysex:false}).then(function(a){
+    access=a;
+    el("roState").textContent="granted"; el("roState").className="v on";
+    el("connNote").innerHTML="";
+    refreshDevices();
+    access.onstatechange=function(e){
+      log("sys","--","<i>port "+e.port.state+": "+(e.port.name||"?")+" ("+e.port.type+")</i>",performance.now());
+      refreshDevices();
+    };
+  }).catch(function(err){
+    el("roState").textContent="denied"; el("roState").className="v warn";
+    el("connNote").innerHTML='<div class="note bad"><b>Access refused</b>'+String(err&&err.message||err)+'</div>';
+  });
+});
+
+function refreshDevices(){
+  var sel=el("devices"); sel.innerHTML=""; var n=0;
+  access.inputs.forEach(function(port){
+    var o=document.createElement("option");
+    o.value=port.id; o.textContent=port.name+(port.manufacturer?" — "+port.manufacturer:"");
+    sel.appendChild(o); n++;
+  });
+  sel.disabled = n===0;
+  el("btnCal").disabled = n===0;
+  if(n===0){ sel.innerHTML="<option>— no devices —</option>"; return; }
+  bind(sel.value);
+}
+el("devices").addEventListener("change",function(){ bind(this.value); });
+
+function bind(id){
+  if(input) input.onmidimessage=null;
+  input=access.inputs.get(id);
+  if(!input) return;
+  input.onmidimessage=onMidi;
+  log("ok","--","<u>bound to "+input.name+"</u>",performance.now());
+}
+
+/* ---------------- message handling ---------------- */
+function onMidi(e){
+  var d=e.data, ts=e.timeStamp, s=d[0], hi=s&0xF0, ch=(s&0x0F)+1;
+  msgCount++; el("roMsgs").textContent=msgCount;
+
+  if(s===0xFE){
+    senseStamps.push(ts);
+    if(el("chkSense").checked) log("sys",pad(s),"active sensing",ts);
+    return;
+  }
+  if(s===0xF8){ if(el("chkClock").checked) log("sys",pad(s),"clock",ts); return; }
+  if(s<0x80){ sawRunningStatus=true; log("sys",Array.prototype.map.call(d,pad).join(" "),"<i>running status (no status byte)</i>",ts); return; }
+
+  var raw=Array.prototype.map.call(d,pad).join(" ");
+
+  if(hi===0x90 && d[2]>0){
+    noteOn(d[1],d[2],ts);
+    if(d[2]<minVel) minVel=d[2];
+    if(d[2]>maxVel) maxVel=d[2];
+    log("ok",raw,"note on  ch"+ch+"  "+nameOf(d[1])+" ("+d[1]+")  vel "+d[2],ts);
+  } else if(hi===0x80 || (hi===0x90 && d[2]===0)){
+    if(noteOffStyle===null) noteOffStyle = (hi===0x80) ? "0x80" : "0x90 vel 0";
+    else if((hi===0x80?"0x80":"0x90 vel 0")!==noteOffStyle) noteOffStyle="both";
+    noteOff(d[1]);
+    log("msg",raw,"note off ch"+ch+"  "+nameOf(d[1])+(hi===0x90?"  <i>(as 0x90 vel 0)</i>":""),ts);
+  } else if(hi===0xB0){
+    if(d[1]===64){
+      sustain = d[2]>=64;
+      el("roCC64").textContent = sustain?"DOWN":"up";
+      el("roCC64").className = "v"+(sustain?" on":"");
+      log("ok",raw,"CC64 sustain "+(sustain?"DOWN":"up")+"  value "+d[2],ts);
+    } else log("msg",raw,"CC"+d[1]+" = "+d[2]+"  ch"+ch,ts);
+  } else if(hi===0xE0){
+    log("msg",raw,"pitch bend  ch"+ch,ts);
+  } else if(hi===0xA0){
+    log("msg",raw,"poly aftertouch "+nameOf(d[1])+" = "+d[2],ts);
+  } else if(hi===0xD0){
+    log("msg",raw,"channel aftertouch = "+d[1],ts);
+  } else {
+    log("msg",raw,"unhandled status 0x"+pad(s),ts);
+  }
+}
+
+function noteOn(pitch,vel,ts){
+  if(!held[pitch]){ held[pitch]=true; heldCount++; }
+  lastNote=pitch;
+  if(calRunning) registerTap(ts);
+  if(audioOn && el("chkSynth").checked && synth){
+    try{ synth.triggerAttackRelease(Tone.Frequency(pitch,"midi").toFrequency(), 0.35, undefined, Math.max(0.05,vel/127)); }catch(x){}
+  }
+}
+function noteOff(pitch){ if(held[pitch]){ delete held[pitch]; heldCount--; } }
+
+/* active sensing rate, 1s rolling */
+setInterval(function(){
+  var now=performance.now(), cut=now-1000, i=0;
+  while(i<senseStamps.length && senseStamps[i]<cut) i++;
+  if(i) senseStamps=senseStamps.slice(i);
+  el("roSense").textContent=senseStamps.length.toFixed(1);
+},250);
+
+/* ---------------- visual block ---------------- */
+var cv=el("vis"), cx=cv.getContext("2d");
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+(function draw(){
+  var w=cv.width,h=cv.height;
+  cx.clearRect(0,0,w,h);
+  var on=heldCount>0;
+  cx.fillStyle = on ? css("--lit") : css("--surface-2");
+  cx.fillRect(0,0,w,h);
+  if(on){
+    cx.fillStyle="rgba(0,0,0,.72)";
+    cx.font="600 30px "+css("--f-mono").split(",")[0].replace(/"/g,"");
+    cx.textBaseline="middle";
+    var names=Object.keys(held).map(function(p){return nameOf(+p);}).join("  ");
+    cx.fillText(names,26,h/2);
+    if(sustain){ cx.fillStyle="rgba(0,0,0,.5)"; cx.font="500 13px monospace"; cx.fillText("SUSTAIN",26,h-24); }
+  }
+  requestAnimationFrame(draw);
+})();
+
+/* ---------------- audio ---------------- */
+el("btnAudio").addEventListener("click",function(){
+  if(typeof Tone==="undefined"){
+    el("roAudio").textContent="no lib"; el("roAudio").className="v warn"; return;
+  }
+  Tone.start().then(function(){
+    audioOn=true;
+    synth=new Tone.PolySynth(Tone.Synth,{oscillator:{type:"triangle"},envelope:{attack:0.005,decay:0.15,sustain:0.25,release:0.5}}).toDestination();
+    synth.volume.value=-10;
+    var raw=Tone.getContext().rawContext;
+    el("roAudio").textContent="running"; el("roAudio").className="v on";
+    el("roBase").textContent=(raw.baseLatency!=null)?(raw.baseLatency*1000).toFixed(1):"n/a";
+    el("roOut").textContent=(raw.outputLatency!=null)?(raw.outputLatency*1000).toFixed(1):"n/a";
+    el("roRate").textContent=Math.round(raw.sampleRate/1000)+"k";
+    el("btnAudio").disabled=true;
+  });
+});
+
+/* ---------------- calibration ---------------- */
+var TAPS_WANTED=16, BPM=100, PERIOD=60/BPM;
+var calRunning=false, offsets=[], clickWall=[], schedAhead=0.12, timer=null, nextClick=0;
+
+function ctxOf(){ return (typeof Tone!=="undefined") ? Tone.getContext().rawContext : null; }
+
+el("btnCal").addEventListener("click",function(){
+  var ctx=ctxOf();
+  if(!ctx || ctx.state!=="running"){
+    el("calVerdict").innerHTML='<div class="note bad"><b>Enable audio first</b>The metronome needs the audio clock — press <b style="display:inline">Enable Tone.js</b> in panel 2, then start again.</div>';
+    return;
+  }
+  offsets=[]; clickWall=[]; calRunning=true;
+  el("calVerdict").innerHTML="";
+  renderTaps();
+  el("btnCal").disabled=true; el("btnCalStop").disabled=false;
+  nextClick=ctx.currentTime+0.35;
+  timer=setInterval(schedule,25);
+});
+el("btnCalStop").addEventListener("click",stopCal);
+
+function stopCal(){
+  calRunning=false; clearInterval(timer); timer=null;
+  el("btnCal").disabled=false; el("btnCalStop").disabled=true; el("beat").className="beat";
+}
+
+function schedule(){
+  var ctx=ctxOf(); if(!ctx) return;
+  while(nextClick < ctx.currentTime + schedAhead){
+    click(ctx,nextClick);
+    // audio time -> performance.now() timebase, sampled now
+    clickWall.push(performance.now() + (nextClick - ctx.currentTime)*1000);
+    if(clickWall.length>40) clickWall.shift();
+    var flashIn=Math.max(0,(nextClick-ctx.currentTime)*1000);
+    setTimeout(function(){ el("beat").className="beat on"; setTimeout(function(){ el("beat").className="beat"; },90); },flashIn);
+    nextClick+=PERIOD;
+  }
+}
+function click(ctx,at){
+  var o=ctx.createOscillator(), g=ctx.createGain();
+  o.frequency.value=1400; o.type="square";
+  g.gain.setValueAtTime(0.0001,at);
+  g.gain.exponentialRampToValueAtTime(0.28,at+0.001);
+  g.gain.exponentialRampToValueAtTime(0.0001,at+0.045);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(at); o.stop(at+0.06);
+}
+
+function registerTap(ts){
+  if(offsets.length>=TAPS_WANTED) return;
+  var best=null,bestAbs=1e9;
+  for(var i=0;i<clickWall.length;i++){
+    var d=ts-clickWall[i], a=Math.abs(d);
+    if(a<bestAbs){ bestAbs=a; best=d; }
+  }
+  if(best===null || bestAbs>PERIOD*1000*0.5) return;
+  offsets.push(best);
+  renderTaps();
+  if(offsets.length>=TAPS_WANTED){ stopCal(); report(); }
+}
+
+function renderTaps(){
+  var h="";
+  for(var i=0;i<TAPS_WANTED;i++) h+='<i class="'+(i<offsets.length?"done":"")+'"></i>';
+  el("taps").innerHTML=h;
+}
+
+function quantile(sorted,q){
+  var pos=(sorted.length-1)*q, b=Math.floor(pos), r=pos-b;
+  return sorted[b+1]!==undefined ? sorted[b]+r*(sorted[b+1]-sorted[b]) : sorted[b];
+}
+
+var calResult=null;
+function report(){
+  var s=offsets.slice().sort(function(a,b){return a-b;});
+  var med=quantile(s,.5), q1=quantile(s,.25), q3=quantile(s,.75);
+  calResult={median:med,iqr:q3-q1,min:s[0],max:s[s.length-1],n:s.length,
+             mean:s.reduce(function(a,b){return a+b;},0)/s.length};
+  el("roMedian").textContent=med.toFixed(1);
+  el("roSpread").textContent=(q3-q1).toFixed(1);
+  el("roMin").textContent=s[0].toFixed(1);
+  el("roMax").textContent=s[s.length-1].toFixed(1);
+
+  var abs=Math.abs(med), cls, head, body;
+  if(abs<=80){
+    cls="good"; head="Go";
+    body="Median offset is "+med.toFixed(1)+" ms, inside the ~80 ms budget. A single per-profile offset ("+(-med).toFixed(0)+" ms) will absorb it, which is exactly what <code>TA-CLK-004</code> does. RISK-001 is answered — proceed to Sprint 1.";
+  } else if(abs<=140){
+    cls=""; head="Marginal — investigate before committing";
+    body="Median offset is "+med.toFixed(1)+" ms. Calibration will still centre it, but the residual jitter matters more than the offset does. Check the IQR: under ~25 ms is workable, above that the falling-notes design will feel loose. Try closing other audio apps, switching USB ports, and re-running before deciding.";
+  } else {
+    cls="bad"; head="Stop — this is the no-go case";
+    body="Median offset is "+med.toFixed(1)+" ms, well beyond budget. Do not start Sprint 1 on this. Re-test on a different USB port and cable, with all other audio software closed. If it stays here, the falling-notes timing design needs rethinking before 174 points of work rest on it.";
+  }
+  el("calVerdict").innerHTML='<div class="note '+cls+'"><b>'+head+'</b>'+body+'</div>';
+}
+
+/* ---------------- log controls ---------------- */
+el("btnClear").addEventListener("click",function(){ logLines=[]; el("log").textContent="cleared"; });
+
+/* ---------------- findings ---------------- */
+el("btnGen").addEventListener("click",function(){
+  var devName = input ? input.name : "— not connected —";
+  var devMake = input && input.manufacturer ? input.manufacturer : "unknown";
+  var cal = calResult;
+  var raw = ctxOf();
+  var t=[
+"# Sprint 0 — Findings",
+"",
+"**Date:** "+new Date().toISOString().slice(0,10)+"  ",
+"**Answers:** `RISK-001` · `PRE-001` · `PRE-002` · `PRE-003` · `PRE-008`  ",
+"**Stories:** `US-0.01` … `US-0.05`",
+"",
+"## Instrument",
+"",
+"| Field | Value |",
+"|---|---|",
+"| Model | _fill in_ |",
+"| Connection | _USB-B to USB-A direct / via hub — fill in_ |",
+"| Enumerated as | `"+devName+"` |",
+"| Manufacturer string | `"+devMake+"` |",
+"| Class-compliant, no driver | _yes / no_ |",
+"",
+"## Latency  (`RISK-001` — the go/no-go)",
+"",
+"| Measure | Value |",
+"|---|---|",
+"| Median tap offset | "+(cal?cal.median.toFixed(1)+" ms":"— not measured —")+" |",
+"| Mean (for contrast) | "+(cal?cal.mean.toFixed(1)+" ms":"—")+" |",
+"| IQR spread | "+(cal?cal.iqr.toFixed(1)+" ms":"—")+" |",
+"| Min / max | "+(cal?cal.min.toFixed(1)+" / "+cal.max.toFixed(1)+" ms":"—")+" |",
+"| Taps | "+(cal?cal.n:"—")+" |",
+"| AudioContext baseLatency | "+(raw&&raw.baseLatency!=null?(raw.baseLatency*1000).toFixed(1)+" ms":"—")+" |",
+"| AudioContext outputLatency | "+(raw&&raw.outputLatency!=null?(raw.outputLatency*1000).toFixed(1)+" ms":"—")+" |",
+"| Sample rate | "+(raw?raw.sampleRate+" Hz":"—")+" |",
+"",
+"**Verdict:** _go / marginal / no-go_",
+"",
+"**Visual latency by eye (`NFR-001`):** _does the block feel attached to the key? — fill in_",
+"",
+"**Audio latency by ear (`NFR-003`):** _does the app note flam against the piano's own? — fill in_",
+"",
+"## MIDI dialect  (`US-0.05`)",
+"",
+"| Question | Observed |",
+"|---|---|",
+"| Note-off arrives as | "+(noteOffStyle||"— none seen —")+" |",
+"| Active sensing rate | "+el("roSense").textContent+" per second |",
+"| Running status seen | "+(sawRunningStatus?"**yes** — decoder must handle it":"no")+" |",
+"| CC64 sustain works | "+(el("roCC64").textContent!=="up"||msgCount>0?"_confirm — fill in_":"_not tested_")+" |",
+"| Velocity range observed | "+(maxVel>0?minVel+" … "+maxVel:"— none —")+" |",
+"| Total messages | "+msgCount+" |",
+"",
+"## Decisions this settles",
+"",
+"- `PRE-008` default audio path: _headphones / instrument speakers_ — ",
+"- `TA-MID-002` decoder must handle: "+(noteOffStyle==="0x90 vel 0"||noteOffStyle==="both"?"**velocity-0 note-off**":"0x80 note-off")+(sawRunningStatus?", **running status**":"")+", active sensing suppression",
+"- Per-profile calibration offset to seed: "+(cal?(-cal.median).toFixed(0)+" ms":"— not measured —"),
+"",
+"## Anything surprising",
+"",
+"_This is the most valuable section. Write down what you did not expect,",
+"however small — an odd CC on power-on, a burst of messages when the pedal",
+"is half-down, a device name that changes between reconnects._",
+""].join("\n");
+  el("findings").value=t;
+});
+
+el("btnCopy").addEventListener("click",function(){
+  var ta=el("findings");
+  if(!ta.value){ el("copyOk").textContent="nothing to copy — generate first"; return; }
+  ta.select();
+  navigator.clipboard.writeText(ta.value).then(function(){
+    el("copyOk").textContent="copied";
+    setTimeout(function(){ el("copyOk").textContent=""; },1800);
+  },function(){
+    document.execCommand("copy");
+    el("copyOk").textContent="copied";
+    setTimeout(function(){ el("copyOk").textContent=""; },1800);
+  });
+});
+
+renderTaps();
+})();
+</script>
+</body>
+</html>
