@@ -26,6 +26,7 @@ export default function HomePage() {
   const [displayName, setDisplayName] = useState('');
   const [role, setRole] = useState<Profile['role']>('explorer');
   const [avatar, setAvatar] = useState(AVATARS[0]);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     void loadProfiles();
@@ -44,11 +45,20 @@ export default function HomePage() {
     choose(profile);
   }
 
+  const canAdd = profiles.length < MAX_PROFILES;
+  const isFormShown = loaded && canAdd && isAdding;
+  const roleChoices: { value: Profile['role']; icon: string; label: string; hint: string }[] = [
+    { value: 'explorer', icon: '🎮', label: 'Explorer', hint: 'for kids' },
+    { value: 'student', icon: '🎼', label: 'Studio', hint: 'for grown-ups' },
+  ];
+
   return (
     <PageShell>
       <h1>DuoKeys</h1>
 
       {!loaded && <p>Loading…</p>}
+
+      {loaded && <h2 style={{ margin: 0 }}>Who&apos;s playing?</h2>}
 
       {loaded && profiles.length > 0 && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
@@ -57,31 +67,46 @@ export default function HomePage() {
               key={p.id}
               accent={p.role === 'student' ? 'indigo' : 'amber'}
               onClick={() => choose(p)}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '0.2rem',
+                minWidth: '7rem',
+                borderRadius: '1.5rem',
+                padding: '1rem 1.25rem',
+              }}
             >
-              {p.avatar} {p.displayName}
+              <span style={{ fontSize: '2.5rem', lineHeight: 1 }} aria-hidden="true">{p.avatar}</span>
+              <span>{p.displayName}</span>
             </Button>
           ))}
         </div>
       )}
 
-      {loaded && profiles.length === 0 && <p>Who&apos;s playing? Add your first profile below.</p>}
+      {loaded && canAdd && !isFormShown && (
+        <div>
+          <Button accent="coral" variant="secondary" onClick={() => setIsAdding(true)}>
+            + Add a profile
+          </Button>
+        </div>
+      )}
 
-      {loaded && profiles.length < MAX_PROFILES && (
+      {isFormShown && (
         <Card>
           <h2>Add a profile</h2>
-          <p>
-            <label>
-              Name{' '}
-              <input
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="First name"
-              />
-            </label>
-          </p>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            Name
+            <input
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              placeholder="First name"
+              style={{ font: 'inherit', padding: '0.7rem 0.9rem', minHeight: '44px', width: '100%', boxSizing: 'border-box' }}
+            />
+          </label>
 
           <p>Choose an avatar:</p>
-          <p style={{ display: 'flex', gap: '0.5rem' }}>
+          <div role="group" aria-label="Avatar" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {AVATARS.map((a) => (
               <Button
                 key={a}
@@ -93,38 +118,38 @@ export default function HomePage() {
                 {a}
               </Button>
             ))}
-          </p>
+          </div>
 
-          <p>
-            <label>
-              <input
-                type="radio"
-                name="role"
-                value="explorer"
-                checked={role === 'explorer'}
-                onChange={() => setRole('explorer')}
-              />
-              Explorer (kid)
-            </label>{' '}
-            <label>
-              <input
-                type="radio"
-                name="role"
-                value="student"
-                checked={role === 'student'}
-                onChange={() => setRole('student')}
-              />
-              Studio (grown-up)
-            </label>
-          </p>
+          <p>Who is it for?</p>
+          <div role="radiogroup" aria-label="Who is it for?" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            {roleChoices.map((choice) => (
+              <Button
+                key={choice.value}
+                type="button"
+                role="radio"
+                aria-checked={role === choice.value}
+                accent={choice.value === 'student' ? 'indigo' : 'amber'}
+                variant={role === choice.value ? 'primary' : 'secondary'}
+                onClick={() => setRole(choice.value)}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '8rem', borderRadius: '1.25rem' }}
+              >
+                <span style={{ fontSize: '1.75rem', lineHeight: 1 }} aria-hidden="true">{choice.icon}</span>
+                <span>{choice.label}</span>
+                <span style={{ fontSize: '0.8rem', fontWeight: 400 }}>{choice.hint}</span>
+              </Button>
+            ))}
+          </div>
 
-          <Button
-            accent={role === 'student' ? 'indigo' : 'amber'}
-            onClick={() => void handleAdd()}
-            disabled={!displayName.trim()}
-          >
-            Add profile
-          </Button>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', marginTop: '1rem' }}>
+            <Button
+              accent={role === 'student' ? 'indigo' : 'amber'}
+              onClick={() => void handleAdd()}
+              disabled={!displayName.trim()}
+            >
+              Add profile
+            </Button>
+            {!displayName.trim() && <span style={{ opacity: 0.75 }}>Type a name to start</span>}
+          </div>
         </Card>
       )}
     </PageShell>

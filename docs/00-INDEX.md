@@ -1066,3 +1066,12 @@ and My progressions (add form and saved list). Progressions with an identical
 chord sequence are listed once. No new ID, no ADR; `TA-APP-003`'s route is
 unchanged. Page-only change, so no new automated test; `TS-M-016` is the manual
 check at the piano and is not yet run.
+
+## Update — profile screen on a phone (2026-10-03)
+
+A fix to `US-2.01`'s picker, no new ID. On a phone the avatar row could not wrap,
+so the page scrolled sideways ("wobbly"); `PageShell` now stops content widening
+the page. The screen now opens on "Who's playing?" with large avatar tiles, the
+add form sits behind "+ Add a profile", Explorer / Studio are two picture
+buttons ("for kids" / "for grown-ups"), and the name field is 16 px so iPhone
+does not zoom. Checked at 375 px in the browser; not yet on a real phone.
