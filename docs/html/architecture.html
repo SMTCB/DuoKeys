@@ -791,7 +791,7 @@ IndexedDB          ◀──pull── Supabase   <i>(only on a fresh device)</i
     <li><strong>Tokens as CSS custom properties</strong>, one shared stylesheet (<code>src/ui/shared/tokens.css</code>), consumed by CSS Modules per component — never a per-component hard-coded hex or <code>px</code> value for anything the token system already names.
       <ul>
         <li><strong>Palette:</strong> a light paper ground (<code>--app-paper</code>) and ink (<code>--app-ink</code>/<code>--app-ink-soft</code>/<code>--app-ink-faint</code>), plus three role hues — amber for Explorer/child surfaces, indigo for Studio/adult surfaces, coral reserved exclusively for shared "both players" moments (duet screens). A hue is never repurposed outside its role — coral appearing on a single-player screen would be a bug, not a style choice.</li>
-        <li><strong>Type:</strong> Bricolage Grotesque (display/headings), Plus Jakarta Sans (UI/body), IBM Plex Mono (numbers — tempo %, rush/drag ms, star counts, anything tabular), loaded from Google Fonts.</li>
+        <li><strong>Type:</strong> Bricolage Grotesque (display/headings), Plus Jakarta Sans (UI/body), IBM Plex Mono (numbers — tempo %, rush/drag ms, star counts, anything tabular), self-hosted via <code>next/font/local</code> from <code>@fontsource</code> packages — a build never needs Google Fonts.</li>
         <li><strong>Shared components:</strong> an on-screen keybed (one component, recoloured by role token — amber in Explorer, indigo in Studio, split amber/indigo in Duet) and a chord/card primitive reused by the quest map, the library list and the chord-progression view.</li>
       </ul>
     </li>

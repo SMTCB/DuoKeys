@@ -1237,7 +1237,7 @@ of what that artifact specifies.
     on a single-player screen would be a bug, not a style choice.
   - **Type:** Bricolage Grotesque (display/headings), Plus Jakarta Sans
     (UI/body), IBM Plex Mono (numbers — tempo %, rush/drag ms, star counts,
-    anything tabular), loaded from Google Fonts.
+    anything tabular), self-hosted via `next/font/local` from `@fontsource` packages — a build never needs Google Fonts.
   - **Shared components:** an on-screen keybed (one component, recoloured by
     role token — amber in Explorer, indigo in Studio, split amber/indigo in
     Duet) and a chord/card primitive reused by the quest map, the library
