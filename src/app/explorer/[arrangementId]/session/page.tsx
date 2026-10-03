@@ -68,9 +68,26 @@ export default function SessionArcPage() {
   return (
     <PageShell>
       <h1>Session</h1>
-      <p>
-        Step {currentIndex + 1} of {plan.length}
-      </p>
+      <div
+        style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}
+        role="img"
+        aria-label={`Step ${currentIndex + 1} of ${plan.length}`}
+      >
+        {plan.map((_, i) => (
+          <span
+            key={i}
+            style={{
+              flex: 1,
+              height: 10,
+              borderRadius: 99,
+              background: i <= currentIndex ? 'var(--amber)' : 'var(--amber-tint-2)',
+            }}
+          />
+        ))}
+        <span style={{ fontFamily: 'var(--mono)', fontSize: '0.85rem', marginLeft: '0.4rem' }}>
+          {currentIndex + 1}/{plan.length}
+        </span>
+      </div>
 
       {step.kind === 'freePlay' && (
         <Card>
@@ -85,7 +102,12 @@ export default function SessionArcPage() {
 
       {step.kind === 'quest' && step.sectionId && (
         <Card>
-          <Link href={`/explorer/play/${arrangement.id}?section=${step.sectionId}`}>Start this quest</Link>
+          <Link
+            href={`/explorer/play/${arrangement.id}?section=${step.sectionId}`}
+            style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: '1.1rem' }}
+          >
+            Start this quest →
+          </Link>
         </Card>
       )}
     </PageShell>

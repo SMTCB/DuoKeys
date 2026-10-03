@@ -1075,3 +1075,22 @@ the page. The screen now opens on "Who's playing?" with large avatar tiles, the
 add form sits behind "+ Add a profile", Explorer / Studio are two picture
 buttons ("for kids" / "for grown-ups"), and the name field is 16 px so iPhone
 does not zoom. Checked at 375 px in the browser; not yet on a real phone.
+
+## Update — brand shell and picture cards (2026-10-03)
+
+`US-3.21` under `TA-APP-006`, no FR and no ADR. The tokens already matched the Design
+Reference; what the live screens lacked was the identity itself. `PageShell` now shows
+the logo lockup, a role pill and a role-coloured wash on every route; the Explorer
+and Studio homes use picture cards (`ActionCard`); page titles use the reference
+type scale; the mark is the favicon. Studio's sign-in panel moved below the
+destinations. Checked in the browser at desktop and 375 px (no sideways scroll);
+not yet on a real phone or iPad.
+
+Second pass, same story: every other screen now uses the shared kit (`MidiChooser`,
+`Segmented`, `Pill`, the big-note card). The Explorer quest map is a winding path of
+numbered stops; Note Ninja, Free Play, the falling-notes screen, the session arc,
+sight-reading and Studio practice share the same picker and choices; form controls
+look the same everywhere. Verified at 375 px (no sideways scroll) on the Studio
+screens, Note Ninja, Free Play and the quest map. Not checked in a browser: the
+live falling-notes and notation views, the song page, the chord progression page
+(they need a connected piano).

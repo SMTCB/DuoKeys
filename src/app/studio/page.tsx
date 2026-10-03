@@ -15,6 +15,7 @@ import { useSessionStore } from '../../runtime/stores/sessionStore';
 import { useLibraryStore } from '../../runtime/stores/libraryStore';
 import { PageShell } from '../../ui/shared/PageShell';
 import { Card } from '../../ui/shared/Card';
+import { ActionCard } from '../../ui/shared/ActionCard';
 import { Button } from '../../ui/shared/Button';
 import { SyncPanel } from '../../ui/studio/SyncPanel';
 
@@ -75,40 +76,11 @@ export default function StudioListPage() {
   return (
     <PageShell>
       <h1>Studio</h1>
+      <ActionCard href="/studio/sight-reading" icon="♫" title="Sight-reading" description="A fresh phrase every time — pick a key, length and tempo." />
+      <ActionCard href="/studio/chords" icon="♯" title="Chords & progressions" description="Pick a key, browse its chords and 100+ progressions." />
+      <ActionCard href="/studio/library" icon="♩" title="Song library" description="Search 570+ piano pieces and play them as falling notes." />
       <SyncPanel />
-      <Card>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
-          <div>
-            <strong>Sight-Reading</strong>
-            <p style={{ margin: '0.25rem 0 0' }}>A fresh phrase every time — pick a key, length and tempo.</p>
-          </div>
-          <Link href="/studio/sight-reading">
-            <Button accent="indigo">Generate a phrase</Button>
-          </Link>
-        </div>
-      </Card>
-      <Card>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
-          <div>
-            <strong>Chords &amp; progressions</strong>
-            <p style={{ margin: '0.25rem 0 0' }}>Play around: pick a key, browse its chords and 100+ progressions.</p>
-          </div>
-          <Link href="/studio/chords">
-            <Button accent="indigo">Open chord explorer</Button>
-          </Link>
-        </div>
-      </Card>
-      <Card>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
-          <div>
-            <strong>Song library</strong>
-            <p style={{ margin: '0.25rem 0 0' }}>Search 570+ piano pieces, add them to your songs and play them as falling notes.</p>
-          </div>
-          <Link href="/studio/library">
-            <Button accent="indigo">Open song library</Button>
-          </Link>
-        </div>
-      </Card>
+      <h2>My pieces</h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {index.pieces.map((piece) => (
           <Card key={piece.id}>

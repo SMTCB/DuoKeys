@@ -1,0 +1,64 @@
+.card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 72px;
+  padding: 1rem 1.25rem;
+  background: var(--app-surface);
+  border: 1px solid var(--app-line);
+  border-radius: var(--r-lg);
+  box-shadow: 0 8px 20px rgba(36, 38, 43, 0.06);
+  color: var(--app-ink);
+  text-decoration: none;
+  transition: transform 80ms ease, border-color 80ms ease;
+}
+
+.card:hover {
+  border-color: var(--role);
+}
+
+.card:active {
+  transform: scale(0.99);
+}
+
+.icon {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-md);
+  background: var(--role-tint);
+  color: var(--role-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.5rem;
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.title {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.description {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--app-ink-soft);
+}
+
+.arrow {
+  flex: none;
+  color: var(--role-deep);
+  font-weight: 700;
+  font-size: 1.25rem;
+}

@@ -1,0 +1,32 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 32px;
+  padding: 0 0.85rem;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.role {
+  background: var(--role-tint);
+  color: var(--role-deep);
+}
+
+.neutral {
+  background: var(--app-surface);
+  border: 1px solid var(--app-line);
+  color: var(--app-ink-soft);
+}
+
+.solid {
+  background: var(--role-deep);
+  color: #fff;
+}
+
+.mono {
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-variant-numeric: tabular-nums;
+}

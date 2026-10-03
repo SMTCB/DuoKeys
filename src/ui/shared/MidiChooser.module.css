@@ -1,0 +1,86 @@
+.chooser {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lead {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.keys {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-md);
+  background: var(--role-tint);
+  color: var(--role-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+}
+
+.title {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.device {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 56px;
+  padding: 0.75rem 1.1rem;
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--role);
+  background: var(--app-surface);
+  color: var(--app-ink);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.device:hover {
+  background: var(--role-tint);
+}
+
+.device:active {
+  transform: scale(0.99);
+}
+
+.play {
+  margin-left: auto;
+  color: var(--role-deep);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--app-ink-soft);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--app-ink-soft);
+}
+
+.dotOn {
+  background: var(--role);
+  border-color: var(--role);
+}

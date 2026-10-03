@@ -7,6 +7,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { useSessionStore, type PracticeMode } from '../../../../runtime/stores/sessionStore';
 import { useSessionArcStore } from '../../../../runtime/stores/sessionArcStore';
@@ -16,6 +17,8 @@ import { RewardBurst } from '../../../../ui/shared/RewardBurst';
 import { PageShell } from '../../../../ui/shared/PageShell';
 import { Card } from '../../../../ui/shared/Card';
 import { Button } from '../../../../ui/shared/Button';
+import { MidiChooser } from '../../../../ui/shared/MidiChooser';
+import stage from '../../../../ui/shared/Stage.module.css';
 import type { Arrangement } from '../../../../core/content/types';
 
 export default function ExplorerPlayPage() {
@@ -88,43 +91,45 @@ export default function ExplorerPlayPage() {
 
   return (
     <PageShell>
+      <Link href={`/explorer/${arrangement.id}`} className={stage.back}>
+        ← Quest map
+      </Link>
       <h1>{arrangement.id}</h1>
 
       {attemptStatus === 'idle' && (
         <Card>
-          <p>How should we play?</p>
-          <p>
-            <label>
-              <input
-                type="radio"
-                name="mode"
-                value="wait"
-                checked={mode === 'wait'}
-                onChange={() => setMode('wait')}
-              />
-              Wait for me
-            </label>{' '}
-            <label>
-              <input
-                type="radio"
-                name="mode"
-                value="timed"
-                checked={mode === 'timed'}
-                onChange={() => setMode('timed')}
-              />
-              Keep the beat
-            </label>
-          </p>
-
-          <p>Choose your piano:</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-            {midiInputs.map((input) => (
-              <Button key={input.id} accent="amber" onClick={() => void handleSelectMidi(input.id)}>
-                {input.name}
-              </Button>
-            ))}
+          <div className={`${stage.stage} ${stage.left}`}>
+            <p className={stage.title}>How should we play?</p>
+            <div className={stage.modes}>
+              <label className={stage.mode}>
+                <input
+                  type="radio"
+                  name="mode"
+                  value="wait"
+                  checked={mode === 'wait'}
+                  onChange={() => setMode('wait')}
+                />
+                <span className={stage.modeName}>Wait for me</span>
+                <span className={stage.modeHint}>It waits for your key</span>
+              </label>
+              <label className={stage.mode}>
+                <input
+                  type="radio"
+                  name="mode"
+                  value="timed"
+                  checked={mode === 'timed'}
+                  onChange={() => setMode('timed')}
+                />
+                <span className={stage.modeName}>Keep the beat</span>
+                <span className={stage.modeHint}>Play along in time</span>
+              </label>
+            </div>
+            <MidiChooser
+              inputs={midiInputs}
+              connectionState={midiConnectionState}
+              onSelect={(id) => void handleSelectMidi(id)}
+            />
           </div>
-          <p>Connection: {midiConnectionState}</p>
         </Card>
       )}
 
@@ -139,10 +144,10 @@ export default function ExplorerPlayPage() {
 
       {attemptStatus === 'complete' && grade && (
         <Card>
-          <p>
+          <div className={stage.stage}>
             <RewardBurst />
-            {'⭐'.repeat(grade.stars) || 'Try this one again!'}
-          </p>
+            <div className={stage.stars}>{'⭐'.repeat(grade.stars) || 'Try this one again!'}</div>
+          </div>
           {arcActive && (
             <Button
               accent="amber"

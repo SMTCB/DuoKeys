@@ -54,11 +54,9 @@ export default function HomePage() {
 
   return (
     <PageShell>
-      <h1>DuoKeys</h1>
+      {loaded ? <h1>Who&apos;s playing?</h1> : <h1>DuoKeys</h1>}
 
       {!loaded && <p>Loading…</p>}
-
-      {loaded && <h2 style={{ margin: 0 }}>Who&apos;s playing?</h2>}
 
       {loaded && profiles.length > 0 && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>

@@ -16,7 +16,7 @@ import { computeProgression, type SectionProgress } from '../../../core/progress
 import type { Arrangement } from '../../../core/content/types';
 import type { Attempt } from '../../../core/data/attempt';
 import { PageShell } from '../../../ui/shared/PageShell';
-import { Card } from '../../../ui/shared/Card';
+import styles from './quest.module.css';
 
 export default function ExplorerMapPage() {
   const params = useParams<{ arrangementId: string }>();
@@ -50,28 +50,53 @@ export default function ExplorerMapPage() {
   if (loadError) return <PageShell><p>Could not load this piece: {loadError}</p></PageShell>;
   if (!arrangement || !progress) return <PageShell><p>Loading…</p></PageShell>;
 
+  // The first unlocked section with no attempt yet is "where you are".
+  const currentId = progress.find((p) => p.unlocked && !p.attempted)?.sectionId;
+
   return (
     <PageShell>
       <h1>Quest Map</h1>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        {progress.map((p) => {
+      <ol className={styles.path}>
+        {progress.map((p, i) => {
           const section = arrangement.sections.find((s) => s.id === p.sectionId);
           if (!section) return null;
+          const isReward = p.kind === 'reward';
+          const isCurrent = p.sectionId === currentId;
+          const stateClass = !p.unlocked ? styles.locked : isCurrent ? styles.current : p.attempted ? styles.done : styles.open;
+          const body = (
+            <>
+              <span className={styles.node} aria-hidden="true">
+                {p.unlocked ? (isReward ? '★' : i + 1) : '🔒'}
+              </span>
+              <span className={styles.text}>
+                <span className={styles.label}>{section.label}</span>
+                <span className={styles.sub}>
+                  {!p.unlocked && 'Locked'}
+                  {p.unlocked && isReward && 'Reward'}
+                  {p.unlocked && !isReward && isCurrent && 'Start here'}
+                  {p.unlocked && !isReward && !isCurrent && p.attempted && 'Play again'}
+                </span>
+                {p.attempted && (
+                  <span className={styles.stars} aria-label={`${p.bestStars} stars`}>
+                    {'⭐'.repeat(p.bestStars)}
+                  </span>
+                )}
+              </span>
+            </>
+          );
           return (
-            <Card key={p.sectionId}>
+            <li key={p.sectionId} className={`${styles.step} ${stateClass} ${i % 2 ? styles.right : styles.left}`}>
               {p.unlocked ? (
-                <Link href={`/explorer/play/${arrangement.id}?section=${p.sectionId}`}>
-                  {section.label}
-                  {p.kind === 'reward' ? ' (Reward)' : ''}
-                  {p.attempted ? ` ${'⭐'.repeat(p.bestStars)}` : ''}
+                <Link href={`/explorer/play/${arrangement.id}?section=${p.sectionId}`} className={styles.stop}>
+                  {body}
                 </Link>
               ) : (
-                <span>🔒 {section.label}</span>
+                <div className={styles.stop}>{body}</div>
               )}
-            </Card>
+            </li>
           );
         })}
-      </div>
+      </ol>
     </PageShell>
   );
 }

@@ -1,0 +1,127 @@
+/* US-3.22 — shared "big moment" surfaces for the Explorer play screens. */
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  background: var(--app-surface);
+  border: 1px solid var(--app-line);
+  border-radius: var(--r-xl);
+  box-shadow: 0 8px 20px rgba(36, 38, 43, 0.06);
+}
+
+.bigNote {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(4rem, 22vw, 7rem);
+  line-height: 1;
+  color: var(--role-deep);
+}
+
+.hint {
+  margin: 0;
+  padding: 0.6rem 1rem;
+  border-radius: var(--r-md);
+  background: var(--role-tint);
+  color: var(--role-deep);
+  font-weight: 600;
+}
+
+.bandFast,
+.bandCorrect,
+.bandHinted {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 1.1rem;
+  border-radius: 99px;
+  font-weight: 800;
+  font-family: var(--display);
+  font-size: 1.1rem;
+}
+
+.bandFast {
+  background: var(--amber);
+  color: #fff;
+}
+
+.bandCorrect {
+  background: var(--amber-tint-2);
+  color: var(--amber-deep);
+}
+
+.bandHinted {
+  background: var(--amber-tint);
+  color: var(--amber-deep);
+}
+
+.stars {
+  font-size: 2.5rem;
+  letter-spacing: 0.15em;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.mode {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-height: 56px;
+  padding: 0.75rem 1rem;
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--app-line);
+  background: var(--app-surface);
+  cursor: pointer;
+  text-align: left;
+}
+
+.mode:has(input:checked) {
+  border-color: var(--role);
+  background: var(--role-tint);
+}
+
+.mode input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modeName {
+  font-family: var(--display);
+  font-weight: 700;
+}
+
+.modeHint {
+  font-size: 0.85rem;
+  color: var(--app-ink-soft);
+}
+
+.left {
+  align-items: stretch;
+  text-align: left;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  align-self: flex-start;
+  font-weight: 700;
+  color: var(--role-deep);
+  text-decoration: none;
+}

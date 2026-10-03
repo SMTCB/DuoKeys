@@ -16,6 +16,8 @@ import { NotationView } from '../../../../ui/notation/NotationView';
 import { PageShell } from '../../../../ui/shared/PageShell';
 import { Card } from '../../../../ui/shared/Card';
 import { Button } from '../../../../ui/shared/Button';
+import { MidiChooser } from '../../../../ui/shared/MidiChooser';
+import { Segmented } from '../../../../ui/shared/Segmented';
 import type { Arrangement, Track } from '../../../../core/content/types';
 import { ticksPerMeasure } from '../../../../core/content/toMusicXml';
 import { asTicks } from '../../../../core/time/types';
@@ -170,72 +172,39 @@ export default function StudioPlayPage() {
 
       {attemptStatus === 'idle' && (
         <Card>
-          <p>How should we play?</p>
-          <p>
-            <label>
-              <input
-                type="radio"
-                name="mode"
-                value="wait"
-                checked={mode === 'wait'}
-                onChange={() => setMode('wait')}
-              />
-              Wait for me
-            </label>{' '}
-            <label>
-              <input
-                type="radio"
-                name="mode"
-                value="timed"
-                checked={mode === 'timed'}
-                onChange={() => setMode('timed')}
-              />
-              Keep the beat
-            </label>
-          </p>
-
-          {arrangement.tracks.length > 1 && (
-            <p>
-              Practise:{' '}
-              {arrangement.tracks.map((t) => (
-                <label key={t.id} style={{ marginRight: '1rem' }}>
-                  <input
-                    type="radio"
-                    name="track"
-                    value={t.id}
-                    checked={selectedTrackId === t.id}
-                    onChange={() => setSelectedTrackId(t.id)}
-                  />
-                  {' '}
-                  {trackLabel(t)}
-                </label>
-              ))}
-              <br />
-              The other hand:{' '}
-              <label style={{ marginRight: '1rem' }}>
-                <input
-                  type="radio"
-                  name="accompaniment"
-                  value="silent"
-                  checked={accompaniment === 'silent'}
-                  onChange={() => setAccompaniment('silent')}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <Segmented
+              name="mode"
+              legend="How should we play?"
+              options={[
+                { value: 'wait' as const, label: 'Wait for me' },
+                { value: 'timed' as const, label: 'Keep the beat' },
+              ]}
+              value={mode}
+              onChange={setMode}
+            />
+            {arrangement.tracks.length > 1 && (
+              <>
+                <Segmented
+                  name="track"
+                  legend="Practise"
+                  options={arrangement.tracks.map((t) => ({ value: t.id, label: trackLabel(t) }))}
+                  value={selectedTrackId ?? track?.id ?? ''}
+                  onChange={(id) => setSelectedTrackId(id)}
                 />
-                {' '}
-                Silent
-              </label>
-              <label>
-                <input
-                  type="radio"
+                <Segmented
                   name="accompaniment"
-                  value="sampler"
-                  checked={accompaniment === 'sampler'}
-                  onChange={() => setAccompaniment('sampler')}
+                  legend="The other hand"
+                  options={[
+                    { value: 'silent' as const, label: 'Silent' },
+                    { value: 'sampler' as const, label: 'Played by the sampler' },
+                  ]}
+                  value={accompaniment}
+                  onChange={setAccompaniment}
                 />
-                {' '}
-                Played by the sampler
-              </label>
-            </p>
-          )}
+              </>
+            )}
+          </div>
 
           <p>
             <label>
@@ -280,15 +249,11 @@ export default function StudioPlayPage() {
             </p>
           )}
 
-          <p>Choose your piano:</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-            {midiInputs.map((input) => (
-              <Button key={input.id} accent="indigo" onClick={() => void handleSelectMidi(input.id)}>
-                {input.name}
-              </Button>
-            ))}
-          </div>
-          <p>Connection: {midiConnectionState}</p>
+          <MidiChooser
+            inputs={midiInputs}
+            connectionState={midiConnectionState}
+            onSelect={(id) => void handleSelectMidi(id)}
+          />
         </Card>
       )}
 

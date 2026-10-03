@@ -13,6 +13,9 @@ import type { MidiInputInfo, MidiConnectionState, VoiceHandle } from '../../adap
 import { MidiDecoder, type MidiPitch } from '../../core/midi/decode';
 import { VELOCITY_FLOOR } from '../../core/match/types';
 import { midiPitchToNoteName } from '../../core/content/noteName';
+import { MidiChooser } from '../shared/MidiChooser';
+import { Card } from '../shared/Card';
+import stage from '../shared/Stage.module.css';
 
 export function FreePlay() {
   const [midiInputs, setMidiInputs] = useState<MidiInputInfo[]>([]);
@@ -56,24 +59,20 @@ export function FreePlay() {
 
   if (!connected) {
     return (
-      <section>
-        <p>Choose your piano:</p>
-        <ul>
-          {midiInputs.map((input) => (
-            <li key={input.id}>
-              <button onClick={() => void handleSelectMidi(input.id)}>{input.name}</button>
-            </li>
-          ))}
-        </ul>
-        <p>Connection: {connectionState}</p>
-      </section>
+      <Card>
+        <MidiChooser
+          inputs={midiInputs}
+          connectionState={connectionState}
+          onSelect={(id) => void handleSelectMidi(id)}
+        />
+      </Card>
     );
   }
 
   return (
-    <section>
-      <p>Play anything!</p>
-      <p style={{ fontSize: '4rem' }}>{lastPitch !== undefined ? midiPitchToNoteName(lastPitch) : '🎹'}</p>
+    <section className={stage.stage}>
+      <p className={stage.title}>Play anything!</p>
+      <div className={stage.bigNote}>{lastPitch !== undefined ? midiPitchToNoteName(lastPitch) : '🎹'}</div>
     </section>
   );
 }

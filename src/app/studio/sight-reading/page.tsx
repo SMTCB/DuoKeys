@@ -13,6 +13,7 @@ import { useGeneratedContentStore } from '../../../runtime/stores/generatedConte
 import { PageShell } from '../../../ui/shared/PageShell';
 import { Card } from '../../../ui/shared/Card';
 import { Button } from '../../../ui/shared/Button';
+import { Segmented } from '../../../ui/shared/Segmented';
 
 const KEY_OPTIONS = ['C', 'G', 'F'];
 const BAR_OPTIONS = [4, 8, 12];
@@ -40,29 +41,26 @@ export default function SightReadingPage() {
       <h1>Sight-Reading</h1>
       <Card>
         <p>A fresh phrase every time — never one you have already memorised.</p>
-        <p>
-          Key:{' '}
-          {KEY_OPTIONS.map((k) => (
-            <label key={k} style={{ marginRight: '1rem' }}>
-              <input type="radio" name="keySig" value={k} checked={keySig === k} onChange={() => setKeySig(k)} />
-              {' '}
-              {k}
-            </label>
-          ))}
-        </p>
-        <p>
-          Length:{' '}
-          {BAR_OPTIONS.map((b) => (
-            <label key={b} style={{ marginRight: '1rem' }}>
-              <input type="radio" name="bars" value={b} checked={bars === b} onChange={() => setBars(b)} />
-              {' '}
-              {b} bars
-            </label>
-          ))}
-        </p>
-        <p>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', maxWidth: '20rem' }}>
-            Tempo {tempoBpm} bpm
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginTop: '1rem' }}>
+          <Segmented
+            name="keySig"
+            legend="Key"
+            options={KEY_OPTIONS.map((k) => ({ value: k, label: k }))}
+            value={keySig}
+            onChange={setKeySig}
+          />
+          <Segmented
+            name="bars"
+            legend="Length"
+            options={BAR_OPTIONS.map((b) => ({ value: b, label: `${b} bars` }))}
+            value={bars}
+            onChange={setBars}
+          />
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', maxWidth: '20rem' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--app-ink-soft)' }}>
+              Tempo{' '}
+              <span style={{ fontFamily: 'var(--mono)', fontVariantNumeric: 'tabular-nums' }}>{tempoBpm} bpm</span>
+            </span>
             <input
               type="range"
               min={40}
@@ -72,10 +70,12 @@ export default function SightReadingPage() {
               onChange={(e) => setTempoBpm(Number(e.target.value))}
             />
           </label>
-        </p>
-        <Button accent="indigo" onClick={handleGenerate}>
-          Generate
-        </Button>
+          <div>
+            <Button accent="indigo" onClick={handleGenerate}>
+              Generate a phrase
+            </Button>
+          </div>
+        </div>
       </Card>
     </PageShell>
   );

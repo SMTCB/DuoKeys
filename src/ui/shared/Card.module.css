@@ -3,4 +3,5 @@
   border: 1px solid var(--app-line);
   border-radius: var(--r-lg);
   padding: 1.5rem;
+  box-shadow: 0 8px 20px rgba(36, 38, 43, 0.06);
 }

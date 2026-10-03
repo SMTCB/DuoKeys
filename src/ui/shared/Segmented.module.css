@@ -1,0 +1,57 @@
+.group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--app-ink-soft);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.option {
+  position: relative;
+  cursor: pointer;
+}
+
+.option input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--app-line);
+  background: var(--app-surface);
+  font-weight: 600;
+}
+
+.option input:checked + .pill {
+  background: var(--role-tint);
+  border-color: var(--role);
+  color: var(--role-deep);
+}
+
+.option input:focus-visible + .pill {
+  outline: 3px solid var(--role);
+  outline-offset: 2px;
+}

@@ -6,11 +6,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { getAdapters } from '../../runtime/bootstrap';
 import type { ContentIndex } from '../../adapters/ports';
 import { PageShell } from '../../ui/shared/PageShell';
-import { Card } from '../../ui/shared/Card';
+import { ActionCard } from '../../ui/shared/ActionCard';
 
 export default function ExplorerListPage() {
   const [index, setIndex] = useState<ContentIndex | undefined>();
@@ -29,20 +28,20 @@ export default function ExplorerListPage() {
 
   return (
     <PageShell>
-      <h1>Pieces</h1>
+      <h1>What shall we play?</h1>
+      <ActionCard href="/explorer/ninja" icon="♪" title="Note Ninja" description="Find the note, as fast as you can." />
+      <ActionCard href="/explorer/free-play" icon="✦" title="Free Play" description="Press any key and make some music." />
+      <h2>Pieces</h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        {index.pieces.map((piece) => (
-          <Card key={piece.id}>
-            <Link href={`/explorer/${piece.defaultArrangementId}`}>{piece.title}</Link>
-          </Card>
+        {index.pieces.map((piece, i) => (
+          <ActionCard
+            key={piece.id}
+            href={`/explorer/${piece.defaultArrangementId}`}
+            icon={i + 1}
+            title={piece.title}
+          />
         ))}
       </div>
-      <p>
-        <Link href="/explorer/ninja">Note Ninja</Link>
-      </p>
-      <p>
-        <Link href="/explorer/free-play">Free Play</Link>
-      </p>
     </PageShell>
   );
 }

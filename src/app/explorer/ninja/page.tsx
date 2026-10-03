@@ -13,7 +13,9 @@ import { getAdapters } from '../../../runtime/bootstrap';
 import { RewardBurst } from '../../../ui/shared/RewardBurst';
 import { PageShell } from '../../../ui/shared/PageShell';
 import { Card } from '../../../ui/shared/Card';
-import { Button } from '../../../ui/shared/Button';
+import { MidiChooser } from '../../../ui/shared/MidiChooser';
+import { Pill } from '../../../ui/shared/Pill';
+import stage from '../../../ui/shared/Stage.module.css';
 
 const HINT_DELAY_MS = 6000;
 const ADVANCE_DELAY_MS = 900;
@@ -82,30 +84,26 @@ export default function NoteNinjaPage() {
 
       {!started && (
         <Card>
-          <p>Choose your piano:</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-            {midiInputs.map((input) => (
-              <Button key={input.id} accent="amber" onClick={() => void handleSelectMidi(input.id)}>
-                {input.name}
-              </Button>
-            ))}
-          </div>
-          <p>Connection: {midiConnectionState}</p>
+          <MidiChooser
+            inputs={midiInputs}
+            connectionState={midiConnectionState}
+            onSelect={(id) => void handleSelectMidi(id)}
+          />
         </Card>
       )}
 
       {started && currentPitch !== undefined && (
-        <Card>
-          <p>Streak: {streak}</p>
-          <p style={{ fontSize: '4rem' }}>{midiPitchToNoteName(currentPitch)}</p>
+        <div className={stage.stage}>
+          <Pill mono>Streak {streak}</Pill>
+          <div className={stage.bigNote}>{midiPitchToNoteName(currentPitch)}</div>
           {lastResult && <RewardBurst />}
-          {lastResult?.band === 'fast' && <p>Fast! ⚡</p>}
-          {lastResult?.band === 'correct' && <p>Nice! ✅</p>}
-          {lastResult?.band === 'hinted' && <p>Got it! ✅</p>}
+          {lastResult?.band === 'fast' && <span className={stage.bandFast}>Fast! ⚡</span>}
+          {lastResult?.band === 'correct' && <span className={stage.bandCorrect}>Nice! ✅</span>}
+          {lastResult?.band === 'hinted' && <span className={stage.bandHinted}>Got it! ✅</span>}
           {hintShown && !lastResult && (
-            <p>Hint: it&apos;s {midiPitchToNoteName(currentPitch)} — find it on the keyboard.</p>
+            <p className={stage.hint}>Hint: it&apos;s {midiPitchToNoteName(currentPitch)} — find it on the keyboard.</p>
           )}
-        </Card>
+        </div>
       )}
     </PageShell>
   );

@@ -1341,6 +1341,25 @@ of what that artifact specifies.
   shipped in Sprints 1–2 (quest map, falling notes, Note Ninja), so the whole
   app matches the reference, not only the Studio screens built after it
   existed.
+- **Role shell and picture cards (`US-3.21`).** `PageShell` is the one place
+  that carries the identity onto every route: the logo lockup (`Logo.tsx`,
+  the split-keybed mark), a role pill, and a soft wash of the role colour taken
+  from the route (`/explorer` amber, `/studio` indigo, everything else coral),
+  exposed to children as `--role`, `--role-deep` and `--role-tint`. `ActionCard`
+  is the picture-tile link used on the Explorer and Studio homes; the picture
+  and the title both say what it is, so colour is never the only cue. The mark
+  is also the favicon (`src/app/icon.svg`).
+- **Play-screen kit (`US-3.21`, second pass).** The remaining screens reuse four
+  shared pieces instead of per-page styling: `MidiChooser` (picture tile, one big
+  button per piano, a connection line in words and a dot), `Segmented` (radio
+  groups drawn as pills; the chosen one carries a tick as well as the fill),
+  `Pill` (streak / status), and `Stage.module.css` (the big-note card, band
+  pills, mode choices). The Explorer quest map is a winding path of numbered
+  stops (done filled, current ringed and labelled "Start here", locked grey
+  with a padlock and the word "Locked", stars as emoji with an aria-label).
+  `globals.css` gives every input, select and range one look (44 px, 16 px text,
+  role-coloured controls and focus ring). No behaviour changed: Wait mode,
+  hints and the no-failure rule are untouched.
 
 ---
 
