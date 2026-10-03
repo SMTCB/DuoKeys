@@ -2,9 +2,13 @@
 // injects them into core. Swapping WebMidiBackend for a future CoreMidiBackend
 // (iPad, ADR-002) is a one-line change here.
 //
-// SyncBackend is FakeSyncBackend for now: auth and sync flush are explicitly
-// out of scope for Sprint 1 (docs/03-SPRINT-PLAN.md), so no real Supabase
-// adapter exists yet. Swapping it in later does not touch this file's shape.
+// Storage is IdbBackend wrapped in OutboxStorage (TA-SYN-004), so every write to
+// a synced store queues a sync op as a side effect. `rawStorage` is the
+// undecorated store, used only to restore pulled data without re-queueing it.
+//
+// SyncBackend is SupabaseBackend when NEXT_PUBLIC_SUPABASE_URL/ANON_KEY are set
+// at build time, otherwise FakeSyncBackend (and `isSyncConfigured` is false, so
+// the UI offers no sign-in). Sync is additive: the app works with neither (ADR-003).
 
 import type { AudioBackend, ContentBackend, MidiBackend, StorageBackend, SyncBackend } from '../adapters/ports';
 import { WebMidiBackend } from '../adapters/midi/webMidi';
@@ -12,16 +16,31 @@ import { WebAudioBackend } from '../adapters/audio/webAudio';
 import { IdbBackend } from '../adapters/storage/idb';
 import { StaticContentBackend } from '../adapters/content/static';
 import { FakeSyncBackend } from '../adapters/fake/fakeSyncBackend';
+import { OutboxStorage } from '../adapters/storage/outboxStorage';
+import { SupabaseBackend } from '../adapters/sync/supabaseBackend';
 
 export interface Adapters {
   midi: MidiBackend;
   audio: AudioBackend;
-  storage: StorageBackend;
+  storage: OutboxStorage;
+  rawStorage: StorageBackend;
   sync: SyncBackend;
   content: ContentBackend;
 }
 
 let adapters: Adapters | undefined;
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+/** True when a real Supabase project is wired in at build time. */
+export const isSyncConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+
+let enqueueListener: () => void = () => {};
+/** The sync store registers here so a queued write can schedule a flush. */
+export function setEnqueueListener(listener: () => void): void {
+  enqueueListener = listener;
+}
 
 /** Lazily constructed and memoized — WebAudioBackend opens an AudioContext, so this must run client-side and only once. */
 export function getAdapters(): Adapters {
@@ -33,11 +52,16 @@ export function getAdapters(): Adapters {
     );
   }
   if (!adapters) {
+    const rawStorage = new IdbBackend();
     adapters = {
       midi: new WebMidiBackend(),
       audio: new WebAudioBackend(),
-      storage: new IdbBackend(),
-      sync: new FakeSyncBackend(),
+      rawStorage,
+      storage: new OutboxStorage(rawStorage, () => enqueueListener()),
+      sync:
+        SUPABASE_URL && SUPABASE_ANON_KEY
+          ? new SupabaseBackend({ url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY, redirectTo: `${window.location.origin}/studio` })
+          : new FakeSyncBackend(),
       content: new StaticContentBackend(),
     };
   }

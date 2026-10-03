@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { Bricolage_Grotesque, Plus_Jakarta_Sans, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
+import { SyncBoot } from '../ui/shared/SyncBoot';
 
 export const metadata: Metadata = {
   title: 'DuoKeys',
@@ -28,7 +29,10 @@ const monoFont = IBM_Plex_Mono({
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${displayFont.variable} ${uiFont.variable} ${monoFont.variable}`}>
-      <body>{children}</body>
+      <body>
+        <SyncBoot />
+        {children}
+      </body>
     </html>
   );
 }

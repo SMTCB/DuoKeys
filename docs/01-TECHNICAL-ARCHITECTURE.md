@@ -890,6 +890,22 @@ Every local write that needs syncing appends an op. A background flush drains it
 when online and authenticated. Failure is silent and retried; sync never blocks or
 interrupts a practice session.
 
+`US-2.03` — **delivered**. `OutboxStorage` (`adapters/storage/outboxStorage.ts`)
+decorates the `StorageBackend`: a write to a synced store (`profiles`, `attempts`,
+`library`, `settings`) queues its op in the *same transaction* as the write.
+`OutboxOp` is unchanged (`TA-PORT-002` untouched); the payload is an envelope —
+`{ value, atMs }` for a put, `{ key, atMs }` for a delete — so the write time
+travels with the op. If the outbox itself is unusable the local write still lands.
+`SyncEngine` (`runtime/syncEngine.ts`) runs one flush at a time, in `seq` order,
+batches of 100, and stops at the first failure so order is preserved; the result is
+`synced` / `behind` / `signed-out` / `offline`, never an error shown to the child.
+On a user's first sign-in on a device, existing local records are queued once.
+Flush triggers: 2 s after a write, on the `online` event, and every 60 s.
+
+Known limitations: pulls carry no deletes (a cleared library entry is not removed
+on other devices); a poison op can wedge the queue (it is retried, not dropped);
+`flashcards` do not sync.
+
 ### TA-SYN-005 — Row-level security
 
 Every Supabase table has RLS enabled with `auth.uid() = owner_id`. No exceptions,
@@ -930,10 +946,19 @@ yet, so neither has a table.
 - `attempts.grade` and `attempts.events` are `jsonb` — `TA-DAT-002` embeds
   them — so a change to the grade shape needs no server migration.
 
-Verified so far: anonymous `GET`/`POST` against all four tables is refused
-(401 / `42501`). `TS-I-SYN-004`'s real test (a *second authenticated* user
-cannot read the first's rows) is **not yet run**, and the `SyncBackend`
-adapter and magic-link sign-in (`US-2.02`) are not built.
+Verified: anonymous `GET`/`POST` against all four tables is refused (401 /
+`42501`). `TS-I-SYN-004` **passes** at the database level —
+`supabase/tests/rls.sql` runs as two authenticated roles in a rolled-back
+transaction (B sees none of A's rows and cannot write under A's profile; `attempts`
+update/delete refused for the owner; stale write skipped, newer applied; anon
+refused). It does not go through PostgREST/JWT.
+
+The `SyncBackend` adapter (`SupabaseBackend`, `adapters/sync/`) and magic-link
+sign-in (`US-2.02`, `SyncPanel` on the Studio screen) are built and selected when
+`NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` are set; otherwise
+`FakeSyncBackend`. **Not yet verified:** a live end-to-end push/pull with a real
+signed-in user. Deployment must add the site URL to Supabase's redirect allow-list,
+and the built-in SMTP rate-limits magic-link emails.
 
 ---
 

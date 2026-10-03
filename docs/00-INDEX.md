@@ -111,9 +111,9 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-CON-002 beginner catalogue | M | TA-CNT-003 | US-2.09 | TS-U-CNT-012, TS-M-006 |
 | FR-CON-003 segmentation | M | TA-CNT-001 | US-2.07 | TS-U-CNT-007, 008 |
 | FR-CON-004 licence gate | M | TA-CNT-005 | US-2.08 | TS-U-CNT-009, 010 |
-| FR-SYN-001 auth | M | TA-SYN-002 | US-1.03, US-2.02 | TS-I-SYN-004 |
-| FR-SYN-002 background sync | M | TA-SYN-001/004/007 | US-2.03 | TS-I-SYN-001…003, 009 |
-| FR-SYN-003 device restore | M | TA-SYN-001/007 | US-2.04 | TS-I-SYN-005, TS-E-009 |
+| FR-SYN-001 auth | M | TA-SYN-002 | US-1.03, US-2.02 (built) | TS-I-SYN-004 (DB-level, passes) |
+| FR-SYN-002 background sync | M | TA-SYN-001/004/007 | US-2.03 (built) | TS-I-SYN-001…003 (pass), 009 |
+| FR-SYN-003 device restore | M | TA-SYN-001/007 | US-2.04 (built) | TS-I-SYN-005 (pass), TS-E-009 |
 | FR-SYN-004 sync status | S | TA-SYN-004 | US-4.11 | — |
 | FR-SYN-005 offline normal | M | ADR-003 | US-2.06 | TS-E-008, TS-I-SYN-010 |
 | FR-SYS-001 device select | M | TA-PORT-003 | US-0.01, US-1.07 | TS-I-MID-001, 002 |
@@ -936,10 +936,9 @@ recommended and confirmed in the roadmap plan itself, not a gap.
 
 Sprint 2's content pipeline track, the Note Ninja slice (`US-2.13`), the
 bundled child's-loop slice (`US-2.14`–`US-2.19`), and the profiles slice
-(`US-2.01`) are all done. Two tracks remain, both blocked on setup that
-isn't Claude's to do: `US-1.03` (a real Supabase project) is still not
-created, so the sync stories (`US-2.02`–`US-2.06`) stay blocked; and
-`US-2.20` (golden fixtures) needs a real piano recording. Full physical-MIDI
+(`US-2.01`) are all done. The sync track (`US-1.03` project and schema, `US-2.02`–`US-2.04` sign-in,
+outbox and restore) is built — see Group E below. One track remains, blocked on
+setup that isn't Claude's to do: `US-2.20` (golden fixtures) needs a real piano recording. Full physical-MIDI
 verification of the bundled slice above (timed-mode bands, the arc gate,
 reward audio) is also still outstanding and worth doing at the piano before
 either track is picked up.
@@ -984,11 +983,15 @@ Verified: anonymous reads and writes are refused on all four tables.
 
 - The Supabase GitHub integration (Project Settings → Integrations → GitHub)
   was authorised by the user in the dashboard on 2026-10-03 — done.
-- `TS-I-SYN-004` (a second *authenticated* user cannot read the first's rows)
-  has not been run; only the anonymous check has.
-- The `SyncBackend` adapter, magic-link sign-in (`US-2.02`) and the outbox
-  flush (`US-2.03`) are unbuilt, so the sync stories `US-2.02`–`US-2.06` are
-  now unblocked but not started.
+- `TS-I-SYN-004` now passes at the database level (`supabase/tests/rls.sql`).
+- `SupabaseBackend`, magic-link sign-in (`US-2.02`), the outbox (`US-2.03`)
+  and restore (`US-2.04`) are **built** and covered by fake-level tests
+  (`TS-I-SYN-001`–`003`, `005`–`008`, `010`, `011`). Not yet verified: a live
+  end-to-end push/pull with a real signed-in user, and the Studio sync panel in a
+  browser. `TS-I-SYN-009` has no automated test.
+- Known gaps: pulls carry no deletes; flashcards unsynced; Supabase redirect
+  allow-list/Site URL must be set at deployment; built-in SMTP rate-limits
+  magic-link emails.
 - `flashcards` (Note Ninja) have no sync policy and no table.
 - The temporary full-access Supabase personal access token used for setup
   should be deleted in the dashboard once no more CLI work is planned.

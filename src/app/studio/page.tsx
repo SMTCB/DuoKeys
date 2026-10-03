@@ -16,6 +16,7 @@ import { useLibraryStore } from '../../runtime/stores/libraryStore';
 import { PageShell } from '../../ui/shared/PageShell';
 import { Card } from '../../ui/shared/Card';
 import { Button } from '../../ui/shared/Button';
+import { SyncPanel } from '../../ui/studio/SyncPanel';
 
 const STATUS_LABEL: Record<LibraryStatus, string> = {
   wantToLearn: 'Want to learn',
@@ -74,6 +75,7 @@ export default function StudioListPage() {
   return (
     <PageShell>
       <h1>Studio</h1>
+      <SyncPanel />
       <Card>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
           <div>

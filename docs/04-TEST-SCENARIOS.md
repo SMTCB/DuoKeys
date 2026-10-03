@@ -288,6 +288,8 @@ needs that extraction, not yet done.
 
 ### Sync
 
+Status: `TS-I-SYN-001`–`003`, `005`–`008`, `010`, `011` have automated tests against fakes (`outboxStorage.test.ts`, `syncEngine.test.ts`, `mapping.test.ts`). `TS-I-SYN-004` runs at the database level via `supabase/tests/rls.sql` and passes. `TS-I-SYN-009` has no automated test yet.
+
 | ID | Scenario | Verifies |
 |---|---|---|
 | `TS-I-SYN-001` | A local write appends an outbox op | TA-SYN-004 |
