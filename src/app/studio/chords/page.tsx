@@ -4,6 +4,8 @@
 // chordCatalogue.ts), play along with each chord validated by ChordMatcher
 // and highlighted on an on-screen keybed. No timing requirement, no failure
 // state — FR-EXP-006's free-play philosophy applied to harmony.
+// US-3.20: three tabs (Chords, Progressions, My progressions), a compact top
+// bar and a "now playing" keybed pinned to the top, so one screen holds one job.
 
 'use client';
 
@@ -20,6 +22,11 @@ import { Button } from '../../../ui/shared/Button';
 import { ChordKeybed } from '../../../ui/shared/ChordKeybed';
 
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+const PAGE_SIZE = 12;
+const ROW = { display: 'flex', flexWrap: 'wrap', gap: '0.4rem', alignItems: 'center' } as const;
+const COLUMN = { display: 'flex', flexDirection: 'column', gap: '1rem' } as const;
+
+type Tab = 'chords' | 'progressions' | 'mine';
 
 export default function ChordExplorerPage() {
   const catalogue = useChordExplorerStore((s) => s.catalogue);
@@ -41,8 +48,10 @@ export default function ChordExplorerPage() {
   const startProgression = useChordExplorerStore((s) => s.startProgression);
   const advanceProgression = useChordExplorerStore((s) => s.advanceProgression);
 
+  const [tab, setTab] = useState<Tab>('chords');
   const [modeFilter, setModeFilter] = useState<'all' | 'major' | 'minor' | 'modal'>('all');
   const [moodFilter, setMoodFilter] = useState<string | null>(null);
+  const [shownCount, setShownCount] = useState(PAGE_SIZE);
   const [newName, setNewName] = useState('');
   const [newText, setNewText] = useState('');
   const [newMode, setNewMode] = useState<'major' | 'minor'>('major');
@@ -54,10 +63,18 @@ export default function ChordExplorerPage() {
     void refreshMidiInputs();
   }, [loadCatalogue, refreshMidiInputs]);
 
-  const progressionsInKey = useMemo(
-    () => (catalogue ? catalogue.progressions.filter((p) => p.key === selectedKey && !p.isUserAdded) : []),
-    [catalogue, selectedKey],
-  );
+  const progressionsInKey = useMemo(() => {
+    if (!catalogue) return [];
+    // The source lists some progressions more than once; show each chord sequence once.
+    const seen = new Set<string>();
+    return catalogue.progressions.filter((p) => {
+      if (p.key !== selectedKey || p.isUserAdded) return false;
+      const sequence = p.chordIds.join('>');
+      if (seen.has(sequence)) return false;
+      seen.add(sequence);
+      return true;
+    });
+  }, [catalogue, selectedKey]);
   const availableMoods = useMemo(
     () => Array.from(new Set(progressionsInKey.flatMap((p) => p.moods))).sort(),
     [progressionsInKey],
@@ -94,25 +111,58 @@ export default function ChordExplorerPage() {
     }
   }
 
-  const diatonicIds = diatonicChordIds(selectedKey);
-  const diatonicChords = diatonicIds.map((id) => catalogue.chords.find((c) => c.id === id)).filter((c) => c !== undefined);
+  const keyName = NOTE_NAMES[selectedKey as number];
+  const isPianoConnected = midiConnectionState === 'connected';
+  const chordCount = Object.values(chordsByGroup).reduce((n, g) => n + g.length, 0);
+  const diatonicChords = diatonicChordIds(selectedKey)
+    .map((id) => catalogue.chords.find((c) => c.id === id))
+    .filter((c) => c !== undefined);
   const currentChord = currentChordId ? catalogue.chords.find((c) => c.id === currentChordId) : undefined;
   const currentProgression = selectedProgressionId
     ? catalogue.progressions.find((p) => p.id === selectedProgressionId)
     : undefined;
 
+  const tabs: { id: Tab; label: string; count: number }[] = [
+    { id: 'chords', label: 'Chords', count: chordCount },
+    { id: 'progressions', label: 'Progressions', count: progressionsInKey.length },
+    { id: 'mine', label: 'My progressions', count: myProgressions.length },
+  ];
+
+  const chordButton = (id: string, label: string) => (
+    <Button
+      key={id}
+      accent="indigo"
+      variant={currentChordId === id && !selectedProgressionId ? 'primary' : 'secondary'}
+      aria-pressed={currentChordId === id && !selectedProgressionId}
+      onClick={() => playChord(id)}
+    >
+      {label}
+    </Button>
+  );
+
   return (
     <PageShell>
-      <h1>Chord & progression explorer</h1>
+      <div style={{ ...ROW, justifyContent: 'space-between' }}>
+        <h1 style={{ margin: 0 }}>Chords</h1>
+        <div style={ROW}>
+          <span role="status">Piano: {isPianoConnected ? 'connected' : 'not connected'}</span>
+          {midiInputs.map((input) => (
+            <Button key={input.id} accent="indigo" variant="secondary" onClick={() => void selectMidiInput(input.id)}>
+              {input.name}
+            </Button>
+          ))}
+        </div>
+      </div>
 
       <Card>
-        <p>Key:</p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+        <div style={ROW}>
+          <strong>Key</strong>
           {NOTE_NAMES.map((name, i) => (
             <Button
               key={name}
               accent="indigo"
               variant={selectedKey === i ? 'primary' : 'secondary'}
+              aria-pressed={selectedKey === i}
               onClick={() => setKey(asPitchClass(i))}
             >
               {name}
@@ -121,203 +171,230 @@ export default function ChordExplorerPage() {
         </div>
       </Card>
 
-      <Card>
-        <p>Choose your piano:</p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-          {midiInputs.map((input) => (
-            <Button key={input.id} accent="indigo" onClick={() => void selectMidiInput(input.id)}>
-              {input.name}
-            </Button>
-          ))}
-        </div>
-        <p>Connection: {midiConnectionState}</p>
-      </Card>
-
-      <Card>
-        <p>
-          <strong>Add your own progression</strong>
-        </p>
-        <p style={{ opacity: 0.75 }}>
-          Type chords from a chart — <code>C G Am F</code>, <code>Dm7 G7 Cmaj7</code>, <code>Bb/D</code> — or numerals in
-          the key chosen above, like <code>I V vi IV</code>. In a minor key the numerals follow the natural minor scale
-          (VII is G in A minor).
-        </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <input
-            aria-label="Name (optional)"
-            placeholder="Name (optional)"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            style={{ padding: '0.5rem', font: 'inherit' }}
-          />
-          <textarea
-            aria-label="Chords"
-            placeholder="C G Am F"
-            rows={2}
-            value={newText}
-            onChange={(e) => setNewText(e.target.value)}
-            style={{ padding: '0.5rem', font: 'inherit' }}
-          />
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', alignItems: 'center' }}>
-            <span>Numerals in {NOTE_NAMES[selectedKey as number]}:</span>
-            {(['major', 'minor'] as const).map((mode) => (
-              <Button
-                key={mode}
-                accent="coral"
-                variant={newMode === mode ? 'primary' : 'secondary'}
-                onClick={() => setNewMode(mode)}
-              >
-                {mode === 'major' ? 'Major' : 'Minor'}
-              </Button>
-            ))}
-            <Button accent="indigo" onClick={() => void handleAdd()}>
-              Add to my library
-            </Button>
-          </div>
-          {addError && <p role="alert">{addError}</p>}
-          {justAdded && !addError && <p role="status">Added “{justAdded}” to My progressions below.</p>}
-        </div>
-      </Card>
-
-      <Card>
-        <p>My progressions ({myProgressions.length}):</p>
-        {myProgressions.length === 0 && <p style={{ opacity: 0.75 }}>Nothing yet — add one above.</p>}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {myProgressions.map((progression) => (
-            <div key={progression.id} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', alignItems: 'center' }}>
-              <Button
-                accent="indigo"
-                variant={selectedProgressionId === progression.id ? 'primary' : 'secondary'}
-                onClick={() => startProgression(progression.id)}
-              >
-                {progression.name}
-              </Button>
-              <Link href={`/studio/chords/play/${encodeURIComponent(progression.id)}`}>
-                <Button accent="coral" variant="secondary">Falling notes</Button>
-              </Link>
-              <Button
-                accent="coral"
-                variant="secondary"
-                aria-label={`Remove ${progression.name}`}
-                onClick={() => void removeUserProgression(progression.id)}
-              >
-                Remove
-              </Button>
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      <Card>
-        <p>Diatonic chords in {NOTE_NAMES[selectedKey as number]}:</p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-          {diatonicChords.map((chord) => (
-            <Button
-              key={chord.id}
-              accent="indigo"
-              variant={currentChordId === chord.id && !selectedProgressionId ? 'primary' : 'secondary'}
-              onClick={() => playChord(chord.id)}
-            >
-              {chord.id}
-            </Button>
-          ))}
-        </div>
-      </Card>
-
-      <Card>
-        <p>
-          Chord library — every chord on {NOTE_NAMES[selectedKey as number]} ({Object.values(chordsByGroup).reduce((n, g) => n + g.length, 0)}):
-        </p>
-        {(['triad', 'seventh', 'other'] as const).map((group) => (
-          <div key={group} style={{ marginBottom: '0.75rem' }}>
-            <p style={{ opacity: 0.75, margin: '0 0 0.3rem' }}>
-              {GROUP_LABELS[group]} ({chordsByGroup[group].length})
+      {currentChord && (
+        <div style={{ position: 'sticky', top: 0, zIndex: 5 }}>
+          <Card>
+            <p style={{ margin: '0 0 0.4rem' }}>
+              {currentProgression
+                ? `${currentProgression.name} — chord ${currentChordIndex + 1} of ${currentProgression.chordIds.length}: `
+                : 'Play: '}
+              <strong>{chordSymbolOfId(currentChord.id)}</strong>
+              {matchResult?.kind === 'complete' && ' — nice!'}
             </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-              {chordsByGroup[group].map((chord) => (
+            <ChordKeybed
+              target={currentChord.midiNotes.map((p) => asPitchClass(p as number))}
+              played={playedPitchClasses}
+            />
+            {currentProgression && (
+              <div style={{ ...ROW, marginTop: '0.5rem' }}>
+                <Button accent="indigo" variant="secondary" onClick={advanceProgression}>
+                  Next chord
+                </Button>
+                <Link href={`/studio/chords/play/${encodeURIComponent(currentProgression.id)}`}>
+                  <Button accent="coral" variant="secondary">Play with falling notes</Button>
+                </Link>
+              </div>
+            )}
+          </Card>
+        </div>
+      )}
+
+      <div role="tablist" aria-label="Chord explorer sections" style={ROW}>
+        {tabs.map((t) => (
+          <Button
+            key={t.id}
+            role="tab"
+            id={`tab-${t.id}`}
+            aria-selected={tab === t.id}
+            aria-controls={`panel-${t.id}`}
+            accent="indigo"
+            variant={tab === t.id ? 'primary' : 'secondary'}
+            onClick={() => setTab(t.id)}
+          >
+            {t.label} ({t.count})
+          </Button>
+        ))}
+      </div>
+
+      {tab === 'chords' && (
+        <div role="tabpanel" id="panel-chords" aria-labelledby="tab-chords" style={COLUMN}>
+          <Card>
+            <p style={{ marginTop: 0 }}>
+              <strong>Chords that belong in {keyName}</strong> — press one to see it on the keys, then play it.
+            </p>
+            <div style={ROW}>{diatonicChords.map((chord) => chordButton(chord.id, chordSymbolOfId(chord.id)))}</div>
+          </Card>
+          <Card>
+            <p style={{ marginTop: 0 }}>
+              <strong>All {chordCount} chords on {keyName}</strong>
+            </p>
+            {(['triad', 'seventh', 'other'] as const).map((group) => (
+              <details key={group} open={group === 'triad'} style={{ marginBottom: '0.5rem' }}>
+                <summary style={{ minHeight: '44px', display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                  {GROUP_LABELS[group]} ({chordsByGroup[group].length})
+                </summary>
+                <div style={ROW}>{chordsByGroup[group].map((chord) => chordButton(chord.id, chord.symbol))}</div>
+              </details>
+            ))}
+          </Card>
+        </div>
+      )}
+
+      {tab === 'progressions' && (
+        <div role="tabpanel" id="panel-progressions" aria-labelledby="tab-progressions">
+          <Card>
+            <div style={{ ...ROW, marginBottom: '0.75rem' }}>
+              {(['all', 'major', 'minor', 'modal'] as const).map((mode) => (
                 <Button
-                  key={chord.id}
-                  accent="indigo"
-                  variant={currentChordId === chord.id && !selectedProgressionId ? 'primary' : 'secondary'}
-                  onClick={() => playChord(chord.id)}
+                  key={mode}
+                  accent="coral"
+                  variant={modeFilter === mode ? 'primary' : 'secondary'}
+                  aria-pressed={modeFilter === mode}
+                  onClick={() => {
+                    setModeFilter(mode);
+                    setShownCount(PAGE_SIZE);
+                  }}
                 >
-                  {chord.symbol}
+                  {mode === 'all' ? 'All' : mode === 'major' ? 'Major' : mode === 'minor' ? 'Minor' : 'Modal'}
                 </Button>
               ))}
+              <label style={ROW}>
+                Mood
+                <select
+                  value={moodFilter ?? ''}
+                  onChange={(e) => {
+                    setMoodFilter(e.target.value === '' ? null : e.target.value);
+                    setShownCount(PAGE_SIZE);
+                  }}
+                  style={{ font: 'inherit', padding: '0.5rem', minHeight: '44px' }}
+                >
+                  <option value="">Any mood</option>
+                  {availableMoods.map((mood) => (
+                    <option key={mood} value={mood}>{mood}</option>
+                  ))}
+                </select>
+              </label>
+              <span style={{ opacity: 0.75 }}>
+                {progressions.length} progressions in {keyName}
+              </span>
             </div>
-          </div>
-        ))}
-      </Card>
-
-      <Card>
-        <p>Progressions ({progressions.length} of {progressionsInKey.length}):</p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.6rem' }}>
-          {(['all', 'major', 'minor', 'modal'] as const).map((mode) => (
-            <Button
-              key={mode}
-              accent="coral"
-              variant={modeFilter === mode ? 'primary' : 'secondary'}
-              onClick={() => setModeFilter(mode)}
-            >
-              {mode === 'all' ? 'All' : mode === 'major' ? 'Major' : mode === 'minor' ? 'Minor' : 'Modal'}
-            </Button>
-          ))}
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.75rem' }}>
-          <Button accent="coral" variant={moodFilter === null ? 'primary' : 'secondary'} onClick={() => setMoodFilter(null)}>
-            Any mood
-          </Button>
-          {availableMoods.map((mood) => (
-            <Button
-              key={mood}
-              accent="coral"
-              variant={moodFilter === mood ? 'primary' : 'secondary'}
-              onClick={() => setMoodFilter(mood)}
-            >
-              {mood}
-            </Button>
-          ))}
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-          {progressions.map((progression) => (
-            <Button
-              key={progression.id}
-              accent="indigo"
-              variant={selectedProgressionId === progression.id ? 'primary' : 'secondary'}
-              onClick={() => startProgression(progression.id)}
-            >
-              {progression.name}
-            </Button>
-          ))}
-        </div>
-        {currentProgression && (
-          <p style={{ marginTop: '0.75rem' }}>
-            Chord {currentChordIndex + 1} of {currentProgression.chordIds.length}: {currentChordId}
-            {' — '}
-            <Button accent="indigo" variant="secondary" onClick={advanceProgression}>
-              Next chord
-            </Button>{' '}
-            <Link href={`/studio/chords/play/${encodeURIComponent(currentProgression.id)}`}>
-              <Button accent="coral" variant="secondary">Play with falling notes</Button>
-            </Link>
-            {currentProgression.moods.length > 0 && (
-              <span style={{ marginLeft: '0.5rem', opacity: 0.7 }}>({currentProgression.moods.join(', ')})</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {progressions.slice(0, shownCount).map((progression) => (
+                <div
+                  key={progression.id}
+                  style={{ ...ROW, justifyContent: 'space-between', borderTop: '1px solid #d9dfd3', paddingTop: '0.5rem' }}
+                >
+                  <div>
+                    <strong>{progression.chordIds.map(chordSymbolOfId).join('  ')}</strong>
+                    <div style={{ opacity: 0.75, fontSize: '0.85em' }}>
+                      {progression.name}
+                      {progression.moods.length > 0 && ` · ${progression.moods.join(', ')}`}
+                    </div>
+                  </div>
+                  <div style={ROW}>
+                    <Button
+                      accent="indigo"
+                      variant={selectedProgressionId === progression.id ? 'primary' : 'secondary'}
+                      aria-pressed={selectedProgressionId === progression.id}
+                      onClick={() => startProgression(progression.id)}
+                    >
+                      Play
+                    </Button>
+                    <Link href={`/studio/chords/play/${encodeURIComponent(progression.id)}`}>
+                      <Button accent="coral" variant="secondary">Falling notes</Button>
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {progressions.length > shownCount && (
+              <p>
+                <Button accent="indigo" variant="secondary" onClick={() => setShownCount((n) => n + PAGE_SIZE)}>
+                  Show {Math.min(PAGE_SIZE, progressions.length - shownCount)} more
+                </Button>
+              </p>
             )}
-          </p>
-        )}
-      </Card>
+          </Card>
+        </div>
+      )}
 
-      {currentChord && (
-        <Card>
-          <p>
-            Play: <strong>{chordSymbolOfId(currentChord.id)}</strong>
-            {matchResult?.kind === 'complete' && ' — nice!'}
-          </p>
-          <ChordKeybed
-            target={currentChord.midiNotes.map((p) => asPitchClass(p as number))}
-            played={playedPitchClasses}
-          />
-        </Card>
+      {tab === 'mine' && (
+        <div role="tabpanel" id="panel-mine" aria-labelledby="tab-mine" style={COLUMN}>
+          <Card>
+            <p style={{ marginTop: 0 }}>
+              <strong>Add your own progression</strong>
+            </p>
+            <p style={{ opacity: 0.75 }}>
+              Type chords from a chart — <code>C G Am F</code>, <code>Dm7 G7 Cmaj7</code>, <code>Bb/D</code> — or
+              numerals in the key chosen above, like <code>I V vi IV</code>. In a minor key the numerals follow the
+              natural minor scale (VII is G in A minor).
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <input
+                aria-label="Name (optional)"
+                placeholder="Name (optional)"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                style={{ padding: '0.5rem', font: 'inherit' }}
+              />
+              <textarea
+                aria-label="Chords"
+                placeholder="C G Am F"
+                rows={2}
+                value={newText}
+                onChange={(e) => setNewText(e.target.value)}
+                style={{ padding: '0.5rem', font: 'inherit' }}
+              />
+              <div style={ROW}>
+                <span>Numerals in {keyName}:</span>
+                {(['major', 'minor'] as const).map((mode) => (
+                  <Button
+                    key={mode}
+                    accent="coral"
+                    variant={newMode === mode ? 'primary' : 'secondary'}
+                    aria-pressed={newMode === mode}
+                    onClick={() => setNewMode(mode)}
+                  >
+                    {mode === 'major' ? 'Major' : 'Minor'}
+                  </Button>
+                ))}
+                <Button accent="indigo" onClick={() => void handleAdd()}>
+                  Add to my library
+                </Button>
+              </div>
+              {addError && <p role="alert">{addError}</p>}
+              {justAdded && !addError && <p role="status">Added “{justAdded}” to the list below.</p>}
+            </div>
+          </Card>
+          <Card>
+            <p style={{ marginTop: 0 }}>My progressions ({myProgressions.length})</p>
+            {myProgressions.length === 0 && <p style={{ opacity: 0.75 }}>Nothing yet — add one above.</p>}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {myProgressions.map((progression) => (
+                <div key={progression.id} style={ROW}>
+                  <Button
+                    accent="indigo"
+                    variant={selectedProgressionId === progression.id ? 'primary' : 'secondary'}
+                    onClick={() => startProgression(progression.id)}
+                  >
+                    {progression.name}
+                  </Button>
+                  <Link href={`/studio/chords/play/${encodeURIComponent(progression.id)}`}>
+                    <Button accent="coral" variant="secondary">Falling notes</Button>
+                  </Link>
+                  <Button
+                    accent="coral"
+                    variant="secondary"
+                    aria-label={`Remove ${progression.name}`}
+                    onClick={() => void removeUserProgression(progression.id)}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
       )}
     </PageShell>
   );

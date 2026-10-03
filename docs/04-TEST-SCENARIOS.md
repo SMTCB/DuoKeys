@@ -399,6 +399,7 @@ These cannot be automated. Run at each sprint exit.
 | `TS-M-013` | Cable disconnected mid-piece: recovery is calm and nothing is lost | 4 | FR-SYS-004 |
 | `TS-M-014` | Same golden fixtures produce identical grades on iPad and laptop | 5 | US-5.04 |
 | `TS-M-015` | A library song (one two-hand piece, one single line) is played at the real piano in wait mode: each hand lands on the right keys and a chord waits for all its notes | 3 | FR-STU-016 |
+| `TS-M-016` | **Manual, not yet run.** On the chord screen with the piano connected: pressing a chord or a progression's Play shows its keys on the keybed pinned at the top without scrolling; Next chord steps through the progression; the three tabs each show only their own content | 3 | FR-STU-015 |
 
 ---
 
@@ -424,7 +425,7 @@ critical-path behaviour has a manual confirmation.
 | FR-STU-010 | TS-U-CNT-021 | — |
 | FR-STU-012 | TS-U-MAT-023…025, TS-U-CNT-019 | — |
 | FR-STU-013 | TS-U-REN-007 | — |
-| FR-STU-015 | TS-U-CNT-022…027, TS-I-DAT-008 | — |
+| FR-STU-015 | TS-U-CNT-022…027, TS-I-DAT-008 | TS-M-016 |
 | FR-STU-016 | TS-U-CNT-028, 029, TS-I-DAT-009 | TS-M-015 |
 | FR-DUO-001 | TS-E-015 | TS-M-012 |
 | FR-DUO-002 | TS-U-MAT-021, TS-G-010 | TS-M-011 |

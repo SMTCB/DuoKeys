@@ -97,7 +97,7 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-STU-012 chord & progression explorer | M | TA-CNT-006, TA-MAT-007 | US-3.13 | TS-U-MAT-023…025, TS-U-CNT-019 |
 | FR-STU-013 lead-sheet song mode | M | TA-DAT-001 (ext), TA-REN-001 | US-3.14 | TS-U-REN-007 |
 | FR-STU-014 personal score import | C | — (future roadmap) | — | — |
-| FR-STU-015 my progressions & falling-notes chords | S | TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.18 | TS-U-CNT-022…027, TS-I-DAT-008 |
+| FR-STU-015 my progressions & falling-notes chords | S | TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.18, US-3.20 | TS-U-CNT-022…027, TS-I-DAT-008, TS-M-016 |
 | FR-STU-016 song library | S | TA-CNT-004, TA-CNT-005, TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.19 | TS-U-CNT-028, 029, TS-I-DAT-009, TS-M-015 |
 | FR-DUO-001 split + transpose | M | TA-DAT-001 | US-4.01 | TS-E-015, TS-M-012 |
 | FR-DUO-002 dual matchers | M | TA-MAT-001 | US-4.02 | TS-U-MAT-021, TS-G-010 |
@@ -1054,3 +1054,15 @@ different feature). No ADR and no new component ID: it extends `TA-CNT-006`
   else middle C — worth checking on real pieces at the piano (`TS-M-015`).
 - Tests: `TS-U-CNT-028`, `029`, `TS-I-DAT-009`. 289 unit tests pass.
 - **Not verified at a real piano.**
+
+## Update — chord screen declutter (2026-10-03)
+
+`US-3.20` under `FR-STU-015`. `/studio/chords` held 282 buttons in about 5,000
+px with the keybed at the very bottom. It is now one compact top bar (piano
+status, key), a "now playing" keybed pinned at the top, and three tabs: Chords
+(diatonic chords first, the rest in collapsible groups), Progressions (mode
+switch, mood dropdown, 12 rows at a time, each row showing the chords in the key)
+and My progressions (add form and saved list). Progressions with an identical
+chord sequence are listed once. No new ID, no ADR; `TA-APP-003`'s route is
+unchanged. Page-only change, so no new automated test; `TS-M-016` is the manual
+check at the piano and is not yet run.

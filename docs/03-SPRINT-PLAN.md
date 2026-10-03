@@ -193,6 +193,7 @@ Note Ninja, styling.
 | `US-3.15` | As an adult, I can mark a piece "want to learn", "learning" or "learned" and see that list, so that my repertoire is tracked across devices. | FR-PRO-006 | TA-DAT-007 | 2 |
 | `US-3.18` | As an adult, I can type or paste a chord progression (symbols or Roman numerals), keep it in "My progressions", play any progression as falling notes in block chords or a rhythmic style, and browse every chord on a key, so that I can play around without waiting for the catalogue to have my song. | FR-STU-015 | TA-CNT-006, TA-REN-001, TA-DAT-003 | 3 |
 | `US-3.19` | As an adult, I can search a library of real piano pieces from my own platform, add the ones I want to "my songs", and play them as falling notes with the hand selector, loop and tempo tools, so that I have somewhere to plug in the piano and start playing. | FR-STU-016 | TA-CNT-004, TA-CNT-005, TA-CNT-006, TA-REN-001, TA-DAT-003 | 5 |
+| `US-3.20` | As an adult, I can open the chord screen and find one job per tab (chords, progressions, my progressions) with the keybed pinned at the top and each progression shown as the chords I will play, so that I am not scrolling through five thousand pixels of buttons to find a chord. | FR-STU-015 | TA-APP-003, TA-CNT-006 | 3 |
 
 **Exit criteria**
 - You use it for your own practice for a week and prefer it to the alternative.
@@ -253,10 +254,10 @@ original brief is delivered.
 | 0 | Hardware spike | 6 | 1–2 days |
 | 1 | Walking skeleton | 34 | ~1 week |
 | 2 | Child's loop | 60 | ~2 weeks |
-| 3 | Adult's loop | 65 | ~2 weeks |
+| 3 | Adult's loop | 68 | ~2 weeks |
 | 4 | Duet & dashboard | 35 | ~2 weeks |
 | 5 | iPad (optional) | 16 | ~1 week |
-| | **v1 total (0–4)** | **200** | **~7 weeks** |
+| | **v1 total (0–4)** | **203** | **~7 weeks** |
 
 Points are load-bearing only *within* a sprint; the calendar estimates assume
 part-time evening work, which is the realistic mode for this project.
