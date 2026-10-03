@@ -173,16 +173,24 @@ wrong under the hands is still wrong.
 
 ### CI (`.github/workflows/ci.yml`)
 
-Runs on every push:
+Runs on every push and pull request (a newer push to the same ref cancels the older run):
 
 ```
 typecheck  → tsc --noEmit
 lint       → eslint (includes boundary rules, TA-PORT-005)
 test:unit  → vitest run  (TS-U-*, TS-I-*, TS-G-*)
-docs:check → node scripts/docs-check.mjs
+docs:check → pnpm run docs:check  (node scripts/docs-check.mjs)
 build      → next build
 test:e2e   → playwright  (TS-E-*, pre-merge only)
 ```
+
+A separate `rls` job (main only) runs `supabase/tests/rls.sql` against the live
+project (`TS-I-SYN-004`). It is **skipped, not failed,** until the repository
+secrets `SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD` exist.
+
+`pnpm run lint` covers the whole repo except generated or tooling output
+(`.next`, `.claude`, `docs/html`, `supabase/.temp`); the boundary rules
+(`TA-PORT-005`) apply to `src/` and are never disabled.
 
 CI has no MIDI device and no audio hardware, and needs neither (ADR-005).
 

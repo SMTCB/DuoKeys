@@ -8,8 +8,13 @@ const compat = new FlatCompat({
 });
 
 const config = [
-  { ignores: ['.next/**', 'next-env.d.ts'] },
+  { ignores: ['.next/**', 'next-env.d.ts', '.claude/**', 'docs/html/**', 'supabase/.temp/**'] },
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  {
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    },
+  },
   {
     files: ['src/core/**/*.ts'],
     rules: {

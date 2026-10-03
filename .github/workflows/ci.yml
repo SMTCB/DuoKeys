@@ -3,10 +3,16 @@ name: CI
 on:
   push:
     branches: ['**']
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   ci:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -18,7 +24,7 @@ jobs:
       - run: pnpm run typecheck
       - run: pnpm run lint
       - run: pnpm run test:unit
-      - run: node scripts/docs-check.mjs
+      - run: pnpm run docs:check
       - run: pnpm run content:build
       - run: pnpm run build
       - name: Install Playwright browsers
@@ -27,3 +33,33 @@ jobs:
       - name: E2E (pre-merge only)
         if: github.ref == 'refs/heads/main'
         run: pnpm run test:e2e
+
+  # TS-I-SYN-004 — row-level security against the real Supabase project. Runs in
+  # a rolled-back transaction with a throwaway user, so it leaves nothing behind.
+  # Skipped (not failed) until both repository secrets exist:
+  #   SUPABASE_ACCESS_TOKEN, SUPABASE_DB_PASSWORD
+  rls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.ref == 'refs/heads/main'
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check secrets
+        id: gate
+        run: |
+          if [ -n "$SUPABASE_ACCESS_TOKEN" ] && [ -n "$SUPABASE_DB_PASSWORD" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "RLS test skipped: SUPABASE_ACCESS_TOKEN / SUPABASE_DB_PASSWORD not set"
+          fi
+      - uses: supabase/setup-cli@v1
+        if: steps.gate.outputs.run == 'true'
+      - name: Link project
+        if: steps.gate.outputs.run == 'true'
+        run: supabase link --project-ref huewidncswsybikisisu --password "$SUPABASE_DB_PASSWORD"
+      - name: RLS test
+        if: steps.gate.outputs.run == 'true'
+        run: supabase db query --linked -f supabase/tests/rls.sql

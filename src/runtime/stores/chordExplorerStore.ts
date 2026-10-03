@@ -7,6 +7,8 @@
 
 import { create } from 'zustand';
 import { getAdapters } from '../bootstrap';
+import { rememberMidiInput, useSessionStore } from './sessionStore';
+import { rememberedInputFirst } from '../../core/profile/midiPreference';
 import type { MidiConnectionState, MidiInputInfo } from '../../adapters/ports';
 import { MidiDecoder } from '../../core/midi/decode';
 import { VELOCITY_FLOOR } from '../../core/match/types';
@@ -68,13 +70,14 @@ export const useChordExplorerStore = create<ChordExplorerState>((set, get) => ({
 
   async refreshMidiInputs(): Promise<void> {
     const inputs = await getAdapters().midi.listInputs();
-    set({ midiInputs: inputs });
+    set({ midiInputs: rememberedInputFirst(inputs, useSessionStore.getState().profile.midiInputId) });
   },
 
   async selectMidiInput(id: string): Promise<void> {
     const adapters = getAdapters();
     await adapters.audio.resume(); // user-gesture unlock, TA-AUD-003
     await adapters.midi.open(id);
+    await rememberMidiInput(id);
     adapters.midi.onStateChange((s) => set({ midiConnectionState: s }));
 
     decoder = new MidiDecoder();

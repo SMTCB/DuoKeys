@@ -170,13 +170,15 @@ code was finished:
    no visible stutter (`NFR-002`).
 3. **`NFR-004`** — cold start to playable under 3 s. No automated check exists
    yet (`TS-E-002` is unwritten in the Sprint 1 scope) — time it by hand.
-4. **`US-1.07` gap** — `selectMidiInput()` in `src/runtime/stores/sessionStore.ts`
-   opens the chosen MIDI input for the session but never writes it to the
-   `settings` store, so the "have it remembered" half of the story doesn't
-   survive a reload yet. Not a test to run — a small fix still owed.
+4. **`US-1.07` — remembered input, half closed.** `selectMidiInput()` (session,
+   Note Ninja and chord stores) now writes the chosen input to the active
+   profile's `midiInputId` (synced like any profile field), and the input list
+   offers the remembered input first (`TS-I-MID-002`, `midiMemory.test.ts`).
+   It does **not** yet reopen it unprompted on launch: each page still waits
+   for one tap, because opening also unlocks audio (`TA-AUD-003`). Check at the
+   piano that the right input is first in the list after a reload.
 
-Run 1–3 at the piano before calling Sprint 1 formally closed; fix 4 whenever
-convenient (does not need hardware).
+Run 1–4 at the piano before calling Sprint 1 formally closed.
 
 ---
 

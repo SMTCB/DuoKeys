@@ -314,6 +314,8 @@ Status: `TS-I-SYN-001`–`003`, `005`–`008`, `010`, `011` have automated tests
 | `TS-I-MID-004` | Reconnect resumes without losing state | FR-SYS-004 |
 | `TS-I-MID-005` | Absent `requestMIDIAccess` shows the unsupported-browser explanation | FR-SYS-005 |
 
+*Status:* `TS-I-MID-002` is half automated (`src/runtime/stores/midiMemory.test.ts`): the chosen input is written to the profile and listed first after a reload. Reopening it with no tap is not built yet.
+
 ---
 
 ## 9. Golden fixtures — `TS-G-*`

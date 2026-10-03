@@ -25,6 +25,7 @@ import { classifyArticulation } from '../../core/grade/articulation';
 import { reconcileMissed } from '../../core/grade/reconcileMissed';
 import { computeAttempt } from '../../core/data/attempt';
 import { DEFAULT_PROFILE } from '../defaultProfile';
+import { rememberedInputFirst, withMidiInput } from '../../core/profile/midiPreference';
 
 export type PracticeMode = 'wait' | 'timed';
 /** FR-STU-005 — how the *other* tracks (e.g. the hand not being practised) sound. */
@@ -157,6 +158,21 @@ function recordArticulation(pitch: MidiPitch, actualMs: number): void {
   if (outcome) open.result.articulation = outcome;
 }
 
+/**
+ * US-1.07 — remember the chosen input on the active profile so it survives a
+ * reload. Only a profile that is actually stored is written (the built-in
+ * default is not); the write goes through the normal storage port, so it syncs.
+ */
+export async function rememberMidiInput(id: string): Promise<void> {
+  const { storage } = getAdapters();
+  const { profile, setProfile } = useSessionStore.getState();
+  const next = withMidiInput(profile, id);
+  if (next === profile) return;
+  if (!(await storage.get<Profile>('profiles', profile.id))) return;
+  await storage.put('profiles', next);
+  setProfile(next);
+}
+
 export const useSessionStore = create<SessionState>((set, get) => ({
   profile: DEFAULT_PROFILE,
 
@@ -183,13 +199,14 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
   async refreshMidiInputs(): Promise<void> {
     const inputs = await getAdapters().midi.listInputs();
-    set({ midiInputs: inputs });
+    set({ midiInputs: rememberedInputFirst(inputs, get().profile.midiInputId) });
   },
 
   async selectMidiInput(id: string): Promise<void> {
     const adapters = getAdapters();
     await adapters.audio.resume(); // user-gesture unlock, TA-AUD-003
     await adapters.midi.open(id);
+    await rememberMidiInput(id);
     adapters.midi.onStateChange((s) => set({ midiConnectionState: s }));
 
     unsubscribeMessage?.();
