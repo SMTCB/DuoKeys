@@ -13,7 +13,7 @@ import { keyOf } from './keyOf';
 import { matchesRange } from './queryFilter';
 
 const DB_NAME = 'duokeys';
-const DB_VERSION = 1;
+const DB_VERSION = 2; // v2 adds the `library` store (US-3.15, TA-DAT-007)
 
 const STORES: readonly StoreName[] = [
   'profiles',
@@ -21,6 +21,7 @@ const STORES: readonly StoreName[] = [
   'attempts',
   'progression',
   'flashcards',
+  'library',
   'settings',
   'outbox',
 ];

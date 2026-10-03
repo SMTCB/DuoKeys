@@ -159,6 +159,21 @@ Note Ninja, styling.
 
 **Goal:** you practise with it yourself for a week and prefer it to the alternative.
 
+### Design system
+
+> Tackled first, ahead of the feature stories below despite the higher ID
+> numbers (`US-3.16`–`US-3.17` were assigned after `US-3.01`–`US-3.15`
+> already existed — IDs are never renumbered, see `CLAUDE.md` § 1.4). Landing
+> this first means the new Studio screens below are built against the
+> DuoKeys Design Reference from day one instead of being restyled after.
+
+| ID | Story | FR | TA | Pts |
+|---|---|---|---|---|
+| `US-3.16` | As the developer, I have the DuoKeys design tokens (palette, type pairing, spacing) and the shared components they drive (keybed, cards) implemented as code, matching the DuoKeys Design Reference artifact, so that every screen built from here on draws from one system instead of one-off styles. | — | TA-APP-006 | 3 |
+| `US-3.17` | As a player, the Explorer screens I already use (quest map, falling notes, Note Ninja) look and feel like the rest of the app, so that the visual identity isn't Studio-only. | — | TA-APP-006, TA-REN-001, TA-REN-002 | 3 |
+
+### The adult's loop
+
 | ID | Story | FR | TA | Pts |
 |---|---|---|---|---|
 | `US-3.01` | As an adult, I practise from real notation with a cursor driven by what I actually play. | FR-STU-001 | TA-REN-003 | 5 |
@@ -168,11 +183,14 @@ Note Ninja, styling.
 | `US-3.05` | As an adult, I scale tempo from 30–100% of written. | FR-STU-004 | TA-CLK-002 | 2 |
 | `US-3.06` | As an adult, auto-ramp raises tempo 5% after a clean pass and drops one step after a failed pass, so that the controls become a practice method. | FR-STU-004 | TA-CLK-002 | 3 |
 | `US-3.07` | As an adult, I practise one hand while the other is muted, silent, or played by the sampler. | FR-STU-005 | TA-AUD-002, TA-DAT-001 | 3 |
-| `US-3.08` | As an adult, I am told when notes are held too short or too long relative to the written articulation. | FR-STU-006 | TA-MID-004 | 3 |
+| `US-3.08` | As an adult, I am told when notes are held too short or too long relative to the written articulation. | FR-STU-006 | TA-MID-004, TA-GRD-006 | 3 |
 | `US-3.09` | As an adult, Hanon exercises 1–20 are generated from patterns and graded on evenness. | FR-STU-007 | TA-GRD-003, TA-CNT-004 | 5 |
 | `US-3.10` | As an adult, I get unlimited generated sight-reading constrained by key, range, rhythm and difficulty. | FR-STU-010 | TA-CNT-004 | 5 |
 | `US-3.11` | As an adult, I see my signed rush/drag in milliseconds rather than an RMS number. | FR-STU-008 | TA-GRD-001 | 2 |
 | `US-3.12` | As an adult, I can ingest Mutopia and OpenScore MusicXML through the build pipeline. | FR-STU-011 | TA-CNT-001, TA-CNT-004 | 3 |
+| `US-3.13` | As an adult, I can browse chords and progressions by key and quality, see a suggested chord on the keybed, and have what I actually play validated against it, so that the explorer is more than passive browsing. | FR-STU-012 | TA-CNT-006, TA-MAT-007 | 5 |
+| `US-3.14` | As an adult, I can play a lead-sheet song with chord symbols overlaid on the falling-notes view, so that I can practise from a chart the way I would at a real gig. | FR-STU-013 | TA-DAT-001, TA-REN-001 | 5 |
+| `US-3.15` | As an adult, I can mark a piece "want to learn", "learning" or "learned" and see that list, so that my repertoire is tracked across devices. | FR-PRO-006 | TA-DAT-007 | 2 |
 
 **Exit criteria**
 - You use it for your own practice for a week and prefer it to the alternative.
@@ -233,10 +251,10 @@ original brief is delivered.
 | 0 | Hardware spike | 6 | 1–2 days |
 | 1 | Walking skeleton | 34 | ~1 week |
 | 2 | Child's loop | 60 | ~2 weeks |
-| 3 | Adult's loop | 39 | ~2 weeks |
+| 3 | Adult's loop | 57 | ~2 weeks |
 | 4 | Duet & dashboard | 35 | ~2 weeks |
 | 5 | iPad (optional) | 16 | ~1 week |
-| | **v1 total (0–4)** | **174** | **~7 weeks** |
+| | **v1 total (0–4)** | **192** | **~7 weeks** |
 
 Points are load-bearing only *within* a sprint; the calendar estimates assume
 part-time evening work, which is the realistic mode for this project.
@@ -260,8 +278,10 @@ Every `M`-priority functional requirement is delivered by at least one story:
 | FR-STU-004 | 3 | FR-SYN-001 | 1, 2 |
 | FR-STU-005 | 3 | FR-SYN-002 | 2 |
 | FR-STU-008 | 3 | FR-SYN-003 | 2 |
-| FR-DUO-001 | 4 | FR-SYN-005 | 2 |
-| FR-DUO-002 | 4 | FR-SYS-001 | 0, 1 |
-| FR-SYS-002 | 0, 1 | FR-SYS-003 | 1 |
-| FR-SYS-004 | 4 | FR-SYS-005 | 4 |
-| FR-SYS-007 | 1–4 (ongoing) | FR-SYS-008 | 2 |
+| FR-STU-012 | 3 | FR-SYN-005 | 2 |
+| FR-STU-013 | 3 | FR-PRO-006 | 3 |
+| FR-DUO-001 | 4 | FR-SYS-001 | 0, 1 |
+| FR-DUO-002 | 4 | FR-SYS-003 | 1 |
+| FR-SYS-002 | 0, 1 | FR-SYS-004 | 4 |
+| FR-SYS-005 | 4 | FR-SYS-007 | 1–4 (ongoing) |
+| FR-SYS-008 | 2 | | |

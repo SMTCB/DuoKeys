@@ -45,6 +45,12 @@ export interface DifficultyBreakdown {
   overall: 1 | 2 | 3 | 4 | 5;
 }
 
+/** FR-STU-013 — lead-sheet chord symbols, positioned at a tick like a note. Optional: most content has none. */
+export interface ChordMarker {
+  atTick: Ticks;
+  symbol: string;
+}
+
 export interface Arrangement {
   id: string;
   pieceId: string;
@@ -55,6 +61,7 @@ export interface Arrangement {
   tracks: Track[];
   sections: Section[];
   analysis: DifficultyBreakdown;
+  chordMarkers?: ChordMarker[];
 }
 
 export interface Piece {

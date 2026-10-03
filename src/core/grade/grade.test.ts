@@ -1,11 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { computeGrade, type NoteResult } from './grade';
+import { computeGrade, describeArticulation, describeRushDrag, type Grade, type NoteResult } from './grade';
 import { asMidiPitch } from '../midi/decode';
 
-function results(spec: { outcome: NoteResult['outcome']; deltaMs?: number }[]): NoteResult[] {
+function results(spec: { outcome: NoteResult['outcome']; deltaMs?: number; onsetMs?: number }[]): NoteResult[] {
   return spec.map((s, i) => {
     const base: NoteResult = { pitch: asMidiPitch(60 + i), outcome: s.outcome };
-    return s.deltaMs === undefined ? base : { ...base, deltaMs: s.deltaMs };
+    return {
+      ...base,
+      ...(s.deltaMs === undefined ? {} : { deltaMs: s.deltaMs }),
+      ...(s.onsetMs === undefined ? {} : { onsetMs: s.onsetMs }),
+    };
   });
 }
 
@@ -70,6 +74,14 @@ describe('computeGrade', () => {
     expect(grade.timingRmsMs).toBeCloseTo(40, 0);
   });
 
+  // TS-U-GRD-015
+  it('Explorer floor applies even when the attempt is not fully completed', () => {
+    const spec = [...Array(2).fill({ outcome: 'correct' }), ...Array(2).fill({ outcome: 'missed' })];
+    const grade = computeGrade(results(spec), 10, { explorerFloor: true });
+    expect(grade.completion).toBeCloseTo(0.4);
+    expect(grade.stars).toBeGreaterThanOrEqual(1);
+  });
+
   // TS-U-GRD-011
   it('an empty attempt grades 0 without dividing by zero', () => {
     const grade = computeGrade([], 0);
@@ -80,11 +92,96 @@ describe('computeGrade', () => {
     expect(Number.isFinite(grade.timingRmsMs)).toBe(true);
   });
 
+  // TS-U-GRD-008
+  it('perfectly even intervals grade evennessCv at 0', () => {
+    const spec = Array.from({ length: 5 }, (_, i) => ({ outcome: 'correct' as const, onsetMs: i * 200 }));
+    const grade = computeGrade(results(spec), 5);
+    expect(grade.evennessCv).toBeCloseTo(0);
+  });
+
+  // TS-U-GRD-009
+  it('lumpy intervals grade evennessCv above 0.20', () => {
+    const onsets = [0, 200, 210, 600, 620, 1400];
+    const spec = onsets.map((onsetMs) => ({ outcome: 'correct' as const, onsetMs }));
+    const grade = computeGrade(results(spec), onsets.length);
+    expect(grade.evennessCv).toBeGreaterThan(0.2);
+  });
+
+  it('leaves evennessCv absent with fewer than three onsets', () => {
+    const spec = [
+      { outcome: 'correct' as const, onsetMs: 0 },
+      { outcome: 'correct' as const, onsetMs: 200 },
+    ];
+    const grade = computeGrade(results(spec), 2);
+    expect(grade.evennessCv).toBeUndefined();
+  });
+
   // TS-U-GRD-012
   it('is deterministic — the same fixture grades identically every run', () => {
     const spec = [...Array(8).fill({ outcome: 'correct', deltaMs: 12 }), { outcome: 'wrong' }, { outcome: 'missed' }];
     const a = computeGrade(results(spec), 10);
     const b = computeGrade(results(spec), 10);
     expect(a).toEqual(b);
+  });
+});
+
+describe('describeRushDrag', () => {
+  // TS-U-GRD-018
+  it('phrases a negative offset as ahead of the beat', () => {
+    expect(describeRushDrag(-40)).toBe('40 ms ahead of the beat');
+  });
+
+  // TS-U-GRD-018
+  it('phrases a positive offset as behind the beat', () => {
+    expect(describeRushDrag(40)).toBe('40 ms behind the beat');
+  });
+
+  // TS-U-GRD-018
+  it('phrases zero as right on the beat', () => {
+    expect(describeRushDrag(0)).toBe('right on the beat');
+  });
+
+  // TS-U-GRD-019
+  it('rounds fractional milliseconds', () => {
+    expect(describeRushDrag(-39.6)).toBe('40 ms ahead of the beat');
+  });
+});
+
+describe('describeArticulation', () => {
+  function grade(articulations: NoteResult['articulation'][]): Grade {
+    const perNote = articulations.map((articulation, i) => {
+      const base: NoteResult = { pitch: asMidiPitch(60 + i), outcome: 'correct' };
+      return articulation === undefined ? base : { ...base, articulation };
+    });
+    return computeGrade(perNote, perNote.length);
+  }
+
+  // TS-U-GRD-020
+  it('reports nothing when no note was classified', () => {
+    expect(describeArticulation(grade([undefined, undefined]))).toBeUndefined();
+  });
+
+  // TS-U-GRD-020
+  it('reports a clean match when every classified note was even', () => {
+    expect(describeArticulation(grade(['even', 'even']))).toBe('Your note lengths matched what was written.');
+  });
+
+  // TS-U-GRD-021
+  it('leads with the short count when short notes outnumber long ones', () => {
+    expect(describeArticulation(grade(['short', 'short', 'long', 'even']))).toBe(
+      '2 notes cut short — try holding a little longer.',
+    );
+  });
+
+  // TS-U-GRD-021
+  it('leads with the long count when long notes outnumber short ones', () => {
+    expect(describeArticulation(grade(['long', 'long', 'short', 'even']))).toBe(
+      '2 notes held too long — try releasing a little sooner.',
+    );
+  });
+
+  // TS-U-GRD-021
+  it('uses singular phrasing for a single note', () => {
+    expect(describeArticulation(grade(['short']))).toBe('1 note cut short — try holding a little longer.');
   });
 });

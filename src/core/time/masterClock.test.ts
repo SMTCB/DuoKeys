@@ -67,4 +67,55 @@ describe('MasterClock', () => {
     const tickAfterPause = clock.audioToTicks(audio.now());
     expect(tickAfterPause).toBeCloseTo(tickBeforePause, 6);
   });
+
+  // TS-U-CLK-011
+  it('checkLoop snaps back to the loop start once the loop end is reached', () => {
+    const tempoMap: TempoMap = [{ atTick: asTicks(0), bpm: 120 }];
+    const audio = new FakeAudioClock();
+    const clock = new MasterClock(audio, tempoMap);
+    clock.start(asTicks(0));
+    clock.setLoop(asTicks(0), asTicks(480)); // one quarter note @ 120bpm = 0.5s
+    expect(clock.checkLoop()).toBe(false);
+    audio.advance(0.5);
+    expect(clock.checkLoop()).toBe(true);
+    expect(clock.audioToTicks(audio.now())).toBeCloseTo(0, 6);
+  });
+
+  // TS-U-CLK-012
+  it('checkLoop is a no-op with no loop set, or while paused', () => {
+    const tempoMap: TempoMap = [{ atTick: asTicks(0), bpm: 120 }];
+    const audio = new FakeAudioClock();
+    const clock = new MasterClock(audio, tempoMap);
+    clock.start(asTicks(0));
+    audio.advance(10);
+    expect(clock.checkLoop()).toBe(false);
+
+    clock.setLoop(asTicks(0), asTicks(480));
+    clock.pause();
+    audio.advance(10);
+    expect(clock.checkLoop()).toBe(false);
+  });
+
+  // TS-U-CLK-013
+  it('clearLoop removes the loop range', () => {
+    const tempoMap: TempoMap = [{ atTick: asTicks(0), bpm: 120 }];
+    const audio = new FakeAudioClock();
+    const clock = new MasterClock(audio, tempoMap);
+    clock.start(asTicks(0));
+    clock.setLoop(asTicks(0), asTicks(480));
+    expect(clock.loopRange).toEqual({ startTick: asTicks(0), endTick: asTicks(480) });
+    clock.clearLoop();
+    expect(clock.loopRange).toBeUndefined();
+    audio.advance(0.5);
+    expect(clock.checkLoop()).toBe(false);
+  });
+
+  // TS-U-CLK-014
+  it('setLoop rejects a range whose end is not after its start', () => {
+    const tempoMap: TempoMap = [{ atTick: asTicks(0), bpm: 120 }];
+    const clock = new MasterClock(new FakeAudioClock(), tempoMap);
+    clock.start(asTicks(0));
+    expect(() => clock.setLoop(asTicks(480), asTicks(480))).toThrow();
+    expect(() => clock.setLoop(asTicks(480), asTicks(0))).toThrow();
+  });
 });

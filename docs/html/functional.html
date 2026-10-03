@@ -187,7 +187,7 @@
 
   <div class="req">
     <h3 id="FR-STU-006" data-toc="Articulation and duration feedback"><span class="aid">FR-STU-006</span> Articulation and duration feedback <span class="pri S">S</span></h3>
-    <p class="by"><b>Realised by</b> TA-MID-004</p>
+    <p class="by"><b>Realised by</b> TA-MID-004 · TA-GRD-006</p>
     <p>Using the PedalTracker's distinction between key-up and note-stopped-sounding, report notes held too short — staccato where legato was written — or too long.</p>
   </div>
 
@@ -220,6 +220,26 @@
     <h3 id="FR-STU-011" data-toc="Real repertoire ingest"><span class="aid">FR-STU-011</span> Real repertoire ingest <span class="pri C">C</span></h3>
     <p class="by"><b>Realised by</b> TA-CNT-001 · TA-CNT-004</p>
     <p>Import from Mutopia and OpenScore through the build pipeline, with the licence gate (TA-CNT-005) enforced.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-012" data-toc="Chord &amp; progression explorer"><span class="aid">FR-STU-012</span> Chord &amp; progression explorer <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-CNT-006 · TA-MAT-007 · US-3.13</p>
+    <p>A browsable map of chords and progressions in every key: pick a key, see its diatonic chords and a large catalogue of progressions (1 stock 12-bar blues turnaround plus 50 major-key and 58 minor-key progressions per key, each tagged with moods and filterable by mode/mood), and play along with each chord highlighted on an on-screen keybed as it comes due. Each suggested chord is validated against what's actually played — TA-MAT-007's ChordMatcher — but there is no timing requirement and no failure state: this is FR-EXP-006's free-play philosophy applied to harmony instead of melody, for practice time that isn't in an exercise mood.</p>
+    <div class="note"><p><span class="k">Content source</span>progression sequences and mood tags are ported as text data from <a href="https://github.com/ldrolez/free-midi-chords">ldrolez/free-midi-chords</a> (MIT-licensed) — specifically the <code>prog_maj</code>/<code>prog_min</code> Roman-numeral degree/quality token lists in <code>chords.py</code>, 108 progression templates in total. Chord voicings (<code>midiNotes</code>) are this codebase's own generation from standard chord-interval formulas, not parsed from any MIDI file — TA-CNT-006 has the full split and the licence-gate entries for both parts (TA-CNT-005). TA-CNT-006 defines the lighter, parallel ingest path this needs — chords have no Section or difficulty score, so they deliberately don't fit Arrangement/Track as authored today, and don't reuse the falling-notes or OSMD renderers.</p></div>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-013" data-toc="Lead-sheet song mode"><span class="aid">FR-STU-013</span> Lead-sheet song mode <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-DAT-001 (extended) · TA-REN-001 · US-3.14</p>
+    <p>For a specific song, a simplified practice mode: chord symbols over a beat grid plus the melody, closer to a lead sheet than a full score. Reuses FR-STU-012's chord data and playback for the harmony half; the melody half already fits TA-DAT-001's existing Track/ContentNote shape at a coarse difficulty, rendered with the existing falling-notes view (TA-REN-001) rather than a new renderer, with chord symbols overlaid as text at their tick position. Positioned as the easy on-ramp before FR-STU-001's full notation view, not a replacement for it — depends on FR-STU-012 existing first, and on FR-STU-011/FR-CON-* for a specific song's melody data if it isn't already in the catalogue.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-014" data-toc="Personal score import"><span class="aid">FR-STU-014</span> Personal score import <span class="pri C">C</span></h3>
+    <p class="by"><b>Status</b> Future roadmap — deliberately out of MVP (v1) scope. Raised by the adult user and confirmed as a nice-to-have, not a blocker; revisit after v1 ships. Flagged as an open architecture question below, not only an unscheduled story</p>
+    <p>The end state: the adult receives an already-digitised sheet from a teacher (MusicXML, or a scan run through OMR) and brings it into DuoKeys to practise against — the same idea as FR-STU-011's Mutopia/OpenScore ingest, but for one personal file rather than the shared catalogue.</p>
+    <div class="note"><p><span class="k">Two separable questions</span>Rendering it once it's in the app is already solved — OSMD (TA-REN-003, already chosen, BSD-3-Clause) renders MusicXML directly, which is also the standard output of most open-source OMR tools (e.g. Audiveris) and of MuseScore's export. Getting a personal file into the app is not solved. The five-port architecture (TA-PORT-002) has no upload-capable port: ContentBackend fetches build output, not user-supplied files, and StorageBackend is IndexedDB, not a file-drop target. Two paths exist and neither is chosen: (1) build-time, matching US-3.12's existing pattern — drop a MusicXML file into content/sources/, let TA-CNT-001's pipeline ingest it like any other piece, cheapest but needs a rebuild per song; (2) runtime upload — a real new capability needing a new port method or adapter, genuine architecture work, not wiring. Licensing is also different in kind: TA-CNT-005's gate assumes redistributable content with a public source URL, which a teacher's personal handout has neither of, and isn't being redistributed — the gate as written doesn't obviously apply to one household's own copy, but this is an open policy question, not a decision already made.</p></div>
   </div>
 
   <!-- ================================================================ -->
@@ -279,6 +299,12 @@
     <h3 id="FR-PRO-005" data-toc="Recording and playback"><span class="aid">FR-PRO-005</span> Recording and playback <span class="pri C">C</span></h3>
     <p class="by"><b>Realised by</b> TA-DAT-002</p>
     <p>Capture a performance as a note stream and play it back through the sampler, with the score or falling notes following along. Useful for "listen to what you did" and delightful for a child.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-PRO-006" data-toc="Saved / in-progress repertoire"><span class="aid">FR-PRO-006</span> Saved / in-progress repertoire <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-DAT-007 · US-3.15</p>
+    <p>A short per-profile list of pieces currently being worked on — something the adult can add a piece to and find again, distinct from FR-PRO-002's derived unlock/best-grade state. TA-DAT-007 adds the library store this needs (TA-DAT-003 previously had nothing shaped like a saved list). Small in scope: one new IndexedDB store, an add/remove action, and a filtered view of the piece list.</p>
   </div>
 
   <!-- ================================================================ -->
@@ -401,15 +427,16 @@
     <thead><tr><th>Module</th><th>Must</th><th>Should</th><th>Could</th><th>Total</th></tr></thead>
     <tbody>
       <tr><td><a href="#explorer">Explorer</a></td><td class="n">5</td><td class="n">3</td><td class="n">1</td><td class="n">9</td></tr>
-      <tr><td><a href="#studio">Studio</a></td><td class="n">6</td><td class="n">4</td><td class="n">1</td><td class="n">11</td></tr>
+      <tr><td><a href="#studio">Studio</a></td><td class="n">8</td><td class="n">4</td><td class="n">2</td><td class="n">14</td></tr>
       <tr><td><a href="#duet">Duet</a></td><td class="n">3</td><td class="n">1</td><td class="n">0</td><td class="n">4</td></tr>
-      <tr><td><a href="#profiles">Profiles</a></td><td class="n">3</td><td class="n">1</td><td class="n">1</td><td class="n">5</td></tr>
+      <tr><td><a href="#profiles">Profiles</a></td><td class="n">4</td><td class="n">1</td><td class="n">1</td><td class="n">6</td></tr>
       <tr><td><a href="#content">Content</a></td><td class="n">4</td><td class="n">0</td><td class="n">1</td><td class="n">5</td></tr>
       <tr><td><a href="#sync">Sync</a></td><td class="n">4</td><td class="n">1</td><td class="n">0</td><td class="n">5</td></tr>
-      <tr><td><a href="#system">System</a></td><td class="n">6</td><td class="n">1</td><td class="n">0</td><td class="n">8</td></tr>
-      <tr class="tot"><td><strong>Total</strong></td><td class="n">31</td><td class="n">11</td><td class="n">4</td><td class="n">47</td></tr>
+      <tr><td><a href="#system">System</a></td><td class="n">7</td><td class="n">1</td><td class="n">0</td><td class="n">8</td></tr>
+      <tr class="tot"><td><strong>Total</strong></td><td class="n">35</td><td class="n">11</td><td class="n">5</td><td class="n">51</td></tr>
     </tbody>
   </table></div>
+  <div class="note"><p><span class="k">Correction</span>System's Must count was previously misstated as 6/8 — corrected to 7/8 here; FR-SYS-001–005 and 007–008 are all M, only FR-SYS-006 is S.</p></div>
 
   <p class="sub">Delivery of each requirement is planned in <a href="sprints.html">the sprint plan</a>; the components realising them are specified in <a href="architecture.html">the technical architecture</a>.</p>
 

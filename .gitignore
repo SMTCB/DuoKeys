@@ -14,3 +14,7 @@ playwright-report/
 test-results/
 .vercel/
 tsconfig.tsbuildinfo
+
+# Claude Code runtime
+.claude/worktrees/
+.claude/scheduled_tasks.lock

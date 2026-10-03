@@ -1,0 +1,45 @@
+{
+  "id": "hot-cross-buns",
+  "title": "Hot Cross Buns",
+  "tags": ["traditional", "five-finger", "beginner"],
+  "licenceId": "trad-hot-cross-buns",
+  "tempoBpm": 100,
+  "timeSig": [4, 4],
+  "keySig": "C",
+  "tracks": [
+    {
+      "id": "melody",
+      "role": "melody",
+      "hand": "R",
+      "notes": [
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 960 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 960 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 960 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 960 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 960 }
+      ]
+    }
+  ]
+}

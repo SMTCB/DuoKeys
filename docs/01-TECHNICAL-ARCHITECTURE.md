@@ -290,18 +290,30 @@ and audio.
 
 ```ts
 export class MasterClock {
-  constructor(private audio: AudioBackend, private tempoMap: TempoMap) {}
+  constructor(private audio: AudioClock, private tempoMap: TempoMap) {}
 
   nowAudio(): Seconds;
-  wallToAudio(t: Millis): Seconds;   // EMA-corrected, see TA-CLK-003
   audioToTicks(t: Seconds): Ticks;
   ticksToAudio(t: Ticks): Seconds;
 
   start(atTick: Ticks): void;
   pause(): void;
   setTempoScale(scale: number): void;  // 0.30 – 1.00, see FR-STU-004
+
+  // FR-STU-003 — indefinite measure-range loop, driven by playback position
+  // reaching the loop end, independent of whether the notes played were
+  // correct (US-3.06 grades the pass separately, from Grade.accuracy).
+  setLoop(startTick: Ticks, endTick: Ticks): void;  // half-open [startTick, endTick)
+  clearLoop(): void;
+  get loopRange(): { startTick: Ticks; endTick: Ticks } | undefined;
+  checkLoop(): boolean;  // poll once per frame; restarts at loopStart and
+                          // returns true the instant playback crosses loopEnd
 }
 ```
+
+The wall→audio EMA correction (TA-CLK-003) lives on the separate `DriftTracker`
+class (`wallToAudio`, `src/core/time/drift.ts`), not on `MasterClock` —
+`MasterClock` itself only ever reads audio time via the injected `AudioClock`.
 
 ### TA-CLK-003 — Drift correction
 
@@ -495,6 +507,32 @@ At 60 bpm, `good` = 160 ms. At 160 bpm, `good` = 90 ms. Both feel right; a flat
 Explorer mode multiplies all windows by `Profile.toleranceScale` (default **1.6**
 for the child, **1.0** for the adult).
 
+### TA-MAT-007 — ChordMatcher (pitch-class set matching)
+
+`US-3.13` (`FR-STU-012`). Different in kind from `TA-MAT-002`/`003`: those match a
+*stream position*; this matches an *unordered set*, because a suggested chord has
+no sequence to follow.
+
+- Target = the current `ChordEntry.midiNotes` (`TA-CNT-006`) reduced to pitch
+  classes mod 12 — **octave-invariant**, so a C in any octave counts.
+- Incoming notes accumulate into a played set using the same "one decision"
+  co-incidence window as `TA-MAT-004`'s chord grouping, expressed in wall time
+  (150 ms) rather than ticks, since chord/progression playback has no tempo map
+  driving it.
+- `TA-MAT-005`'s velocity floor applies unchanged.
+- Result is `complete` (played set ⊇ target set) or `partial` (still missing
+  pitch classes) — no `wrong`, no timeout. Extra non-chord notes don't block
+  completion. This mirrors `FR-EXP-006`'s free-play philosophy: `FR-STU-012` is
+  explicitly framed as low-pressure noodling, not a graded drill, so the matcher
+  has no failure state to invent.
+
+Delivered for `US-3.13` (`src/core/match/chordMatcher.ts`) exactly as specified
+above — pitch-class-set matching, octave-invariant, 150 ms wall-time
+co-incidence window, `complete`/`partial`/`ignored` result only. `ChordMatcher`
+deliberately does not implement the `Matcher` interface (`TA-MAT-002`/`003`):
+its result shape has no `wrong`/`extra`/group-position concept, so sharing the
+interface would mean padding it with fields that never apply.
+
 ---
 
 ## 6. Grading
@@ -516,6 +554,9 @@ export interface Grade {
 **`rushDragMs` is signed on purpose.** "You are 40 ms ahead of the beat" is a note
 a teacher gives; "your RMS timing error is 40 ms" is not. RMS is kept for the
 consistency trend, but the signed number is what the UI shows (`FR-STU-008`).
+`describeRushDrag(rushDragMs)` (`src/core/grade/grade.ts`) turns the signed
+number into that exact phrasing — negative is "ahead of the beat", positive is
+"behind the beat" — so Studio never renders the bare signed millisecond value.
 
 ### TA-GRD-002 — Star thresholds
 
@@ -540,6 +581,74 @@ rather than merely endured.
 
 `NoteResult[]` aggregates by measure so the dashboard can say "your left hand
 rushes bar 5" rather than "you played it" (`FR-STU-009`).
+
+### TA-GRD-005 — Note Ninja response-time bands
+
+Note Ninja (`US-2.13`, `FR-EXP-005`) is a single isolated pitch per card, not a
+section — it does not go through `Grade`/`stars.ts`. Its own, much smaller
+classification:
+
+```ts
+type ResponseBand = 'fast' | 'correct' | 'hinted';
+
+const FAST_THRESHOLD_SECONDS = 2;
+const HINT_THRESHOLD_SECONDS = 6;
+```
+
+| Band | Elapsed time since the card was shown | Effect |
+|---|---|---|
+| `fast` | < 2 s | Streak continues, bonus shown |
+| `correct` | 2–6 s | Streak continues |
+| `hinted` | > 6 s | The key is highlighted; streak still continues |
+
+Elapsed time is read from `AudioBackend.now()` directly (`ADR-006`'s own
+source), not through `MasterClock` — Note Ninja has no tempo map or scheduled
+notes for a clock to bind to. There is no losing band: a wrong key played
+before the 6 s mark reveals the hint immediately rather than failing the card
+(`FR-EXP-003`). Spaced-repetition scheduling for missed cards is `US-2.14`,
+not this component.
+
+### TA-GRD-006 — Articulation and duration feedback
+
+`US-3.08` (`FR-STU-006`). Compares a held note's actual sounding duration
+against its written duration and classifies the result:
+
+```ts
+type ArticulationOutcome = 'short' | 'even' | 'long';
+
+const SHORT_RATIO = 0.7;
+const LONG_RATIO = 1.3;
+
+function classifyArticulation(actualMs: number, targetMs: number): ArticulationOutcome | undefined;
+// ratio = actualMs / targetMs; < 0.7 -> short, > 1.3 -> long, else even.
+// targetMs <= 0 -> undefined (unclassifiable).
+```
+
+**Actual duration** comes from `NoteStreamTracker`'s `NoteEvent.durationMs`
+(`TA-MID-001`) — itself gated by `PedalTracker`'s key-up/stopped-sounding
+distinction (`TA-MID-004`), so a note held past key-up on the pedal is not
+misread as short. **Written duration** is `ContentNote.durationTicks`
+converted to milliseconds through `MasterClock.ticksToAudio` (`ADR-006`) at
+the attempt's current tempo scale, computed in `sessionStore` — not
+`MasterClock` itself — as the difference between two `ticksToAudio` calls
+made synchronously, which share the same fixed `startAudioTime` anchor and
+so are drift-free without adding a new clock method.
+
+`classifyArticulation` is a pure `core/` function; the open-note bookkeeping
+(matching a note-on's correct match to its eventual release) lives in
+`sessionStore`, the same split `TA-GRD-001`–`005` already use between pure
+grading math and runtime wiring. A successfully classified note sets
+`NoteResult.articulation`; the field is absent, not `undefined`-valued, when
+unclassified (`exactOptionalPropertyTypes`, `CLAUDE.md` § 3). The last note
+of an attempt may go unclassified if grading fires (on the matcher
+completing) before that note's release event arrives — an accepted gap, not
+a bug, since the field is optional throughout.
+
+`describeArticulation(grade: Grade): string | undefined` (`src/core/grade/grade.ts`)
+aggregates the classified notes in a `Grade` into one sentence for Studio's
+post-attempt summary — "N notes cut short — try holding a little longer.",
+the long-note equivalent, a clean-match message, or `undefined` when nothing
+was classified (so Studio renders nothing rather than an empty line).
 
 ---
 
@@ -567,6 +676,17 @@ Derived once from `Profile.keyboardRange`.
 Studio mode only. OSMD is BSD-3-Clause. Matcher-driven cursor; per-note colouring
 applied after an attempt, not during (repainting the SVG mid-performance is the
 fastest way to drop frames).
+
+OSMD renders MusicXML, not `ContentNote[]` directly, so a pure `core/` function
+(`toMusicXml.ts`) converts one track of an `Arrangement` to a MusicXML document:
+`divisions=480` is set equal to PPQ so `durationTicks` maps 1:1 to `<duration>`;
+a small duration→type lookup (60/120/240/480/960/1920 ticks → 32nd…whole) covers
+every value currently produced by `content/sources/*.json`; pitch spelling is
+sharp-only (no key-signature-aware enharmonics); measures are bucketed by
+`floor(startTick / ticksPerMeasure)` from `timeSig`. The converter documents and
+enforces its own limits — single voice, no synthesized rests for gaps, no
+unmapped duration — by throwing rather than silently misrendering when a future
+content file violates them.
 
 ### TA-REN-004 — Route-level code splitting
 
@@ -643,6 +763,7 @@ Attempts are **append-only and immutable**. This is what makes sync trivial
 | `attempts` | `id` | `profileId+startedAt`, `arrangementId` | append-only, the bulk of the data |
 | `progression` | `profileId+arrangementId` | `profileId` | unlock state, best grade, SR schedule |
 | `flashcards` | `profileId+cardId` | `profileId+dueAt` | Note Ninja spaced-repetition pool |
+| `library` | `profileId+arrangementId` | `profileId` | saved / in-progress repertoire (`TA-DAT-007`) |
 | `settings` | `profileId` | — | last-write-wins on sync |
 | `outbox` | `seq` (auto) | — | pending sync ops |
 
@@ -667,6 +788,73 @@ Arrangements are static versioned JSON under `public/content/` with immutable ca
 headers. Removes a class of loading states, works offline through the service
 worker, costs nothing, and means the Supabase pause can never take the lessons down.
 
+### TA-DAT-006 — Flashcard scheduling
+
+Note Ninja (`US-2.13`/`US-2.14`) schedules its `flashcards` (`TA-DAT-003`) with a
+five-box leitner-style scheme, pure and deterministic (`ADR-005` — no `Date.now()`;
+the caller passes `nowMs`, sourced from `MasterClock` per `ADR-006`):
+
+```ts
+const INTERVAL_BY_BOX: Record<1 | 2 | 3 | 4 | 5, Millis> = {
+  1: asMillis(0),
+  2: asMillis(60_000),        // 1 minute — resurfaces within the same session
+  3: asMillis(600_000),       // 10 minutes
+  4: asMillis(86_400_000),    // 1 day
+  5: asMillis(345_600_000),   // 4 days
+};
+
+function reviewCard(card: Flashcard, outcome: ResponseBand, nowMs: number): Flashcard;
+```
+
+Four outcomes, matching `TA-GRD-005`'s response bands:
+
+| Outcome | Box change | Rationale |
+|---|---|---|
+| `fast` | `box + 1` (capped at 5) | Confident recall — space it out further |
+| `correct` | unchanged | Solid but not instant — hold at the current interval |
+| `hinted` | unchanged | The child still found it — not a regression, but not sped up either |
+| `wrong` | reset to `1` | Needs to resurface immediately, same session |
+
+Every pool pitch missing a card is seeded at box 1, due now, the first time it's
+drawn. Card selection queries `flashcards` by the `profileId+dueAt` index
+(`TA-DAT-003`) scoped to this profile, then filters to `dueAtMs <= now`
+client-side — the compound index only narrows by its first field
+(`profileId`), so `dueAt` filtering happens in the query layer, not the index
+itself. This is FR-EXP-003-safe by construction: there is no `outcome` that
+removes a card from the pool or blocks the child from continuing.
+
+### TA-DAT-007 — Saved / in-progress repertoire
+
+`US-3.15` (`FR-PRO-006`) — **delivered, Group D**. A small, user-curated
+list, distinct from `progression`'s derived unlock/best-grade state
+(`TA-DAT-001`) — the adult explicitly adds a piece here; nothing computes
+membership.
+
+```ts
+interface LibraryEntry {
+  profileId: string;
+  arrangementId: string;
+  status: 'wantToLearn' | 'learning' | 'learned';
+  addedAtMs: Millis;
+  updatedAtMs: Millis;
+}
+```
+
+Delivered as a three-button status control (`LibraryControl`) inline in
+`/studio`'s existing piece list, not the separate `/studio/library` route
+`TA-APP-003` lists — a catalogue this small (nine pieces) doesn't need a
+dedicated filtered view, and the toggle is one click either way. Status
+changes are an idempotent `put` keyed `profileId+arrangementId` (a repeat
+click on the active status clears it via `delete`, not a fourth "none"
+status value). `src/runtime/stores/libraryStore.ts` (Zustand, `TA-APP-001`)
+owns the loaded state.
+
+Stored in the `library` store (`TA-DAT-003`), keyed `profileId+arrangementId`
+so add/remove is an idempotent `put`/`delete`, not an append. Syncs
+last-write-wins on `updatedAtMs`, the same policy class as `settings` and
+`profiles` (`TA-SYN-003`) — this is small, rarely-changed, single-device-at-a-
+time state, not append-only history like `attempts`.
+
 ---
 
 ## 9. Sync
@@ -690,7 +878,7 @@ Supabase user owns all profiles in the household.
 | Data | Policy | Why it works |
 |---|---|---|
 | `attempts` | **Append-only** — insert, never update | Two devices cannot conflict on rows neither mutates |
-| `settings`, `profiles` | Last-write-wins on `updatedAt` | Changed rarely, by one adult, on one device at a time |
+| `settings`, `profiles`, `library` | Last-write-wins on `updatedAt` | Changed rarely, by one adult, on one device at a time |
 | `progression` | Recomputed from attempts | Derived state — never synced directly |
 
 This is deliberately the boring choice. There is no CRDT, no vector clock, and no
@@ -735,10 +923,49 @@ content/build/ingest.ts
   8. emit        → public/content/<pieceId>/<arrangementId>.v<n>.json + index.json
 ```
 
+Delivered for US-2.07: stage 1 reads `content/sources/*.json` only (MusicXML/MIDI
+parsing is unimplemented — all first-year child content is hand-authored JSON per
+`TA-CNT-004`); stage 5 implements the fixed-bar fallback only (phrase-boundary
+segmentation is unimplemented), 2 bars by default but configurable per source
+(`SourceInput.barsPerQuest`, added for `US-3.09`'s Hanon generator, whose own
+2/4-time notation needs 1-bar quest sections). Both are the documented
+fallback paths, not a narrower design.
+
+Delivered for US-3.09: stage 1 also calls `loadHanonSources()`, which maps
+`HANON_PATTERNS` (`src/core/content/hanon.ts`) through a shared
+`buildHanonSourceInput(pattern, options)` — the same `SourceInput`-building
+logic `generateHanonArrangement` uses for the runtime (non-build) path, so a
+Hanon drill is difficulty-scored and sectioned identically whether it was
+baked into `public/content/` or generated live — and tags each with
+`licenceId: 'hanon-virtuoso-pianist-1900'` (`TA-CNT-005`). `HANON_PATTERNS`
+holds 5 of the eventual 20 entries: `hanon-01` is Hanon No. 1 itself;
+`hanon-02`–`05` are original patterns in the same style, honestly labelled
+`'Hanon-style Exercise N (approximate)'` rather than claimed as verified
+transcriptions (`NFR-012`); 6–20 remain deferred, data-only additions.
+
+Delivered for US-3.12: stage 1 also reads uncompressed `content/sources/*.musicxml`
+(each paired with a `*.meta.json` sidecar carrying `id`/`tags`/`licenceId` — a bare
+MusicXML file has no field for those), via `src/core/content/parseMusicXml.ts`.
+Scope is bounded deliberately, matching `TA-CNT-005`'s fail-the-build philosophy —
+anything past it throws a specific, actionable error rather than silently
+mis-importing: a single `<part>` (solo piano only; four-hands duets stay
+hand-authored JSON), up to two staves (treble/bass → `rh`/`lh` tracks), one voice
+per staff (MusicXML's `<backup>`/`<forward>` multi-voice-per-staff interleaving is
+not implemented), and a single global tempo/time/key signature taken from the
+file's first `<attributes>`/`<sound>` (mid-piece changes are flattened). Ties are
+merged (a `<tie type="stop">` extends the preceding same-pitch note's duration
+rather than becoming a second onset — the one case in this scope that gets
+resolved instead of rejected, since silently importing a tie as two onsets would
+be a correctness bug, not a missing feature). No grace notes, unpitched
+(percussion) notes, or double sharps/flats. `.mxl` (zip-compressed) and `.mid`
+remain unimplemented this slice — only uncompressed `.musicxml` is read.
+
 ### TA-CNT-002 — Difficulty scoring
 
 A transparent weighted sum over five axes, with sub-scores published in the JSON so
-a mis-scored piece can be diagnosed rather than hand-overridden:
+a mis-scored piece can be diagnosed rather than hand-overridden. Delivered for
+US-2.08 as an **equal-weighted** average of five 1–5 bands, one per axis — the
+initial weighting, not yet tuned against real content:
 
 | Axis | Signal |
 |---|---|
@@ -764,16 +991,79 @@ a mis-scored piece can be diagnosed rather than hand-overridden:
 |---|---|---|
 | Hand-authored JSON | Own | Nearly all first-year child content. A five-finger tune is 20 notes. |
 | Traditional / folk melodies | Author from memory | Public domain by age. Core of the child curriculum. |
-| Hanon 1–20 | Generate | Each is one pattern sequenced up the scale — write the generator |
-| Mutopia Project | LilyPond → MusicXML | Adult module. Conversion imperfect; expect to fix articulations |
-| OpenScore | MuseScore / MusicXML | CC0 standard repertoire, cleanly engraved. Best MusicXML source |
-| Generated exercises | Runtime | Unlimited sight-reading at exactly the right difficulty |
+| Hanon 1–20 | Generate | Each is one pattern sequenced up the scale. Generator delivered (`US-3.09`); 5 of 20 patterns authored so far — 1 verified, 2–5 approximate and labelled as such, 6–20 deferred |
+| Mutopia Project | LilyPond → MusicXML | Adult module. Conversion imperfect; expect to fix articulations. Importer delivered (`US-3.12`, `TA-CNT-001`); no real Mutopia piece ingested yet — acquiring and licensing one is a follow-up |
+| OpenScore | MuseScore / MusicXML | CC0 standard repertoire, cleanly engraved. Best MusicXML source. Importer delivered (`US-3.12`, `TA-CNT-001`); no real OpenScore piece ingested yet — acquiring and licensing one is a follow-up |
+| Generated exercises | Runtime | Unlimited sight-reading at exactly the right difficulty. Delivered (`US-3.10`) — `/studio/sight-reading` calls `generateSightReadingArrangement` live and stores the result in `generatedContentStore`, never `content/sources/` |
 
 ### TA-CNT-005 — Licence gate
 
 Every piece needs an entry in `content/licences.json` with a source URL and a
 verification date. `ingest` exits non-zero without one. Costs nothing now; it is
 the only thing that makes the catalogue safe to ever share.
+
+### TA-CNT-006 — Chord & progression content
+
+`US-3.13` (`FR-STU-012`). Chords and progressions across all 12 keys, for
+the chord explorer. This content has no `Section`, no hand role, no
+difficulty score, so it deliberately does **not** flow through
+`TA-CNT-001`'s stages 4–6 (group/segment/analyse) and does not become a
+`Piece`/`Arrangement` (`TA-DAT-001`):
+
+```ts
+interface ChordEntry {
+  id: string;              // e.g. "C-maj7"
+  root: PitchClass;        // 0–11
+  quality: string;         // "maj", "min7", "dom7", ...
+  midiNotes: MidiPitch[];  // one voicing
+}
+interface ProgressionEntry {
+  id: string;
+  name: string;            // "I-V-vi-IV"
+  key: PitchClass;
+  mode: 'major' | 'minor';
+  moods: readonly string[]; // e.g. ["Hopeful", "Romantic"]
+  chordIds: string[];      // in order
+  suggestedBpm: number;
+}
+```
+
+`content/build/ingestChords.ts` calls `generateChordCatalogue()`
+(`src/core/content/chordCatalogue.ts`) and emits
+`public/content/chords/index.json` — build-time only, same as every other
+content (`ADR-003`, `TA-CNT-001`). The licence gate (`TA-CNT-005`) checks
+two `content/licences.json` entries, since two distinct things are sourced
+differently:
+
+- **Chord voicings** (`midiNotes`, all 12 roots × 17 qualities = 204
+  chords, plus the hand-authored 12-bar-blues turnaround) — generated from
+  standard chord-interval formulas and diatonic harmony, public-domain music
+  theory, not sourced from any corpus. Licence entry:
+  `duokeys-original-chord-catalogue`.
+- **Progression sequences and mood tags** — ported as text data from
+  [ldrolez/free-midi-chords](https://github.com/ldrolez/free-midi-chords)
+  (MIT), specifically the `prog_maj` (50 entries) and `prog_min` (58
+  entries) Roman-numeral degree/quality token lists in `chords.py`
+  (`src/core/content/progressionData.ts`). The repository's `prog_modal`
+  list (chromatic/borrowed-degree progressions such as `bIII`, `#IV`) was
+  not ported — out of scope for this slice. Licence entry:
+  `free-midi-chords-progressions`.
+
+No MIDI files, audio, or note data from free-midi-chords are used: parsing
+standard MIDI files needs a binary SMF reader that does not exist in this
+codebase (`decode.ts` only decodes live Web MIDI messages, not `.mid` file
+structure) — a separate piece of work comparable in scope to
+`parseMusicXml.ts` itself, undelivered and out of scope here. Instead, each
+ported degree/quality token (e.g. `"IV"`, `"iim7"`, `"Vsus2"`, `"IM-5"`) is
+parsed (`parseDegreeToken` in `chordCatalogue.ts`) into a scale degree (0–6)
+and a chord quality, then transposed into all 12 keys using the major or
+natural-minor scale-step table as appropriate — the same interval-formula
+engine that generates every chord's `midiNotes`.
+
+The generated catalogue covers 204 chords and, per key, 1 hand-authored
+12-bar-blues turnaround + 50 ported major-key + 58 ported minor-key
+progressions (1,308 progressions total across the 12 keys) —
+`generateChordCatalogue()` is fully deterministic and pure (`ADR-005`).
 
 ---
 
@@ -786,7 +1076,7 @@ the only thing that makes the catalogue safe to ever share.
 | Framework | Next.js (App Router) | `output: 'export'` compatible — ADR-002 |
 | Language | TypeScript, `strict` | `noUncheckedIndexedAccess` on |
 | State | Zustand for session state; React Query not needed (no server) | |
-| Styling | CSS Modules or Tailwind — either, chosen once | |
+| Styling | CSS custom-property design tokens + CSS Modules per component (`TA-APP-006`) | |
 | Audio | Tone.js | |
 | Notation | OpenSheetMusicDisplay (BSD-3) | Studio routes only |
 | Storage | `idb` | |
@@ -803,22 +1093,86 @@ here — that is the whole of ADR-002's cost.
 ### TA-APP-003 — Routes
 
 ```
-/                     profile picker
-/explorer             child home — quest map
-/explorer/play/[id]   falling-notes practice
-/explorer/ninja       Note Ninja
-/studio               adult home
-/studio/practice/[id] OSMD + matcher
-/studio/drills        Hanon / sight-reading generators
-/duet/[id]            four-hands mode
-/dashboard            practice history
-/settings             profiles, MIDI device, calibration, sync
+/                             profile picker
+/explorer                     child home — quest map
+/explorer/[arrangementId]     per-piece quest map
+/explorer/play/[id]           falling-notes practice
+/explorer/[arrangementId]/session   session arc — warm-up, quests, wind-down (TA-APP-005)
+/explorer/ninja                Note Ninja
+/explorer/free-play            ungraded free play (FR-EXP-006)
+/studio                       adult home
+/studio/practice/[id]         OSMD + matcher
+/studio/drills                Hanon / sight-reading generators
+/studio/chords                 chord & progression explorer (TA-CNT-006, TA-MAT-007)
+/studio/songs/[id]             lead-sheet song mode (FR-STU-013)
+/studio/library                 saved / in-progress repertoire (TA-DAT-007)
+/duet/[id]                    four-hands mode
+/dashboard                    practice history
+/settings                     profiles, MIDI device, calibration, sync
 ```
 
 ### TA-APP-004 — PWA
 
 Service worker precaches the app shell and all content JSON. Wake lock during
 active sessions. Installable. Offline is the default assumption, not a fallback.
+
+### TA-APP-005 — Session arc
+
+`US-2.17`. A practice session is a short arc, not a bare quest map: free play
+(warm-up) → up to three quests → free play (wind-down). `buildSessionArc`
+(`core/session/arc.ts`, pure, `ADR-005` — random source injected) reads
+`computeProgression`'s (`TA-DAT`) output for the arrangement and picks up to
+three *unlocked* sections, preferring ones not yet attempted or with fewer than
+two stars — what's worth practicing today — and wraps them with a free-play
+step at each end.
+
+The arc does not own a parallel practice flow. `sessionArcStore` (Zustand,
+`TA-APP-001`) only sequences existing routes: a free-play step mounts the same
+`FreePlay` component used at `/explorer/free-play`; a quest step links into the
+existing `/explorer/play/[id]?section=X`. When a quest is reached *via* the arc
+(`sessionArcStore.active`), its complete-state screen shows a "Continue your
+session" button that advances the arc and returns to
+`/explorer/[arrangementId]/session`; reached directly, that button does not
+appear — the arc is strictly opt-in orchestration, never a required path.
+
+### TA-APP-006 — Visual design system
+
+`US-3.16`, `US-3.17`. Resolves `TA-APP-001`'s "either, chosen once" — the
+product ships one deliberate visual identity, defined once as tokens and
+consumed everywhere, rather than per-screen styling decisions. Reference:
+the **DuoKeys Design Reference** artifact (CLAUDE.md § 1.5) — eight annotated
+screen mockups plus the logo lockups; this section is the code-facing summary
+of what that artifact specifies.
+
+- **Tokens as CSS custom properties**, one shared stylesheet
+  (`src/ui/shared/tokens.css`), consumed by CSS Modules per component — never
+  a per-component hard-coded hex or `px` value for anything the token system
+  already names.
+  - **Palette:** a light paper ground (`--app-paper`) and ink
+    (`--app-ink`/`--app-ink-soft`/`--app-ink-faint`), plus three role hues —
+    amber for Explorer/child surfaces, indigo for Studio/adult surfaces,
+    coral reserved exclusively for shared "both players" moments (duet
+    screens). A hue is never repurposed outside its role — coral appearing
+    on a single-player screen would be a bug, not a style choice.
+  - **Type:** Bricolage Grotesque (display/headings), Plus Jakarta Sans
+    (UI/body), IBM Plex Mono (numbers — tempo %, rush/drag ms, star counts,
+    anything tabular), loaded from Google Fonts.
+  - **Shared components:** an on-screen keybed (one component, recoloured by
+    role token — amber in Explorer, indigo in Studio, split amber/indigo in
+    Duet) and a chord/card primitive reused by the quest map, the library
+    list and the chord-progression view.
+- **The product commits to one theme, deliberately** — light only, no
+  dark-mode toggle. This is a product decision (`NFR-008`, `PRE-*` "kid-
+  friendly but not childish, and still a credible adult tool" brief), not an
+  oversight: unlike a general-purpose document or tool, DuoKeys' palette
+  carries meaning (role colour, reward states) that a naive dark inversion
+  would undermine. Revisit only via a new ADR if this stops serving the
+  product.
+- **Retrofit, not just new screens.** `US-3.16` builds the token system and
+  shared components; `US-3.17` applies them to the Explorer surfaces already
+  shipped in Sprints 1–2 (quest map, falling notes, Note Ninja), so the whole
+  app matches the reference, not only the Studio screens built after it
+  existed.
 
 ---
 
@@ -849,7 +1203,7 @@ active sessions. Installable. Offline is the default assumption, not a fallback.
 | `RISK-002` | Child loses interest in weeks | Medium | High | Sprint 2 exit is a week of unsupervised real use; expect to discard a designed feature |
 | `RISK-003` | Web MIDI device enumeration flaky on Windows | Low | Medium | Detected in Sprint 0; `MidiBackend` isolates any workaround |
 | `RISK-004` | MusicXML conversion quality poor | Medium | Low | Hand-authored JSON is the primary child source anyway |
-| `RISK-005` | Scope creep from adult module | High | Medium | Sprint 3 is gated on Sprint 2 exit criteria being met first |
+| `RISK-005` | Scope creep from adult module | High | Medium | Sprint 3 is gated on Sprint 2 exit criteria being met first. **Deviation, by explicit user decision, before the Sprint 2 observation week completed:** a deliberately minimal Studio slice (`US-3.01`/`3.02`/`3.03`/`3.05`) plus the shared design system (`US-3.16`/`3.17`) shipped early, so both journeys could be tested at the piano together. Scoped down specifically to keep this risk's actual danger — unbounded scope creep — from materialising: the other 11 Sprint 3 stories (57 pts) stay unbuilt. |
 | `RISK-006` | Supabase project paused during a holiday | High | Low | ADR-003 makes this a degraded-sync, not an outage |
 | `RISK-007` | iPad path silently closes through a stray import | Medium | Medium | `TA-PORT-005` lint rule fails CI |
 | `RISK-008` | No Mac available when Sprint 5 arrives | High | Medium | Decide rented vs. cloud Mac before starting Sprint 5, not during |

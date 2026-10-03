@@ -8,6 +8,7 @@ export function keyOf(store: StoreName, value: unknown): string {
   const v = value as Record<string, unknown>;
   switch (store) {
     case 'progression':
+    case 'library':
       return `${String(v.profileId)}+${String(v.arrangementId)}`;
     case 'flashcards':
       return `${String(v.profileId)}+${String(v.cardId)}`;

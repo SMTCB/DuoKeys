@@ -28,7 +28,7 @@
   <div id="filterMeta"></div>
   <nav id="toc" aria-label="Contents"></nav>
   <div class="foot">
-    67 stories · 190 points<br>v1 is sprints 0–4<br>
+    70 stories · 202 points<br>v1 is sprints 0–4<br>
     <button id="themeBtn" type="button">auto</button>
   </div>
 </aside>
@@ -43,8 +43,8 @@
   </div>
 
   <div class="stats">
-    <div><span class="v">67</span><span class="l">stories</span></div>
-    <div><span class="v">174</span><span class="l">points to v1</span></div>
+    <div><span class="v">72</span><span class="l">stories</span></div>
+    <div><span class="v">192</span><span class="l">points to v1</span></div>
     <div><span class="v">6</span><span class="l">sprints</span></div>
     <div><span class="v">1</span><span class="l">go/no-go gate</span></div>
   </div>
@@ -226,11 +226,22 @@
   <h2 id="sprint-3" data-toc="Sprint 3 — The adult's loop"><span class="num">S3</span>The adult's loop</h2>
 
   <div class="sp">
-    <div class="hd"><span class="no">Sprint 3</span><span class="ti">The adult's loop</span><span class="du">~2 weeks · 39 pts</span></div>
+    <div class="hd"><span class="no">Sprint 3</span><span class="ti">The adult's loop</span><span class="du">~2 weeks · 57 pts</span></div>
     <div class="body">
       <blockquote><p><strong>Gated on Sprint 2's exit criteria actually being met</strong> (RISK-005). Do not start this to avoid confronting a child's-loop problem.</p></blockquote>
       <p><strong>Goal:</strong> you practise with it yourself for a week and prefer it to the alternative.</p>
 
+      <div class="grp">Design system</div>
+      <blockquote><p>Tackled first, ahead of the feature stories below despite the higher ID numbers (US-3.16&ndash;US-3.17 were assigned after US-3.01&ndash;US-3.15 already existed &mdash; IDs are never renumbered, see CLAUDE.md &sect; 1.4). Landing this first means the new Studio screens below are built against the DuoKeys Design Reference from day one instead of being restyled after.</p></blockquote>
+      <div class="tw"><table>
+        <thead><tr><th>ID</th><th>Story</th><th>FR</th><th>TA</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr id="US-3.16"><td class="us">US-3.16</td><td class="story">As the developer, I have the DuoKeys design tokens (palette, type pairing, spacing) and the shared components they drive (keybed, cards) implemented as code, matching the DuoKeys Design Reference artifact, so that every screen built from here on draws from one system instead of one-off styles.</td><td>—</td><td>TA-APP-006</td><td class="n">3</td></tr>
+          <tr id="US-3.17"><td class="us">US-3.17</td><td class="story">As a player, the Explorer screens I already use (quest map, falling notes, Note Ninja) look and feel like the rest of the app, so that the visual identity isn't Studio-only.</td><td>—</td><td>TA-APP-006, TA-REN-001, TA-REN-002</td><td class="n">3</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="grp">The adult's loop</div>
       <div class="tw"><table>
         <thead><tr><th>ID</th><th>Story</th><th>FR</th><th>TA</th><th>Pts</th></tr></thead>
         <tbody>
@@ -246,6 +257,9 @@
           <tr id="US-3.10"><td class="us">US-3.10</td><td class="story">As an adult, I get unlimited generated sight-reading constrained by key, range, rhythm and difficulty.</td><td>FR-STU-010</td><td>TA-CNT-004</td><td class="n">5</td></tr>
           <tr id="US-3.11"><td class="us">US-3.11</td><td class="story">As an adult, I see my signed rush/drag in milliseconds rather than an RMS number.</td><td>FR-STU-008</td><td>TA-GRD-001</td><td class="n">2</td></tr>
           <tr id="US-3.12"><td class="us">US-3.12</td><td class="story">As an adult, I can ingest Mutopia and OpenScore MusicXML through the build pipeline.</td><td>FR-STU-011</td><td>TA-CNT-001, TA-CNT-004</td><td class="n">3</td></tr>
+          <tr id="US-3.13"><td class="us">US-3.13</td><td class="story">As an adult, I can browse chords and progressions by key and quality, see a suggested chord on the keybed, and have what I actually play validated against it, so that the explorer is more than passive browsing.</td><td>FR-STU-012</td><td>TA-CNT-006, TA-MAT-007</td><td class="n">5</td></tr>
+          <tr id="US-3.14"><td class="us">US-3.14</td><td class="story">As an adult, I can play a lead-sheet song with chord symbols overlaid on the falling-notes view, so that I can practise from a chart the way I would at a real gig.</td><td>FR-STU-013</td><td>TA-DAT-001, TA-REN-001</td><td class="n">5</td></tr>
+          <tr id="US-3.15"><td class="us">US-3.15</td><td class="story">As an adult, I can mark a piece "want to learn", "learning" or "learned" and see that list, so that my repertoire is tracked across devices.</td><td>FR-PRO-006</td><td>TA-DAT-007</td><td class="n">2</td></tr>
         </tbody>
       </table></div>
 
@@ -333,10 +347,10 @@
       <tr><td class="n">0</td><td><a href="#sprint-0">Hardware spike</a></td><td class="n">6</td><td>1–2 days</td></tr>
       <tr><td class="n">1</td><td><a href="#sprint-1">Walking skeleton</a></td><td class="n">34</td><td>~1 week</td></tr>
       <tr><td class="n">2</td><td><a href="#sprint-2">Child's loop</a></td><td class="n">60</td><td>~2 weeks</td></tr>
-      <tr><td class="n">3</td><td><a href="#sprint-3">Adult's loop</a></td><td class="n">39</td><td>~2 weeks</td></tr>
+      <tr><td class="n">3</td><td><a href="#sprint-3">Adult's loop</a></td><td class="n">57</td><td>~2 weeks</td></tr>
       <tr><td class="n">4</td><td><a href="#sprint-4">Duet &amp; dashboard</a></td><td class="n">35</td><td>~2 weeks</td></tr>
       <tr><td class="n">5</td><td><a href="#sprint-5">iPad (optional)</a></td><td class="n">16</td><td>~1 week</td></tr>
-      <tr class="tot"><td></td><td><strong>v1 total (0–4)</strong></td><td class="n"><strong>174</strong></td><td><strong>~7 weeks</strong></td></tr>
+      <tr class="tot"><td></td><td><strong>v1 total (0–4)</strong></td><td class="n"><strong>192</strong></td><td><strong>~7 weeks</strong></td></tr>
     </tbody>
   </table></div>
 
@@ -361,11 +375,13 @@
       <tr><td>FR-STU-004</td><td class="n">3</td><td>FR-SYN-001</td><td class="n">1, 2</td></tr>
       <tr><td>FR-STU-005</td><td class="n">3</td><td>FR-SYN-002</td><td class="n">2</td></tr>
       <tr><td>FR-STU-008</td><td class="n">3</td><td>FR-SYN-003</td><td class="n">2</td></tr>
-      <tr><td>FR-DUO-001</td><td class="n">4</td><td>FR-SYN-005</td><td class="n">2</td></tr>
-      <tr><td>FR-DUO-002</td><td class="n">4</td><td>FR-SYS-001</td><td class="n">0, 1</td></tr>
-      <tr><td>FR-SYS-002</td><td class="n">0, 1</td><td>FR-SYS-003</td><td class="n">1</td></tr>
-      <tr><td>FR-SYS-004</td><td class="n">4</td><td>FR-SYS-005</td><td class="n">4</td></tr>
-      <tr><td>FR-SYS-007</td><td class="n">1–4 (ongoing)</td><td>FR-SYS-008</td><td class="n">2</td></tr>
+      <tr><td>FR-STU-012</td><td class="n">3</td><td>FR-SYN-005</td><td class="n">2</td></tr>
+      <tr><td>FR-STU-013</td><td class="n">3</td><td>FR-PRO-006</td><td class="n">3</td></tr>
+      <tr><td>FR-DUO-001</td><td class="n">4</td><td>FR-SYS-001</td><td class="n">0, 1</td></tr>
+      <tr><td>FR-DUO-002</td><td class="n">4</td><td>FR-SYS-003</td><td class="n">1</td></tr>
+      <tr><td>FR-SYS-002</td><td class="n">0, 1</td><td>FR-SYS-004</td><td class="n">4</td></tr>
+      <tr><td>FR-SYS-005</td><td class="n">4</td><td>FR-SYS-007</td><td class="n">1–4 (ongoing)</td></tr>
+      <tr><td>FR-SYS-008</td><td class="n">2</td><td></td><td></td></tr>
     </tbody>
   </table></div>
 

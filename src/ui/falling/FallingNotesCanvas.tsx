@@ -10,7 +10,7 @@
 
 import { useEffect, useRef } from 'react';
 import type { MasterClock } from '../../core/time/masterClock';
-import type { ContentNote } from '../../core/content/types';
+import type { ChordMarker, ContentNote } from '../../core/content/types';
 import { asTicks } from '../../core/time/types';
 import { pitchToX, type KeyboardRange } from './pitchToX';
 
@@ -22,6 +22,8 @@ export interface FallingNotesCanvasProps {
   pendingGroupId: string | undefined;
   /** Seconds of lead-in shown above the hit line. */
   lookAheadSeconds?: number;
+  /** FR-STU-013 lead-sheet mode — chord symbols drawn as falling text, reusing this same renderer. */
+  chordMarkers?: readonly ChordMarker[];
 }
 
 const WHITE_KEY_PX = 32;
@@ -34,17 +36,25 @@ export function FallingNotesCanvas({
   keyboardRange,
   pendingGroupId,
   lookAheadSeconds = 4,
+  chordMarkers,
 }: FallingNotesCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // Sorted once per notes/clock change, not every frame — the render loop
   // only needs to find its windowed slice into an already-sorted array.
   const sortedRef = useRef<{ note: ContentNote; atSeconds: number }[]>([]);
+  const sortedMarkersRef = useRef<{ marker: ChordMarker; atSeconds: number }[]>([]);
 
   useEffect(() => {
     sortedRef.current = notes
       .map((note) => ({ note, atSeconds: clock.ticksToAudio(note.startTick) as number }))
       .sort((a, b) => a.atSeconds - b.atSeconds);
   }, [notes, clock]);
+
+  useEffect(() => {
+    sortedMarkersRef.current = (chordMarkers ?? [])
+      .map((marker) => ({ marker, atSeconds: clock.ticksToAudio(marker.atTick) as number }))
+      .sort((a, b) => a.atSeconds - b.atSeconds);
+  }, [chordMarkers, clock]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -92,6 +102,17 @@ export function FallingNotesCanvas({
         const isPending = note.groupId === pendingGroupId;
         ctx.fillStyle = isWhite ? (isPending ? '#4a90d9' : '#2d6cb3') : isPending ? '#d9a24a' : '#b37c2d';
         ctx.fillRect(pxX + 1, pxY - pxHeight, pxWidth, pxHeight);
+      }
+
+      ctx.font = 'bold 20px sans-serif';
+      ctx.fillStyle = '#444';
+      ctx.textAlign = 'center';
+      for (const { marker, atSeconds } of sortedMarkersRef.current) {
+        if (atSeconds < windowStart) continue;
+        if (atSeconds > windowEnd) break;
+        const secondsUntilHit = atSeconds - nowAudio;
+        const pxY = hitLineY - secondsUntilHit * PIXELS_PER_SECOND;
+        ctx.fillText(marker.symbol, width / 2, pxY - 12);
       }
     };
 

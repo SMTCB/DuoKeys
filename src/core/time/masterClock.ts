@@ -54,6 +54,8 @@ export class MasterClock {
   private startTick: Ticks = asTicks(0);
   private startAudioTime: Seconds | undefined;
   private tempoScale = 1;
+  private loopStartTick: Ticks | undefined;
+  private loopEndTick: Ticks | undefined;
 
   constructor(
     private readonly audio: AudioClock,
@@ -100,5 +102,42 @@ export class MasterClock {
       this.startAudioTime = this.audio.now();
     }
     this.tempoScale = scale;
+  }
+
+  /** FR-STU-003 — loop a measure range indefinitely. Half-open [startTick, endTick). */
+  setLoop(startTick: Ticks, endTick: Ticks): void {
+    if ((endTick as number) <= (startTick as number)) {
+      throw new Error(`MasterClock: loop end ${endTick as number} must be after loop start ${startTick as number}`);
+    }
+    this.loopStartTick = startTick;
+    this.loopEndTick = endTick;
+  }
+
+  clearLoop(): void {
+    this.loopStartTick = undefined;
+    this.loopEndTick = undefined;
+  }
+
+  get loopRange(): { startTick: Ticks; endTick: Ticks } | undefined {
+    return this.loopStartTick !== undefined && this.loopEndTick !== undefined
+      ? { startTick: this.loopStartTick, endTick: this.loopEndTick }
+      : undefined;
+  }
+
+  /**
+   * Call once per frame/poll while playing. Restarts playback at the loop
+   * start once the current position reaches the loop end. No-op when no loop
+   * is set or the clock is paused. Returns true the instant it loops, so the
+   * caller can grade the pass that just finished (US-3.06).
+   */
+  checkLoop(): boolean {
+    if (this.loopStartTick === undefined || this.loopEndTick === undefined) return false;
+    if (this.startAudioTime === undefined) return false;
+    const currentTick = this.audioToTicks(this.audio.now());
+    if ((currentTick as number) >= (this.loopEndTick as number)) {
+      this.start(this.loopStartTick);
+      return true;
+    }
+    return false;
   }
 }

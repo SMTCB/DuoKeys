@@ -7,14 +7,15 @@
 import type { Profile } from '../core/profile/types';
 import { asMidiPitch } from '../core/midi/decode';
 
-// No profile-picker story in Sprint 1 (docs/03-SPRINT-PLAN.md) — one child
-// profile stands in until US-2.x adds real profile management.
+// sessionStore's initial value before a family profile is chosen at `/`
+// (US-2.01) — never written to storage itself, just the in-memory fallback
+// until profileStore.selectProfile()/addProfile() calls setProfile().
 export const DEFAULT_PROFILE: Profile = {
   id: 'default-explorer',
   displayName: 'Explorer',
   role: 'explorer',
   keyboardRange: { low: asMidiPitch(21), high: asMidiPitch(108) },
   latencyOffsetMs: 0,
-  toleranceScale: 1,
+  toleranceScale: 1.6, // TA-MAT-006 / FR-EXP-007 — child default
   avatar: '🎹',
 };

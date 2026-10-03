@@ -58,6 +58,10 @@ grading.
 | `TS-U-CLK-008` | Calibration rejects too few samples | Given fewer than 8 usable taps, when computing, then calibration reports failure rather than a bad number | TA-CLK-004 |
 | `TS-U-CLK-009` | Branded types prevent domain mixing | Given `Millis` and `Seconds`, when mixed without conversion, then it is a compile error | TA-CLK-001 |
 | `TS-U-CLK-010` | Pause and resume do not advance musical time | Given a running clock, when paused for 5 s and resumed, then tick position is unchanged | TA-CLK-002 |
+| `TS-U-CLK-011` | `checkLoop` snaps back at the loop end | Given `setLoop(0, 480)` at 120 bpm, when audio time advances 0.5 s, then `checkLoop()` returns true and position is back at tick 0 | TA-CLK-002, FR-STU-003 |
+| `TS-U-CLK-012` | `checkLoop` is a no-op with no loop set, or while paused | Given no loop set (or a set loop while paused), when time advances past where a loop end would be, then `checkLoop()` returns false | TA-CLK-002, FR-STU-003 |
+| `TS-U-CLK-013` | `clearLoop` removes the loop range | Given a loop set, when `clearLoop()` is called, then `loopRange` is undefined and `checkLoop()` returns false even past the old loop end | TA-CLK-002, FR-STU-003 |
+| `TS-U-CLK-014` | `setLoop` rejects a non-forward range | Given a loop end at or before the loop start, when `setLoop` is called, then it throws | TA-CLK-002, FR-STU-003 |
 
 ---
 
@@ -121,6 +125,15 @@ grading.
 | `TS-U-MAT-019` | Octave error is classified `octave`, not `other` | TA-MAT-001 |
 | `TS-U-MAT-020` | Semitone error is classified `neighbour` | TA-MAT-001 |
 | `TS-U-MAT-021` | Two matcher instances fed disjoint pitch ranges do not interfere | FR-DUO-002 |
+| `TS-U-MAT-022` | A nearer wrong-pitch slot never steals the match from a same-pitch slot still in window | TA-MAT-003 |
+
+### Chord matching
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-U-MAT-023` | Playing all of a chord's pitch classes, in any octave, resolves `complete` | TA-MAT-007 |
+| `TS-U-MAT-024` | A played set missing one pitch class stays `partial`, never `wrong` | TA-MAT-007 |
+| `TS-U-MAT-025` | Extra non-chord notes accumulate but never block `complete` | TA-MAT-007 |
 
 ---
 
@@ -140,6 +153,15 @@ grading.
 | `TS-U-GRD-010` | Per-measure aggregation attributes errors to the correct bar | TA-GRD-004, FR-STU-009 |
 | `TS-U-GRD-011` | Empty attempt (no notes played) grades 0 without dividing by zero | TA-GRD-001 |
 | `TS-U-GRD-012` | Grade is deterministic — same fixture, same grade, every run | TA-GRD-001 |
+| `TS-U-GRD-013` | Note Ninja response classifies < 2s fast, 2–6s correct (both boundaries inclusive), > 6s hinted | TA-GRD-005, FR-EXP-005 |
+| `TS-U-GRD-014` | Note Ninja card draw never repeats the immediately-previous card, deterministic under an injected random source | TA-GRD-005 |
+| `TS-U-GRD-015` | **Universal star floor** — `completion = 0.4` with `explorerFloor: true` still yields ≥ 1 star (the case a `completion === 1` fixture couldn't catch) | FR-EXP-007 |
+| `TS-U-GRD-016` | `reviewCard('fast')` advances the box by one, capped at box 5 | TA-DAT-006 |
+| `TS-U-GRD-017` | `reviewCard('wrong')` resets the box to 1 and `dueAtMs` follows `INTERVAL_BY_BOX` from the new box | TA-DAT-006 |
+| `TS-U-GRD-018` | `describeRushDrag` phrases a signed offset directionally — negative "ahead of the beat", positive "behind the beat", zero "right on the beat" | TA-GRD-001, FR-STU-008 |
+| `TS-U-GRD-019` | `describeRushDrag` rounds fractional milliseconds before phrasing | TA-GRD-001, FR-STU-008 |
+| `TS-U-GRD-020` | `classifyArticulation` returns `'short'`/`'even'`/`'long'` for actual/target ratios below `SHORT_RATIO`, within tolerance, and above `LONG_RATIO` respectively; `describeArticulation` summarises a `Grade`'s classified notes into a directional sentence | TA-GRD-006, FR-STU-006 |
+| `TS-U-GRD-021` | `classifyArticulation` returns `undefined` for a target duration ≤ 0 (unclassifiable); `describeArticulation` omits unclassified notes and returns `undefined` when none were classified | TA-GRD-006, FR-STU-006 |
 
 ---
 
@@ -164,6 +186,39 @@ grading.
 | `TS-U-CNT-015` | Malformed MusicXML fails with a message naming the file | TA-CNT-001 |
 | `TS-U-CNT-016` | A note starting exactly on a section's `endTick` belongs to the next section, not this one (half-open range) | TA-DAT-001 |
 | `TS-U-CNT-017` | An arrangement's quest sections partition its full tick range with no gaps or overlaps, and its one reward section spans the whole piece | TA-DAT-001, FR-EXP-004 |
+| `TS-U-CNT-018` | Scientific pitch names (`"C4"`, `"C#4"`/`"Db4"`, octave boundaries) resolve to the correct MIDI pitch, and malformed names throw | TA-CNT-001 |
+| `TS-U-CNT-019` | `ingestChords` reads a curated MIDI subset and emits `ChordEntry`/`ProgressionEntry` shapes with correct `root`/`quality`/`midiNotes` — progression sequences ported as text from `free-midi-chords` | TA-CNT-006 |
+| `TS-U-CNT-020` | `generateHanonArrangement` sequences a pattern's cell up a major scale by degree and back down, right and left hand an octave apart, every note the pattern's fixed duration, deterministically | TA-CNT-004, FR-STU-007 |
+| `TS-U-CNT-021` | `generateSightReadingArrangement` produces a diatonic, pitch-range- and rhythmic-vocabulary-constrained phrase filling exactly the requested bars, deterministic under a repeatable random source and different under a different one | TA-CNT-004, FR-STU-010 |
+
+`TS-U-CNT-019` is **partially** satisfied as written — `ingestChords.ts`
+(`US-3.13`) emits the same `ChordEntry`/`ProgressionEntry` shapes.
+`midiNotes` (chord voicings) still come from this codebase's own
+chord-interval formulas and diatonic harmony
+(`src/core/content/chordCatalogue.ts`), not from a curated MIDI subset —
+parsing standard MIDI files needs a binary SMF reader this codebase doesn't
+have. Progression *sequences* and mood tags, however, genuinely are ported
+as text data from `ldrolez/free-midi-chords` (`chords.py`'s `prog_maj`/
+`prog_min` Roman-numeral token lists, MIT, explicit user authorization
+2026-09-04) — see `src/core/content/progressionData.ts` and the
+`free-midi-chords-progressions` licence entry. The generator's own
+correctness (204 chords, 1,308 progressions, correct
+`root`/`quality`/`midiNotes` per formula, correct progression transposition
+and mood-tag passthrough per ported template) is covered instead, by
+`src/core/content/chordCatalogue.test.ts`. The ID stays open, not renumbered
+or withdrawn, until the chord voicings themselves are sourced from real
+MIDI content.
+
+`TS-U-CNT-002` is satisfied by `parseMusicXml.ts` (`US-3.12`): a `<tie
+type="stop">` merges into the immediately preceding same-pitch note rather
+than becoming a second onset (`src/core/content/parseMusicXml.test.ts`).
+`TS-U-CNT-003` is **not** satisfied as written — `parseMusicXml.ts` throws a
+named error on a grace note rather than resolving it. This is a deliberate,
+documented scope limit for `US-3.12` (grace notes carry no `<duration>` and
+require borrowing time from an adjacent note, a materially harder problem
+than tie-merging), not an oversight. The ID stays open rather than being
+renumbered or withdrawn, per this repo's ID-stability convention, until
+grace-note resolution is scoped as its own story.
 
 ---
 
@@ -176,6 +231,8 @@ grading.
 | `TS-U-PRO-003` | The reward section stays locked until every quest section has ≥ 1 star, then unlocks | FR-PRO-002, FR-EXP-004 |
 | `TS-U-PRO-004` | `bestStars` for a section is the maximum `grade.stars` across all attempts for that section, not the most recent | FR-PRO-002 |
 | `TS-U-PRO-005` | An attempt tagged with one section's id does not affect another section's unlock state or star count | FR-PRO-002 |
+| `TS-U-PRO-006` | `buildSessionArc` wraps up to 3 unlocked, under-starred (`bestStars < 2` or unattempted) quest sections with a free-play step at each end | TA-APP-005, FR-EXP-008 |
+| `TS-U-PRO-007` | `buildSessionArc` is deterministic — same progress and injected random source, same arc, every run | TA-APP-005, ADR-005 |
 
 ---
 
@@ -189,10 +246,33 @@ grading.
 | `TS-U-REN-004` | Pitch 21 maps to x = 0 and pitch 108 to the right edge for an 88-key range | TA-REN-002, ADR-009 |
 | `TS-U-REN-005` | A 61-key range renders 61 keys, not a scaled 88 | TA-REN-002 |
 | `TS-U-REN-006` | Note y-position derives from clock time, not a frame counter | TA-REN-001 |
+| `TS-U-REN-007` | A song's chord symbols overlay the falling-notes view at their tick position, not a fixed offset | TA-REN-001, FR-STU-013 |
+| `TS-U-REN-008` | `arrangementToMusicXml` places notes into successive measures once cumulative ticks cross a measure boundary, for both 4/4 and 3/4 | TA-REN-003 |
+| `TS-U-REN-009` | `arrangementToMusicXml` maps `durationTicks` to the correct MusicXML note type and spells a sharp pitch class with `<alter>1</alter>` | TA-REN-003 |
+| `TS-U-REN-010` | `arrangementToMusicXml` emits exactly one `<note>` per source note with no synthesized rests, and throws for an unknown track or an unmapped duration | TA-REN-003 |
+
+`TS-U-REN-007` is delivered (`FallingNotesCanvas.tsx`, `US-3.14`) —
+`chordMarkers[].atTick` converts through `clock.ticksToAudio` the same way a
+note's `startTick` does, so a marker's on-screen position is tick-derived,
+not a fixed pixel offset — but it has **no automated test**, unlike
+`TS-U-REN-001`–`006`. Those scenarios test the pure `pitchToX` function
+(`pitchToX.test.ts`); this one lives inside the canvas render loop itself,
+which nothing in this codebase currently extracts into a testable pure
+function (`TS-U-REN-001`–`006`'s own precedent). Verified this session by
+browser inspection of `/studio/songs/[id]` only — a real automated test
+needs that extraction, not yet done.
 
 ---
 
 ## 8. Data and sync — `TS-I-*`
+
+### Profile (unit) — `TS-U-DAT-*`
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-U-DAT-001` | `createProfile` defaults the explorer role to `toleranceScale` 1.6 | TA-DAT-004, TA-MAT-006 |
+| `TS-U-DAT-002` | `createProfile` defaults the student role to `toleranceScale` 1.0 | TA-DAT-004, TA-MAT-006 |
+| `TS-U-DAT-003` | Adding a piece to the library twice is idempotent — one entry, keyed `profileId+arrangementId` | TA-DAT-007 |
 
 ### Persistence
 
@@ -204,6 +284,7 @@ grading.
 | `TS-I-DAT-004` | Progression state recomputes identically from an attempt history | FR-PRO-002, TA-SYN-003 |
 | `TS-I-DAT-005` | Schema migration from v1 to v2 preserves all attempts | TA-DAT-003 |
 | `TS-I-DAT-006` | Two profiles' data never cross-read | FR-PRO-001 |
+| `TS-I-DAT-007` | A library status change overwrites the same row (not append); delete removes it; a `profileId` query never leaks another profile's entries | TA-DAT-007, FR-PRO-006 |
 
 ### Sync
 
@@ -219,6 +300,7 @@ grading.
 | `TS-I-SYN-008` | Two devices appending different attempts both survive — no conflict | TA-SYN-003 |
 | `TS-I-SYN-009` | **Sync never blocks practice** — with the network hung, a full session completes at normal speed | FR-SYN-002, ADR-003 |
 | `TS-I-SYN-010` | A paused Supabase project degrades to "sync behind", not an app outage | TA-SYN-006 |
+| `TS-I-SYN-011` | Library conflict resolves last-write-wins on `updatedAtMs`, same policy class as settings/profiles | TA-SYN-003, TA-DAT-007 |
 
 ### MIDI adapter
 
@@ -315,19 +397,25 @@ critical-path behaviour has a manual confirmation.
 | FR-EXP-002 | TS-U-REN-001…006, TS-E-003 | TS-M-004 |
 | FR-EXP-003 | TS-U-MAT-001…008 | TS-M-005 |
 | FR-EXP-004 | TS-U-CNT-007, TS-U-CNT-016, 017, TS-E-003 | TS-M-006 |
-| FR-EXP-005 | TS-E-006, TS-E-007 | TS-M-006 |
-| FR-EXP-007 | TS-U-GRD-001…005, TS-U-MAT-018 | TS-M-006 |
+| FR-EXP-005 | TS-U-GRD-013, 014, 016, 017, TS-E-006, TS-E-007 | TS-M-006 |
+| FR-EXP-006 | — | TS-M-006 |
+| FR-EXP-007 | TS-U-GRD-001…005, 015, TS-U-MAT-010…018 | TS-M-006 |
+| FR-EXP-008 | TS-U-PRO-006, 007 | TS-E-013 |
 | FR-STU-001 | TS-E-010 | TS-M-010 |
-| FR-STU-003 | TS-E-010 | TS-M-009 |
+| FR-STU-003 | TS-U-CLK-011…014, TS-E-010 | TS-M-009 |
 | FR-STU-004 | TS-U-CLK-003, TS-E-011 | TS-M-009 |
-| FR-STU-007 | TS-U-GRD-008, 009, TS-G-007, 008 | TS-M-009 |
-| FR-STU-008 | TS-U-GRD-006, 007 | — |
+| FR-STU-007 | TS-U-GRD-008, 009, TS-U-CNT-020, TS-G-007, 008 | TS-M-009 |
+| FR-STU-008 | TS-U-GRD-006, 007, 018, 019 | — |
+| FR-STU-010 | TS-U-CNT-021 | — |
+| FR-STU-012 | TS-U-MAT-023…025, TS-U-CNT-019 | — |
+| FR-STU-013 | TS-U-REN-007 | — |
 | FR-DUO-001 | TS-E-015 | TS-M-012 |
 | FR-DUO-002 | TS-U-MAT-021, TS-G-010 | TS-M-011 |
-| FR-PRO-001 | TS-I-DAT-006, TS-E-005 | — |
+| FR-PRO-001 | TS-U-DAT-001, 002, TS-I-DAT-006, TS-E-005 | — |
 | FR-PRO-002 | TS-U-PRO-001…005, TS-I-DAT-004, TS-E-004 | — |
 | FR-PRO-003 | TS-I-DAT-001, 002 | — |
-| FR-CON-001 | TS-U-CNT-001…004 | — |
+| FR-PRO-006 | TS-U-DAT-003, TS-I-DAT-007, TS-I-SYN-011 | — |
+| FR-CON-001 | TS-U-CNT-001…004, 018 | — |
 | FR-CON-003 | TS-U-CNT-007, 008 | — |
 | FR-CON-004 | TS-U-CNT-009, 010 | — |
 | FR-SYN-001 | TS-I-SYN-004 | — |

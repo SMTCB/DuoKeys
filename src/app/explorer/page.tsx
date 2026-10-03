@@ -1,66 +1,48 @@
-// TA-APP-003 `/explorer` — the quest map (US-2.10). Client component: reads
-// attempts from IndexedDB via the storage port, which has no server-side
-// equivalent (same reasoning as `/explorer/play/[id]`, which this page links
-// into with a `?section=` param to target a single quest).
+// TA-APP-003 `/explorer` — the piece list (US-2.09), routing into
+// `/explorer/[arrangementId]`'s quest map. Client component: `ContentBackend`
+// is fetch-based (TA-PORT-003), same reasoning as the quest map it links
+// into.
 
 'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useSessionStore } from '../../runtime/stores/sessionStore';
-import { MARY_HAD_A_LITTLE_LAMB } from '../../adapters/content/maryHadALittleLamb';
-import { computeProgression, type SectionProgress } from '../../core/progression/progression';
-import type { Arrangement } from '../../core/content/types';
-import type { Attempt } from '../../core/data/attempt';
+import { getAdapters } from '../../runtime/bootstrap';
+import type { ContentIndex } from '../../adapters/ports';
+import { PageShell } from '../../ui/shared/PageShell';
+import { Card } from '../../ui/shared/Card';
 
-export default function ExplorerMapPage() {
-  const adapters = useSessionStore((s) => s.adapters);
-  const profile = useSessionStore((s) => s.profile);
-  const [arrangement, setArrangement] = useState<Arrangement | undefined>();
-  const [progress, setProgress] = useState<SectionProgress[] | undefined>();
+export default function ExplorerListPage() {
+  const [index, setIndex] = useState<ContentIndex | undefined>();
 
   useEffect(() => {
     let cancelled = false;
-    adapters.content.arrangement(MARY_HAD_A_LITTLE_LAMB.id).then(async (a) => {
-      const attempts = await adapters.storage.query<Attempt>('attempts', 'profileId', {
-        lower: profile.id,
-        upper: profile.id,
-      });
-      const forThisArrangement = attempts.filter((at) => at.arrangementId === a.id);
-      if (!cancelled) {
-        setArrangement(a);
-        setProgress(computeProgression(a.sections, forThisArrangement));
-      }
+    getAdapters().content.index().then((i) => {
+      if (!cancelled) setIndex(i);
     });
     return () => {
       cancelled = true;
     };
-  }, [adapters, profile.id]);
+  }, []);
 
-  if (!arrangement || !progress) return <main><p>Loading…</p></main>;
+  if (!index) return <PageShell><p>Loading…</p></PageShell>;
 
   return (
-    <main>
-      <h1>Quest Map</h1>
-      <ul>
-        {progress.map((p) => {
-          const section = arrangement.sections.find((s) => s.id === p.sectionId);
-          if (!section) return null;
-          return (
-            <li key={p.sectionId}>
-              {p.unlocked ? (
-                <Link href={`/explorer/play/${arrangement.id}?section=${p.sectionId}`}>
-                  {section.label}
-                  {p.kind === 'reward' ? ' (Reward)' : ''}
-                  {p.attempted ? ` ${'⭐'.repeat(p.bestStars)}` : ''}
-                </Link>
-              ) : (
-                <span>🔒 {section.label}</span>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-    </main>
+    <PageShell>
+      <h1>Pieces</h1>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        {index.pieces.map((piece) => (
+          <Card key={piece.id}>
+            <Link href={`/explorer/${piece.defaultArrangementId}`}>{piece.title}</Link>
+          </Card>
+        ))}
+      </div>
+      <p>
+        <Link href="/explorer/ninja">Note Ninja</Link>
+      </p>
+      <p>
+        <Link href="/explorer/free-play">Free Play</Link>
+      </p>
+    </PageShell>
   );
 }

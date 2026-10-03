@@ -19,6 +19,7 @@ jobs:
       - run: pnpm run lint
       - run: pnpm run test:unit
       - run: node scripts/docs-check.mjs
+      - run: pnpm run content:build
       - run: pnpm run build
       - name: Install Playwright browsers
         if: github.ref == 'refs/heads/main'

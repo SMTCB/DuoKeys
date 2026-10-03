@@ -1,0 +1,43 @@
+{
+  "id": "row-row-row-your-boat",
+  "title": "Row Row Row Your Boat",
+  "tags": ["traditional", "five-finger", "beginner", "simplified"],
+  "licenceId": "trad-row-row-row-your-boat",
+  "tempoBpm": 90,
+  "timeSig": [4, 4],
+  "keySig": "C",
+  "tracks": [
+    {
+      "id": "melody",
+      "role": "melody",
+      "hand": "R",
+      "notes": [
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 960 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "F4", "durationTicks": 960 },
+        { "pitch": "E4", "durationTicks": 960 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 960 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "F4", "durationTicks": 960 },
+        { "pitch": "E4", "durationTicks": 960 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 960 }
+      ]
+    }
+  ]
+}

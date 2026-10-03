@@ -5,5 +5,75 @@
     "status": "public-domain",
     "sourceUrl": "https://en.wikipedia.org/wiki/Mary_Had_a_Little_Lamb",
     "verifiedDate": "2026-09-02"
+  },
+  {
+    "licenceId": "trad-twinkle-twinkle-little-star",
+    "work": "Twinkle Twinkle Little Star (melody)",
+    "status": "public-domain",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Twinkle,_Twinkle,_Little_Star",
+    "verifiedDate": "2026-09-03"
+  },
+  {
+    "licenceId": "trad-hot-cross-buns",
+    "work": "Hot Cross Buns (melody; also covers the hands-together arrangement, whose LH part is an original root-fifth accompaniment, not separately sourced)",
+    "status": "public-domain",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Hot_Cross_Buns_(song)",
+    "verifiedDate": "2026-09-03"
+  },
+  {
+    "licenceId": "trad-ode-to-joy",
+    "work": "Ode to Joy (Beethoven, Symphony No. 9 theme, melody, simplified)",
+    "status": "public-domain",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Ode_to_Joy",
+    "verifiedDate": "2026-09-03"
+  },
+  {
+    "licenceId": "trad-jingle-bells",
+    "work": "Jingle Bells (melody, simplified)",
+    "status": "public-domain",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Jingle_Bells",
+    "verifiedDate": "2026-09-03"
+  },
+  {
+    "licenceId": "trad-row-row-row-your-boat",
+    "work": "Row, Row, Row Your Boat (melody, simplified)",
+    "status": "public-domain",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Row,_Row,_Row_Your_Boat",
+    "verifiedDate": "2026-09-03"
+  },
+  {
+    "licenceId": "trad-london-bridge",
+    "work": "London Bridge Is Falling Down (melody, simplified)",
+    "status": "public-domain",
+    "sourceUrl": "https://en.wikipedia.org/wiki/London_Bridge_Is_Falling_Down",
+    "verifiedDate": "2026-09-03"
+  },
+  {
+    "licenceId": "trad-old-macdonald",
+    "work": "Old MacDonald Had a Farm (melody, simplified)",
+    "status": "public-domain",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Old_MacDonald_Had_a_Farm",
+    "verifiedDate": "2026-09-03"
+  },
+  {
+    "licenceId": "duokeys-original-chord-catalogue",
+    "work": "Chord voicings/audio (all chord midiNotes across all 12 roots x 17 qualities, plus the 12-bar-blues turnaround stock progression) — generated from standard chord-interval formulas and major-scale diatonic harmony, not sourced from any external corpus.",
+    "status": "public-domain",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Chord_(music)",
+    "verifiedDate": "2026-09-04"
+  },
+  {
+    "licenceId": "free-midi-chords-progressions",
+    "work": "Progression sequences and mood tags (prog_maj, prog_min lists in chords.py — 50 major-key and 58 minor-key Roman-numeral degree/quality token sequences, each with mood tags) ported as text data. The actual chord voicings/pitches are this codebase's own generation (see duokeys-original-chord-catalogue); no MIDI files or audio from this repository are used.",
+    "status": "MIT",
+    "sourceUrl": "https://github.com/ldrolez/free-midi-chords",
+    "verifiedDate": "2026-09-04"
+  },
+  {
+    "licenceId": "hanon-virtuoso-pianist-1900",
+    "work": "Hanon exercises (The Virtuoso Pianist in 60 Exercises, Part 1, Charles-Louis Hanon, first published 1873) — scale-degree cell patterns re-derived as data, not parsed from any score file. Only exercise 1 is a verified transcription; exercises 2-5 are original approximations in the same style, honestly labelled in the UI as such (see src/core/content/hanon.ts); exercises 6-20 are deferred.",
+    "status": "public-domain",
+    "sourceUrl": "https://en.wikipedia.org/wiki/The_Virtuoso_Pianist_in_60_Exercises",
+    "verifiedDate": "2026-09-04"
   }
 ]

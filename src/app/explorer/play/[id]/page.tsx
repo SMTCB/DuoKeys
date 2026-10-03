@@ -7,16 +7,22 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
-import { useSessionStore } from '../../../../runtime/stores/sessionStore';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { useSessionStore, type PracticeMode } from '../../../../runtime/stores/sessionStore';
+import { useSessionArcStore } from '../../../../runtime/stores/sessionArcStore';
+import { getAdapters } from '../../../../runtime/bootstrap';
 import { FallingNotesCanvas } from '../../../../ui/falling/FallingNotesCanvas';
+import { RewardBurst } from '../../../../ui/shared/RewardBurst';
+import { PageShell } from '../../../../ui/shared/PageShell';
+import { Card } from '../../../../ui/shared/Card';
+import { Button } from '../../../../ui/shared/Button';
 import type { Arrangement } from '../../../../core/content/types';
 
 export default function ExplorerPlayPage() {
+  const router = useRouter();
   const params = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const sectionId = searchParams.get('section') ?? undefined;
-  const adapters = useSessionStore((s) => s.adapters);
   const profile = useSessionStore((s) => s.profile);
   const midiInputs = useSessionStore((s) => s.midiInputs);
   const midiConnectionState = useSessionStore((s) => s.midiConnectionState);
@@ -28,9 +34,12 @@ export default function ExplorerPlayPage() {
   const refreshMidiInputs = useSessionStore((s) => s.refreshMidiInputs);
   const selectMidiInput = useSessionStore((s) => s.selectMidiInput);
   const startArrangement = useSessionStore((s) => s.startArrangement);
+  const arcActive = useSessionArcStore((s) => s.active);
+  const advanceArc = useSessionArcStore((s) => s.advance);
 
   const [arrangement, setArrangement] = useState<Arrangement | undefined>();
   const [loadError, setLoadError] = useState<string | undefined>();
+  const [mode, setMode] = useState<PracticeMode>('wait');
 
   useEffect(() => {
     void refreshMidiInputs();
@@ -38,8 +47,8 @@ export default function ExplorerPlayPage() {
 
   useEffect(() => {
     let cancelled = false;
-    adapters.content
-      .arrangement(params.id)
+    getAdapters()
+      .content.arrangement(params.id)
       .then((a) => {
         if (!cancelled) setArrangement(a);
       })
@@ -47,7 +56,7 @@ export default function ExplorerPlayPage() {
     return () => {
       cancelled = true;
     };
-  }, [adapters, params.id]);
+  }, [params.id]);
 
   const track = arrangement?.tracks[0];
   // Sequential distinct groupIds, in the same order WaitMatcher.expect() saw
@@ -71,28 +80,52 @@ export default function ExplorerPlayPage() {
   async function handleSelectMidi(inputId: string): Promise<void> {
     if (!arrangement || !track) return;
     await selectMidiInput(inputId);
-    await startArrangement(arrangement, track.id, crypto.randomUUID(), new Date().toISOString(), sectionId);
+    await startArrangement(arrangement, track.id, crypto.randomUUID(), new Date().toISOString(), sectionId, mode);
   }
 
-  if (loadError) return <main><p>Could not load this piece: {loadError}</p></main>;
-  if (!arrangement || !track) return <main><p>Loading…</p></main>;
+  if (loadError) return <PageShell><p>Could not load this piece: {loadError}</p></PageShell>;
+  if (!arrangement || !track) return <PageShell><p>Loading…</p></PageShell>;
 
   return (
-    <main>
+    <PageShell>
       <h1>{arrangement.id}</h1>
 
       {attemptStatus === 'idle' && (
-        <section>
+        <Card>
+          <p>How should we play?</p>
+          <p>
+            <label>
+              <input
+                type="radio"
+                name="mode"
+                value="wait"
+                checked={mode === 'wait'}
+                onChange={() => setMode('wait')}
+              />
+              Wait for me
+            </label>{' '}
+            <label>
+              <input
+                type="radio"
+                name="mode"
+                value="timed"
+                checked={mode === 'timed'}
+                onChange={() => setMode('timed')}
+              />
+              Keep the beat
+            </label>
+          </p>
+
           <p>Choose your piano:</p>
-          <ul>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {midiInputs.map((input) => (
-              <li key={input.id}>
-                <button onClick={() => void handleSelectMidi(input.id)}>{input.name}</button>
-              </li>
+              <Button key={input.id} accent="amber" onClick={() => void handleSelectMidi(input.id)}>
+                {input.name}
+              </Button>
             ))}
-          </ul>
+          </div>
           <p>Connection: {midiConnectionState}</p>
-        </section>
+        </Card>
       )}
 
       {attemptStatus === 'playing' && clock && (
@@ -105,10 +138,24 @@ export default function ExplorerPlayPage() {
       )}
 
       {attemptStatus === 'complete' && grade && (
-        <section>
-          <p>{'⭐'.repeat(grade.stars) || 'Try this one again!'}</p>
-        </section>
+        <Card>
+          <p>
+            <RewardBurst />
+            {'⭐'.repeat(grade.stars) || 'Try this one again!'}
+          </p>
+          {arcActive && (
+            <Button
+              accent="amber"
+              onClick={() => {
+                advanceArc();
+                router.push(`/explorer/${arrangement.id}/session`);
+              }}
+            >
+              Continue your session
+            </Button>
+          )}
+        </Card>
       )}
-    </main>
+    </PageShell>
   );
 }

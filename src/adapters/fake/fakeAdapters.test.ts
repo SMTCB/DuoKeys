@@ -120,9 +120,14 @@ describe('FakeContentBackend', () => {
         overall: 1,
       },
     };
-    const content = new FakeContentBackend([arrangement], [{ id: 'piece-1', title: 'Test Piece' }]);
+    const content = new FakeContentBackend(
+      [arrangement],
+      [{ id: 'piece-1', title: 'Test Piece', defaultArrangementId: 'arr-1' }],
+    );
     expect(await content.arrangement('arr-1')).toBe(arrangement);
-    expect((await content.index()).pieces).toEqual([{ id: 'piece-1', title: 'Test Piece' }]);
+    expect((await content.index()).pieces).toEqual([
+      { id: 'piece-1', title: 'Test Piece', defaultArrangementId: 'arr-1' },
+    ]);
     await expect(content.arrangement('nope')).rejects.toThrow();
   });
 });

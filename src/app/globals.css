@@ -1,0 +1,68 @@
+/* US-3.16 — design tokens, matching the approved DuoKeys Design Reference
+   (duokeys_ui_concepts.html) exactly. One light theme only — no dark mode
+   toggle, per the Build Board's recorded decision. */
+
+:root {
+  --app-paper: #f4f6f0;
+  --app-surface: #ffffff;
+  --app-surface-2: #ecefe6;
+  --app-ink: #24262b;
+  --app-ink-soft: #5c6059;
+  --app-ink-faint: #8b8f86;
+  --app-line: #dee2d6;
+
+  --amber: #e19b34;
+  --amber-deep: #b9791d;
+  --amber-tint: #fbead0;
+  --amber-tint-2: #f7ddb4;
+
+  --indigo: #3d5a7c;
+  --indigo-deep: #2a415c;
+  --indigo-tint: #dce4ec;
+  --indigo-tint-2: #c4d2e0;
+
+  --coral: #dd6e4b;
+  --coral-deep: #b8532f;
+  --coral-tint: #fbe1d6;
+
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+
+  --display: var(--font-display), 'Segoe UI', sans-serif;
+  --ui: var(--font-ui), 'Segoe UI', sans-serif;
+  --mono: var(--font-mono), ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: var(--app-paper);
+  color: var(--app-ink);
+  font-family: var(--ui);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}

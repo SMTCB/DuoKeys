@@ -1,0 +1,41 @@
+{
+  "id": "jingle-bells",
+  "title": "Jingle Bells",
+  "tags": ["traditional", "five-finger", "beginner", "simplified"],
+  "licenceId": "trad-jingle-bells",
+  "tempoBpm": 110,
+  "timeSig": [4, 4],
+  "keySig": "C",
+  "tracks": [
+    {
+      "id": "melody",
+      "role": "melody",
+      "hand": "R",
+      "notes": [
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 960 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 960 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "F4", "durationTicks": 480 },
+        { "pitch": "G4", "durationTicks": 960 },
+        { "pitch": "F4", "durationTicks": 480 },
+        { "pitch": "F4", "durationTicks": 480 },
+        { "pitch": "F4", "durationTicks": 960 },
+        { "pitch": "F4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 960 },
+        { "pitch": "F4", "durationTicks": 960 },
+        { "pitch": "E4", "durationTicks": 1920 }
+      ]
+    }
+  ]
+}

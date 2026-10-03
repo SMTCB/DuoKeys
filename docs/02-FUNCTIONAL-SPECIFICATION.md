@@ -195,7 +195,7 @@ lonely.
 
 ### FR-STU-006 — Articulation and duration feedback (`S`)
 
-**Realised by:** `TA-MID-004`
+**Realised by:** `TA-MID-004`, `TA-GRD-006`
 
 Using the PedalTracker's distinction between key-up and note-stopped-sounding,
 report notes held too short (staccato where legato was written) or too long.
@@ -241,6 +241,82 @@ exactly the right level, and the cheapest content in the project.
 
 Import from Mutopia and OpenScore through the build pipeline, with the licence
 gate (`TA-CNT-005`) enforced.
+
+### FR-STU-012 — Chord & progression explorer (`M`)
+
+**Realised by:** `TA-CNT-006`, `TA-MAT-007` · `US-3.13`
+
+A browsable map of chords and progressions in every key: pick a key, see its
+diatonic chords and a large catalogue of progressions (1 stock 12-bar blues
+turnaround plus 50 major-key and 58 minor-key progressions per key, each
+tagged with moods and filterable by mode/mood), and play along with each
+chord highlighted on an on-screen keybed as it comes due. Each suggested
+chord is validated against what's actually played — `TA-MAT-007`'s
+`ChordMatcher` — but there is no timing requirement and no failure state:
+this is `FR-EXP-006`'s free-play philosophy applied to harmony instead of
+melody, for practice time that isn't in an exercise mood.
+
+> **Content source:** progression sequences and mood tags are ported as text
+> data from [ldrolez/free-midi-chords](https://github.com/ldrolez/free-midi-chords)
+> (MIT-licensed) — specifically the `prog_maj`/`prog_min` Roman-numeral
+> degree/quality token lists in `chords.py`, 108 progression templates in
+> total. Chord voicings (`midiNotes`) are this codebase's own generation
+> from standard chord-interval formulas, not parsed from any MIDI file —
+> `TA-CNT-006` has the full split and the licence-gate entries for both
+> parts (`TA-CNT-005`).
+> `TA-CNT-006` defines the lighter, parallel ingest path this needs — chords
+> have no `Section` or difficulty score, so they deliberately don't fit
+> `Arrangement`/`Track` as authored today, and don't reuse the falling-notes
+> or OSMD renderers.
+
+### FR-STU-013 — Lead-sheet song mode (`M`)
+
+**Realised by:** `TA-DAT-001` (extended), `TA-REN-001` · `US-3.14`
+
+For a specific song, a simplified practice mode: chord symbols over a beat
+grid plus the melody, closer to a lead sheet than a full score. Reuses
+`FR-STU-012`'s chord data and playback for the harmony half; the melody half
+already fits `TA-DAT-001`'s existing `Track`/`ContentNote` shape at a coarse
+difficulty, rendered with the existing falling-notes view (`TA-REN-001`)
+rather than a new renderer, with chord symbols overlaid as text at their
+tick position. Positioned as the easy on-ramp before `FR-STU-001`'s full
+notation view, not a replacement for it — depends on `FR-STU-012` existing
+first, and on `FR-STU-011`/`FR-CON-*` for a specific song's melody data if it
+isn't already in the catalogue.
+
+### FR-STU-014 — Personal score import (`C`)
+
+**Status:** Future roadmap — deliberately out of MVP (v1) scope. Raised by
+the adult user and confirmed as a nice-to-have, not a blocker; revisit after
+v1 ships. Flagged as an open architecture question below, not only an
+unscheduled story.
+
+The end state: the adult receives an already-digitised sheet from a teacher
+(MusicXML, or a scan run through OMR) and brings it into DuoKeys to practise
+against — the same idea as `FR-STU-011`'s Mutopia/OpenScore ingest, but for
+one personal file rather than the shared catalogue.
+
+> Two separable questions here, not one. **Rendering it once it's in the
+> app** is already solved — OSMD (`TA-REN-003`, already chosen, BSD-3-Clause)
+> renders MusicXML directly, which is also the standard output of most
+> open-source OMR tools (e.g. Audiveris) and of MuseScore's export. **Getting
+> a personal file into the app is not solved.** The five-port architecture
+> (`TA-PORT-002`) has no upload-capable port: `ContentBackend` fetches build
+> output, not user-supplied files, and `StorageBackend` is IndexedDB, not a
+> file-drop target. Two paths exist and neither is chosen:
+> 1. **Build-time**, matching `US-3.12`'s existing pattern — drop a MusicXML
+>    file into `content/sources/`, let `TA-CNT-001`'s pipeline ingest it like
+>    any other piece. Cheapest, reuses everything, but needs a rebuild per
+>    song — a poor fit for "a new sheet every week."
+> 2. **Runtime upload** — a real new capability: a file picker, in-browser
+>    parsing, and storage for the result. Needs a new port method or adapter;
+>    this is genuine architecture work, not wiring.
+>
+> Licensing is also different in kind: `TA-CNT-005`'s gate assumes
+> redistributable content with a public source URL. A teacher's personal
+> handout has neither, and isn't being redistributed — the gate as written
+> doesn't obviously apply to one household's own copy, but this is an
+> open policy question, not a decision already made.
 
 ---
 
@@ -318,6 +394,17 @@ Studio sees the numbers.
 Capture a performance as a note stream and play it back through the sampler, with
 the score or falling notes following along. Useful for "listen to what you did"
 and delightful for a child.
+
+### FR-PRO-006 — Saved / in-progress repertoire (`M`)
+
+**Realised by:** `TA-DAT-007` · `US-3.15`
+
+A short per-profile list of pieces currently being worked on — something the
+adult can add a piece to and find again, distinct from `FR-PRO-002`'s derived
+unlock/best-grade state. `TA-DAT-007` adds the `library` store this needs
+(`TA-DAT-003` previously had nothing shaped like a saved list). Small in
+scope: one new IndexedDB store, an add/remove action, and a filtered view of
+the piece list.
 
 ---
 
@@ -458,10 +545,13 @@ leaves the device.
 | Module | Must | Should | Could | Total |
 |---|---|---|---|---|
 | Explorer | 5 | 3 | 1 | 9 |
-| Studio | 6 | 4 | 1 | 11 |
+| Studio | 8 | 4 | 2 | 14 |
 | Duet | 3 | 1 | 0 | 4 |
-| Profiles | 3 | 1 | 1 | 5 |
+| Profiles | 4 | 1 | 1 | 6 |
 | Content | 4 | 0 | 1 | 5 |
 | Sync | 4 | 1 | 0 | 5 |
-| System | 6 | 1 | 0 | 8 |
-| **Total** | **31** | **11** | **4** | **47** |
+| System | 7 | 1 | 0 | 8 |
+| **Total** | **35** | **11** | **5** | **51** |
+
+*(System's Must count was previously misstated as 6/8 — corrected to 7/8 here;
+`FR-SYS-001`–`005` and `007`–`008` are all `M`, only `FR-SYS-006` is `S`.)*

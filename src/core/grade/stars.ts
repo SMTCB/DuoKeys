@@ -8,9 +8,7 @@ export interface StarOptions {
 }
 
 export function starsFor(accuracy: number, completion: number, options: StarOptions = {}): Stars {
-  if (accuracy >= 0.95 && completion === 1) return 3;
-  if (accuracy >= 0.8 && completion === 1) return 2;
-  if (completion >= 0.6) return 1;
-  if (options.explorerFloor && completion === 1) return 1;
-  return 0;
+  const raw: Stars =
+    accuracy >= 0.95 && completion === 1 ? 3 : accuracy >= 0.8 && completion === 1 ? 2 : completion >= 0.6 ? 1 : 0;
+  return options.explorerFloor ? (Math.max(raw, 1) as Stars) : raw;
 }

@@ -76,6 +76,7 @@ export type StoreName =
   | 'attempts'
   | 'progression'
   | 'flashcards'
+  | 'library'
   | 'settings'
   | 'outbox';
 
@@ -114,7 +115,7 @@ export interface PullResult {
 }
 
 export interface ContentIndex {
-  pieces: { id: string; title: string }[];
+  pieces: { id: string; title: string; defaultArrangementId: string }[];
 }
 
 export type { Arrangement };

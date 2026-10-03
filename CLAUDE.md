@@ -97,6 +97,7 @@ exits non-zero on drift and prints exactly which IDs are on which side.
 |---|---|---|
 | **DuoKeys Build Board** | `https://claude.ai/code/artifact/6a574200-c6ab-47c9-9a79-f1b46c436f5b` | **Live.** Republish on any change the matrix routes to it. |
 | DuoKeys Build Architecture | `https://claude.ai/code/artifact/9a4f8537-b30f-4e37-b5dd-1d869d7f80f5` | **Frozen.** The narrative record of how the decisions were reached. Superseded by `docs/`. Do not overwrite. |
+| **DuoKeys Design Reference** | `https://claude.ai/code/artifact/90b71da2-2e2f-4613-bd24-a338ebb52a08` | **Live.** Eight annotated screen mockups (Explorer + Studio) plus the logo lockups — the visual identity `TA-APP-006` specifies in code. Republish on any change to the design system. |
 
 To update the Build Board: read it first (`action: "read"` with its URL), merge
 onto what comes back, then publish to the same URL. Never publish without the

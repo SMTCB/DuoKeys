@@ -1,0 +1,44 @@
+{
+  "id": "mary-had-a-little-lamb",
+  "title": "Mary Had a Little Lamb",
+  "tags": ["traditional", "five-finger", "beginner"],
+  "licenceId": "trad-mary-had-a-little-lamb",
+  "tempoBpm": 100,
+  "timeSig": [4, 4],
+  "keySig": "C",
+  "tracks": [
+    {
+      "id": "melody",
+      "role": "melody",
+      "hand": "R",
+      "notes": [
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 960 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 960 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "G4", "durationTicks": 480 },
+        { "pitch": "G4", "durationTicks": 960 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 1920 }
+      ]
+    }
+  ]
+}

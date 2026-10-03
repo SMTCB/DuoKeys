@@ -1,0 +1,13 @@
+.shell {
+  min-height: 100vh;
+  background: var(--app-paper);
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.inner {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}

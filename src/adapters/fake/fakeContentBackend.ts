@@ -6,7 +6,7 @@ import type { Arrangement, ArrangementId, ContentBackend, ContentIndex } from '.
 export class FakeContentBackend implements ContentBackend {
   constructor(
     private readonly arrangements: readonly Arrangement[] = [],
-    private readonly pieces: readonly { id: string; title: string }[] = [],
+    private readonly pieces: readonly { id: string; title: string; defaultArrangementId: string }[] = [],
   ) {}
 
   async index(): Promise<ContentIndex> {

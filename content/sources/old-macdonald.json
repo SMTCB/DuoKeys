@@ -1,0 +1,44 @@
+{
+  "id": "old-macdonald",
+  "title": "Old MacDonald Had a Farm",
+  "tags": ["traditional", "five-finger", "beginner", "simplified"],
+  "licenceId": "trad-old-macdonald",
+  "tempoBpm": 110,
+  "timeSig": [4, 4],
+  "keySig": "C",
+  "tracks": [
+    {
+      "id": "melody",
+      "role": "melody",
+      "hand": "R",
+      "notes": [
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 960 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 960 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "F4", "durationTicks": 480 },
+        { "pitch": "G4", "durationTicks": 960 },
+        { "pitch": "G4", "durationTicks": 480 },
+        { "pitch": "F4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 960 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 960 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 960 }
+      ]
+    }
+  ]
+}

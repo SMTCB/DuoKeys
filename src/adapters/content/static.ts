@@ -1,31 +1,47 @@
-// TA-PORT-003 v1 adapter for ContentBackend. The content pipeline (TA-CNT-001,
-// content ingest, licence-gated build step) is out of scope for Sprint 1
-// (docs/03-SPRINT-PLAN.md); this wraps the one hand-authored arrangement
-// (US-1.13) behind the real port so the port itself is still exercised rather
-// than bypassed.
+// TA-PORT-003 v1 adapter for ContentBackend — fetch + cache. Reads the static
+// JSON emitted by content/build/ingest.ts (TA-CNT-001) under public/content/;
+// the licence gate and difficulty scoring already happened at build time
+// (TA-CNT-005, TA-CNT-002), so this adapter does no validation of its own.
+//
+// The index.json shape read here is duplicated (not imported) in
+// content/build/ingest.ts, which writes it — keep the two shapes in sync by
+// hand if either changes.
 
 import type { ArrangementId, ContentBackend, ContentIndex } from '../ports';
-import type { Arrangement, Piece } from '../../core/content/types';
-import { assertLicenced, type LicenceEntry } from '../../core/content/licence';
-import licencesJson from '../../../content/licences.json';
-import { MARY_HAD_A_LITTLE_LAMB, MARY_HAD_A_LITTLE_LAMB_PIECE } from './maryHadALittleLamb';
+import type { Arrangement } from '../../core/content/types';
 
-const LICENCES = licencesJson as LicenceEntry[];
-const PIECES: readonly Piece[] = [MARY_HAD_A_LITTLE_LAMB_PIECE];
-const ARRANGEMENTS: readonly Arrangement[] = [MARY_HAD_A_LITTLE_LAMB];
+interface ContentIndexFile extends ContentIndex {
+  arrangements: { id: string; path: string }[];
+}
 
 export class StaticContentBackend implements ContentBackend {
-  constructor() {
-    for (const piece of PIECES) assertLicenced(piece.licenceId, LICENCES);
+  private indexPromise: Promise<ContentIndexFile> | undefined;
+
+  private loadIndex(): Promise<ContentIndexFile> {
+    this.indexPromise ??= fetch('/content/index.json').then((res) => {
+      if (!res.ok) {
+        throw new Error(
+          `StaticContentBackend: could not load /content/index.json (${res.status}) — run "npm run content:build"?`,
+        );
+      }
+      return res.json() as Promise<ContentIndexFile>;
+    });
+    return this.indexPromise;
   }
 
   async index(): Promise<ContentIndex> {
-    return { pieces: PIECES.map((p) => ({ id: p.id, title: p.title })) };
+    const index = await this.loadIndex();
+    return { pieces: index.pieces };
   }
 
   async arrangement(id: ArrangementId): Promise<Arrangement> {
-    const found = ARRANGEMENTS.find((a) => a.id === id);
-    if (!found) throw new Error(`StaticContentBackend: no arrangement with id "${id}"`);
-    return found;
+    const index = await this.loadIndex();
+    const entry = index.arrangements.find((a) => a.id === id);
+    if (!entry) throw new Error(`StaticContentBackend: no arrangement with id "${id}"`);
+    const res = await fetch(entry.path);
+    if (!res.ok) {
+      throw new Error(`StaticContentBackend: could not load "${entry.path}" (${res.status})`);
+    }
+    return res.json() as Promise<Arrangement>;
   }
 }

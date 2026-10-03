@@ -1,0 +1,47 @@
+{
+  "id": "twinkle-twinkle-little-star",
+  "title": "Twinkle Twinkle Little Star",
+  "tags": ["traditional", "five-finger", "beginner", "simplified"],
+  "licenceId": "trad-twinkle-twinkle-little-star",
+  "tempoBpm": 100,
+  "timeSig": [4, 4],
+  "keySig": "C",
+  "tracks": [
+    {
+      "id": "melody",
+      "role": "melody",
+      "hand": "R",
+      "notes": [
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "F4", "durationTicks": 480 },
+        { "pitch": "G4", "durationTicks": 960 },
+        { "pitch": "F4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "F4", "durationTicks": 480 },
+        { "pitch": "G4", "durationTicks": 480 },
+        { "pitch": "F4", "durationTicks": 960 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "F4", "durationTicks": 480 },
+        { "pitch": "G4", "durationTicks": 960 },
+        { "pitch": "F4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "F4", "durationTicks": 480 },
+        { "pitch": "G4", "durationTicks": 480 },
+        { "pitch": "F4", "durationTicks": 480 },
+        { "pitch": "E4", "durationTicks": 480 },
+        { "pitch": "D4", "durationTicks": 480 },
+        { "pitch": "C4", "durationTicks": 480 }
+      ]
+    }
+  ]
+}
