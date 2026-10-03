@@ -180,7 +180,7 @@ typecheck  → tsc --noEmit
 lint       → eslint (includes boundary rules, TA-PORT-005)
 test:unit  → vitest run  (TS-U-*, TS-I-*, TS-G-*)
 docs:check → pnpm run docs:check  (node scripts/docs-check.mjs)
-build      → next build
+build      → content:build, then next build  (content is generated, not committed)
 test:e2e   → playwright  (TS-E-*, pre-merge only)
 ```
 
