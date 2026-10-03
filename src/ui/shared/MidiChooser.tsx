@@ -1,4 +1,4 @@
-// US-3.22 — the "choose your piano" step shared by every play screen. Picture
+// US-3.21 — the "choose your piano" step shared by every play screen. Picture
 // tile + title + one big button per device + a connection line that says its
 // state in words as well as a dot (NFR-008).
 

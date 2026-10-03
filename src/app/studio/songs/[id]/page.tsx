@@ -14,7 +14,8 @@ import { getAdapters } from '../../../../runtime/bootstrap';
 import { FallingNotesCanvas } from '../../../../ui/falling/FallingNotesCanvas';
 import { PageShell } from '../../../../ui/shared/PageShell';
 import { Card } from '../../../../ui/shared/Card';
-import { Button } from '../../../../ui/shared/Button';
+import { MidiChooser } from '../../../../ui/shared/MidiChooser';
+import stage from '../../../../ui/shared/Stage.module.css';
 import type { Arrangement } from '../../../../core/content/types';
 import { describeRushDrag } from '../../../../core/grade/grade';
 
@@ -71,15 +72,7 @@ export default function StudioSongPage() {
 
       {attemptStatus === 'idle' && (
         <Card>
-          <p>Choose your piano:</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-            {midiInputs.map((input) => (
-              <Button key={input.id} accent="indigo" onClick={() => void handleSelectMidi(input.id)}>
-                {input.name}
-              </Button>
-            ))}
-          </div>
-          <p>Connection: {midiConnectionState}</p>
+          <MidiChooser inputs={midiInputs} connectionState={midiConnectionState} onSelect={(id) => void handleSelectMidi(id)} />
         </Card>
       )}
 
@@ -95,9 +88,10 @@ export default function StudioSongPage() {
 
       {attemptStatus === 'complete' && grade && (
         <Card>
-          <p>
-            Accuracy: {Math.round(grade.accuracy * 100)}% — {'⭐'.repeat(grade.stars)}
-          </p>
+          <div className={stage.stars} aria-label={`${grade.stars} stars`}>
+            {'⭐'.repeat(grade.stars)}
+          </div>
+          <p className={stage.title}>{Math.round(grade.accuracy * 100)}% of the notes</p>
           <p>You are {describeRushDrag(grade.rushDragMs)}.</p>
         </Card>
       )}

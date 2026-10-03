@@ -1094,3 +1094,10 @@ look the same everywhere. Verified at 375 px (no sideways scroll) on the Studio
 screens, Note Ninja, Free Play and the quest map. Not checked in a browser: the
 live falling-notes and notation views, the song page, the chord progression page
 (they need a connected piano).
+
+Third pass (`US-3.21`): the screens that need no piano are done too — the song library
+rows and search, the chord explorer (key, tabs, filters, progression rows, add form),
+the backup panel, and the setup / result states of the song page and chord-progression
+page. Checked at 375 px (no sideways scroll) on the library and the chord explorer.
+The setup and result states of the song and chord-progression pages were not seen in a
+browser (they need a connected piano).

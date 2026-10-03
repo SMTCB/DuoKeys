@@ -81,10 +81,11 @@ a {
   color: inherit;
 }
 
-/* US-3.22 - form controls share one look on every screen; the role colour
+/* US-3.21 - form controls share one look on every screen; the role colour
    (amber / indigo) tints the native controls. */
 input[type='text'],
 input[type='search'],
+input[type='email'],
 input[type='number'],
 input[type='password'],
 select,

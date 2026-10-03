@@ -20,6 +20,8 @@ import { PageShell } from '../../../ui/shared/PageShell';
 import { Card } from '../../../ui/shared/Card';
 import { Button } from '../../../ui/shared/Button';
 import { ChordKeybed } from '../../../ui/shared/ChordKeybed';
+import { Segmented } from '../../../ui/shared/Segmented';
+import styles from './chords.module.css';
 
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const PAGE_SIZE = 12;
@@ -155,20 +157,13 @@ export default function ChordExplorerPage() {
       </div>
 
       <Card>
-        <div style={ROW}>
-          <strong>Key</strong>
-          {NOTE_NAMES.map((name, i) => (
-            <Button
-              key={name}
-              accent="indigo"
-              variant={selectedKey === i ? 'primary' : 'secondary'}
-              aria-pressed={selectedKey === i}
-              onClick={() => setKey(asPitchClass(i))}
-            >
-              {name}
-            </Button>
-          ))}
-        </div>
+        <Segmented
+          name="key"
+          legend="Key"
+          options={NOTE_NAMES.map((name, i) => ({ value: i, label: name }))}
+          value={selectedKey as number}
+          onChange={(i) => setKey(asPitchClass(i))}
+        />
       </Card>
 
       {currentChord && (
@@ -191,7 +186,7 @@ export default function ChordExplorerPage() {
                   Next chord
                 </Button>
                 <Link href={`/studio/chords/play/${encodeURIComponent(currentProgression.id)}`}>
-                  <Button accent="coral" variant="secondary">Play with falling notes</Button>
+                  <Button accent="indigo" variant="secondary">Play with falling notes</Button>
                 </Link>
               </div>
             )}
@@ -199,20 +194,22 @@ export default function ChordExplorerPage() {
         </div>
       )}
 
-      <div role="tablist" aria-label="Chord explorer sections" style={ROW}>
+      <div role="tablist" aria-label="Chord explorer sections" className={styles.tabs}>
         {tabs.map((t) => (
-          <Button
+          <button
             key={t.id}
+            type="button"
             role="tab"
             id={`tab-${t.id}`}
             aria-selected={tab === t.id}
             aria-controls={`panel-${t.id}`}
-            accent="indigo"
-            variant={tab === t.id ? 'primary' : 'secondary'}
+            className={styles.tab}
             onClick={() => setTab(t.id)}
           >
-            {t.label} ({t.count})
-          </Button>
+            {tab === t.id ? '✓ ' : ''}
+            {t.label}
+            <span className={styles.count}>{t.count}</span>
+          </button>
         ))}
       </div>
 
@@ -243,22 +240,23 @@ export default function ChordExplorerPage() {
       {tab === 'progressions' && (
         <div role="tabpanel" id="panel-progressions" aria-labelledby="tab-progressions">
           <Card>
-            <div style={{ ...ROW, marginBottom: '0.75rem' }}>
-              {(['all', 'major', 'minor', 'modal'] as const).map((mode) => (
-                <Button
-                  key={mode}
-                  accent="coral"
-                  variant={modeFilter === mode ? 'primary' : 'secondary'}
-                  aria-pressed={modeFilter === mode}
-                  onClick={() => {
-                    setModeFilter(mode);
-                    setShownCount(PAGE_SIZE);
-                  }}
-                >
-                  {mode === 'all' ? 'All' : mode === 'major' ? 'Major' : mode === 'minor' ? 'Minor' : 'Modal'}
-                </Button>
-              ))}
-              <label style={ROW}>
+            <div className={styles.filters}>
+              <Segmented
+                name="modeFilter"
+                legend="Mode"
+                options={[
+                  { value: 'all' as const, label: 'All' },
+                  { value: 'major' as const, label: 'Major' },
+                  { value: 'minor' as const, label: 'Minor' },
+                  { value: 'modal' as const, label: 'Modal' },
+                ]}
+                value={modeFilter}
+                onChange={(mode) => {
+                  setModeFilter(mode);
+                  setShownCount(PAGE_SIZE);
+                }}
+              />
+              <label className={styles.mood}>
                 Mood
                 <select
                   value={moodFilter ?? ''}
@@ -266,27 +264,23 @@ export default function ChordExplorerPage() {
                     setMoodFilter(e.target.value === '' ? null : e.target.value);
                     setShownCount(PAGE_SIZE);
                   }}
-                  style={{ font: 'inherit', padding: '0.5rem', minHeight: '44px' }}
                 >
                   <option value="">Any mood</option>
                   {availableMoods.map((mood) => (
                     <option key={mood} value={mood}>{mood}</option>
                   ))}
                 </select>
+                <span className={styles.sub}>
+                  {progressions.length} progressions in {keyName}
+                </span>
               </label>
-              <span style={{ opacity: 0.75 }}>
-                {progressions.length} progressions in {keyName}
-              </span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div>
               {progressions.slice(0, shownCount).map((progression) => (
-                <div
-                  key={progression.id}
-                  style={{ ...ROW, justifyContent: 'space-between', borderTop: '1px solid #d9dfd3', paddingTop: '0.5rem' }}
-                >
-                  <div>
-                    <strong>{progression.chordIds.map(chordSymbolOfId).join('  ')}</strong>
-                    <div style={{ opacity: 0.75, fontSize: '0.85em' }}>
+                <div key={progression.id} className={styles.progRow}>
+                  <div style={{ minWidth: 0 }}>
+                    <div className={styles.symbols}>{progression.chordIds.map(chordSymbolOfId).join('  ')}</div>
+                    <div className={styles.sub}>
                       {progression.name}
                       {progression.moods.length > 0 && ` · ${progression.moods.join(', ')}`}
                     </div>
@@ -301,7 +295,7 @@ export default function ChordExplorerPage() {
                       Play
                     </Button>
                     <Link href={`/studio/chords/play/${encodeURIComponent(progression.id)}`}>
-                      <Button accent="coral" variant="secondary">Falling notes</Button>
+                      <Button accent="indigo" variant="secondary">Falling notes</Button>
                     </Link>
                   </div>
                 </div>
@@ -335,7 +329,6 @@ export default function ChordExplorerPage() {
                 placeholder="Name (optional)"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                style={{ padding: '0.5rem', font: 'inherit' }}
               />
               <textarea
                 aria-label="Chords"
@@ -343,21 +336,18 @@ export default function ChordExplorerPage() {
                 rows={2}
                 value={newText}
                 onChange={(e) => setNewText(e.target.value)}
-                style={{ padding: '0.5rem', font: 'inherit' }}
               />
-              <div style={ROW}>
-                <span>Numerals in {keyName}:</span>
-                {(['major', 'minor'] as const).map((mode) => (
-                  <Button
-                    key={mode}
-                    accent="coral"
-                    variant={newMode === mode ? 'primary' : 'secondary'}
-                    aria-pressed={newMode === mode}
-                    onClick={() => setNewMode(mode)}
-                  >
-                    {mode === 'major' ? 'Major' : 'Minor'}
-                  </Button>
-                ))}
+              <Segmented
+                name="numeralMode"
+                legend={`Numerals in ${keyName}`}
+                options={[
+                  { value: 'major' as const, label: 'Major' },
+                  { value: 'minor' as const, label: 'Minor' },
+                ]}
+                value={newMode}
+                onChange={setNewMode}
+              />
+              <div>
                 <Button accent="indigo" onClick={() => void handleAdd()}>
                   Add to my library
                 </Button>
@@ -380,10 +370,10 @@ export default function ChordExplorerPage() {
                     {progression.name}
                   </Button>
                   <Link href={`/studio/chords/play/${encodeURIComponent(progression.id)}`}>
-                    <Button accent="coral" variant="secondary">Falling notes</Button>
+                    <Button accent="indigo" variant="secondary">Falling notes</Button>
                   </Link>
                   <Button
-                    accent="coral"
+                    accent="indigo"
                     variant="secondary"
                     aria-label={`Remove ${progression.name}`}
                     onClick={() => void removeUserProgression(progression.id)}

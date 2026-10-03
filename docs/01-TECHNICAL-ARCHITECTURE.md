@@ -1360,6 +1360,15 @@ of what that artifact specifies.
   `globals.css` gives every input, select and range one look (44 px, 16 px text,
   role-coloured controls and focus ring). No behaviour changed: Wait mode,
   hints and the no-failure rule are untouched.
+- **Studio screens that need no piano (`US-3.21`).** The song library is a list
+  of picture-led rows (composer initial tile, title, style / instrument / bars as
+  pills, licence and source links kept, Play and Add / Remove). The chord explorer
+  uses `Segmented` for key, mode and numeral choices, pill tabs with a tick on the
+  open one, progression rows on tokens (no hard-coded colours), and indigo only:
+  coral is kept for shared / duet moments. The backup panel got a tile and the
+  shared input look; its calm-offline wording (`FR-SYN-005`) is unchanged. The
+  song page and the chord-progression page use `MidiChooser`, `Segmented` and the
+  star result card. No behaviour changed.
 
 ---
 

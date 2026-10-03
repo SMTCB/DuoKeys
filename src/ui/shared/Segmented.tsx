@@ -1,4 +1,4 @@
-// US-3.22 — a radio group drawn as a row of pills. Real radio inputs underneath
+// US-3.21 — a radio group drawn as a row of pills. Real radio inputs underneath
 // (keyboard and screen readers work); the selected pill is filled and also
 // carries a tick, so colour is never the only cue (NFR-008).
 

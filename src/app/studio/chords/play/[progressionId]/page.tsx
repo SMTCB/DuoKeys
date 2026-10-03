@@ -15,6 +15,9 @@ import { FallingNotesCanvas } from '../../../../../ui/falling/FallingNotesCanvas
 import { PageShell } from '../../../../../ui/shared/PageShell';
 import { Card } from '../../../../../ui/shared/Card';
 import { Button } from '../../../../../ui/shared/Button';
+import { MidiChooser } from '../../../../../ui/shared/MidiChooser';
+import stage from '../../../../../ui/shared/Stage.module.css';
+import { Segmented } from '../../../../../ui/shared/Segmented';
 import { progressionToArrangement } from '../../../../../core/content/progressionArrangement';
 import {
   CHORD_STYLES,
@@ -111,32 +114,22 @@ export default function ChordProgressionPlayPage() {
 
       {attemptStatus === 'idle' && (
         <Card>
-          <p>Choose your piano — the chords fall and wait for you.</p>
           {hasStyles && (
-            <div role="group" aria-label="Rhythm" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
-              {([{ id: 'block', label: 'Block chords' }, ...CHORD_STYLES] as { id: StyleChoice; label: string }[]).map((choice) => (
-                <Button
-                  key={choice.id}
-                  accent="indigo"
-                  variant={style === choice.id ? 'primary' : 'secondary'}
-                  aria-pressed={style === choice.id}
-                  onClick={() => setStyle(choice.id)}
-                >
-                  {choice.label}
-                </Button>
-              ))}
-            </div>
+            <Segmented
+              name="rhythm"
+              legend="Rhythm"
+              options={([{ id: 'block', label: 'Block chords' }, ...CHORD_STYLES] as { id: StyleChoice; label: string }[]).map((choice) => ({
+                value: choice.id,
+                label: choice.label,
+              }))}
+              value={style}
+              onChange={setStyle}
+            />
           )}
           {styleError && <p>That rhythm could not be loaded — block chords will play instead.</p>}
           {isStyleLoading && <p>Loading the rhythm…</p>}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-            {midiInputs.map((input) => (
-              <Button key={input.id} accent="indigo" onClick={() => void start(input.id)}>
-                {input.name}
-              </Button>
-            ))}
-          </div>
-          <p>Connection: {midiConnectionState}</p>
+          <p>The chords fall and wait for you.</p>
+          <MidiChooser inputs={midiInputs} connectionState={midiConnectionState} onSelect={(id) => void start(id)} />
         </Card>
       )}
 
@@ -152,9 +145,10 @@ export default function ChordProgressionPlayPage() {
 
       {attemptStatus === 'complete' && grade && (
         <Card>
-          <p>
-            Round finished — {Math.round(grade.accuracy * 100)}% of the chord notes {'⭐'.repeat(grade.stars)}
-          </p>
+          <div className={stage.stars} aria-label={`${grade.stars} stars`}>
+            {'⭐'.repeat(grade.stars)}
+          </div>
+          <p className={stage.title}>Round finished — {Math.round(grade.accuracy * 100)}% of the chord notes</p>
           <Button accent="indigo" onClick={() => void start()}>
             Play it again
           </Button>

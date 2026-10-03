@@ -1,0 +1,72 @@
+/* US-3.21 — chord explorer: pill tabs and progression rows, all on tokens. */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tab {
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--app-line);
+  background: var(--app-surface);
+  color: var(--app-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab[aria-selected='true'] {
+  background: var(--role-tint);
+  border-color: var(--role);
+  color: var(--role-deep);
+}
+
+.count {
+  margin-left: 0.35rem;
+  font-family: var(--mono);
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+  color: var(--app-ink-soft);
+}
+
+.progRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-top: 1.5px solid var(--app-line);
+}
+
+.progRow:first-child {
+  border-top: none;
+}
+
+.symbols {
+  font-family: var(--display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.sub {
+  color: var(--app-ink-soft);
+  font-size: 0.85rem;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.mood {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}

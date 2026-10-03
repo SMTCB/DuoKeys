@@ -1,4 +1,4 @@
-// US-3.22 — small status/label pill. Tone follows the screen's role colour
+// US-3.21 — small status/label pill. Tone follows the screen's role colour
 // unless a tone is named; the text always carries the meaning (NFR-008).
 
 import type { ReactNode } from 'react';

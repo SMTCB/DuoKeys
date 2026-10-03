@@ -36,7 +36,10 @@ export function SyncPanel() {
 
   return (
     <Card>
-      <strong>Backup and other devices</strong>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <span aria-hidden="true" style={{ display: 'grid', placeItems: 'center', width: '2.5rem', height: '2.5rem', borderRadius: 'var(--r-md)', background: 'var(--indigo-tint, var(--role-tint))', fontSize: '1.25rem' }}>☁️</span>
+        <strong style={{ fontFamily: 'var(--display)', fontSize: '1.05rem' }}>Backup and other devices</strong>
+      </div>
       {isSignedIn ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
           <p style={{ margin: '0.25rem 0 0' }} role="status">
@@ -64,7 +67,7 @@ export function SyncPanel() {
             placeholder="you@example.com"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            style={{ flex: '1 1 14rem', padding: '0.5rem 0.75rem', borderRadius: '0.5rem', border: '1px solid currentColor' }}
+            style={{ flex: '1 1 14rem', minWidth: 0 }}
           />
           <Button accent="indigo" type="submit">
             Email me a sign-in link
