@@ -288,7 +288,7 @@ needs that extraction, not yet done.
 
 ### Sync
 
-Status: `TS-I-SYN-001`–`003`, `005`–`008`, `010`, `011` have automated tests against fakes (`outboxStorage.test.ts`, `syncEngine.test.ts`, `mapping.test.ts`). `TS-I-SYN-004` runs at the database level via `supabase/tests/rls.sql` and passes. `TS-I-SYN-009` is automated in `syncEngine.test.ts` (a hung backend does not delay a session's writes, and `sync()` never rejects). Tombstone, flashcard and permanent-rejection behaviour is covered in `supabaseBackend.test.ts` and `syncEngine.test.ts`; `rls.sql` also covers `flashcards` and tombstones but has **not been re-run** since the part-2 migration is not yet applied.
+Status: `TS-I-SYN-001`–`003`, `005`–`008`, `010`, `011` have automated tests against fakes (`outboxStorage.test.ts`, `syncEngine.test.ts`, `mapping.test.ts`). `TS-I-SYN-004` runs at the database level via `supabase/tests/rls.sql` and passes. `TS-I-SYN-009` is automated in `syncEngine.test.ts` (a hung backend does not delay a session's writes, and `sync()` never rejects). Tombstone, flashcard and permanent-rejection behaviour is covered in `supabaseBackend.test.ts` and `syncEngine.test.ts`; `rls.sql` also covers `flashcards` and tombstones and passed against the live project after the part-2 migration was applied.
 
 | ID | Scenario | Verifies |
 |---|---|---|

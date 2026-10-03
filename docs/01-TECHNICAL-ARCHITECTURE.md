@@ -947,9 +947,8 @@ applied. It creates the four tables `TA-SYN-003` says sync, mirroring
 Migration `supabase/migrations/20261003150000_sync_flashcards_and_tombstones.sql`
 adds the `flashcards` table (`profile_id, card_id` key; RLS and last-write-wins
 triggers as for `library`) and a `deleted` tombstone column on `library`.
-**It is written but not yet applied to the live project** — until it is, library
-pushes fail as retryable and sync reports "behind". Apply it, then re-run
-`supabase/tests/rls.sql`, which now also covers `flashcards` and tombstones.
+**Applied to the live project on 2026-10-03**, after which `supabase/tests/rls.sql`
+(now also covering `flashcards` and tombstones) was re-run and passed.
 
 - Primary keys are the client-generated ids (`attempts.id`, `profiles.id`) or
   the local composite key (`library`: `profile_id, arrangement_id`), so a push
@@ -971,7 +970,7 @@ pushes fail as retryable and sync reports "behind". Apply it, then re-run
   them — so a change to the grade shape needs no server migration.
 
 Verified: anonymous `GET`/`POST` against all four tables is refused (401 /
-`42501`). `TS-I-SYN-004` **passed** at the database level (before the part-2 migration) —
+`42501`). `TS-I-SYN-004` **passes** at the database level —
 `supabase/tests/rls.sql` runs as two authenticated roles in a rolled-back
 transaction (B sees none of A's rows and cannot write under A's profile; `attempts`
 update/delete refused for the owner; stale write skipped, newer applied; anon

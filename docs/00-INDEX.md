@@ -993,9 +993,10 @@ Verified: anonymous reads and writes are refused on all four tables.
   writes still complete).
 - Hardening added: library clears propagate (tombstones), permanently rejected
   ops are dropped instead of wedging the queue, and flashcards sync
-  (`TA-SYN-003`/`004`/`007`). **The migration for this,
-  `20261003150000_sync_flashcards_and_tombstones.sql`, is written but not yet
-  applied to the live project**; after applying it, re-run `supabase/tests/rls.sql`.
+  (`TA-SYN-003`/`004`/`007`). The migration for this,
+  `20261003150000_sync_flashcards_and_tombstones.sql`, was applied to the live
+  project on 2026-10-03 and `supabase/tests/rls.sql` (extended to flashcards and
+  tombstones) re-run and passed.
 - Known gaps: Supabase redirect allow-list/Site URL must be set at deployment;
   built-in SMTP rate-limits magic-link emails.
 - The temporary full-access Supabase personal access token used for setup
