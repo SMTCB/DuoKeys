@@ -902,6 +902,39 @@ never on the read path (ADR-003), a paused project degrades to "sync is behind",
 not "the app is down". A weekly scheduled ping is optional insurance, not a
 requirement.
 
+### TA-SYN-007 — Supabase schema
+
+`US-1.03` — **delivered**. Project `DuoKeys` (org `SMTCB`, `eu-central-1`) is
+live; migration `supabase/migrations/20261003130000_sync_schema.sql` is
+applied. It creates the four tables `TA-SYN-003` says sync, mirroring
+`TA-DAT-002`/`004`/`007` — `profiles`, `attempts`, `library`, `settings`.
+`progression` is derived (never synced) and `flashcards` have no sync policy
+yet, so neither has a table.
+
+- Primary keys are the client-generated ids (`attempts.id`, `profiles.id`) or
+  the local composite key (`library`: `profile_id, arrangement_id`), so a push
+  is idempotent (`TS-I-SYN-006`).
+- Every table carries `owner_id uuid default auth.uid()` and has RLS enabled
+  (`TA-SYN-005`). `anon` has no grant on any of them.
+- **`attempts` is select + insert only** — no `UPDATE`/`DELETE` grant and no
+  policy, so append-only (`TA-DAT-002`) is enforced by the database, not by
+  convention. Deleting a profile still cascades.
+- `profiles`, `library`, `settings` are last-write-wins on `updated_at_ms`:
+  a `BEFORE UPDATE` trigger silently skips an older write rather than
+  raising, so a stale outbox flush never errors or reverts a newer edit.
+- Every table has a server-set `synced_at timestamptz`, bumped by trigger on
+  each accepted write; `pull(since)` (`TA-PORT-002`) uses it as its cursor, so
+  no client clock is trusted.
+- Child rows (`attempts`, `library`, `settings`) are insert-checked to
+  reference a profile with the same `owner_id`.
+- `attempts.grade` and `attempts.events` are `jsonb` — `TA-DAT-002` embeds
+  them — so a change to the grade shape needs no server migration.
+
+Verified so far: anonymous `GET`/`POST` against all four tables is refused
+(401 / `42501`). `TS-I-SYN-004`'s real test (a *second authenticated* user
+cannot read the first's rows) is **not yet run**, and the `SyncBackend`
+adapter and magic-link sign-in (`US-2.02`) are not built.
+
 ---
 
 ## 10. Content pipeline

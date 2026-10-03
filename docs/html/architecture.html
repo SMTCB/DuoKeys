@@ -627,6 +627,19 @@ IndexedDB          ◀──pull── Supabase   <i>(only on a fresh device)</i
   <h3 id="TA-SYN-006" data-toc="Free-tier pause mitigation"><span class="aid">TA-SYN-006</span> Free-tier pause mitigation</h3>
   <p>Supabase pauses a free project after 7 days without API traffic. Because sync is never on the read path (ADR-003), a paused project degrades to "sync is behind", not "the app is down". A weekly scheduled ping is optional insurance, not a requirement.</p>
 
+  <h3 id="TA-SYN-007" data-toc="Supabase schema"><span class="aid">TA-SYN-007</span> Supabase schema</h3>
+  <p><code>US-1.03</code> — <strong>delivered</strong>. Project <code>DuoKeys</code> (org <code>SMTCB</code>, <code>eu-central-1</code>) is live; migration <code>supabase/migrations/20261003130000_sync_schema.sql</code> is applied. It creates the four tables <code>TA-SYN-003</code> says sync, mirroring <code>TA-DAT-002</code>/<code>004</code>/<code>007</code> — <code>profiles</code>, <code>attempts</code>, <code>library</code>, <code>settings</code>. <code>progression</code> is derived (never synced) and <code>flashcards</code> have no sync policy yet, so neither has a table.</p>
+  <ul>
+    <li>Primary keys are the client-generated ids (<code>attempts.id</code>, <code>profiles.id</code>) or the local composite key (<code>library</code>: <code>profile_id, arrangement_id</code>), so a push is idempotent (<code>TS-I-SYN-006</code>).</li>
+    <li>Every table carries <code>owner_id uuid default auth.uid()</code> and has RLS enabled (<code>TA-SYN-005</code>). <code>anon</code> has no grant on any of them.</li>
+    <li><strong><code>attempts</code> is select + insert only</strong> — no <code>UPDATE</code>/<code>DELETE</code> grant and no policy, so append-only (<code>TA-DAT-002</code>) is enforced by the database, not by convention. Deleting a profile still cascades.</li>
+    <li><code>profiles</code>, <code>library</code>, <code>settings</code> are last-write-wins on <code>updated_at_ms</code>: a <code>BEFORE UPDATE</code> trigger silently skips an older write rather than raising, so a stale outbox flush never errors or reverts a newer edit.</li>
+    <li>Every table has a server-set <code>synced_at timestamptz</code>, bumped by trigger on each accepted write; <code>pull(since)</code> (<code>TA-PORT-002</code>) uses it as its cursor, so no client clock is trusted.</li>
+    <li>Child rows (<code>attempts</code>, <code>library</code>, <code>settings</code>) are insert-checked to reference a profile with the same <code>owner_id</code>.</li>
+    <li><code>attempts.grade</code> and <code>attempts.events</code> are <code>jsonb</code> — <code>TA-DAT-002</code> embeds them — so a change to the grade shape needs no server migration.</li>
+  </ul>
+  <div class="warn"><p><span class="k">Verified so far</span>Anonymous <code>GET</code>/<code>POST</code> against all four tables is refused (401 / <code>42501</code>). <code>TS-I-SYN-004</code>'s real test (a <em>second authenticated</em> user cannot read the first's rows) is <strong>not yet run</strong>, and the <code>SyncBackend</code> adapter and magic-link sign-in (<code>US-2.02</code>) are not built.</p></div>
+
   <!-- ============================================================ 10. Content -->
   <h2 id="content" data-toc="Content pipeline"><span class="num">10</span>Content pipeline</h2>
 

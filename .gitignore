@@ -18,3 +18,4 @@ tsconfig.tsbuildinfo
 # Claude Code runtime
 .claude/worktrees/
 .claude/scheduled_tasks.lock
+supabase/.temp/

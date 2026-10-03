@@ -112,8 +112,8 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-CON-003 segmentation | M | TA-CNT-001 | US-2.07 | TS-U-CNT-007, 008 |
 | FR-CON-004 licence gate | M | TA-CNT-005 | US-2.08 | TS-U-CNT-009, 010 |
 | FR-SYN-001 auth | M | TA-SYN-002 | US-1.03, US-2.02 | TS-I-SYN-004 |
-| FR-SYN-002 background sync | M | TA-SYN-001/004 | US-2.03 | TS-I-SYN-001…003, 009 |
-| FR-SYN-003 device restore | M | TA-SYN-001 | US-2.04 | TS-I-SYN-005, TS-E-009 |
+| FR-SYN-002 background sync | M | TA-SYN-001/004/007 | US-2.03 | TS-I-SYN-001…003, 009 |
+| FR-SYN-003 device restore | M | TA-SYN-001/007 | US-2.04 | TS-I-SYN-005, TS-E-009 |
 | FR-SYN-004 sync status | S | TA-SYN-004 | US-4.11 | — |
 | FR-SYN-005 offline normal | M | ADR-003 | US-2.06 | TS-E-008, TS-I-SYN-010 |
 | FR-SYS-001 device select | M | TA-PORT-003 | US-0.01, US-1.07 | TS-I-MID-001, 002 |
@@ -961,3 +961,34 @@ where it applies (grading-affecting work — Group B's articulation, Group
 C's evenness, Group G's chord matcher — most needs it; UI-only work least
 does). That physical-MIDI verification, across every group, is the user's
 own next step.
+
+---
+
+## Group E — Supabase project and schema (`US-1.03`, `TA-SYN-007`)
+
+**Update, 2026-10-03** — the paragraphs above that call `US-1.03` unbuilt or
+blocked predate this; kept as-is per this doc's append-only convention.
+
+`US-1.03` is delivered: Supabase project `DuoKeys` (org `SMTCB`, region
+`eu-central-1`) exists, the repo is linked to it with the Supabase CLI, and
+its URL, anon key and database password are in the git-ignored `.env.local`.
+The repo is public at `github.com/SMTCB/DuoKeys` (`main`). Migration
+`supabase/migrations/20261003130000_sync_schema.sql` is applied and creates
+`profiles`, `attempts`, `library` and `settings` with RLS on every table,
+append-only `attempts` (select + insert only), last-write-wins triggers and a
+server `synced_at` pull cursor — see `TA-SYN-007`.
+
+Verified: anonymous reads and writes are refused on all four tables.
+
+**Still open:**
+
+- The Supabase GitHub integration (Project Settings → Integrations → GitHub)
+  was authorised by the user in the dashboard on 2026-10-03 — done.
+- `TS-I-SYN-004` (a second *authenticated* user cannot read the first's rows)
+  has not been run; only the anonymous check has.
+- The `SyncBackend` adapter, magic-link sign-in (`US-2.02`) and the outbox
+  flush (`US-2.03`) are unbuilt, so the sync stories `US-2.02`–`US-2.06` are
+  now unblocked but not started.
+- `flashcards` (Note Ninja) have no sync policy and no table.
+- The temporary full-access Supabase personal access token used for setup
+  should be deleted in the dashboard once no more CLI work is planned.
