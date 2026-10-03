@@ -118,6 +118,39 @@ describe('SyncEngine flush', () => {
   });
 });
 
+describe('sync never blocks practice (TS-I-SYN-009)', () => {
+  it('local writes finish at normal speed while the network is hung', async () => {
+    const { outbox, backend, engine } = setup();
+    const hang = new Promise<never>(() => {});
+    backend.push = () => hang;
+    backend.pull = () => hang;
+    backend.currentUser = () => hang;
+
+    const flush = engine.sync(); // stays pending for the whole test
+    let settled = false;
+    void flush.then(() => (settled = true));
+
+    // A full session's worth of writes: each resolves without waiting on the network.
+    const session = (async () => {
+      for (let i = 0; i < 200; i++) await outbox.put('attempts', { id: `a${i}` });
+      await outbox.put('flashcards', { profileId: 'p1', cardId: 'C4' });
+      await outbox.delete('library', 'p1+x');
+    })();
+    const timeout = new Promise((resolve) => setTimeout(() => resolve('blocked'), 2000));
+    await expect(Promise.race([session.then(() => 'done'), timeout])).resolves.toBe('done');
+    expect(settled).toBe(false);
+    expect(await engine.pendingCount()).toBe(202);
+  });
+
+  it('a backend that throws never makes sync() reject', async () => {
+    const { backend, engine } = setup();
+    backend.currentUser = async () => {
+      throw new Error('boom');
+    };
+    await expect(engine.sync()).resolves.toBe('behind');
+  });
+});
+
 describe('SyncEngine restore (TS-I-SYN-005, 006, 007, 008, 011)', () => {
   const attempt = (id: string): PulledChange => ({ store: 'attempts', value: { id } });
 
@@ -159,6 +192,32 @@ describe('SyncEngine restore (TS-I-SYN-005, 006, 007, 008, 011)', () => {
     await engine.sync();
     expect(await raw.get('settings', 'p1')).toMatchObject({ theme: 'dark' });
     expect(await raw.get('library', 'p1+a')).toMatchObject({ status: 'learning' });
+  });
+
+  it('removes a library entry another device cleared, unless the local one is newer', async () => {
+    const { raw, backend, engine } = setup();
+    await raw.put('library', { profileId: 'p1', arrangementId: 'old', status: 'learning', updatedAtMs: 100 });
+    await raw.put('library', { profileId: 'p1', arrangementId: 'fresh', status: 'learning', updatedAtMs: 900 });
+    backend.remote = [
+      { store: 'library', value: { profileId: 'p1', arrangementId: 'old', updatedAtMs: 200 }, deleted: true },
+      { store: 'library', value: { profileId: 'p1', arrangementId: 'fresh', updatedAtMs: 200 }, deleted: true },
+    ];
+    await engine.sync();
+    expect(await raw.get('library', 'p1+old')).toBeUndefined();
+    expect(await raw.get('library', 'p1+fresh')).toBeDefined();
+    expect(await engine.pendingCount()).toBe(0);
+  });
+
+  it('restores flashcards onto a fresh device but never overwrites a local card', async () => {
+    const { raw, backend, engine } = setup();
+    await raw.put('flashcards', { profileId: 'p1', cardId: 'D4', box: 5 });
+    backend.remote = [
+      { store: 'flashcards', value: { profileId: 'p1', cardId: 'C4', box: 2 } },
+      { store: 'flashcards', value: { profileId: 'p1', cardId: 'D4', box: 1 } },
+    ];
+    await engine.sync();
+    expect(await raw.get('flashcards', 'p1+C4')).toMatchObject({ box: 2 });
+    expect(await raw.get('flashcards', 'p1+D4')).toMatchObject({ box: 5 });
   });
 
   it('resumes from the saved cursor next time', async () => {

@@ -13,11 +13,12 @@ import type { StoreName } from '../ports';
 import type { Profile } from '../../core/profile/types';
 import type { Attempt } from '../../core/data/attempt';
 import type { LibraryEntry } from '../../core/data/library';
+import type { Flashcard } from '../../core/data/flashcard';
 import { asMidiPitch } from '../../core/midi/decode';
 import { asMillis } from '../../core/time/types';
 
-/** Stores whose writes are queued to the outbox. `progression` is derived and `flashcards` have no sync policy yet (TA-SYN-007). */
-export const SYNCED_STORES = ['profiles', 'attempts', 'library', 'settings'] as const;
+/** Stores whose writes are queued to the outbox. `progression` is derived and never synced (TA-SYN-003). */
+export const SYNCED_STORES = ['profiles', 'attempts', 'library', 'settings', 'flashcards'] as const;
 export type SyncedStore = (typeof SYNCED_STORES)[number];
 
 export function isSyncedStore(store: StoreName): store is SyncedStore {
@@ -30,6 +31,7 @@ export const TABLE_OF: Record<SyncedStore, string> = {
   attempts: 'attempts',
   library: 'library',
   settings: 'settings',
+  flashcards: 'flashcards',
 };
 
 export interface PutEnvelope<T = unknown> {
@@ -45,6 +47,8 @@ export interface DeleteEnvelope {
 export interface PulledChange {
   store: SyncedStore;
   value: unknown;
+  /** A tombstone: the record was cleared on another device. `value` still carries its key and updatedAtMs. Only `library` has them. */
+  deleted?: true;
 }
 
 export type Row = Record<string, unknown>;
@@ -96,11 +100,23 @@ export function toRow(store: SyncedStore, value: unknown, atMs: number): Row {
         status: l.status,
         added_at_ms: l.addedAtMs,
         updated_at_ms: l.updatedAtMs,
+        deleted: false,
       };
     }
     case 'settings': {
       const { profileId, updatedAtMs, ...data } = value as LocalSettings;
       return { profile_id: profileId, data, updated_at_ms: updatedAtMs ?? atMs };
+    }
+    case 'flashcards': {
+      const c = value as Flashcard;
+      return {
+        profile_id: c.profileId,
+        card_id: c.cardId,
+        pitch: c.pitch,
+        box: c.box,
+        due_at_ms: Math.round(c.dueAtMs),
+        updated_at_ms: atMs,
+      };
     }
   }
 }
@@ -152,15 +168,29 @@ export function fromRow(store: SyncedStore, row: Row): unknown {
       };
       return settings;
     }
+    case 'flashcards': {
+      const card: Flashcard = {
+        profileId: String(row.profile_id),
+        cardId: String(row.card_id),
+        pitch: asMidiPitch(Number(row.pitch)),
+        box: Number(row.box) as Flashcard['box'],
+        dueAtMs: asMillis(Number(row.due_at_ms)),
+      };
+      return card;
+    }
   }
 }
 
-/** Split a local store key into the server columns a delete needs. Only `library` has a composite key that is synced. */
+/** Split a local store key into the server columns a delete needs. `library` and `flashcards` have composite keys. */
 export function deleteFilter(store: SyncedStore, key: string): Row {
   switch (store) {
-    case 'library': {
+    case 'library':
+    case 'flashcards': {
       const at = key.indexOf('+');
-      return { profile_id: key.slice(0, at), arrangement_id: key.slice(at + 1) };
+      const rest = key.slice(at + 1);
+      return store === 'library'
+        ? { profile_id: key.slice(0, at), arrangement_id: rest }
+        : { profile_id: key.slice(0, at), card_id: rest };
     }
     case 'settings':
       return { profile_id: key };
@@ -176,4 +206,5 @@ export const CONFLICT_COLUMNS: Record<SyncedStore, string> = {
   attempts: 'id',
   library: 'profile_id,arrangement_id',
   settings: 'profile_id',
+  flashcards: 'profile_id,card_id',
 };

@@ -879,6 +879,7 @@ Supabase user owns all profiles in the household.
 |---|---|---|
 | `attempts` | **Append-only** — insert, never update | Two devices cannot conflict on rows neither mutates |
 | `settings`, `profiles`, `library` | Last-write-wins on `updatedAt` | Changed rarely, by one adult, on one device at a time |
+| `flashcards` | Last-write-wins on the outbox write time; on restore a local card is never overwritten | A `Flashcard` carries no timestamp of its own; the point is restoring a lost machine, not merging two live ones |
 | `progression` | Recomputed from attempts | Derived state — never synced directly |
 
 This is deliberately the boring choice. There is no CRDT, no vector clock, and no
@@ -902,9 +903,26 @@ batches of 100, and stops at the first failure so order is preserved; the result
 On a user's first sign-in on a device, existing local records are queued once.
 Flush triggers: 2 s after a write, on the `online` event, and every 60 s.
 
-Known limitations: pulls carry no deletes (a cleared library entry is not removed
-on other devices); a poison op can wedge the queue (it is retried, not dropped);
-`flashcards` do not sync.
+Hardening (follow-up to `US-2.03`):
+
+- **Clears propagate.** A pull returns changed rows, so a hard-deleted row is
+  invisible to it. A `library` clear is therefore pushed as a tombstone
+  (`deleted = true`, `updated_at_ms` = the clear time) under the same
+  last-write-wins rule; a pull flags tombstoned rows and the engine removes the
+  local entry unless it is newer. A re-add upserts `deleted = false`.
+- **A bad op cannot wedge the queue.** The backend drops an op only when the
+  server rejects it permanently (Postgres class 22 data exception or class 23
+  integrity violation — retrying cannot help), logging the code and store but
+  never the payload. Network errors, expired sessions, 5xx and a missing column
+  during a rollout leave it queued. A dropped op's record stays in IndexedDB,
+  which is the truth.
+- **`flashcards` sync** (policy in `TA-SYN-003`, table in `TA-SYN-007`). Devices
+  linked before this change re-queue their data once (the link flag is
+  versioned); pushes are idempotent, so this is safe.
+
+Remaining limitation: no hard-delete path exists for `profiles`, `settings` or
+`flashcards` because nothing in the app deletes them; if that changes they need
+tombstones too.
 
 ### TA-SYN-005 — Row-level security
 
@@ -924,8 +942,14 @@ requirement.
 live; migration `supabase/migrations/20261003130000_sync_schema.sql` is
 applied. It creates the four tables `TA-SYN-003` says sync, mirroring
 `TA-DAT-002`/`004`/`007` — `profiles`, `attempts`, `library`, `settings`.
-`progression` is derived (never synced) and `flashcards` have no sync policy
-yet, so neither has a table.
+`progression` is derived and never synced, so it has no table.
+
+Migration `supabase/migrations/20261003150000_sync_flashcards_and_tombstones.sql`
+adds the `flashcards` table (`profile_id, card_id` key; RLS and last-write-wins
+triggers as for `library`) and a `deleted` tombstone column on `library`.
+**It is written but not yet applied to the live project** — until it is, library
+pushes fail as retryable and sync reports "behind". Apply it, then re-run
+`supabase/tests/rls.sql`, which now also covers `flashcards` and tombstones.
 
 - Primary keys are the client-generated ids (`attempts.id`, `profiles.id`) or
   the local composite key (`library`: `profile_id, arrangement_id`), so a push
@@ -947,7 +971,7 @@ yet, so neither has a table.
   them — so a change to the grade shape needs no server migration.
 
 Verified: anonymous `GET`/`POST` against all four tables is refused (401 /
-`42501`). `TS-I-SYN-004` **passes** at the database level —
+`42501`). `TS-I-SYN-004` **passed** at the database level (before the part-2 migration) —
 `supabase/tests/rls.sql` runs as two authenticated roles in a rolled-back
 transaction (B sees none of A's rows and cannot write under A's profile; `attempts`
 update/delete refused for the owner; stale write skipped, newer applied; anon

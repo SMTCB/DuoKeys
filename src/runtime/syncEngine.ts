@@ -30,7 +30,8 @@ export interface SyncEngineDeps {
 
 const BATCH = 100;
 const cursorKey = (userId: string) => `duokeys.sync.cursor.${userId}`;
-const linkedKey = (userId: string) => `duokeys.sync.linked.${userId}`;
+// v2: flashcards joined the synced stores, so devices linked before that re-queue once (idempotent server-side).
+const linkedKey = (userId: string) => `duokeys.sync.linked.v2.${userId}`;
 
 export class SyncEngine {
   private running: Promise<SyncOutcome> | undefined;
@@ -99,11 +100,13 @@ export class SyncEngine {
 
   /**
    * Merge one pulled record (TA-SYN-003): attempts are immutable, so only
-   * insert; profiles have no local updatedAt, so a local copy always wins;
-   * library and settings are last-write-wins on updatedAtMs.
+   * insert; profiles and flashcards have no local updatedAt, so a local copy
+   * always wins; library and settings are last-write-wins on updatedAtMs, and a
+   * library tombstone removes the local entry only if it is not newer.
+   * Pulled data is written to the raw store so it never re-enters the outbox.
    */
   private async apply(change: PulledChange): Promise<void> {
-    const { store, value } = change;
+    const { store, value, deleted } = change;
     const { storage } = this.deps;
     switch (store) {
       case 'attempts': {
@@ -118,8 +121,18 @@ export class SyncEngine {
       }
       case 'library': {
         const v = value as { profileId: string; arrangementId: string; updatedAtMs: number };
-        const local = await storage.get<{ updatedAtMs: number }>('library', `${v.profileId}+${v.arrangementId}`);
+        const key = `${v.profileId}+${v.arrangementId}`;
+        const local = await storage.get<{ updatedAtMs: number }>('library', key);
+        if (deleted) {
+          if (local && v.updatedAtMs >= local.updatedAtMs) await storage.delete('library', key);
+          return;
+        }
         if (!local || v.updatedAtMs > local.updatedAtMs) await storage.put('library', value);
+        return;
+      }
+      case 'flashcards': {
+        const v = value as { profileId: string; cardId: string };
+        if (!(await storage.get('flashcards', `${v.profileId}+${v.cardId}`))) await storage.put('flashcards', value);
         return;
       }
       case 'settings': {

@@ -988,10 +988,15 @@ Verified: anonymous reads and writes are refused on all four tables.
   and restore (`US-2.04`) are **built** and covered by fake-level tests
   (`TS-I-SYN-001`–`003`, `005`–`008`, `010`, `011`). Not yet verified: a live
   end-to-end push/pull with a real signed-in user, and the Studio sync panel in a
-  browser. `TS-I-SYN-009` has no automated test.
-- Known gaps: pulls carry no deletes; flashcards unsynced; Supabase redirect
-  allow-list/Site URL must be set at deployment; built-in SMTP rate-limits
-  magic-link emails.
-- `flashcards` (Note Ninja) have no sync policy and no table.
+  browser. The sync panel's signed-out state was since checked in the dev
+  browser. `TS-I-SYN-009` now has automated tests (network hung, a session's
+  writes still complete).
+- Hardening added: library clears propagate (tombstones), permanently rejected
+  ops are dropped instead of wedging the queue, and flashcards sync
+  (`TA-SYN-003`/`004`/`007`). **The migration for this,
+  `20261003150000_sync_flashcards_and_tombstones.sql`, is written but not yet
+  applied to the live project**; after applying it, re-run `supabase/tests/rls.sql`.
+- Known gaps: Supabase redirect allow-list/Site URL must be set at deployment;
+  built-in SMTP rate-limits magic-link emails.
 - The temporary full-access Supabase personal access token used for setup
   should be deleted in the dashboard once no more CLI work is planned.

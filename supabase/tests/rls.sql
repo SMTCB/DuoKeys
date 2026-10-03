@@ -57,6 +57,9 @@ values ('10000000-0000-0000-0000-000000000001', 'mary-d1', 'learning', 1000, 100
 insert into public.settings (profile_id, data, updated_at_ms)
 values ('10000000-0000-0000-0000-000000000001', '{"theme":"dark"}'::jsonb, 1000);
 
+insert into public.flashcards (profile_id, card_id, pitch, box, due_at_ms, updated_at_ms)
+values ('10000000-0000-0000-0000-000000000001', 'C4', 60, 2, 5000, 1000);
+
 select pg_temp.expect_eq('A sees own profile', (select count(*) from public.profiles), 1);
 select pg_temp.expect_eq('A sees own attempt', (select count(*) from public.attempts), 1);
 
@@ -69,6 +72,12 @@ select pg_temp.expect_eq('B sees no profiles', (select count(*) from public.prof
 select pg_temp.expect_eq('B sees no attempts', (select count(*) from public.attempts), 0);
 select pg_temp.expect_eq('B sees no library', (select count(*) from public.library), 0);
 select pg_temp.expect_eq('B sees no settings', (select count(*) from public.settings), 0);
+select pg_temp.expect_eq('B sees no flashcards', (select count(*) from public.flashcards), 0);
+
+select pg_temp.expect_refused('B cannot insert a flashcard under A''s profile', $$
+  insert into public.flashcards (profile_id, card_id, pitch, box, due_at_ms, updated_at_ms)
+  values ('10000000-0000-0000-0000-000000000001', 'D4', 62, 1, 1, 1)
+$$);
 
 -- B cannot attach an attempt to A's profile (child-row owner check).
 select pg_temp.expect_refused('B cannot insert an attempt under A''s profile', $$
@@ -86,6 +95,8 @@ $$);
 update public.profiles set display_name = 'hacked' where id = '10000000-0000-0000-0000-000000000001';
 delete from public.profiles where id = '10000000-0000-0000-0000-000000000001';
 delete from public.library where profile_id = '10000000-0000-0000-0000-000000000001';
+update public.library set deleted = true, updated_at_ms = 9000 where profile_id = '10000000-0000-0000-0000-000000000001';
+delete from public.flashcards where profile_id = '10000000-0000-0000-0000-000000000001';
 
 -- ---------------------------------------------------------------------------
 -- Back as A: nothing changed, and attempts are immutable even for the owner.
@@ -95,6 +106,9 @@ select pg_temp.act_as('00000000-0000-0000-0000-0000000000a1');
 select pg_temp.expect_eq('A profile survived B''s update/delete',
   (select count(*) from public.profiles where display_name = 'Mia'), 1);
 select pg_temp.expect_eq('A library survived B''s delete', (select count(*) from public.library), 1);
+
+select pg_temp.expect_eq('A flashcard survived B''s delete', (select count(*) from public.flashcards), 1);
+select pg_temp.expect_eq('A library not tombstoned by B', (select count(*) from public.library where not deleted), 1);
 
 select pg_temp.expect_refused('A cannot update an attempt (append-only)',
   $$update public.attempts set duration_ms = 1 where id = '20000000-0000-0000-0000-000000000001'$$);
@@ -107,6 +121,24 @@ select pg_temp.expect_eq('stale write skipped', (select count(*) from public.pro
 update public.profiles set display_name = 'Fresh', updated_at_ms = 2000 where id = '10000000-0000-0000-0000-000000000001';
 select pg_temp.expect_eq('newer write applied', (select count(*) from public.profiles where display_name = 'Fresh'), 1);
 
+-- Clearing a library entry is a tombstone update (it must reach other devices
+-- through pull); a stale tombstone is skipped, a newer one applied, and a re-add wins.
+update public.library set deleted = true, updated_at_ms = 500
+  where profile_id = '10000000-0000-0000-0000-000000000001' and arrangement_id = 'mary-d1';
+select pg_temp.expect_eq('stale tombstone skipped', (select count(*) from public.library where not deleted), 1);
+update public.library set deleted = true, updated_at_ms = 3000
+  where profile_id = '10000000-0000-0000-0000-000000000001' and arrangement_id = 'mary-d1';
+select pg_temp.expect_eq('newer tombstone applied', (select count(*) from public.library where deleted), 1);
+update public.library set deleted = false, status = 'learning', updated_at_ms = 4000
+  where profile_id = '10000000-0000-0000-0000-000000000001' and arrangement_id = 'mary-d1';
+select pg_temp.expect_eq('re-add after tombstone wins', (select count(*) from public.library where not deleted), 1);
+
+-- Flashcards are last-write-wins like the other mutable tables.
+update public.flashcards set box = 5, updated_at_ms = 500 where card_id = 'C4';
+select pg_temp.expect_eq('stale flashcard write skipped', (select count(*) from public.flashcards where box = 2), 1);
+update public.flashcards set box = 4, updated_at_ms = 2000 where card_id = 'C4';
+select pg_temp.expect_eq('newer flashcard write applied', (select count(*) from public.flashcards where box = 4), 1);
+
 -- ---------------------------------------------------------------------------
 -- Signed-out (anon) sees nothing and writes nothing.
 -- ---------------------------------------------------------------------------
@@ -114,5 +146,6 @@ select set_config('request.jwt.claims', '', true);
 select set_config('role', 'anon', true);
 select pg_temp.expect_refused('anon cannot read profiles', 'select count(*) from public.profiles');
 select pg_temp.expect_refused('anon cannot read attempts', 'select count(*) from public.attempts');
+select pg_temp.expect_refused('anon cannot read flashcards', 'select count(*) from public.flashcards');
 
 rollback;

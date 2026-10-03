@@ -35,6 +35,24 @@ export interface SupabaseBackendOptions {
   anonKey: string;
   /** Where the magic link sends the adult back to. */
   redirectTo?: string;
+  /** Tests inject a stub client; the app lets the backend create its own. */
+  client?: SupabaseClient;
+}
+
+interface PostgrestFailure {
+  code?: string;
+  message?: string;
+}
+
+/**
+ * A rejection the server will give every time (class 22 data exception, class 23
+ * integrity violation). Retrying cannot help, so the op is dropped instead of
+ * wedging every write queued behind it. Network errors, 401/PGRST301 (expired
+ * session), 5xx and a missing column during a rollout are NOT permanent: they
+ * leave the op queued. The record itself stays in IndexedDB, which is the truth.
+ */
+export function isPermanentRejection(error: PostgrestFailure): boolean {
+  return /^2[23]/.test(error.code ?? '');
 }
 
 export class SupabaseBackend implements SyncBackend {
@@ -43,9 +61,11 @@ export class SupabaseBackend implements SyncBackend {
 
   constructor(options: SupabaseBackendOptions) {
     this.redirectTo = options.redirectTo;
-    this.client = createClient(options.url, options.anonKey, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
-    });
+    this.client =
+      options.client ??
+      createClient(options.url, options.anonKey, {
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+      });
   }
 
   async signIn(email: string): Promise<void> {
@@ -88,14 +108,41 @@ export class SupabaseBackend implements SyncBackend {
       while (end < ops.length && end - i < PUSH_CHUNK && ops[end]?.store === first.store && ops[end]?.op === first.op) end += 1;
       const run = ops.slice(i, end);
       const ok = first.op === 'put' ? await this.upsertRun(first.store, run) : await this.deleteRun(first.store, run);
-      if (!ok) break;
-      accepted += run.length;
+      if (ok === 'transient') {
+        // Isolate a permanently bad op from its neighbours: send the run one op at a time.
+        if (run.length === 1) break;
+        const done = await this.pushEach(run);
+        accepted += done;
+        if (done < run.length) break;
+      } else {
+        accepted += run.length;
+      }
       i = end;
     }
     return { accepted };
   }
 
-  private async upsertRun(store: SyncedStore, run: OutboxOp[]): Promise<boolean> {
+  /** Returns how many leading ops of `run` were settled (sent, or dropped as permanently rejected). */
+  private async pushEach(run: OutboxOp[]): Promise<number> {
+    let done = 0;
+    for (const op of run) {
+      const store = op.store as SyncedStore;
+      const ok = op.op === 'put' ? await this.upsertRun(store, [op]) : await this.deleteRun(store, [op]);
+      if (ok === 'transient') break;
+      done += 1;
+    }
+    return done;
+  }
+
+  /** 'ok' = sent or dropped as permanently rejected; 'transient' = leave it queued and retry. */
+  private settle(store: SyncedStore, error: PostgrestFailure | null): 'ok' | 'transient' {
+    if (error === null) return 'ok';
+    if (!isPermanentRejection(error)) return 'transient';
+    console.warn(`DuoKeys sync: dropped a ${store} write the server rejects permanently (${error.code ?? 'unknown'})`);
+    return 'ok';
+  }
+
+  private async upsertRun(store: SyncedStore, run: OutboxOp[]): Promise<'ok' | 'transient'> {
     // Within one run a later put to the same key supersedes an earlier one.
     const byKey = new Map<string, Row>();
     for (const op of run) {
@@ -106,16 +153,25 @@ export class SupabaseBackend implements SyncBackend {
     const { error } = await this.client
       .from(TABLE_OF[store])
       .upsert([...byKey.values()], { onConflict: CONFLICT_COLUMNS[store], ignoreDuplicates: store === 'attempts' });
-    return error === null;
+    return this.settle(store, error);
   }
 
-  private async deleteRun(store: SyncedStore, run: OutboxOp[]): Promise<boolean> {
+  /**
+   * `library` clears are tombstones, not deletes, so a pull can carry them to
+   * other devices; the server's last-write-wins trigger orders them against
+   * edits. Everything else is a hard delete (nothing in the app issues one).
+   */
+  private async deleteRun(store: SyncedStore, run: OutboxOp[]): Promise<'ok' | 'transient'> {
     for (const op of run) {
-      const { key } = op.payload as DeleteEnvelope;
-      const { error } = await this.client.from(TABLE_OF[store]).delete().match(deleteFilter(store, key));
-      if (error) return false;
+      const { key, atMs } = op.payload as DeleteEnvelope;
+      const table = this.client.from(TABLE_OF[store]);
+      const { error } =
+        store === 'library'
+          ? await table.update({ deleted: true, updated_at_ms: atMs }).match(deleteFilter(store, key))
+          : await table.delete().match(deleteFilter(store, key));
+      if (this.settle(store, error) === 'transient') return 'transient';
     }
-    return true;
+    return 'ok';
   }
 
   /**
@@ -137,7 +193,10 @@ export class SupabaseBackend implements SyncBackend {
         .limit(PULL_PAGE);
       if (error) throw new Error(error.message);
       const rows = (data ?? []) as Row[];
-      for (const row of rows) changes.push({ store, value: fromRow(store, row) });
+      for (const row of rows) {
+        const value = fromRow(store, row);
+        changes.push(row.deleted === true ? { store, value, deleted: true } : { store, value });
+      }
       const last = rows[rows.length - 1];
       if (last) {
         const at = String(last.synced_at);

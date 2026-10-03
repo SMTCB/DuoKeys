@@ -21,6 +21,13 @@ describe('OutboxStorage (TS-I-SYN-001)', () => {
     expect(onEnqueue).toHaveBeenCalledTimes(1);
   });
 
+  it('queues flashcard writes, which sync as of US-2.03 hardening', async () => {
+    const inner = new FakeStorageBackend();
+    const storage = new OutboxStorage(inner);
+    await storage.put('flashcards', { profileId: 'p1', cardId: 'C4' });
+    expect((await queued(inner))[0]).toMatchObject({ store: 'flashcards', op: 'put' });
+  });
+
   it('queues a delete with the store key', async () => {
     const inner = new FakeStorageBackend();
     const storage = new OutboxStorage(inner, undefined, () => 1);
@@ -28,10 +35,9 @@ describe('OutboxStorage (TS-I-SYN-001)', () => {
     expect((await queued(inner))[0]).toMatchObject({ op: 'delete', payload: { key: 'p1+a' } });
   });
 
-  it('does not queue stores that never sync', async () => {
+  it('does not queue stores that never sync (progression is derived)', async () => {
     const inner = new FakeStorageBackend();
     const storage = new OutboxStorage(inner);
-    await storage.put('flashcards', { profileId: 'p1', cardId: 60 });
     await storage.put('progression', { profileId: 'p1', arrangementId: 'a' });
     expect(await queued(inner)).toEqual([]);
   });

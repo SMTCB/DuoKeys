@@ -8,7 +8,7 @@ import { keyOf } from './keyOf';
 import { isSyncedStore, SYNCED_STORES, type DeleteEnvelope, type PutEnvelope, type SyncedStore } from '../sync/mapping';
 
 /** The first key field of each synced store — matchesRange filters on it, so `{}` returns every row. */
-const INDEX_OF: Record<SyncedStore, string> = { profiles: 'id', attempts: 'id', library: 'profileId', settings: 'profileId' };
+const INDEX_OF: Record<SyncedStore, string> = { profiles: 'id', attempts: 'id', library: 'profileId', settings: 'profileId', flashcards: 'profileId' };
 
 export class OutboxStorage implements StorageBackend {
   private nextSeq: number | undefined;

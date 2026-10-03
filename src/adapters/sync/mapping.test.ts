@@ -6,6 +6,7 @@ import { asMidiPitch } from '../../core/midi/decode';
 import { asMillis } from '../../core/time/types';
 import type { Profile } from '../../core/profile/types';
 import type { LibraryEntry } from '../../core/data/library';
+import type { Flashcard } from '../../core/data/flashcard';
 import type { Attempt } from '../../core/data/attempt';
 
 const profile: Profile = {
@@ -62,6 +63,16 @@ describe('sync row mapping', () => {
       appVersion: '0.1.0',
     } as unknown as Attempt;
     expect(fromRow('attempts', toRow('attempts', attempt, 1))).toEqual(attempt);
+  });
+
+  it('round-trips a flashcard', () => {
+    const card: Flashcard = { profileId: 'p1', cardId: 'C4', pitch: asMidiPitch(60), box: 3, dueAtMs: asMillis(9000) };
+    expect(fromRow('flashcards', toRow('flashcards', card, 123))).toEqual(card);
+    expect(toRow('flashcards', card, 123).updated_at_ms).toBe(123);
+  });
+
+  it('splits a flashcard key into profile and card', () => {
+    expect(deleteFilter('flashcards', 'p1+C4')).toEqual({ profile_id: 'p1', card_id: 'C4' });
   });
 
   it('splits a library key into the columns a server delete needs', () => {
