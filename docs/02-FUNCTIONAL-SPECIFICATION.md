@@ -284,6 +284,73 @@ notation view, not a replacement for it — depends on `FR-STU-012` existing
 first, and on `FR-STU-011`/`FR-CON-*` for a specific song's melody data if it
 isn't already in the catalogue.
 
+### FR-STU-015 — My progressions & falling-notes chord play (`S`)
+
+**Realised by:** `TA-CNT-006`, `TA-REN-001`, `TA-DAT-003` · `US-3.18`
+
+The adult can type or paste a chord progression — chord symbols (`C G Am F`,
+`Dm7 G7 Cmaj7`, `Bb/D`) or Roman numerals in a chosen key and mode (`I V vi IV`,
+`ii7 V7 I`) — name it, and have it saved to "My progressions" beside the
+shipped catalogue. Any progression, shipped or typed, can then be played as
+falling notes: each chord is a chord-group on the falling-notes view with its
+symbol overlaid, in wait mode (`FR-EXP-003`: no timer, no failure state).
+
+**Chord library and rhythms.** The explorer lists every chord on the chosen
+key — 40 qualities, grouped Triads / 7ths & 9ths / Other — and the
+progression filter covers the Major, Minor and Modal sets (2,292
+progressions across the 12 keys). A progression can be played as block
+chords (one bar per chord) or in one of four rhythmic styles (pop, pop 2,
+soul, hip-hop) taken from the free-midi-chords style files, transposed to
+the chosen key. The 12-bar blues has block chords only.
+
+> **No web chord search.** Searching chord sites and auto-importing was
+> considered and declined: there is no public chord API, scraping breaches the
+> sites' terms and copyright, and a network read on the practice path would
+> break `ADR-003`. Typed text is the substitute. User progressions live on the
+> profile's `settings` record, so they sync like any other setting and need no
+> migration. A slash chord's bass note is dropped (the matcher checks pitch
+> classes). In minor mode Roman numerals follow the natural minor scale, as the
+> shipped catalogue does.
+
+### FR-STU-016 — Song library (`S`)
+
+**Realised by:** `TA-CNT-004`, `TA-CNT-005`, `TA-CNT-006`, `TA-REN-001`, `TA-DAT-003` · `US-3.19`
+
+The adult can search a library of real piano pieces, add the ones they want to
+"my songs", and play any of them as falling notes at the instrument, in wait
+mode (`FR-EXP-003`: no timer, no failure state) or timed, with the hand
+selector, A/B loop, auto-ramp and tempo scale of `FR-STU-003`–`005`.
+
+**Where the pieces come from.** The Mutopia Project's solo keyboard pieces —
+piano, harpsichord and clavichord, 576 at the time of writing: 377 public
+domain, 128 CC BY-SA, 71 CC BY. Duets, voice and other instruments are left out.
+Their MIDI files are mirrored into the repository once
+(`content/build/crawlMutopia.ts`, `fetchMutopiaMidi.ts`) and shipped as static
+assets with a searchable index (`content/build/ingestSongs.ts`), so nothing is
+fetched from Mutopia while practising (`ADR-003`). Every piece has its own entry
+in `content/licences.json` (`TA-CNT-005`) and every row of the library shows its
+licence and links to the piece's own Mutopia page, which is how attribution is
+met.
+
+**Search and "add to my songs".** Search matches every typed word against title,
+composer, opus and style, ignoring accents and punctuation, with a style filter.
+"Add" saves the song's id on the profile's `settings` record — the same place
+as `FR-STU-015`'s progressions, so it syncs with no new table. The MIDI bytes
+stay static assets, downloaded on play.
+
+**Playing a piece.** The file's notes become an arrangement with tracks Both
+hands, Right hand and Left hand (two note tracks are read as right then left;
+a single track is split at middle C). Notes that begin together form one
+group, so a chord, or both hands landing together, is one decision in wait mode.
+The notation view is offered only for a single line; a full piece plays as
+falling notes.
+
+> **Limits.** Only MIDI is mirrored, so there is no engraved score for a
+> song — MIDI carries no beaming, voices or articulation marks. Mutopia's MIDI
+> is machine-generated from the score: the tempo is the score's marking, and
+> dynamics are flat. Pieces are classical, Baroque, folk and a little jazz; a
+> pop song would need a source with a licence that allows it.
+
 ### FR-STU-014 — Personal score import (`C`)
 
 **Status:** Future roadmap — deliberately out of MVP (v1) scope. Raised by
@@ -545,13 +612,13 @@ leaves the device.
 | Module | Must | Should | Could | Total |
 |---|---|---|---|---|
 | Explorer | 5 | 3 | 1 | 9 |
-| Studio | 8 | 4 | 2 | 14 |
+| Studio | 8 | 6 | 2 | 16 |
 | Duet | 3 | 1 | 0 | 4 |
 | Profiles | 4 | 1 | 1 | 6 |
 | Content | 4 | 0 | 1 | 5 |
 | Sync | 4 | 1 | 0 | 5 |
 | System | 7 | 1 | 0 | 8 |
-| **Total** | **35** | **11** | **5** | **51** |
+| **Total** | **35** | **13** | **5** | **53** |
 
 *(System's Must count was previously misstated as 6/8 — corrected to 7/8 here;
 `FR-SYS-001`–`005` and `007`–`008` are all `M`, only `FR-SYS-006` is `S`.)*

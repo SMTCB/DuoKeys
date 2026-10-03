@@ -190,19 +190,27 @@ grading.
 | `TS-U-CNT-019` | `ingestChords` reads a curated MIDI subset and emits `ChordEntry`/`ProgressionEntry` shapes with correct `root`/`quality`/`midiNotes` — progression sequences ported as text from `free-midi-chords` | TA-CNT-006 |
 | `TS-U-CNT-020` | `generateHanonArrangement` sequences a pattern's cell up a major scale by degree and back down, right and left hand an octave apart, every note the pattern's fixed duration, deterministically | TA-CNT-004, FR-STU-007 |
 | `TS-U-CNT-021` | `generateSightReadingArrangement` produces a diatonic, pitch-range- and rhythmic-vocabulary-constrained phrase filling exactly the requested bars, deterministic under a repeatable random source and different under a different one | TA-CNT-004, FR-STU-010 |
+| `TS-U-CNT-022` | Chord text parses as symbols (`Dm7`, `Bb/D`, `C#m7b5`) or as Roman numerals in a key and mode (`I V vi IV`, `bVII`, `ii7`), including dash-joined `I-V-vi-IV`; every bad token is reported, not just the first; chord ids round-trip to symbols | TA-CNT-006, FR-STU-015 |
+| `TS-U-CNT-023` | `makeUserProgression` names an unnamed progression from its symbols, rejects empty or unparseable text with a readable message, and `userProgressionsOf` tolerates malformed saved data | TA-CNT-006, FR-STU-015 |
+| `TS-U-CNT-024` | `progressionToArrangement` gives each chord four beats as one chord-group, a symbol marker at each chord's tick, and a stable `chords:<id>` arrangement id | TA-REN-001, FR-STU-015 |
+| `TS-U-CNT-025` | The catalogue holds 40 qualities × 12 roots = 480 chords and 191 progressions per key (2,292 in all, ids unique, modal repeats suffixed `~2`); every modal chord id exists; `C-modal:I-bIIIM-bVIIM-IV` is C, D#, A#, F; a bare `7` and the diminished degree read diatonically only without an accidental | TA-CNT-006, FR-STU-015 |
+| `TS-U-CNT-026` | `parseSmf` reads notes (start, length, velocity, channel), running status, velocity-0 note-offs, tempo, time signature and track names; skips sysex and controllers; closes unclosed notes; reports malformed, truncated and SMPTE files as an error value instead of throwing | TA-CNT-006, FR-STU-015 |
+| `TS-U-CNT-027` | `styledProgressionToArrangement` keeps the style file's tempo, one marker per chord per pass, simultaneous notes in one group on the PPQ grid, transposes by the key offset (folded to −6…+5), declines an empty file; `styleFilePath` names a bundled file for every non-blues progression in every style | TA-CNT-006, FR-STU-015 |
+| `TS-U-CNT-028` | `searchSongs` finds a piece by any words of its title, composer, opus or style, ignoring accents and punctuation ("etude" finds "Étude"), needs every word, and filters by style; `smfToArrangement` reads two note tracks as right then left hand and a single track split at middle C, adds a both-hands track, groups notes that begin together across the hands, scales the file's ticks to 480 PPQ and keeps its tempo, declines a file with no notes; `isMonophonic` says whether a track is a single line | TA-CNT-006, FR-STU-016 |
+| `TS-U-CNT-029` | Every Mutopia MIDI file in `content/sources/mutopia/mid` parses with `parseSmf` and converts to a non-empty arrangement (skipped when the mirror is absent) | TA-CNT-006, TA-CNT-005, FR-STU-016 |
 
 `TS-U-CNT-019` is **partially** satisfied as written — `ingestChords.ts`
 (`US-3.13`) emits the same `ChordEntry`/`ProgressionEntry` shapes.
 `midiNotes` (chord voicings) still come from this codebase's own
 chord-interval formulas and diatonic harmony
 (`src/core/content/chordCatalogue.ts`), not from a curated MIDI subset —
-parsing standard MIDI files needs a binary SMF reader this codebase doesn't
-have. Progression *sequences* and mood tags, however, genuinely are ported
+the binary SMF reader that now exists (`parseSmf`, `TS-U-CNT-026`) is not used for
+chord voicings, which stay generated. Progression *sequences* and mood tags, however, genuinely are ported
 as text data from `ldrolez/free-midi-chords` (`chords.py`'s `prog_maj`/
 `prog_min` Roman-numeral token lists, MIT, explicit user authorization
 2026-09-04) — see `src/core/content/progressionData.ts` and the
 `free-midi-chords-progressions` licence entry. The generator's own
-correctness (204 chords, 1,308 progressions, correct
+correctness (now 480 chords and 2,292 progressions — see `TS-U-CNT-025` — correct
 `root`/`quality`/`midiNotes` per formula, correct progression transposition
 and mood-tag passthrough per ported template) is covered instead, by
 `src/core/content/chordCatalogue.test.ts`. The ID stays open, not renumbered
@@ -285,6 +293,8 @@ needs that extraction, not yet done.
 | `TS-I-DAT-005` | Schema migration from v1 to v2 preserves all attempts | TA-DAT-003 |
 | `TS-I-DAT-006` | Two profiles' data never cross-read | FR-PRO-001 |
 | `TS-I-DAT-007` | A library status change overwrites the same row (not append); delete removes it; a `profileId` query never leaks another profile's entries | TA-DAT-007, FR-PRO-006 |
+| `TS-I-DAT-008` | A user progression saved to the profile's settings record survives a reload, removal deletes it, and saving keeps the record's other settings fields intact | TA-DAT-003, FR-STU-015 |
+| `TS-I-DAT-009` | Songs added to "my songs" are saved once each on the profile's settings record beside its other fields, survive a reload, and removal deletes them; a malformed record yields no ids | TA-DAT-003, FR-STU-016 |
 
 ### Sync
 
@@ -388,6 +398,7 @@ These cannot be automated. Run at each sprint exit.
 | `TS-M-012` | Duet transposition feels right to the child — their part sounds where they expect | 4 | FR-DUO-001 |
 | `TS-M-013` | Cable disconnected mid-piece: recovery is calm and nothing is lost | 4 | FR-SYS-004 |
 | `TS-M-014` | Same golden fixtures produce identical grades on iPad and laptop | 5 | US-5.04 |
+| `TS-M-015` | A library song (one two-hand piece, one single line) is played at the real piano in wait mode: each hand lands on the right keys and a chord waits for all its notes | 3 | FR-STU-016 |
 
 ---
 
@@ -413,6 +424,8 @@ critical-path behaviour has a manual confirmation.
 | FR-STU-010 | TS-U-CNT-021 | — |
 | FR-STU-012 | TS-U-MAT-023…025, TS-U-CNT-019 | — |
 | FR-STU-013 | TS-U-REN-007 | — |
+| FR-STU-015 | TS-U-CNT-022…027, TS-I-DAT-008 | — |
+| FR-STU-016 | TS-U-CNT-028, 029, TS-I-DAT-009 | TS-M-015 |
 | FR-DUO-001 | TS-E-015 | TS-M-012 |
 | FR-DUO-002 | TS-U-MAT-021, TS-G-010 | TS-M-011 |
 | FR-PRO-001 | TS-U-DAT-001, 002, TS-I-DAT-006, TS-E-005 | — |

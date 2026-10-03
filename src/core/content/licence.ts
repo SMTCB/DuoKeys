@@ -6,7 +6,7 @@
 export interface LicenceEntry {
   licenceId: string;
   work: string;
-  status: 'public-domain' | 'cc0' | 'cc-by' | 'licensed';
+  status: 'public-domain' | 'cc0' | 'cc-by' | 'cc-by-sa' | 'licensed';
   sourceUrl: string;
   verifiedDate: string; // ISO date
 }

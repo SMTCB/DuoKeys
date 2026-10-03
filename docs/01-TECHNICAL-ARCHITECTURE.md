@@ -841,7 +841,7 @@ interface LibraryEntry {
 ```
 
 Delivered as a three-button status control (`LibraryControl`) inline in
-`/studio`'s existing piece list, not the separate `/studio/library` route
+`/studio`'s existing piece list, not a separate route (`/studio/library` now holds the song library, `FR-STU-016`)
 `TA-APP-003` lists — a catalogue this small (nine pieces) doesn't need a
 dedicated filtered view, and the toggle is one click either way. Status
 changes are an idempotent `put` keyed `profileId+arrangementId` (a repeat
@@ -1073,7 +1073,7 @@ initial weighting, not yet tuned against real content:
 | Hand-authored JSON | Own | Nearly all first-year child content. A five-finger tune is 20 notes. |
 | Traditional / folk melodies | Author from memory | Public domain by age. Core of the child curriculum. |
 | Hanon 1–20 | Generate | Each is one pattern sequenced up the scale. Generator delivered (`US-3.09`); 5 of 20 patterns authored so far — 1 verified, 2–5 approximate and labelled as such, 6–20 deferred |
-| Mutopia Project | LilyPond → MusicXML | Adult module. Conversion imperfect; expect to fix articulations. Importer delivered (`US-3.12`, `TA-CNT-001`); no real Mutopia piece ingested yet — acquiring and licensing one is a follow-up |
+| Mutopia Project | LilyPond → MusicXML | Adult module. Conversion imperfect; expect to fix articulations. Importer delivered (`US-3.12`, `TA-CNT-001`); no real Mutopia piece ingested through it yet. Separately, the project's solo keyboard **MIDI** files are mirrored as the song library (`US-3.19`, `TA-CNT-006`) — 576 pieces, each licence-gated |
 | OpenScore | MuseScore / MusicXML | CC0 standard repertoire, cleanly engraved. Best MusicXML source. Importer delivered (`US-3.12`, `TA-CNT-001`); no real OpenScore piece ingested yet — acquiring and licensing one is a follow-up |
 | Generated exercises | Runtime | Unlimited sight-reading at exactly the right difficulty. Delivered (`US-3.10`) — `/studio/sight-reading` calls `generateSightReadingArrangement` live and stores the result in `generatedContentStore`, never `content/sources/` |
 
@@ -1081,7 +1081,9 @@ initial weighting, not yet tuned against real content:
 
 Every piece needs an entry in `content/licences.json` with a source URL and a
 verification date. `ingest` exits non-zero without one. Costs nothing now; it is
-the only thing that makes the catalogue safe to ever share.
+the only thing that makes the catalogue safe to ever share. `LicenceEntry.status`
+is `public-domain`, `cc0`, `cc-by`, `cc-by-sa` or `licensed`; the song library's
+per-piece entries use the first, fourth and third.
 
 ### TA-CNT-006 — Chord & progression content
 
@@ -1102,7 +1104,7 @@ interface ProgressionEntry {
   id: string;
   name: string;            // "I-V-vi-IV"
   key: PitchClass;
-  mode: 'major' | 'minor';
+  mode: 'major' | 'minor' | 'modal';
   moods: readonly string[]; // e.g. ["Hopeful", "Romantic"]
   chordIds: string[];      // in order
   suggestedBpm: number;
@@ -1113,38 +1115,121 @@ interface ProgressionEntry {
 (`src/core/content/chordCatalogue.ts`) and emits
 `public/content/chords/index.json` — build-time only, same as every other
 content (`ADR-003`, `TA-CNT-001`). The licence gate (`TA-CNT-005`) checks
-two `content/licences.json` entries, since two distinct things are sourced
-differently:
+three `content/licences.json` entries, since three distinct things are
+sourced differently:
 
-- **Chord voicings** (`midiNotes`, all 12 roots × 17 qualities = 204
+- **Chord voicings** (`midiNotes`, all 12 roots × 40 qualities = 480
   chords, plus the hand-authored 12-bar-blues turnaround) — generated from
   standard chord-interval formulas and diatonic harmony, public-domain music
-  theory, not sourced from any corpus. Licence entry:
+  theory, not sourced from any corpus. The 40 qualities are the table in
+  `chordQualities.ts` (triads, 7ths & 9ths, and an "Other" group of sus,
+  add, 6th, altered and 5 chords); its chord *types* match the release's
+  "All chords" folder, read as text from file names, and every formula was
+  checked against that folder's MIDI. Licence entry:
   `duokeys-original-chord-catalogue`.
 - **Progression sequences and mood tags** — ported as text data from
   [ldrolez/free-midi-chords](https://github.com/ldrolez/free-midi-chords)
-  (MIT), specifically the `prog_maj` (50 entries) and `prog_min` (58
-  entries) Roman-numeral degree/quality token lists in `chords.py`
-  (`src/core/content/progressionData.ts`). The repository's `prog_modal`
-  list (chromatic/borrowed-degree progressions such as `bIII`, `#IV`) was
-  not ported — out of scope for this slice. Licence entry:
+  (MIT): the Major (50), Minor (58) and Modal (82, chromatic/borrowed
+  degrees such as `bIII`, `#IV`) Roman-numeral token lists
+  (`src/core/content/progressionData.ts`). Licence entry:
   `free-midi-chords-progressions`.
+- **Rhythmic style MIDI** — the release's pop, pop2, soul and hiphop2 style
+  files, 760 of them (the reference key of each set: C for Major and Modal,
+  A for Minor), committed unmodified under `content/chord-styles/` with the
+  MIT notice and copied to `public/content/chords/styles/` by the ingest.
+  The other keys in the release are the same files shifted, so the app
+  transposes. Licence entry: `free-midi-chords-style-midi`.
 
-No MIDI files, audio, or note data from free-midi-chords are used: parsing
-standard MIDI files needs a binary SMF reader that does not exist in this
-codebase (`decode.ts` only decodes live Web MIDI messages, not `.mid` file
-structure) — a separate piece of work comparable in scope to
-`parseMusicXml.ts` itself, undelivered and out of scope here. Instead, each
-ported degree/quality token (e.g. `"IV"`, `"iim7"`, `"Vsus2"`, `"IM-5"`) is
-parsed (`parseDegreeToken` in `chordCatalogue.ts`) into a scale degree (0–6)
-and a chord quality, then transposed into all 12 keys using the major or
-natural-minor scale-step table as appropriate — the same interval-formula
-engine that generates every chord's `midiNotes`.
+Chord pitches are never read from the MIDI: each ported token (e.g. `"IV"`,
+`"iim7"`, `"bIIIM"`, `"IM-5"`) is parsed (`parseDegreeToken` in
+`chordCatalogue.ts`) into a scale degree, an optional `b`/`#` accidental
+and a chord quality, then transposed into all 12 keys — the same
+interval-formula engine that generates every chord's `midiNotes`. A bare
+`7` or a lower-case numeral on the diminished degree is read diatonically
+(the release's convention, confirmed against its MIDI), but only when the
+token has no accidental. Modal degrees count off the major scale. Where the
+release lists identical chords under two moods, the repeat keeps its own
+entry with the id suffixed `~2`.
 
-The generated catalogue covers 204 chords and, per key, 1 hand-authored
-12-bar-blues turnaround + 50 ported major-key + 58 ported minor-key
-progressions (1,308 progressions total across the 12 keys) —
-`generateChordCatalogue()` is fully deterministic and pure (`ADR-005`).
+The generated catalogue covers 480 chords and, per key, 1 hand-authored
+12-bar-blues turnaround + 50 major + 58 minor + 82 modal progressions (191
+per key, 2,292 progressions across the 12 keys) — `generateChordCatalogue()`
+is fully deterministic and pure (`ADR-005`). `ProgressionEntry.mode` is
+`'major' | 'minor' | 'modal'`.
+
+**Standard MIDI File reader.** `src/core/midi/smf.ts` (`parseSmf`) is a pure
+`.mid` reader: bytes in, notes (start and length in ticks, velocity,
+channel), tempo changes, time signature and track names out. It handles
+running status, velocity-0 note-offs and unclosed notes, skips what it does
+not need, and returns an error value rather than throwing on a malformed or
+SMPTE-timed file. `decode.ts` still only decodes live Web MIDI messages; the
+two do not share code. Callers pass bytes in, so `core/` never touches the
+file system or network (`ADR-005`).
+
+**Extension — `US-3.18` (`FR-STU-015`).** The shipped catalogue is unchanged
+by this extension (a test asserts its counts). Three additions sit beside it:
+
+- **User progressions.** `chordSymbols.ts` parses typed chord symbols or
+  Roman numerals into chords (qualities extended with dom9/min9/maj9/dim7/
+  min7b5); `userProgression.ts` wraps a parsed list as a `UserProgression`,
+  stored in the profile's `settings` record (`TA-DAT-003`, field
+  `userProgressions`) and merged into the explorer's catalogue as
+  `ProgressionEntry` rows flagged `isUserAdded`. Sync treats `settings.data`
+  as opaque JSON, so no migration or new table is needed.
+- **Falling-notes play.** `progressionArrangement.ts` converts any
+  progression into an in-memory `Arrangement` (id `chords:<progressionId>`,
+  one `'chords'` track, four beats per chord at 480 PPQ, chord notes sharing a
+  group id so `TA-MAT-002` treats them as one chord, `chordMarkers` for the
+  symbols) and plays it through `sessionStore.startArrangement` in wait mode
+  and `TA-REN-001`. This is a deliberate exception to the "does not become an
+  `Arrangement`" line above: it is generated at play time, never stored as
+  content, and attempts record the synthetic id (append-only, `TA-DAT-002`).
+- **Rhythmic styles.** `styledProgression.ts` builds the same kind of
+  `Arrangement` from one of the four bundled style files (`parseSmf`): pitches
+  shifted by the key distance (folded to −6…+5), the file's own tempo, time
+  signature and bar-aligned loop (two passes), simultaneous notes sharing a
+  group id. Chord markers come from the file, not a fixed bar: the loop is
+  split evenly across the chords, with a half beat of anticipation allowed.
+  Checked against the release, every file segments cleanly except at most 23 per
+  style whose progressions already differ upstream. `staticChords.ts` fetches
+  the file; the play page offers "Block chords" (the default, and the
+  fallback if a file fails to load) and the four styles. The 12-bar blues has
+  no style file.
+
+**Extension — `US-3.19` (`FR-STU-016`), the song library.** Real pieces as
+MIDI, searched in-app and played as falling notes. Four additions:
+
+- **Build-time mirror.** Mutopia serves no CORS headers, so a runtime search
+  of the site from the browser is impossible, and a proxy would need a server
+  (`ADR-002`). `content/build/crawlMutopia.ts` lists the piano pieces (the
+  listing pages hold ten each) into `content/sources/mutopia/index.json`;
+  `fetchMutopiaMidi.ts` downloads the solo keyboard ones (`isSoloKeyboard`:
+  piano, harpsichord, clavichord — no duets, voice or strings) into
+  `content/sources/mutopia/mid/`. Both are run by hand and committed.
+- **Ingest.** `content/build/ingestSongs.ts` (part of `content:build`,
+  or `content:build:songs`) asserts a licence entry for every piece
+  (`TA-CNT-005`; `--write-licences` adds the missing ones from the crawl),
+  checks each file parses and yields notes, copies the files to
+  `public/content/songs/mid/<id>.mid` and writes `public/content/songs/index.json`.
+- **Pure half.** `songLibrary.ts` holds `SongEntry`, `searchSongs` (every word
+  matches title, composer, opus or style, accent- and punctuation-blind),
+  `stylesOf`, and `smfToArrangement`: `parseSmf` output scaled from the file's
+  ticks per quarter to 480 PPQ, tracks `both` / `rh` / `lh` (two note tracks
+  read as right then left; one track split at middle C), notes that begin
+  together sharing a group id, the file's tempo changes, and one section.
+  `isMonophonic` tells the play page whether the notation view could draw it.
+- **Shell.** `adapters/content/staticSongs.ts` fetches the index and the bytes
+  (same shape as `staticChords.ts`; not a port method, for the same reason).
+  `runtime/stores/songLibraryStore.ts` keeps "my songs" as `savedSongIds` on the
+  profile's `settings` record (`TA-DAT-003`) — no new table, syncs as opaque
+  JSON, the MIDI itself is never stored. `/studio/library` searches and adds;
+  `/studio/play/mutopia-<n>` parses and converts on load and plays through
+  `sessionStore.startArrangement`. The `both` track is never accompaniment, and
+  practising it leaves no other track to accompany.
+
+A converted piece is generated at play time and never stored as content;
+attempts record the synthetic id `mutopia-<n>`. `core/` still touches no file
+system or network: bytes come in through the adapter.
 
 ---
 
@@ -1184,9 +1269,11 @@ here — that is the whole of ADR-002's cost.
 /studio                       adult home
 /studio/practice/[id]         OSMD + matcher
 /studio/drills                Hanon / sight-reading generators
-/studio/chords                 chord & progression explorer (TA-CNT-006, TA-MAT-007)
+/studio/chords                 chord & progression explorer + my progressions (TA-CNT-006, TA-MAT-007)
+/studio/chords/play/[progressionId]  a progression as falling notes (FR-STU-015)
 /studio/songs/[id]             lead-sheet song mode (FR-STU-013)
-/studio/library                 saved / in-progress repertoire (TA-DAT-007)
+/studio/library                 song library — search, add to my songs (FR-STU-016, TA-CNT-006)
+/studio/play/[id]              also plays library songs, id mutopia-<n> (FR-STU-016)
 /duet/[id]                    four-hands mode
 /dashboard                    practice history
 /settings                     profiles, MIDI device, calibration, sync

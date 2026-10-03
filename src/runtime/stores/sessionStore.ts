@@ -292,7 +292,9 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     }
     const loopRange = get().loopRange;
     const notesInScope = scopeNotes(track.notes, targetSection, loopRange);
-    const otherTracks = arrangement.tracks.filter((t) => t.id !== trackId);
+    // FR-STU-016 — a song's `both` track repeats what `rh` and `lh` already say, so it is never
+    // accompaniment, and practising it leaves nothing else to accompany.
+    const otherTracks = arrangement.tracks.filter((t) => t.id !== trackId && t.id !== 'both' && trackId !== 'both');
     accompanimentNotesByTrack = otherTracks.map((t) => scopeNotes(t.notes, targetSection, loopRange));
 
     decoder = new MidiDecoder();

@@ -19,6 +19,9 @@ import { Button } from '../../../../ui/shared/Button';
 import type { Arrangement, Track } from '../../../../core/content/types';
 import { ticksPerMeasure } from '../../../../core/content/toMusicXml';
 import { asTicks } from '../../../../core/time/types';
+import { loadSongBytes, loadSongIndex } from '../../../../adapters/content/staticSongs';
+import { parseSmf } from '../../../../core/midi/smf';
+import { isMonophonic, smfToArrangement } from '../../../../core/content/songLibrary';
 import { describeArticulation, describeEvenness, describeRushDrag } from '../../../../core/grade/grade';
 
 type StudioView = 'falling' | 'notation';
@@ -32,6 +35,7 @@ const TEMPO_STEP = 5;
 function trackLabel(track: Track): string {
   if (track.hand === 'L') return 'Left hand';
   if (track.hand === 'R') return 'Right hand';
+  if (track.id === 'both') return 'Both hands';
   return track.role;
 }
 
@@ -86,8 +90,18 @@ export default function StudioPlayPage() {
       return;
     }
     let cancelled = false;
-    getAdapters()
-      .content.arrangement(params.id)
+    // FR-STU-016 — a song from the library is a MIDI file converted on the spot.
+    const load: Promise<Arrangement> = params.id.startsWith('mutopia-')
+      ? Promise.all([loadSongBytes(params.id), loadSongIndex().catch(() => undefined)]).then(([bytes, index]) => {
+          if (!bytes) throw new Error('that song file is missing from this copy of the library');
+          const parsed = parseSmf(bytes);
+          if (!parsed.ok) throw new Error(parsed.error);
+          const made = smfToArrangement(parsed.file, { id: params.id, title: index?.songs.find((x) => x.id === params.id)?.title ?? params.id });
+          if (!made) throw new Error('that file has no notes');
+          return made;
+        })
+      : getAdapters().content.arrangement(params.id);
+    load
       .then((a) => {
         if (!cancelled) {
           setArrangement(a);
@@ -143,12 +157,16 @@ export default function StudioPlayPage() {
     await startArrangement(arrangement, track.id, crypto.randomUUID(), new Date().toISOString(), undefined, mode);
   }
 
+  // FR-STU-016 — notation can only draw a single line; a full piece plays as falling notes only.
+  const canShowNotation = track ? isMonophonic(track) : true;
+  const shownView: StudioView = canShowNotation ? view : 'falling';
+
   if (loadError) return <PageShell><p>Could not load this piece: {loadError}</p></PageShell>;
   if (!arrangement || !track) return <PageShell><p>Loading…</p></PageShell>;
 
   return (
     <PageShell>
-      <h1>{arrangement.id}</h1>
+      <h1>{params.id.startsWith('mutopia-') ? (arrangement.sections[0]?.label ?? arrangement.id) : arrangement.id}</h1>
 
       {attemptStatus === 'idle' && (
         <Card>
@@ -291,18 +309,20 @@ export default function StudioPlayPage() {
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <Button
             accent="indigo"
-            variant={view === 'falling' ? 'primary' : 'secondary'}
+            variant={shownView === 'falling' ? 'primary' : 'secondary'}
             onClick={() => setView('falling')}
           >
             Falling notes
           </Button>
-          <Button
-            accent="indigo"
-            variant={view === 'notation' ? 'primary' : 'secondary'}
-            onClick={() => setView('notation')}
-          >
-            Notation
-          </Button>
+          {canShowNotation && (
+            <Button
+              accent="indigo"
+              variant={view === 'notation' ? 'primary' : 'secondary'}
+              onClick={() => setView('notation')}
+            >
+              Notation
+            </Button>
+          )}
           <label style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             Tempo {Math.round(tempoScale * 100)}%
             <input
@@ -317,7 +337,7 @@ export default function StudioPlayPage() {
         </div>
       </Card>
 
-      {view === 'falling' && attemptStatus === 'playing' && clock && (
+      {shownView === 'falling' && attemptStatus === 'playing' && clock && (
         <FallingNotesCanvas
           clock={clock}
           notes={notesForDisplay}
@@ -326,7 +346,7 @@ export default function StudioPlayPage() {
         />
       )}
 
-      {view === 'notation' && (
+      {shownView === 'notation' && (
         <Card>
           <NotationView
             arrangement={arrangement}

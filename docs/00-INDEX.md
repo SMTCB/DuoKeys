@@ -12,7 +12,7 @@ a six-year-old and an adult beginner to play — separately, and together.
 | # | Document | ID | Contains |
 |---|---|---|---|
 | 01 | [Technical Architecture](01-TECHNICAL-ARCHITECTURE.md) | `TECH` | 9 ADRs, ports & adapters, clock, MIDI pipeline, matcher, grading, renderers, data model, sync, content pipeline, 12 NFRs, 8 risks |
-| 02 | [Functional Specification](02-FUNCTIONAL-SPECIFICATION.md) | `FUNC` | 51 requirements across 7 modules (4 proposed, unscheduled), prioritised MoSCoW |
+| 02 | [Functional Specification](02-FUNCTIONAL-SPECIFICATION.md) | `FUNC` | 52 requirements across 7 modules (4 proposed, unscheduled), prioritised MoSCoW |
 | 03 | [Sprint Plan & User Stories](03-SPRINT-PLAN.md) | `SPRINT` | 6 sprints, 72 user stories, each mapped to FR and TA IDs |
 | 04 | [Test Scenarios](04-TEST-SCENARIOS.md) | `TEST` | ~130 scenarios across 5 tiers, with a coverage matrix |
 | 05 | [Engineering Handbook](05-ENGINEERING-HANDBOOK.md) | `ENG` | Pre-build checklist, repo scaffold, Definition of Done, conventions, content authoring guide, Sprint 0 kit |
@@ -97,6 +97,8 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-STU-012 chord & progression explorer | M | TA-CNT-006, TA-MAT-007 | US-3.13 | TS-U-MAT-023…025, TS-U-CNT-019 |
 | FR-STU-013 lead-sheet song mode | M | TA-DAT-001 (ext), TA-REN-001 | US-3.14 | TS-U-REN-007 |
 | FR-STU-014 personal score import | C | — (future roadmap) | — | — |
+| FR-STU-015 my progressions & falling-notes chords | S | TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.18 | TS-U-CNT-022…027, TS-I-DAT-008 |
+| FR-STU-016 song library | S | TA-CNT-004, TA-CNT-005, TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.19 | TS-U-CNT-028, 029, TS-I-DAT-009, TS-M-015 |
 | FR-DUO-001 split + transpose | M | TA-DAT-001 | US-4.01 | TS-E-015, TS-M-012 |
 | FR-DUO-002 dual matchers | M | TA-MAT-001 | US-4.02 | TS-U-MAT-021, TS-G-010 |
 | FR-DUO-003 asymmetric parts | M | TA-DAT-001 | US-4.03 | TS-M-011 |
@@ -1003,3 +1005,52 @@ Verified: anonymous reads and writes are refused on all four tables.
   built-in SMTP rate-limits magic-link emails.
 - The temporary full-access Supabase personal access token used for setup
   should be deleted in the dashboard once no more CLI work is planned.
+
+## Update — chord library, modal progressions and rhythmic styles (2026-10-03)
+
+`FR-STU-015` / `US-3.18` grew beyond the typed-progression slice. All of it is
+`TA-CNT-006`; no new requirement or component ID was needed.
+
+- **Chord library:** 40 qualities × 12 roots = 480 chords (was 17 / 204), the
+  full chord-type list of the free-midi-chords release, grouped Triads / 7ths &
+  9ths / Other in the explorer.
+- **Modal progressions:** the release's 82-entry modal set is ported
+  (`ProgressionEntry.mode` gains `'modal'`); 191 progressions per key, 2,292 in
+  all (was 1,308). Earlier notes in this file that say the modal list was not
+  ported, or give 204 / 1,308, describe the state at that date.
+- **SMF reader:** `src/core/midi/smf.ts` (`parseSmf`) — pure `.mid` parsing, which
+  earlier entries said the codebase lacked.
+- **Rhythmic styles:** 760 style files (pop, pop2, soul, hiphop2; reference key
+  per set) shipped under MIT (`free-midi-chords-style-midi` licence entry,
+  `content/chord-styles/NOTICE.md`) and transposed at play time.
+- Tests: `TS-U-CNT-025`–`027`. 276 unit tests pass.
+- **Checked against the release's MIDI:** every chord quality's pitch classes
+  match; 24 of 2,292 progression chord sequences differ in the file's own
+  voicing from the diatonic reading (upstream anomalies, left as ported).
+- **Song library:** built afterwards — see the next update.
+
+## Update — song library (2026-10-03)
+
+`FR-STU-016` / `US-3.19`, built on the build-time-mirror route (a proxy would
+have needed an ADR superseding the static export, `ADR-002`; file upload is a
+different feature). No ADR and no new component ID: it extends `TA-CNT-006`
+(shell, search, conversion), `TA-CNT-004` (the Mutopia MIDI source) and
+`TA-CNT-005` (licence entries, new `cc-by-sa` status).
+
+- **Content:** 576 solo keyboard pieces (piano, harpsichord, clavichord) of
+  Mutopia's 744 piano listings; duets, voice and other instruments left out.
+  Licences: 377 public domain, 128 CC BY-SA, 71 CC BY, one entry per piece in
+  `content/licences.json` with its Mutopia page as `sourceUrl`, verified
+  2026-10-03. Each library row shows its licence and links to that page.
+- **Mirror:** `content/build/crawlMutopia.ts` and `fetchMutopiaMidi.ts` run by
+  hand (about 7 MB of MIDI under `content/sources/mutopia/`); `ingestSongs.ts`
+  is part of `content:build`.
+- **In app:** `/studio/library` (search, style filter, add to / remove from "my
+  songs", play), linked from `/studio`; play reuses `/studio/play/[id]`
+  (`mutopia-<n>` ids). "Add" stores the id on the profile's settings record, so
+  it syncs; the MIDI is a static asset fetched on play.
+- **Limits:** MIDI only, so no engraved score and no notation view for a full
+  piece; Mutopia's MIDI is flat in dynamics. The hand split is by track order,
+  else middle C — worth checking on real pieces at the piano (`TS-M-015`).
+- Tests: `TS-U-CNT-028`, `029`, `TS-I-DAT-009`. 289 unit tests pass.
+- **Not verified at a real piano.**

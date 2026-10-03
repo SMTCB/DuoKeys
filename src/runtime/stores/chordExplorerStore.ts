@@ -15,9 +15,17 @@ import { VELOCITY_FLOOR } from '../../core/match/types';
 import { ChordMatcher, type ChordMatchResult } from '../../core/match/chordMatcher';
 import { loadChordCatalogue } from '../../adapters/content/staticChords';
 import type { ChordEntry, ChordIndex, PitchClass, ProgressionEntry } from '../../core/content/chordTypes';
+import {
+  makeUserProgression,
+  userProgressionsOf,
+  withUserProgressions,
+  type UserProgression,
+} from '../../core/content/userProgression';
 
 interface ChordExplorerState {
+  /** The shipped catalogue plus this profile's own progressions (FR-STU-015). */
   catalogue: ChordIndex | undefined;
+  userProgressions: UserProgression[];
 
   midiInputs: MidiInputInfo[];
   midiConnectionState: MidiConnectionState;
@@ -30,6 +38,14 @@ interface ChordExplorerState {
   playedPitchClasses: readonly PitchClass[];
 
   loadCatalogue(): Promise<void>;
+  /** FR-STU-015 — parse typed chords and save them to this profile. Resolves to a message to show, or undefined on success. */
+  addUserProgression(input: {
+    name: string;
+    text: string;
+    key: PitchClass;
+    mode: 'major' | 'minor';
+  }): Promise<string | undefined>;
+  removeUserProgression(id: string): Promise<void>;
   refreshMidiInputs(): Promise<void>;
   selectMidiInput(id: string): Promise<void>;
   setKey(key: PitchClass): void;
@@ -38,6 +54,7 @@ interface ChordExplorerState {
   advanceProgression(): void;
 }
 
+let baseCatalogue: ChordIndex | undefined;
 let decoder: MidiDecoder | undefined;
 let unsubscribeMessage: (() => void) | undefined;
 const matcher = new ChordMatcher();
@@ -50,8 +67,16 @@ function findProgression(catalogue: ChordIndex | undefined, progressionId: strin
   return catalogue?.progressions.find((p) => p.id === progressionId);
 }
 
+/** Saved on the profile's settings record (TA-DAT-003), so it syncs like any other setting. */
+async function saveUserProgressions(profileId: string, list: UserProgression[]): Promise<void> {
+  const { storage } = getAdapters();
+  const existing = await storage.get<Record<string, unknown>>('settings', profileId);
+  await storage.put('settings', { ...existing, profileId, updatedAtMs: Date.now(), userProgressions: list });
+}
+
 export const useChordExplorerStore = create<ChordExplorerState>((set, get) => ({
   catalogue: undefined,
+  userProgressions: [],
 
   midiInputs: [],
   midiConnectionState: 'disconnected',
@@ -64,8 +89,25 @@ export const useChordExplorerStore = create<ChordExplorerState>((set, get) => ({
   playedPitchClasses: [],
 
   async loadCatalogue(): Promise<void> {
-    const catalogue = await loadChordCatalogue();
-    set({ catalogue });
+    baseCatalogue = await loadChordCatalogue();
+    const settings = await getAdapters().storage.get('settings', useSessionStore.getState().profile.id);
+    const userProgressions = userProgressionsOf(settings);
+    set({ userProgressions, catalogue: withUserProgressions(baseCatalogue, userProgressions) });
+  },
+
+  async addUserProgression(input): Promise<string | undefined> {
+    const made = makeUserProgression({ ...input, id: `mine-${crypto.randomUUID()}`, addedAtMs: Date.now() });
+    if (!made.ok) return made.error;
+    const userProgressions = [...get().userProgressions, made.progression];
+    await saveUserProgressions(useSessionStore.getState().profile.id, userProgressions);
+    if (baseCatalogue) set({ userProgressions, catalogue: withUserProgressions(baseCatalogue, userProgressions) });
+    return undefined;
+  },
+
+  async removeUserProgression(id: string): Promise<void> {
+    const userProgressions = get().userProgressions.filter((p) => p.id !== id);
+    await saveUserProgressions(useSessionStore.getState().profile.id, userProgressions);
+    if (baseCatalogue) set({ userProgressions, catalogue: withUserProgressions(baseCatalogue, userProgressions) });
   },
 
   async refreshMidiInputs(): Promise<void> {

@@ -19,10 +19,12 @@ export interface ProgressionEntry {
   id: string;
   name: string; // "I-V-vi-IV"
   key: PitchClass;
-  mode: 'major' | 'minor';
+  mode: 'major' | 'minor' | 'modal'; // modal: degrees numbered off the major scale, with b/# for borrowed chords
   moods: readonly string[]; // e.g. ["Hopeful", "Romantic"]
   chordIds: string[]; // in order
   suggestedBpm: number;
+  /** FR-STU-015 — typed in by the adult rather than shipped in the catalogue. */
+  isUserAdded?: true;
 }
 
 export interface ChordIndex {

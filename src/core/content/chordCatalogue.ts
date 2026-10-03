@@ -19,37 +19,25 @@
 
 import { asMidiPitch, type MidiPitch } from '../midi/decode';
 import { asPitchClass, type ChordEntry, type ChordIndex, type PitchClass, type ProgressionEntry } from './chordTypes';
-import { MAJOR_PROGRESSION_TEMPLATES, MINOR_PROGRESSION_TEMPLATES, type ProgressionTemplate } from './progressionData';
+import { QUALITY_INTERVALS, qualityOfRomanSuffix } from './chordQualities';
+import {
+  MAJOR_PROGRESSION_TEMPLATES,
+  MINOR_PROGRESSION_TEMPLATES,
+  MODAL_PROGRESSION_TEMPLATES,
+  type ProgressionTemplate,
+} from './progressionData';
 
-const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+export const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const MIDDLE_C = 60;
 
-// Interval formulas from the root, in semitones — standard chord theory.
-const QUALITIES: Record<string, readonly number[]> = {
-  maj: [0, 4, 7],
-  min: [0, 3, 7],
-  dim: [0, 3, 6],
-  aug: [0, 4, 8],
-  dom7: [0, 4, 7, 10],
-  maj7: [0, 4, 7, 11],
-  min7: [0, 3, 7, 10],
-  sus2: [0, 2, 7],
-  sus4: [0, 5, 7],
-  five: [0, 7],
-  majFlat5: [0, 4, 6],
-  maj6: [0, 4, 7, 9],
-  min6: [0, 3, 7, 9],
-  maj69: [0, 4, 7, 9, 14],
-  min69: [0, 3, 7, 9, 14],
-  majAdd9: [0, 4, 7, 14],
-  minAdd9: [0, 3, 7, 14],
-};
+// Interval formulas live in chordQualities.ts (the full free-midi-chords chord-type set).
+export const QUALITIES = QUALITY_INTERVALS;
 
-function chordId(root: PitchClass, quality: string): string {
+export function chordId(root: PitchClass, quality: string): string {
   return `${NOTE_NAMES[root as number]}-${quality}`;
 }
 
-function buildChord(root: PitchClass, quality: string): ChordEntry {
+export function buildChord(root: PitchClass, quality: string): ChordEntry {
   const intervals = QUALITIES[quality]!;
   const midiNotes: MidiPitch[] = intervals.map((i) => asMidiPitch(MIDDLE_C + (root as number) + i));
   return { id: chordId(root, quality), root, quality, midiNotes };
@@ -74,71 +62,68 @@ const ROMAN_DEGREE: Record<string, number> = { I: 0, II: 1, III: 2, IV: 3, V: 4,
 // "Vsus2", "IM-5". Case of the numeral is the diatonic-default triad
 // quality (upper = major, lower = minor); the suffix overrides or extends
 // it. This is exactly how free-midi-chords' chords.py writes its tokens.
-const DEGREE_TOKEN = /^([iIvV]+)(.*)$/;
+const DEGREE_TOKEN = /^([b#]?)([iIvV]+)(.*)$/;
 
 interface ParsedDegreeToken {
   degreeIndex: number; // 0-6, I..VII
+  accidentalOffset: number; // -1 for "b", +1 for "#", else 0 (modal tokens: "bIIIM", "#IVm")
   quality: string; // a key into QUALITIES
 }
 
-function resolveQuality(isUpperNumeral: boolean, suffix: string): string {
-  switch (suffix) {
-    case '':
-      return isUpperNumeral ? 'maj' : 'min';
-    case '5':
-      return 'five';
-    case '6':
-      return isUpperNumeral ? 'maj6' : 'min6';
-    case '69':
-      return isUpperNumeral ? 'maj69' : 'min69';
-    case '7':
-      return isUpperNumeral ? 'dom7' : 'min7';
-    case 'M-5':
-      return 'majFlat5';
-    case 'add9':
-      return isUpperNumeral ? 'majAdd9' : 'minAdd9';
-    case 'dim':
-      return 'dim';
-    case 'dom7':
-      return 'dom7';
-    case 'm7':
-      return 'min7';
-    case 'sus2':
-      return 'sus2';
-    case 'sus4':
-      return 'sus4';
-    default:
-      throw new Error(`Unknown chord-quality suffix: "${suffix}"`);
-  }
-}
+// What the release's MIDI files do with the shorthand: a bare "7" is the scale's own
+// seventh chord (I7 = Imaj7, V7 = dominant, III7 in a minor key = maj7), and a bare
+// lowercase numeral on the diminished degree (ii in minor, vii in major) is diminished.
+const DIATONIC_TRIAD = {
+  major: ['maj', 'min', 'min', 'maj', 'maj', 'min', 'dim'],
+  minor: ['min', 'dim', 'maj', 'min', 'min', 'maj', 'maj'],
+} as const;
+const DIATONIC_SEVENTH = {
+  major: ['maj7', 'min7', 'min7', 'maj7', 'dom7', 'min7', 'min7b5'],
+  minor: ['min7', 'min7b5', 'maj7', 'min7', 'min7', 'maj7', 'dom7'],
+} as const;
 
-/** Parses a free-midi-chords-style degree token, e.g. "IV", "iim7", "Vsus2". Exported for tests. */
-export function parseDegreeToken(token: string): ParsedDegreeToken {
+/**
+ * Parses a free-midi-chords-style degree token, e.g. "IV", "iim7", "Vsus2", "bIIIM". Exported for tests.
+ * Pass the progression's mode to apply the diatonic readings above; without it the token alone decides.
+ */
+export function parseDegreeToken(token: string, mode?: 'major' | 'minor' | 'modal'): ParsedDegreeToken {
   const match = DEGREE_TOKEN.exec(token);
   if (!match) throw new Error(`Unrecognised degree token: "${token}"`);
-  const numeral = match[1]!;
-  const suffix = match[2]!;
+  const numeral = match[2]!;
+  const suffix = match[3]!;
   const degreeIndex = ROMAN_DEGREE[numeral.toUpperCase()];
   if (degreeIndex === undefined) throw new Error(`Unrecognised scale-degree numeral: "${numeral}"`);
-  const isUpperNumeral = numeral === numeral.toUpperCase();
-  return { degreeIndex, quality: resolveQuality(isUpperNumeral, suffix) };
+  const quality = qualityOfRomanSuffix(numeral === numeral.toUpperCase(), suffix);
+  if (quality === undefined) throw new Error(`Unknown chord-quality suffix: "${suffix}"`);
+  const accidentalOffset = match[1] === 'b' ? -1 : match[1] === '#' ? 1 : 0;
+  if (mode !== undefined && accidentalOffset === 0) {
+    const scale = mode === 'minor' ? 'minor' : 'major';
+    if (suffix === '7') return { degreeIndex, accidentalOffset, quality: DIATONIC_SEVENTH[scale][degreeIndex]! };
+    if (suffix === '' && numeral !== numeral.toUpperCase() && DIATONIC_TRIAD[scale][degreeIndex] === 'dim') {
+      return { degreeIndex, accidentalOffset, quality: 'dim' };
+    }
+  }
+  return { degreeIndex, accidentalOffset, quality };
 }
 
-function chordIdForDegree(keyRoot: PitchClass, mode: 'major' | 'minor', token: string): string {
-  const { degreeIndex, quality } = parseDegreeToken(token);
-  const steps = mode === 'major' ? MAJOR_SCALE_STEPS : MINOR_SCALE_STEPS;
-  const root = asPitchClass((keyRoot as number) + steps[degreeIndex]!);
+// Major and minor sets number their degrees off the key's own scale; the modal
+// set numbers everything off the major (Ionian) scale and marks borrowed
+// degrees with b / # — chords.py's convention, see the README's "Modal" note.
+function chordIdForDegree(keyRoot: PitchClass, mode: 'major' | 'minor' | 'modal', token: string): string {
+  const { degreeIndex, accidentalOffset, quality } = parseDegreeToken(token, mode);
+  const steps = mode === 'minor' ? MINOR_SCALE_STEPS : MAJOR_SCALE_STEPS;
+  const root = asPitchClass((keyRoot as number) + steps[degreeIndex]! + accidentalOffset);
   return chordId(root, quality);
 }
 
 function buildTemplateProgression(
   keyRoot: PitchClass,
-  mode: 'major' | 'minor',
+  mode: 'major' | 'minor' | 'modal',
   template: ProgressionTemplate,
 ): ProgressionEntry {
   const name = template.tokens.join('-');
   return {
-    id: `${NOTE_NAMES[keyRoot as number]}-${name}`,
+    id: mode === 'modal' ? `${NOTE_NAMES[keyRoot as number]}-modal:${name}` : `${NOTE_NAMES[keyRoot as number]}-${name}`,
     name,
     key: keyRoot,
     mode,
@@ -183,6 +168,14 @@ export function generateChordCatalogue(): ChordIndex {
     }
     for (const template of MINOR_PROGRESSION_TEMPLATES) {
       progressions.push(buildTemplateProgression(key, 'minor', template));
+    }
+    // The release lists the same chords twice under different moods (e.g. "im bVIIM IV im"); the repeat keeps its own entry, id suffixed ~2.
+    const seenModalIds = new Set<string>();
+    for (const template of MODAL_PROGRESSION_TEMPLATES) {
+      const entry = buildTemplateProgression(key, 'modal', template);
+      if (seenModalIds.has(entry.id)) entry.id = `${entry.id}~2`;
+      seenModalIds.add(entry.id);
+      progressions.push(entry);
     }
   }
 

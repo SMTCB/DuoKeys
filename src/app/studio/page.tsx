@@ -87,6 +87,28 @@ export default function StudioListPage() {
           </Link>
         </div>
       </Card>
+      <Card>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+          <div>
+            <strong>Chords &amp; progressions</strong>
+            <p style={{ margin: '0.25rem 0 0' }}>Play around: pick a key, browse its chords and 100+ progressions.</p>
+          </div>
+          <Link href="/studio/chords">
+            <Button accent="indigo">Open chord explorer</Button>
+          </Link>
+        </div>
+      </Card>
+      <Card>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+          <div>
+            <strong>Song library</strong>
+            <p style={{ margin: '0.25rem 0 0' }}>Search 570+ piano pieces, add them to your songs and play them as falling notes.</p>
+          </div>
+          <Link href="/studio/library">
+            <Button accent="indigo">Open song library</Button>
+          </Link>
+        </div>
+      </Card>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {index.pieces.map((piece) => (
           <Card key={piece.id}>

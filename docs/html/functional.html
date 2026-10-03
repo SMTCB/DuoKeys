@@ -49,7 +49,7 @@
       <thead><tr><th>Prefix</th><th>Module</th><th>Count</th></tr></thead>
       <tbody>
         <tr><td><code>FR-EXP-*</code></td><td><a href="#explorer">Explorer — the child's experience</a></td><td class="n">9</td></tr>
-        <tr><td><code>FR-STU-*</code></td><td><a href="#studio">Studio — the adult's experience</a></td><td class="n">11</td></tr>
+        <tr><td><code>FR-STU-*</code></td><td><a href="#studio">Studio — the adult's experience</a></td><td class="n">16</td></tr>
         <tr><td><code>FR-DUO-*</code></td><td><a href="#duet">Duet — four hands together</a></td><td class="n">4</td></tr>
         <tr><td><code>FR-PRO-*</code></td><td><a href="#profiles">Profiles, progression and rewards</a></td><td class="n">5</td></tr>
         <tr><td><code>FR-CON-*</code></td><td><a href="#content">Content and repertoire</a></td><td class="n">5</td></tr>
@@ -236,7 +236,25 @@
   </div>
 
   <div class="req">
-    <h3 id="FR-STU-014" data-toc="Personal score import"><span class="aid">FR-STU-014</span> Personal score import <span class="pri C">C</span></h3>
+    <h3 id="FR-STU-015" data-toc="My progressions &amp; falling-notes chord play"><span class="aid">FR-STU-015</span> My progressions &amp; falling-notes chord play <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-CNT-006 · TA-REN-001 · TA-DAT-003 · US-3.18</p>
+    <p>The adult can type or paste a chord progression — chord symbols (<code>C G Am F</code>, <code>Dm7 G7 Cmaj7</code>, <code>Bb/D</code>) or Roman numerals in a chosen key and mode (<code>I V vi IV</code>, <code>ii7 V7 I</code>) — name it, and have it saved to "My progressions" beside the shipped catalogue. Any progression, shipped or typed, can then be played as falling notes: each chord is a chord-group on the falling-notes view with its symbol overlaid, in wait mode (FR-EXP-003: no timer, no failure state).</p>
+    <p><strong>Chord library and rhythms.</strong> The explorer lists every chord on the chosen key — 40 qualities, grouped Triads / 7ths &amp; 9ths / Other — and the progression filter covers the Major, Minor and Modal sets (2,292 progressions across the 12 keys). A progression can be played as block chords (one bar per chord) or in one of four rhythmic styles (pop, pop 2, soul, hip-hop) taken from the free-midi-chords style files, transposed to the chosen key. The 12-bar blues has block chords only.</p>
+    <div class="note"><p><span class="k">No web chord search</span>Searching chord sites and auto-importing was considered and declined: there is no public chord API, scraping breaches the sites' terms and copyright, and a network read on the practice path would break ADR-003. Typed text is the substitute. User progressions live on the profile's <code>settings</code> record, so they sync like any other setting and need no migration. A slash chord's bass note is dropped (the matcher checks pitch classes). In minor mode Roman numerals follow the natural minor scale, as the shipped catalogue does.</p></div>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-016" data-toc="Song library"><span class="aid">FR-STU-016</span> Song library <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-CNT-004 · TA-CNT-005 · TA-CNT-006 · TA-REN-001 · TA-DAT-003 · US-3.19</p>
+    <p>The adult can search a library of real piano pieces, add the ones they want to "my songs", and play any of them as falling notes at the instrument, in wait mode (FR-EXP-003: no timer, no failure state) or timed, with the hand selector, A/B loop, auto-ramp and tempo scale of FR-STU-003–005.</p>
+    <p><strong>Where the pieces come from.</strong> The Mutopia Project's solo keyboard pieces — piano, harpsichord and clavichord, 576 at the time of writing: 377 public domain, 128 CC BY-SA, 71 CC BY. Duets, voice and other instruments are left out. Their MIDI files are mirrored into the repository once (<code>content/build/crawlMutopia.ts</code>, <code>fetchMutopiaMidi.ts</code>) and shipped as static assets with a searchable index (<code>content/build/ingestSongs.ts</code>), so nothing is fetched from Mutopia while practising (ADR-003). Every piece has its own entry in <code>content/licences.json</code> (TA-CNT-005) and every row of the library shows its licence and links to the piece's own Mutopia page, which is how attribution is met.</p>
+    <p><strong>Search and "add to my songs".</strong> Search matches every typed word against title, composer, opus and style, ignoring accents and punctuation, with a style filter. "Add" saves the song's id on the profile's <code>settings</code> record — the same place as FR-STU-015's progressions, so it syncs with no new table. The MIDI bytes stay static assets, downloaded on play.</p>
+    <p><strong>Playing a piece.</strong> The file's notes become an arrangement with tracks Both hands, Right hand and Left hand (two note tracks are read as right then left; a single track is split at middle C). Notes that begin together form one group, so a chord, or both hands landing together, is one decision in wait mode. The notation view is offered only for a single line; a full piece plays as falling notes.</p>
+    <div class="note"><p><span class="k">Limits</span>Only MIDI is mirrored, so there is no engraved score for a song — MIDI carries no beaming, voices or articulation marks. Mutopia's MIDI is machine-generated from the score: the tempo is the score's marking, and dynamics are flat. Pieces are classical, Baroque, folk and a little jazz; a pop song would need a source with a licence that allows it.</p></div>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-014"data-toc="Personal score import"><span class="aid">FR-STU-014</span> Personal score import <span class="pri C">C</span></h3>
     <p class="by"><b>Status</b> Future roadmap — deliberately out of MVP (v1) scope. Raised by the adult user and confirmed as a nice-to-have, not a blocker; revisit after v1 ships. Flagged as an open architecture question below, not only an unscheduled story</p>
     <p>The end state: the adult receives an already-digitised sheet from a teacher (MusicXML, or a scan run through OMR) and brings it into DuoKeys to practise against — the same idea as FR-STU-011's Mutopia/OpenScore ingest, but for one personal file rather than the shared catalogue.</p>
     <div class="note"><p><span class="k">Two separable questions</span>Rendering it once it's in the app is already solved — OSMD (TA-REN-003, already chosen, BSD-3-Clause) renders MusicXML directly, which is also the standard output of most open-source OMR tools (e.g. Audiveris) and of MuseScore's export. Getting a personal file into the app is not solved. The five-port architecture (TA-PORT-002) has no upload-capable port: ContentBackend fetches build output, not user-supplied files, and StorageBackend is IndexedDB, not a file-drop target. Two paths exist and neither is chosen: (1) build-time, matching US-3.12's existing pattern — drop a MusicXML file into content/sources/, let TA-CNT-001's pipeline ingest it like any other piece, cheapest but needs a rebuild per song; (2) runtime upload — a real new capability needing a new port method or adapter, genuine architecture work, not wiring. Licensing is also different in kind: TA-CNT-005's gate assumes redistributable content with a public source URL, which a teacher's personal handout has neither of, and isn't being redistributed — the gate as written doesn't obviously apply to one household's own copy, but this is an open policy question, not a decision already made.</p></div>
@@ -427,13 +445,13 @@
     <thead><tr><th>Module</th><th>Must</th><th>Should</th><th>Could</th><th>Total</th></tr></thead>
     <tbody>
       <tr><td><a href="#explorer">Explorer</a></td><td class="n">5</td><td class="n">3</td><td class="n">1</td><td class="n">9</td></tr>
-      <tr><td><a href="#studio">Studio</a></td><td class="n">8</td><td class="n">4</td><td class="n">2</td><td class="n">14</td></tr>
+      <tr><td><a href="#studio">Studio</a></td><td class="n">8</td><td class="n">6</td><td class="n">2</td><td class="n">16</td></tr>
       <tr><td><a href="#duet">Duet</a></td><td class="n">3</td><td class="n">1</td><td class="n">0</td><td class="n">4</td></tr>
       <tr><td><a href="#profiles">Profiles</a></td><td class="n">4</td><td class="n">1</td><td class="n">1</td><td class="n">6</td></tr>
       <tr><td><a href="#content">Content</a></td><td class="n">4</td><td class="n">0</td><td class="n">1</td><td class="n">5</td></tr>
       <tr><td><a href="#sync">Sync</a></td><td class="n">4</td><td class="n">1</td><td class="n">0</td><td class="n">5</td></tr>
       <tr><td><a href="#system">System</a></td><td class="n">7</td><td class="n">1</td><td class="n">0</td><td class="n">8</td></tr>
-      <tr class="tot"><td><strong>Total</strong></td><td class="n">35</td><td class="n">11</td><td class="n">5</td><td class="n">51</td></tr>
+      <tr class="tot"><td><strong>Total</strong></td><td class="n">35</td><td class="n">13</td><td class="n">5</td><td class="n">53</td></tr>
     </tbody>
   </table></div>
   <div class="note"><p><span class="k">Correction</span>System's Must count was previously misstated as 6/8 — corrected to 7/8 here; FR-SYS-001–005 and 007–008 are all M, only FR-SYS-006 is S.</p></div>

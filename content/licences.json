@@ -64,10 +64,17 @@
   },
   {
     "licenceId": "free-midi-chords-progressions",
-    "work": "Progression sequences and mood tags (prog_maj, prog_min lists in chords.py — 50 major-key and 58 minor-key Roman-numeral degree/quality token sequences, each with mood tags) ported as text data. The actual chord voicings/pitches are this codebase's own generation (see duokeys-original-chord-catalogue); no MIDI files or audio from this repository are used.",
+    "work": "Progression sequences and mood tags (the Major, Minor and Modal sets of the v0.20260314 release — 50 major-key, 58 minor-key and 82 modal Roman-numeral degree/quality token sequences, each with mood tags) and the chord-type list of its \"All chords\" folder, read as text data from file names. Chord voicings/pitches are this codebase's own generation from interval formulas, checked against the release's MIDI files (see duokeys-original-chord-catalogue); the chord MIDI files are not shipped (the rhythmic style files are: see free-midi-chords-style-midi).",
     "status": "MIT",
     "sourceUrl": "https://github.com/ldrolez/free-midi-chords",
-    "verifiedDate": "2026-09-04"
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "free-midi-chords-style-midi",
+    "work": "The 760 rhythmic style MIDI files of the v0.20260314 release (pop, pop2, soul and hiphop2 styles; reference key only: C for Major and Modal, A for Minor), shipped unmodified as content/chord-styles/ and played transposed to the chosen key. MIT notice kept in content/chord-styles/NOTICE.md.",
+    "status": "MIT",
+    "sourceUrl": "https://github.com/ldrolez/free-midi-chords",
+    "verifiedDate": "2026-10-03"
   },
   {
     "licenceId": "hanon-virtuoso-pianist-1900",
@@ -75,5 +82,4037 @@
     "status": "public-domain",
     "sourceUrl": "https://en.wikipedia.org/wiki/The_Virtuoso_Pianist_in_60_Exercises",
     "verifiedDate": "2026-09-04"
+  },
+  {
+    "licenceId": "mutopia-4",
+    "work": "Das Wohltemperierte Clavier I, Fuga I — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=4",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-5",
+    "work": "Das Wohltemperierte Clavier I, Praeludium I — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=5",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-9",
+    "work": "Das Wohltemperierte Clavier II, Fuga II — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=9",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-23",
+    "work": "Maple Leaf Rag — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=23",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-37",
+    "work": "Gymnopédie No. 1 — E. Satie (1866–1925) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=37",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-38",
+    "work": "Gymnopédie No. 2 — E. Satie (1866–1925) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=38",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-39",
+    "work": "Gymnopédie No. 3 — E. Satie (1866–1925) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=39",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-40",
+    "work": "Invention 1 — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=40",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-45",
+    "work": "3. Satz aus der Sonate in G-Dur — J. A. Benda (1722–1795) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=45",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-55",
+    "work": "Invention 5 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=55",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-58",
+    "work": "Invention 2 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=58",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-59",
+    "work": "Invention 13 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=59",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-61",
+    "work": "Invention 8 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=61",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-62",
+    "work": "Invention 10 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=62",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-63",
+    "work": "Praeludium 10 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=63",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-66",
+    "work": "Applicatio — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=66",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-67",
+    "work": "Invention 4 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=67",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-68",
+    "work": "Invention 15 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=68",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-69",
+    "work": "Praeludium 2 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=69",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-70",
+    "work": "Invention 3 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=70",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-71",
+    "work": "Invention 11 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=71",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-72",
+    "work": "Invention 14 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=72",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-73",
+    "work": "Invention 7 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=73",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-74",
+    "work": "Menuet — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=74",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-75",
+    "work": "Menuet — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=75",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-76",
+    "work": "Menuet — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=76",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-77",
+    "work": "Menuet — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=77",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-78",
+    "work": "Aria — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=78",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-79",
+    "work": "Musette — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=79",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-82",
+    "work": "English Suite II: Bourree I — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=82",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-83",
+    "work": "English Suite II: Bourree II — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=83",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-84",
+    "work": "English Suite II: Gigue — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=84",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-85",
+    "work": "English Suite I: Bourree I — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=85",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-86",
+    "work": "English Suite I: Bourree II — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=86",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-98",
+    "work": "Sonatina in B-flat Major — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=98",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-108",
+    "work": "Sonate Opus KV 331 - Rondo Alla Turca — W. A. Mozart (1756–1791) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=108",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-128",
+    "work": "Erato Praeludium — J. K. F. Fischer (1665–1746) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=128",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-129",
+    "work": "Erato Allemande — J. K. F. Fischer (1665–1746) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=129",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-139",
+    "work": "Sonata in C major — D. Scarlatti (1685–1757) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=139",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-140",
+    "work": "Sinfonia 2 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=140",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-141",
+    "work": "Sonata XI from the Essercizi per Gravicembalo — D. Scarlatti (1685–1757) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=141",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-142",
+    "work": "Sinfonia 1 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=142",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-143",
+    "work": "Sinfonia 3 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=143",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-144",
+    "work": "Sinfonia 12 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=144",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-145",
+    "work": "Sinfonia 15 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=145",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-149",
+    "work": "Ouvertüre — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=149",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-150",
+    "work": "Entrée — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=150",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-151",
+    "work": "Gavotte — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=151",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-152",
+    "work": "Toccata — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=152",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-153",
+    "work": "Fuga — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=153",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-154",
+    "work": "Impertinence — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=154",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-155",
+    "work": "Concerto — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=155",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-156",
+    "work": "Preludio — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=156",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-157",
+    "work": "Menuet I — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=157",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-158",
+    "work": "Menuet II (Trio) — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=158",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-159",
+    "work": "Invention 6 — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=159",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-160",
+    "work": "Allegro — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=160",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-161",
+    "work": "Menuet — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=161",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-162",
+    "work": "Air — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=162",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-163",
+    "work": "Menuet I — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=163",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-164",
+    "work": "Menuet II (Trio) — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=164",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-165",
+    "work": "Air — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=165",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-166",
+    "work": "Allemande — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=166",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-167",
+    "work": "Passepied (et Menuet) — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=167",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-168",
+    "work": "Menuet (Trio) — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=168",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-169",
+    "work": "Sonatina — G. F. Handel (1685–1759) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=169",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-171",
+    "work": "Invention 9 — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=171",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-172",
+    "work": "Sinfonia 4 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=172",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-173",
+    "work": "Sinfonia 6 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=173",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-174",
+    "work": "Invention 12 — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=174",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-175",
+    "work": "Sinfonia 7 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=175",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-176",
+    "work": "Sinfonia 8 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=176",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-177",
+    "work": "Rondo in E-flat Major — C. P. E. Bach (1714–1788) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=177",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-185",
+    "work": "Sonate I, I - Allegro con brio — F. J. Haydn (1732–1809) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=185",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-186",
+    "work": "Sonate I, II - Menuetto — F. J. Haydn (1732–1809) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=186",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-187",
+    "work": "Sonate I, III - Presto — F. J. Haydn (1732–1809) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=187",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-191",
+    "work": "Rondo — I. J. Pleyel (1757–1831) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=191",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-192",
+    "work": "Rondo — J. Wanhal (1739–1813) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=192",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-199",
+    "work": "Sinfonia 9 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=199",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-200",
+    "work": "Sinfonia 11 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=200",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-202",
+    "work": "La Candeur — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=202",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-203",
+    "work": "l'Arabesque — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=203",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-204",
+    "work": "Sinfonia 5 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=204",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-205",
+    "work": "Sinfonia 10 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=205",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-206",
+    "work": "Sinfonia 13 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=206",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-207",
+    "work": "Sonatine — J. André (1741–1799) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=207",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-208",
+    "work": "Siciliano — A. E. Müller (1767–1817) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=208",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-209",
+    "work": "Das Wohltemperierte Clavier II, Fuga I — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=209",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-210",
+    "work": "Sonate II, I - Allegro moderato — F. J. Haydn (1732–1809) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=210",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-211",
+    "work": "Sonate II, II - Menuetto — F. J. Haydn (1732–1809) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=211",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-212",
+    "work": "Sonate II, III - Presto — F. J. Haydn (1732–1809) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=212",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-213",
+    "work": "Sinfonia 14 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=213",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-214",
+    "work": "Innocence — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=214",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-215",
+    "work": "Progrès — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=215",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-216",
+    "work": "Le Courant Limpide — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=216",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-217",
+    "work": "La Gracieuse — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=217",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-218",
+    "work": "La Pastorale — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=218",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-219",
+    "work": "La Petite Réunion — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=219",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-220",
+    "work": "La Chasse — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=220",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-221",
+    "work": "Tendre Fleur — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=221",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-222",
+    "work": "La Bergeronnette — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=222",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-223",
+    "work": "L'Adieu — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=223",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-224",
+    "work": "Consolation — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=224",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-225",
+    "work": "La Styrienne — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=225",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-227",
+    "work": "Ballade — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=227",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-228",
+    "work": "Douce Plainte — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=228",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-229",
+    "work": "La Babillarde — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=229",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-230",
+    "work": "Inquiétude — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=230",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-232",
+    "work": "Sonatine I - Allegro — F. Kuhlau (1786–1832) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=232",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-233",
+    "work": "Sonatine I - Andante — F. Kuhlau (1786–1832) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=233",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-234",
+    "work": "Sonatine I - Rondo — F. Kuhlau (1786–1832) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=234",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-236",
+    "work": "Second Ballade — F. Liszt (1811–1886) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=236",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-239",
+    "work": "Gigue in G Major — W. A. Mozart (1756–1791) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=239",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-241",
+    "work": "Sonata in C major (fragment) — W. A. Mozart (1756–1791) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=241",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-246",
+    "work": "Ases Tod — E. Grieg (1843–1907) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=246",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-254",
+    "work": "Fugue in C major — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=254",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-263",
+    "work": "The Entertainer — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=263",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-275",
+    "work": "Search-Light Rag — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=275",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-288",
+    "work": "Sonata No. 23 “Appassionata” (2nd Movement: Andante con moto) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=288",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-295",
+    "work": "Sonata No. 8 “Pathétique” (2nd Movement: Adagio cantabile) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=295",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-296",
+    "work": "Sonata No. 8 “Pathétique” (3rd Movement: Rondo) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=296",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-299",
+    "work": "Sonata No. 8 “Pathétique” (1st Movement: Grave, Allegro molto e con brio) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=299",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-314",
+    "work": "Romanzen — R. Schumann (1810–1856) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=314",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-316",
+    "work": "Das Wohltemperierte Clavier II, Praeludium II — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=316",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-335",
+    "work": "Peacherine Rag — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=335",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-341",
+    "work": "Doumka — P. I. Tchaikovsky (1840–1893) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=341",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-345",
+    "work": "Original Rags — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=345",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-352",
+    "work": "The Easy Winners — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=352",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-354",
+    "work": "Kinderscenen - Von fremden Ländern und Menschen — R. Schumann (1810–1856), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=354",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-355",
+    "work": "Kinderscenen - Curiose Geschichte — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution 3.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=355",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-356",
+    "work": "Piano Sonata in C Minor - KV. 457 (1st Movement) — W. A. Mozart (1756–1791) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=356",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-357",
+    "work": "Piano Sonata in C Minor - KV. 457 (2nd Movement) — W. A. Mozart (1756–1791) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=357",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-358",
+    "work": "Piano Sonata in C Minor - KV. 457 (3rd Movement) — W. A. Mozart (1756–1791) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=358",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-365",
+    "work": "Kinderscenen - Hasche-Mann — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution 3.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=365",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-366",
+    "work": "Kinderscenen - Bittendes Kind — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution 3.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=366",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-369",
+    "work": "The St. Louis Rag — T. Turpin (1873–1922) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=369",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-372",
+    "work": "Kinderscenen - Glückes genug — R. Schumann (1810–1856), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=372",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-374",
+    "work": "Kinderscenen - Wichtige Begebenheit — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution 3.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=374",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-378",
+    "work": "Aus meines Herzens Grunde (Chorale 1) — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=378",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-379",
+    "work": "Ich dank dir, lieber Herre — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=379",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-407",
+    "work": "Les Sauvages — J. P. Rameau (1683–1764) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=407",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-411",
+    "work": "Prelude: Op. 28, No. 1 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=411",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-414",
+    "work": "Les Tendres Plaintes — J. P. Rameau (1683–1764) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=414",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-420",
+    "work": "Fugues on the Magnificat III. 7. — J. Pachelbel (1653–1706) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=420",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-422",
+    "work": "Ballade number 4 — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=422",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-424",
+    "work": "Fugue in E-flat Major KV 153/375f — W. A. Mozart (1756–1791) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=424",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-425",
+    "work": "Fugue in G Minor KV 154/385k — W. A. Mozart (1756–1791) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=425",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-441",
+    "work": "Magnetic Rag — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=441",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-443",
+    "work": "The Harlem Rag — T. Turpin (1873–1922) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=443",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-445",
+    "work": "Prelude — A. Scriabin (1872–1915) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=445",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-446",
+    "work": "Marche funebre KV 453a — W. A. Mozart (1756–1791) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=446",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-447",
+    "work": "Fugue fragment Anh. 41 (375g) — W. A. Mozart (1756–1791) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=447",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-449",
+    "work": "Alice, Where Art Thou? — J. Ascher (1829–1869), Transcribed for the pianoforte by Joseph Ascher (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=449",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-463",
+    "work": "Bethena — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=463",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-465",
+    "work": "Sun Flower Slow Drag — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=465",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-467",
+    "work": "Sugar Cane — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=467",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-468",
+    "work": "Prelude: Op. 28, No. 4 ('Suffocation') — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=468",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-469",
+    "work": "Prelude: Op. 28, No. 6 — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=469",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-470",
+    "work": "Prelude: Op. 28, No. 7 — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=470",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-471",
+    "work": "Prelude: Op. 28, No. 15 — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=471",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-472",
+    "work": "Prelude: Op. 28, No. 20 — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=472",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-482",
+    "work": "Solace — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=482",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-483",
+    "work": "Valse Op. 64, No. 1 ('Minute Waltz') — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=483",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-484",
+    "work": "Etüde f-moll — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=484",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-485",
+    "work": "A Breeze From Alabama — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=485",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-486",
+    "work": "Nocturne 8 in Db Major — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=486",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-487",
+    "work": "Tambourin — J. P. Rameau (1683–1764) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=487",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-489",
+    "work": "Etüde As-Dur — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=489",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-493",
+    "work": "Petite Prélude No. 9 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=493",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-494",
+    "work": "Prelude: Op. 28, No. 2 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=494",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-496",
+    "work": "Eugenia — S. Joplin (1868–1917), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=496",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-497",
+    "work": "Symphony no. 5, Piano reduction — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=497",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-498",
+    "work": "Rondo A Capriccio — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=498",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-504",
+    "work": "Kinderscenen - Traümerei — R. Schumann (1810–1856) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=504",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-508",
+    "work": "Etüde a-moll — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=508",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-509",
+    "work": "Nocturne No. 19 in E minor — F. F. Chopin (1810–1849), Edited by Rafael Joseffy (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=509",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-511",
+    "work": "Walzer h-moll — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=511",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-519",
+    "work": "The Blue Danube Waltz (main theme) — J. Strauss Jr. (1825–1899), N. Kouremenos (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=519",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-535",
+    "work": "2. Intermezzo — J. Brahms (1833–1897) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=535",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-536",
+    "work": "Enchanted Island — S. C. Doonan (1952–), n/a (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=536",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-538",
+    "work": "Das Wohltemperierte Clavier I, Praeludium VI — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=538",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-545",
+    "work": "Das Wohltemperierte Clavier I, Praeludium X — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=545",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-546",
+    "work": "Das Wohltemperierte Clavier I, Fuga X — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=546",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-550",
+    "work": "Das Wohltemperierte Clavier I, Praeludium II — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=550",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-561",
+    "work": "Das Wohltemperierte Clavier I, Praeludium III — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=561",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-562",
+    "work": "Das Wohltemperierte Clavier I, Praeludium IV — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=562",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-563",
+    "work": "Das Wohltemperierte Clavier I, Praeludium VIII — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=563",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-569",
+    "work": "Das Wohltemperierte Clavier I, Fuga III — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=569",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-582",
+    "work": "Nocturne No. 1 in B-flat minor — F. F. Chopin (1810–1849), n/a (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=582",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-589",
+    "work": "Lied Ohne Worte - Opus 102, No. 3 — F. Mendelssohn-Bartholdy (1809–1847), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=589",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-592",
+    "work": "Lied Ohne Worte - Opus 53, No. 5 - Volkslied — F. Mendelssohn-Bartholdy (1809–1847), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=592",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-596",
+    "work": "Das Wohltemperierte Clavier I, Fuga IV — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=596",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-597",
+    "work": "Das Wohltemperierte Clavier I, Fuga VIII — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=597",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-600",
+    "work": "El Capitan — J. P. Sousa (1854–1932) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=600",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-604",
+    "work": "Das Wohltemperierte Clavier I, Praeludium XV — J. S. Bach (1685–1750), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=604",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-605",
+    "work": "Das Wohltemperierte Clavier I, Fuga XV — J. S. Bach (1685–1750), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=605",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-606",
+    "work": "Amaryllis — A. H. Pease (1838–1882) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=606",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-608",
+    "work": "Hail to the Spirit of Liberty — J. P. Sousa (1854–1932), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=608",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-609",
+    "work": "Hands across the Sea — J. P. Sousa (1854–1932), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=609",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-610",
+    "work": "Thunder and Lightning — J. Strauss Jr. (1825–1899) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=610",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-611",
+    "work": "Les Deux Anges — J. Blumenthal (1829–1908), Variations by A. W. Berg (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=611",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-613",
+    "work": "Sonate Opus KV 331 - Menuetto — W. A. Mozart (1756–1791), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=613",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-614",
+    "work": "Sonate Opus KV 331 - Tema — W. A. Mozart (1756–1791), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=614",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-615",
+    "work": "Sonate Opus KV 331 - Variation 1 — W. A. Mozart (1756–1791), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=615",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-616",
+    "work": "Sonate Opus KV 331 - Variation 2 — W. A. Mozart (1756–1791), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=616",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-617",
+    "work": "Sonate Opus KV 331 - Variation 3 — W. A. Mozart (1756–1791), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=617",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-618",
+    "work": "Sonate Opus KV 331 - Variation 4 — W. A. Mozart (1756–1791), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=618",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-619",
+    "work": "Sonate Opus KV 331 - Variation 5 — W. A. Mozart (1756–1791), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=619",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-620",
+    "work": "Sonate Opus KV 331 - Variation 6 — W. A. Mozart (1756–1791), n/a (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=620",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-623",
+    "work": "The Gladiator — J. P. Sousa (1854–1932) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=623",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-624",
+    "work": "The Invincible Eagle — J. P. Sousa (1854–1932) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=624",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-625",
+    "work": "The Liberty Bell March — J. P. Sousa (1854–1932) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=625",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-626",
+    "work": "The Stars and Stripes Forever — J. P. Sousa (1854–1932) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=626",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-634",
+    "work": "King Cotton — J. P. Sousa (1854–1932) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=634",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-635",
+    "work": "Carmen - Prelude — G. Bizet (1838–1875) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=635",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-647",
+    "work": "Album pour la jeunesse - 1.Mélodie — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=647",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-649",
+    "work": "Entr'acte — G. Bizet (1838–1875) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=649",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-650",
+    "work": "Album pour la jeunesse - 2.Marche militaire — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=650",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-651",
+    "work": "Album pour la jeunesse - 3.Chanson fredonnée — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=651",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-653",
+    "work": "Album pour la jeunesse - 5.Petite pièce — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=653",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-655",
+    "work": "Album pour la jeunesse - 8.Le cavalier sauvage — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=655",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-656",
+    "work": "Lace — R. Kumar (1988–) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=656",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-657",
+    "work": "Prelude — R. Kumar (1988–) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=657",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-658",
+    "work": "Valse — R. Kumar (1988–) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=658",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-659",
+    "work": "Album pour la jeunesse - 10.Le gai laboureur — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=659",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-661",
+    "work": "Jumelle qui joue — R. Kumar (1988–) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=661",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-662",
+    "work": "Album pour la jeunesse - 13.Mai, cher Mai, ... — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=662",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-663",
+    "work": "Album pour la jeunesse - 18.Chant des moissonneurs — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=663",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-670",
+    "work": "Das Wohltemperierte Clavier I, Praeludium XX — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=670",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-675",
+    "work": "Album pour la jeunesse - 9.Chanson populaire — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=675",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-676",
+    "work": "Album pour la jeunesse - 16.Premier chagrin — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=676",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-677",
+    "work": "La Dorset — Spagnoletti (?–?) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=677",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-678",
+    "work": "Ladoiska — Kruetzer (?–?) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=678",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-679",
+    "work": "La Native — Anonymous (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=679",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-680",
+    "work": "Les Graces — Anonymous (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=680",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-681",
+    "work": "Les Lanciers — Yaniewicz (1762–1848) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=681",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-682",
+    "work": "The Countess of Farnham's Waltz — Spagnoletti (?–?) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=682",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-687",
+    "work": "Album pour la jeunesse - 6.Pauvre orpheline — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=687",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-688",
+    "work": "Album pour la jeunesse - 36.Chant de marins italiens — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=688",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-690",
+    "work": "Musicalisches Opfer, Ricercare — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=690",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-691",
+    "work": "Album pour la jeunesse - 7.Chanson du chasseur — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=691",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-692",
+    "work": "Album pour la jeunesse - 32.Sheherazade — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=692",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-693",
+    "work": "Die Kunst der Fuge, Contrapunctus I — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=693",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-702",
+    "work": "Musikalisches Opfer, Ricercare a 6 — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=702",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-727",
+    "work": "A Child's Wish — G. K. Iliev (1977–) (Mutopia Project; Creative Commons Attribution 3.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=727",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-743",
+    "work": "Etüde c-moll — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=743",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-746",
+    "work": "Die Kunst der Fuge, Contrapunctus XII - Canon alla Ottava — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=746",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-748",
+    "work": "Die Kunst der Fuge, Contrapunctus XIII - Canon alla Duodecima — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=748",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-749",
+    "work": "Die Kunst der Fuge, Contrapunctus XIV - Canon alla Decima — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=749",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-750",
+    "work": "Die Kunst der Fuge, Contrapunctus XV - Canon per Augmentationem in Contrario Motu — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=750",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-757",
+    "work": "Etüde f-moll — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=757",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-758",
+    "work": "Ungarische Melodie — F. Schubert (1797–1828) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=758",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-759",
+    "work": "Préludes opus 16 - 1. — A. Scriabin (1872–1915) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=759",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-760",
+    "work": "Préludes opus 16 - 2. — A. Scriabin (1872–1915) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=760",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-761",
+    "work": "Préludes opus 16 - 3. — A. Scriabin (1872–1915) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=761",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-762",
+    "work": "Préludes opus 16 - 4. — A. Scriabin (1872–1915) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=762",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-763",
+    "work": "Préludes opus 16 - 5. — A. Scriabin (1872–1915) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=763",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-767",
+    "work": "Air — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=767",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-776",
+    "work": "Sonata No. 20 (1st Movement: Allegro, ma non troppo) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=776",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-777",
+    "work": "Sonata No. 20 (2nd Movement: Tempo di Menuetto) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=777",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-778",
+    "work": "Sonata No. 5 (1st Movement: Allegro molto e con brio) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=778",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-779",
+    "work": "Sonata No. 5 (3rd Movement: Prestissimo) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=779",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-781",
+    "work": "Wedding-day at Troldhaugen — E. Grieg (1843–1907), Louis Oesterle (1854 - 1932) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=781",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-782",
+    "work": "Album pour la jeunesse - 4.Un choral — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=782",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-783",
+    "work": "Album pour la jeunesse - 11.Sicilienne — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=783",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-784",
+    "work": "Album pour la jeunesse - 12.Le Père Fouettard — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=784",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-786",
+    "work": "Album pour la jeunesse - 14.Petite Etude — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=786",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-787",
+    "work": "Album pour la jeunesse - 25.Echos du Théâtre — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=787",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-788",
+    "work": "Album pour la jeunesse - 26. * * * * * — R. Schumann (1810–1856) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=788",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-794",
+    "work": "Waltz No. 15 — J. Brahms (1833–1897) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=794",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-803",
+    "work": "The Seasons: August — P. I. Tchaikovsky (1840–1893) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=803",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-805",
+    "work": "Das Wohltemperierte Clavier I, Fuga XVI — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=805",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-806",
+    "work": "Das Wohltemperierte Clavier I, Praeludium XVI — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=806",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-807",
+    "work": "Das Wohltemperierte Clavier I, Fuga XX — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=807",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-815",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 1 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=815",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-816",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 10 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=816",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-817",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 11 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=817",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-818",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 12 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=818",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-819",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 13 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=819",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-820",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 2 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=820",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-821",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 22 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=821",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-822",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 23 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=822",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-823",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 3 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=823",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-824",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 31 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=824",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-825",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 33 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=825",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-826",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 4 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=826",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-827",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 5 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=827",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-828",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 6 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=828",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-829",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 7 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=829",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-830",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 8 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=830",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-831",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 9 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=831",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-832",
+    "work": "Traditioner af Swenska Folk-Dansar, 2nd part, nr 15 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=832",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-834",
+    "work": "Little Toy Lost — A. Sidwell (1989–) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=834",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-836",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 14 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=836",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-837",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 15 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=837",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-838",
+    "work": "Traditioner af Swenska Folk-Dansar, 2nd part, nr 27 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=838",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-839",
+    "work": "Traditioner af Swenska Folk-Dansar, 2nd part, nr 30 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=839",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-840",
+    "work": "Traditioner af Swenska Folk-Dansar, 2nd part, nr 31 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=840",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-841",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 14 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=841",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-842",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 18 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=842",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-843",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 2 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=843",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-844",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 21 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=844",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-845",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 22 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=845",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-846",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 23 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=846",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-847",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 24 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=847",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-848",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 3 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=848",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-853",
+    "work": "Ellen's Song — O. Comeau (1924–1971) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=853",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-857",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 16 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=857",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-858",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 17 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=858",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-859",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 18 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=859",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-860",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 19 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=860",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-861",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 20 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=861",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-862",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 26 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=862",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-863",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 27 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=863",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-864",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 29 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=864",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-865",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 30 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=865",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-866",
+    "work": "Traditioner af Swenska Folk-Dansar, 1st part, nr 34 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=866",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-867",
+    "work": "Traditioner af Swenska Folk-Dansar, 2nd part, nr 36 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=867",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-868",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 1 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=868",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-869",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 11 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=869",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-870",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 12 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=870",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-871",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 13 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=871",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-872",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 15 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=872",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-873",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 16 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=873",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-874",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 17 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=874",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-875",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 19 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=875",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-876",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 34 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=876",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-877",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 4 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=877",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-878",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 5 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=878",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-879",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 6 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=879",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-880",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 7 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=880",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-881",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 8 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=881",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-882",
+    "work": "Traditioner af Swenska Folk-Dansar, 3rd part, nr 9 — Traditional (Mutopia Project; Creative Commons Attribution 2.5)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=882",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-892",
+    "work": "La Bayadère - Acte II — L. A. Minkus (1826–1917), arr. Laurence Sardain (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=892",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-897",
+    "work": "Giselle - Pas de deux (1er Acte) — A. Adam (1803–1856), arr. Laurence Sardain (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=897",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-898",
+    "work": "Rumores de la Caleta — I. M. F. Albéniz (1860–1909) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=898",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-904",
+    "work": "Menuett Op. WoO 82 — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=904",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-906",
+    "work": "Sonata No. 27 (1st Movement: Mit Lebhaftigkeit) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=906",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-909",
+    "work": "Sonata No. 27 (2nd Movement: Nicht zu geschwind) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=909",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-910",
+    "work": "Miniature No.2 — A. Sidwell (1989–) (Mutopia Project; Creative Commons Attribution-ShareAlike 2.5)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=910",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-912",
+    "work": "Sonata No. 19 (1st Movement: Andante) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=912",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-913",
+    "work": "Sonata No. 19 (2nd Movement: Rondo-Allegro) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=913",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-914",
+    "work": "Etüde C-Dur — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=914",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-921",
+    "work": "Prelude: Op. 28, No. 4 (from Peters source) — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=921",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-926",
+    "work": "Etüde Ges-Dur — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=926",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-931",
+    "work": "Für Elise — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=931",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-934",
+    "work": "Six Variations — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=934",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-937",
+    "work": "Sonata No. 23 “Appassionata” (3rd Movement: Allegro, ma non troppo - Presto) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=937",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-939",
+    "work": "Prelude Op. WoO 55 — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=939",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-942",
+    "work": "The Dying Swan — L. M. Gottschalk (1829–1869) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=942",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-951",
+    "work": "Lani — R. Kumar (1988–) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=951",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-952",
+    "work": "Unfixed — R. Kumar (1988–) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=952",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-955",
+    "work": "Sonata No. 25 (1st Movement: Presto alla tedesca) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=955",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-956",
+    "work": "Sonata No. 25 (2nd Movement: Andante) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=956",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-957",
+    "work": "Sonata No. 25 (3rd Movement: Vivace) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=957",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-963",
+    "work": "Das Wohltemperierte Clavier I, Praeludium XI — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=963",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-964",
+    "work": "Das Wohltemperierte Clavier I, Fuga XI — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=964",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-972",
+    "work": "EL PERDÓN DE PLOËRMEL — J. F. F. Burgmüller (1806–1874) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=972",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-973",
+    "work": "Variations d'automne — S. Magnenat (1980–) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=973",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-974",
+    "work": "Das Wohltemperierte Clavier II, Praeludium VI — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=974",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-988",
+    "work": "Das Wohltemperierte Clavier I, Fuga VI — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=988",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-989",
+    "work": "Inquiétude — F. Mendelssohn-Bartholdy (1809–1847) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=989",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-992",
+    "work": "Sonata No. 6 (1st Movement: Allegro) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=992",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-993",
+    "work": "Sonata No. 6 (2nd Movement: Allegretto) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=993",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-994",
+    "work": "Sonata No. 6 (3rd Movement: Presto) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=994",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-998",
+    "work": "Sonata Facile - First movement — W. A. Mozart (1756–1791) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=998",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1004",
+    "work": "Flat — R. Kumar (1988–) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1004",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1006",
+    "work": "Chorale setting \"Gib dich zufrieden und sei stille\" in F major — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1006",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1007",
+    "work": "Sonata Facile - Second movement — W. A. Mozart (1756–1791) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1007",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1009",
+    "work": "Chorale setting \"Gib dich zufrieden und sei stille\" in D minor — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1009",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1010",
+    "work": "Chorale setting \"Gib dich zufrieden und sei stille\" in E minor — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1010",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1013",
+    "work": "Polonaise in F major — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1013",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1014",
+    "work": "Minuet in B-flat major — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1014",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1015",
+    "work": "Polonaise in F major — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1015",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1016",
+    "work": "Polonaise in G minor — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1016",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1022",
+    "work": "Sonata No. 32 (1st Movement) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1022",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1023",
+    "work": "Moments Musicaux No. 3 in F Minor — F. Schubert (1797–1828) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1023",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1024",
+    "work": "Seven Variations - Opus WoO 78 — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1024",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1027",
+    "work": "Sonata Facile - Third movement — W. A. Mozart (1756–1791) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1027",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1028",
+    "work": "Prelude — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1028",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1029",
+    "work": "Etude — A. Scriabin (1872–1915) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1029",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1045",
+    "work": "Das Wohltemperierte Clavier I, Praeludium XVII — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1045",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1057",
+    "work": "Gondellied — D. Pejacsevich (1885–1923) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1057",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1137",
+    "work": "Sonata No. 24 (1st Movement: Adagio cantabile) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1137",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1161",
+    "work": "Sonata No. 24 (2nd Movement: Allegro vivace) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1161",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1171",
+    "work": "The Seasons: January — P. I. Tchaikovsky (1840–1893) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1171",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1192",
+    "work": "Impromptu in c-moll — F. Schubert (1797–1828) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1192",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1193",
+    "work": "Impromptu in Ges-dur — F. Schubert (1797–1828) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1193",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1194",
+    "work": "Impromptu in f-moll — F. Schubert (1797–1828) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1194",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1195",
+    "work": "Impromptu in As-dur — F. Schubert (1797–1828) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1195",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1211",
+    "work": "Sonata No. 1 (1st Movement: Allegro) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1211",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1213",
+    "work": "La Traviata - Preludio — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1213",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1214",
+    "work": "La Traviata - N1 Introduzione — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1214",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1215",
+    "work": "La Traviata - N2 Brindisi — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1215",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1216",
+    "work": "La Traviata - N3 Valzer e duetto — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1216",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1217",
+    "work": "La Traviata - N4 Streta dell'introduzione — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1217",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1218",
+    "work": "La Traviata - N5 Scena ed aria — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1218",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1267",
+    "work": "Vase — R. Kumar (1988–) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1267",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1271",
+    "work": "Fugue sur le nom de Bach — N. Rimsky-Korsakov (1844–1908) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1271",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1276",
+    "work": "Sonata No. 1 (3rd Movement: Allegretto) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1276",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1277",
+    "work": "Sonata No. 1 (4th Movement: Prestissimo) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1277",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1321",
+    "work": "The Washington Post — J. P. Sousa (1854–1932) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1321",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1328",
+    "work": "Das Wohltemperierte Clavier II, Fuga IX — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1328",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1375",
+    "work": "Das Wohltemperierte Clavier I, Fuga XVII — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1375",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1379",
+    "work": "Piano Sonata in C Major - KV 309 (1st Part) — W. A. Mozart (1756–1791) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1379",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1382",
+    "work": "Impromptu — N. Rimsky-Korsakov (1844–1908) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1382",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1389",
+    "work": "Goldberg Variations - 15 — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1389",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1398",
+    "work": "The Seasons: February — P. I. Tchaikovsky (1840–1893) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1398",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1399",
+    "work": "La Traviata - N6 Scena ed aria — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1399",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1400",
+    "work": "La Traviata - N7 Scena e duetto — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1400",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1401",
+    "work": "La Traviata - N8 Scena e duettino — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1401",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1402",
+    "work": "La Traviata - N9 Scena ed aria — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1402",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1410",
+    "work": "Transit of Venus March — J. P. Sousa (1854–1932) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1410",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1425",
+    "work": "Novellette — N. Rimsky-Korsakov (1844–1908) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1425",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1450",
+    "work": "Toccatina — C. J. Brown (1947–2016) (Mutopia Project; Creative Commons Attribution 3.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1450",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1476",
+    "work": "BWV 1006a - Prélude — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1476",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1477",
+    "work": "BWV 1006a - Loure — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1477",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1480",
+    "work": "BWV 1006a - Gavotte en Rondeau — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1480",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1481",
+    "work": "BWV 1006a - Menuet I — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1481",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1482",
+    "work": "BWV 1006a - Menuet II — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1482",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1483",
+    "work": "BWV 1006a - Bourrée — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1483",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1484",
+    "work": "BWV 1006a - Gigue — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1484",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1496",
+    "work": "Das Wohltemperierte Clavier I, Praeludium V — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1496",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1509",
+    "work": "Sonata No. 17 (1st Movement: Largo - Allegro) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1509",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1510",
+    "work": "Sonata No. 17 (2nd Movement: Adagio) — L. V. Beethoven (1770–1827) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1510",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1511",
+    "work": "La Traviata - N10 Finale del Atto II — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1511",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1512",
+    "work": "La Traviata - N11 Coro di zingari — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1512",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1513",
+    "work": "La Traviata - N12 Coro di mattadori spagnuoli — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1513",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1514",
+    "work": "La Traviata - N13 Seguito del Finale II — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1514",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1515",
+    "work": "La Traviata - N14 Largo del Finale II — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1515",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1516",
+    "work": "La Traviata - N15 Scena ed Aria — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1516",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1517",
+    "work": "La Traviata - N16 Coro baccanale — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1517",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1518",
+    "work": "La Traviata - N17 Scena e duetto — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1518",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1519",
+    "work": "La Traviata - N18 Scena finale — G. Verdi (1813–1901), Transcripción de N. Toledo (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1519",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1530",
+    "work": "Scherzino — N. Rimsky-Korsakov (1844–1908) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1530",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1540",
+    "work": "Elite Syncopations — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1540",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1541",
+    "work": "Something Doing — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1541",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1542",
+    "work": "The Strenuous Life — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1542",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1543",
+    "work": "Wall Street Rag — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1543",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1545",
+    "work": "Trois Marches militaires — F. Schubert (1797–1828) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1545",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1546",
+    "work": "Trois Marches militaires — F. Schubert (1797–1828) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1546",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1547",
+    "work": "Trois Marches militaires — F. Schubert (1797–1828) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1547",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1551",
+    "work": "Impromptu in Es-dur — F. Schubert (1797–1828) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1551",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1552",
+    "work": "Impromptu in As-dur — F. Schubert (1797–1828) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1552",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1563",
+    "work": "Das Wohltemperierte Clavier I, Fuga XXIV — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1563",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1590",
+    "work": "Nocturne — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1590",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1600",
+    "work": "Etude — N. Rimsky-Korsakov (1844–1908) (Mutopia Project; Creative Commons Attribution-ShareAlike 3.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1600",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1612",
+    "work": "Minuet in A minor — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1612",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1613",
+    "work": "Minuet in C minor — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1613",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1614",
+    "work": "March in E-flat major — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1614",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1615",
+    "work": "Polonaise in D minor — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1615",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1616",
+    "work": "Chorale prelude “Wer nur den lieben Gott läßt walten” — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1616",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1622",
+    "work": "Aria “Warum betrübst du dich” — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1622",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1628",
+    "work": "Lualåt (The Mountaineer's Song) — E. Grieg (1843–1907) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1628",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1647",
+    "work": "Consolation, S.172 No.3 — F. Liszt (1811–1886) (Mutopia Project; Creative Commons Attribution 3.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1647",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1650",
+    "work": "Consolation, S.172 No.4 — F. Liszt (1811–1886) (Mutopia Project; Creative Commons Attribution 3.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1650",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1653",
+    "work": "Scherzo in E minor — F. Mendelssohn-Bartholdy (1809–1847) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1653",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1654",
+    "work": "Consolation, S.172 No.1 — F. Liszt (1811–1886) (Mutopia Project; Creative Commons Attribution 3.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1654",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1679",
+    "work": "Lieder ohne Worte: Venetianisches Gondellied, Op.19 No.6 — F. Mendelssohn-Bartholdy (1809–1847) (Mutopia Project; Creative Commons Attribution 3.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1679",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1682",
+    "work": "Mazurka: Op.33, No.1 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution 3.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1682",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1687",
+    "work": "Mazurka: Op.6, No.1 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution 3.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1687",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1689",
+    "work": "Impromptu in f-moll — F. Schubert (1797–1828) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1689",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1693",
+    "work": "Fantaisie-Impromptu — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1693",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1721",
+    "work": "Impromptu in B-dur — F. Schubert (1797–1828) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1721",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1727",
+    "work": "Sonate 2 b-moll — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1727",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1741",
+    "work": "Lieder ohne Worte: Venetianisches Gondellied, Op.30 No.6 — F. Mendelssohn-Bartholdy (1809–1847) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1741",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1744",
+    "work": "Lieder ohne Worte, Op.85 No.1 — F. Mendelssohn-Bartholdy (1809–1847) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1744",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1776",
+    "work": "Prelude — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1776",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1777",
+    "work": "Première Arabesque — C. Debussy (1862–1918) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1777",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1778",
+    "work": "Suite Bergamasque: Clair de Lune — C. Debussy (1862–1918) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1778",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1779",
+    "work": "Prelude — A. Scriabin (1872–1915) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1779",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1791",
+    "work": "Praeludium IX — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1791",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1806",
+    "work": "March of the Wooden Soldiers — P. I. Tchaikovsky (1840–1893) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1806",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1888",
+    "work": "In the Hall of the Mountain King — E. Grieg (1843–1907), Edvard Grieg (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1888",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1892",
+    "work": "Night on Bald Mountain — M. Mussorgsky (1839–1881), Константин Чернов (Mutopia Project; Creative Commons Attribution 3.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1892",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1895",
+    "work": "Trois Nouvelles Etudes, No. 1 F Minor — F. F. Chopin (1810–1849) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1895",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1899",
+    "work": "Pineapple Rag — S. Joplin (1868–1917) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1899",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1941",
+    "work": "Das Wohltemperierte Clavier I, Fuga II — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1941",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1955",
+    "work": "Nocturne No. 3 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1955",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1957",
+    "work": "Prelude in Lydian Mode — A. V. Stanchinsky (1888–1914) (Mutopia Project; Creative Commons Attribution 4.0)",
+    "status": "cc-by",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1957",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1958",
+    "work": "Prelude Op. 23, No. 1 — S. Rachmaninoff (1873–1943) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1958",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1959",
+    "work": "Première Ballade — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1959",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1960",
+    "work": "Prelude Op. 23, No. 2 — S. Rachmaninoff (1873–1943) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1960",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1990",
+    "work": "Prelude Op. 23, No. 3 — S. Rachmaninoff (1873–1943) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1990",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1993",
+    "work": "Prelude Op. 23, No. 4 — S. Rachmaninoff (1873–1943) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1993",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1994",
+    "work": "Deuxième Arabesque — C. Debussy (1862–1918) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1994",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-1996",
+    "work": "Prelude Op. 23, No. 6 — S. Rachmaninoff (1873–1943) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1996",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2001",
+    "work": "Prelude Op. 23, No. 5 — S. Rachmaninoff (1873–1943) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2001",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2002",
+    "work": "Prélude 4: Les sons et les parfums tournent dans l'air du soir — C. Debussy (1862–1918) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2002",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2009",
+    "work": "Gott, wie gross ist deine Güte — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2009",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2012",
+    "work": "Possum And Taters — C. Hunter (1876–1906) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2012",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2014",
+    "work": "Troldtog (March of the Dwarfs) — E. Grieg (1843–1907) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2014",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2020",
+    "work": "Son Binocle — E. Satie (1866–1925) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2020",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2021",
+    "work": "Sa Taille — E. Satie (1866–1925) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2021",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2022",
+    "work": "Danse maigre — E. Satie (1866–1925) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2022",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2023",
+    "work": "Españaña — E. Satie (1866–1925) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2023",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2024",
+    "work": "Tyrolienne turque — E. Satie (1866–1925) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2024",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2025",
+    "work": "Celle qui parle trop — E. Satie (1866–1925) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2025",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2026",
+    "work": "Le porteur de grosses pierres — E. Satie (1866–1925) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2026",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2027",
+    "work": "Regrets des Enfermés (Janas et Latude) — E. Satie (1866–1925) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2027",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2029",
+    "work": "Ses Jambes — E. Satie (1866–1925) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2029",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2032",
+    "work": "Morning Prayer — P. I. Tchaikovsky (1840–1893) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2032",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2033",
+    "work": "Prelude in C# minor — S. Rachmaninoff (1873–1943) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2033",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2034",
+    "work": "Fantasy in D minor — W. A. Mozart (1756–1791) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2034",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2035",
+    "work": "Gnossienne No. 1 — E. Satie (1866–1925) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2035",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2049",
+    "work": "Das Wohltemperierte Clavier I, Praeludium 24 — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2049",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2052",
+    "work": "Prelude Op. 23, No. 9 — S. Rachmaninoff (1873–1943) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2052",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2057",
+    "work": "Prelude Op. 23, No. 8 — S. Rachmaninoff (1873–1943) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2057",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2058",
+    "work": "Prelude Op. 23, No. 10 — S. Rachmaninoff (1873–1943) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2058",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2060",
+    "work": "160 Eight-Measure Exercises, No. 1 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2060",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2061",
+    "work": "160 Eight-Measure Exercises, No. 2 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2061",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2062",
+    "work": "160 Eight-Measure Exercises, No. 3 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2062",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2063",
+    "work": "160 Eight-Measure Exercises, No. 4 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2063",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2066",
+    "work": "160 Eight-Measure Exercises, No. 5 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2066",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2067",
+    "work": "160 Eight-Measure Exercises, No. 6 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2067",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2068",
+    "work": "160 Eight-Measure Exercises, No. 7 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2068",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2069",
+    "work": "160 Eight-Measure Exercises, No. 8 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2069",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2070",
+    "work": "Sonata No. 1 (2nd Movement: Adagio) — L. V. Beethoven (1770–1827) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2070",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2072",
+    "work": "160 Eight-Measure Exercises, No. 9 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2072",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2073",
+    "work": "160 Eight-Measure Exercises, No. 10 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2073",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2076",
+    "work": "160 Eight-Measure Exercises, No. 11 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2076",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2077",
+    "work": "160 Eight-Measure Exercises, No. 12 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2077",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2078",
+    "work": "160 Eight-Measure Exercises, No. 13 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2078",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2079",
+    "work": "160 Eight-Measure Exercises, No. 14 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2079",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2080",
+    "work": "Old French Song — P. I. Tchaikovsky (1840–1893) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2080",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2081",
+    "work": "160 Eight-Measure Exercises, No. 15 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2081",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2082",
+    "work": "160 Eight-Measure Exercises, No. 16 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2082",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2083",
+    "work": "160 Eight-Measure Exercises, No. 17 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2083",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2084",
+    "work": "160 Eight-Measure Exercises, No. 18 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2084",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2085",
+    "work": "160 Eight-Measure Exercises, No. 19 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2085",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2088",
+    "work": "Keyboard Sonata in D Major — D. Scarlatti (1685–1757) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2088",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2092",
+    "work": "Les étoiles d'or, No. 1 Valse — L. Streabbog (J. L. Gobbaerts) (1835–1886) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2092",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2104",
+    "work": "Keyboard Sonata in G Major — D. Scarlatti (1685–1757) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2104",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2106",
+    "work": "Ermuntre dich, mein schwacher Geist — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2106",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2126",
+    "work": "Ach, was soll ich Sünder machen — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2126",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2130",
+    "work": "Gnossienne No. 2 — E. Satie (1866–1925) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2130",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2131",
+    "work": "Gnossienne No. 3 — E. Satie (1866–1925) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2131",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2132",
+    "work": "Enfantillages Pittoresques — E. Satie (1866–1925) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2132",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2137",
+    "work": "Nocturne — J. Field (1782–1837) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2137",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2146",
+    "work": "50 Melodische Übungsstücke, No. 1 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2146",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2147",
+    "work": "50 Melodische Übungsstücke, No. 2 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2147",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2148",
+    "work": "50 Melodische Übungsstücke, No. 3 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2148",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2149",
+    "work": "50 Melodische Übungsstücke, No. 4 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2149",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2150",
+    "work": "50 Melodische Übungsstücke, No. 5 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2150",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2151",
+    "work": "50 Melodische Übungsstücke, No. 6 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2151",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2152",
+    "work": "50 Melodische Übungsstücke, No. 7 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2152",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2153",
+    "work": "50 Melodische Übungsstücke, No. 8 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2153",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2154",
+    "work": "50 Melodische Übungsstücke, No. 9 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2154",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2155",
+    "work": "In May — F. Behr (1837–1898) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2155",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2156",
+    "work": "The Harebell — W. Smallwood (1831–1897) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2156",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2159",
+    "work": "Prélude 3 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2159",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2160",
+    "work": "Prélude 5 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2160",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2162",
+    "work": "Romanian Folk Dance No.2 - Peasant Costume — B. Bartók (1881–1945) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2162",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2163",
+    "work": "Toccatina — C.-V. Alkan (1813–1888) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2163",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2164",
+    "work": "Waltz No. 10 — J. Brahms (1833–1897) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2164",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2166",
+    "work": "Prélude 8 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2166",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2168",
+    "work": "Prélude 9 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2168",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2171",
+    "work": "Prélude 10 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2171",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2172",
+    "work": "Prélude 11 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2172",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2173",
+    "work": "Prélude 12 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2173",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2174",
+    "work": "Prélude 13 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2174",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2175",
+    "work": "Prélude 14 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2175",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2176",
+    "work": "Prélude 16 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2176",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2177",
+    "work": "50 Melodische Übungsstücke, No. 10 — C. Czerny (1791–1857) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2177",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2190",
+    "work": "Prélude 17 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2190",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2191",
+    "work": "Prélude 18 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2191",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2192",
+    "work": "Prélude 19 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2192",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2194",
+    "work": "Albumblatt in E minor — E. Grieg (1843–1907) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2194",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2195",
+    "work": "Prélude 21 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2195",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2214",
+    "work": "Prélude 22 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2214",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2220",
+    "work": "Prélude 23 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2220",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2221",
+    "work": "Prélude 24 — F. F. Chopin (1810–1849) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2221",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2223",
+    "work": "Das Wohltemperierte Clavier II, Praeludium I — J. S. Bach (1685–1750) (Mutopia Project; Public Domain)",
+    "status": "public-domain",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2223",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2225",
+    "work": "Das Wohltemperierte Clavier I, Fuga XII — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2225",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2226",
+    "work": "Das Wohltemperierte Clavier I, Praeludium XII — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2226",
+    "verifiedDate": "2026-10-03"
+  },
+  {
+    "licenceId": "mutopia-2233",
+    "work": "Das Wohltemperierte Clavier I, Fuga V — J. S. Bach (1685–1750) (Mutopia Project; Creative Commons Attribution-ShareAlike 4.0)",
+    "status": "cc-by-sa",
+    "sourceUrl": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2233",
+    "verifiedDate": "2026-10-03"
   }
 ]

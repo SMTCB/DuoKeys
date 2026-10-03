@@ -17,7 +17,7 @@
  *
  * Run: npm run content:build:chords (also chained into npm run content:build)
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, cpSync, rmSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -27,7 +27,7 @@ import { generateChordCatalogue } from '../../src/core/content/chordCatalogue';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const P = (p: string): string => resolve(root, p);
 
-const LICENCE_IDS = ['duokeys-original-chord-catalogue', 'free-midi-chords-progressions'];
+const LICENCE_IDS = ['duokeys-original-chord-catalogue', 'free-midi-chords-progressions', 'free-midi-chords-style-midi'];
 
 function fail(message: string): never {
   console.error(`content:build:chords — ${message}`);
@@ -53,7 +53,11 @@ function main(): void {
     const catalogue = generateChordCatalogue();
     const outPath = P('public/content/chords/index.json');
     mkdirSync(dirname(outPath), { recursive: true });
-    writeFileSync(outPath, JSON.stringify(catalogue, null, 2));
+    writeFileSync(outPath, JSON.stringify(catalogue));
+
+    // The rhythmic style files (FR-STU-015), published as-is for the browser to fetch and parse.
+    rmSync(P('public/content/chords/styles'), { recursive: true, force: true });
+    cpSync(P('content/chord-styles'), P('public/content/chords/styles'), { recursive: true });
 
     console.log(
       `content:build:chords — wrote ${catalogue.chords.length} chords + ${catalogue.progressions.length} progressions -> public/content/chords/index.json`,

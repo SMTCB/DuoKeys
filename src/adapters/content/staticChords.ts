@@ -21,3 +21,11 @@ export function loadChordCatalogue(): Promise<ChordIndex> {
   });
   return cataloguePromise;
 }
+
+/** FR-STU-015 — the bytes of one rhythmic style file (path from styleFilePath). undefined if it is not there. */
+export async function loadChordStyleBytes(stylePath: string): Promise<Uint8Array | undefined> {
+  const url = `/content/chords/styles/${stylePath.split('/').map(encodeURIComponent).join('/')}`;
+  const res = await fetch(url);
+  if (!res.ok) return undefined;
+  return new Uint8Array(await res.arrayBuffer());
+}
