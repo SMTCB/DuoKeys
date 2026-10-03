@@ -3,6 +3,8 @@
 // this links straight into `/studio/play/[arrangementId]` — no quest map.
 // US-3.15 adds the "want to learn / learning / learned" repertoire control
 // (TA-DAT-007) — an adult-curated list, distinct from progression.
+// US-3.21 — pieces drawn as picture-led rows; the status control is a row of
+// 44px toggle pills, ticked when on (aria-pressed), so colour is not the only cue.
 
 'use client';
 
@@ -14,10 +16,10 @@ import type { LibraryStatus } from '../../core/data/library';
 import { useSessionStore } from '../../runtime/stores/sessionStore';
 import { useLibraryStore } from '../../runtime/stores/libraryStore';
 import { PageShell } from '../../ui/shared/PageShell';
-import { Card } from '../../ui/shared/Card';
+import { StatusNote } from '../../ui/shared/StatusNote';
 import { ActionCard } from '../../ui/shared/ActionCard';
-import { Button } from '../../ui/shared/Button';
 import { SyncPanel } from '../../ui/studio/SyncPanel';
+import css from '../../ui/shared/ListRow.module.css';
 
 const STATUS_LABEL: Record<LibraryStatus, string> = {
   wantToLearn: 'Want to learn',
@@ -32,21 +34,22 @@ function LibraryControl({ profileId, arrangementId }: { profileId: string; arran
   const clearStatus = useLibraryStore((s) => s.clearStatus);
 
   return (
-    <div style={{ display: 'flex', gap: '0.4rem' }}>
+    <div className={css.actions} role="group" aria-label="Where this piece is in your repertoire">
       {STATUSES.map((candidate) => (
-        <Button
+        <button
           key={candidate}
-          accent="indigo"
-          variant={status === candidate ? 'primary' : 'secondary'}
-          style={{ padding: '0.35rem 0.8rem', fontSize: '0.85rem' }}
+          type="button"
+          className={css.toggle}
+          aria-pressed={status === candidate}
           onClick={() =>
             void (status === candidate
               ? clearStatus(profileId, arrangementId)
               : setStatus(profileId, arrangementId, candidate))
           }
         >
+          {status === candidate ? '✓ ' : ''}
           {STATUS_LABEL[candidate]}
-        </Button>
+        </button>
       ))}
     </div>
   );
@@ -71,7 +74,7 @@ export default function StudioListPage() {
     void loadLibrary(profile.id);
   }, [profile.id, loadLibrary]);
 
-  if (!index) return <PageShell><p>Loading…</p></PageShell>;
+  if (!index) return <PageShell><StatusNote /></PageShell>;
 
   return (
     <PageShell>
@@ -81,16 +84,19 @@ export default function StudioListPage() {
       <ActionCard href="/studio/library" icon="♩" title="Song library" description="Search 570+ piano pieces and play them as falling notes." />
       <SyncPanel />
       <h2>My pieces</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      <ul className={css.list}>
         {index.pieces.map((piece) => (
-          <Card key={piece.id}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
-              <Link href={`/studio/play/${piece.defaultArrangementId}`}>{piece.title}</Link>
-              <LibraryControl profileId={profile.id} arrangementId={piece.defaultArrangementId} />
+          <li key={piece.id} className={css.row}>
+            <span className={css.tile} aria-hidden="true">♪</span>
+            <div className={css.body}>
+              <Link className={css.title} href={`/studio/play/${piece.defaultArrangementId}`}>
+                {piece.title}
+              </Link>
             </div>
-          </Card>
+            <LibraryControl profileId={profile.id} arrangementId={piece.defaultArrangementId} />
+          </li>
         ))}
-      </div>
+      </ul>
     </PageShell>
   );
 }

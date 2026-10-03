@@ -16,6 +16,7 @@ import { computeProgression, type SectionProgress } from '../../../core/progress
 import type { Arrangement } from '../../../core/content/types';
 import type { Attempt } from '../../../core/data/attempt';
 import { PageShell } from '../../../ui/shared/PageShell';
+import { StatusNote } from '../../../ui/shared/StatusNote';
 import styles from './quest.module.css';
 
 export default function ExplorerMapPage() {
@@ -47,8 +48,8 @@ export default function ExplorerMapPage() {
     };
   }, [profile.id, params.arrangementId]);
 
-  if (loadError) return <PageShell><p>Could not load this piece: {loadError}</p></PageShell>;
-  if (!arrangement || !progress) return <PageShell><p>Loading…</p></PageShell>;
+  if (loadError) return <PageShell><StatusNote tone="problem">Could not load this piece: {loadError}</StatusNote></PageShell>;
+  if (!arrangement || !progress) return <PageShell><StatusNote /></PageShell>;
 
   // The first unlocked section with no attempt yet is "where you are".
   const currentId = progress.find((p) => p.unlocked && !p.attempted)?.sectionId;

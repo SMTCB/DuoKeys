@@ -15,6 +15,7 @@ import { getAdapters } from '../../../../runtime/bootstrap';
 import { FallingNotesCanvas } from '../../../../ui/falling/FallingNotesCanvas';
 import { RewardBurst } from '../../../../ui/shared/RewardBurst';
 import { PageShell } from '../../../../ui/shared/PageShell';
+import { StatusNote } from '../../../../ui/shared/StatusNote';
 import { Card } from '../../../../ui/shared/Card';
 import { Button } from '../../../../ui/shared/Button';
 import { MidiChooser } from '../../../../ui/shared/MidiChooser';
@@ -86,8 +87,8 @@ export default function ExplorerPlayPage() {
     await startArrangement(arrangement, track.id, crypto.randomUUID(), new Date().toISOString(), sectionId, mode);
   }
 
-  if (loadError) return <PageShell><p>Could not load this piece: {loadError}</p></PageShell>;
-  if (!arrangement || !track) return <PageShell><p>Loading…</p></PageShell>;
+  if (loadError) return <PageShell><StatusNote tone="problem">Could not load this piece: {loadError}</StatusNote></PageShell>;
+  if (!arrangement || !track) return <PageShell><StatusNote /></PageShell>;
 
   return (
     <PageShell>

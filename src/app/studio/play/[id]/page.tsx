@@ -3,6 +3,8 @@
 // falling-notes/notation view toggle and a tempo slider. No quest/section
 // scoping, no session-arc integration, no "explorer floor" messaging — Studio
 // grades honestly (sessionStore already gates the floor on profile.role).
+// US-3.21 — controls on the shared tokens: a framed loop group, a pill
+// view switch, a tempo readout, and the stage-style result.
 
 'use client';
 
@@ -14,10 +16,14 @@ import { getAdapters } from '../../../../runtime/bootstrap';
 import { FallingNotesCanvas } from '../../../../ui/falling/FallingNotesCanvas';
 import { NotationView } from '../../../../ui/notation/NotationView';
 import { PageShell } from '../../../../ui/shared/PageShell';
+import { StatusNote } from '../../../../ui/shared/StatusNote';
 import { Card } from '../../../../ui/shared/Card';
 import { Button } from '../../../../ui/shared/Button';
 import { MidiChooser } from '../../../../ui/shared/MidiChooser';
 import { Segmented } from '../../../../ui/shared/Segmented';
+import { Pill } from '../../../../ui/shared/Pill';
+import controls from '../../../../ui/shared/Controls.module.css';
+import stage from '../../../../ui/shared/Stage.module.css';
 import type { Arrangement, Track } from '../../../../core/content/types';
 import { ticksPerMeasure } from '../../../../core/content/toMusicXml';
 import { asTicks } from '../../../../core/time/types';
@@ -163,8 +169,8 @@ export default function StudioPlayPage() {
   const canShowNotation = track ? isMonophonic(track) : true;
   const shownView: StudioView = canShowNotation ? view : 'falling';
 
-  if (loadError) return <PageShell><p>Could not load this piece: {loadError}</p></PageShell>;
-  if (!arrangement || !track) return <PageShell><p>Loading…</p></PageShell>;
+  if (loadError) return <PageShell><StatusNote tone="problem">Could not load this piece: {loadError}</StatusNote></PageShell>;
+  if (!arrangement || !track) return <PageShell><StatusNote /></PageShell>;
 
   return (
     <PageShell>
@@ -172,7 +178,7 @@ export default function StudioPlayPage() {
 
       {attemptStatus === 'idle' && (
         <Card>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <div className={controls.stack}>
             <Segmented
               name="mode"
               legend="How should we play?"
@@ -204,66 +210,64 @@ export default function StudioPlayPage() {
                 />
               </>
             )}
-          </div>
 
-          <p>
-            <label>
-              <input type="checkbox" checked={loopEnabled} onChange={(e) => setLoopEnabled(e.target.checked)} />
-              Loop measures{' '}
-            </label>
-            <input
-              type="number"
-              min={1}
-              max={totalMeasures}
-              value={loopFromMeasure}
-              disabled={!loopEnabled}
-              onChange={(e) => setLoopFromMeasure(Number(e.target.value))}
-              style={{ width: '3.5rem' }}
-              aria-label="Loop from measure"
-            />
-            {' to '}
-            <input
-              type="number"
-              min={1}
-              max={totalMeasures}
-              value={loopToMeasure}
-              disabled={!loopEnabled}
-              onChange={(e) => setLoopToMeasure(Number(e.target.value))}
-              style={{ width: '3.5rem' }}
-              aria-label="Loop to measure"
-            />
-            {' (of '}
-            {totalMeasures}
-            {')'}
-          </p>
-          {loopEnabled && (
-            <p>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={autoRampChecked}
-                  onChange={(e) => setAutoRampChecked(e.target.checked)}
-                />
-                Auto-ramp tempo on a clean pass
+            <fieldset className={controls.group}>
+              <legend className={controls.legend}>Loop</legend>
+              <label className={controls.check}>
+                <input type="checkbox" checked={loopEnabled} onChange={(e) => setLoopEnabled(e.target.checked)} />
+                Repeat a few measures
               </label>
-            </p>
-          )}
+              <div className={controls.range}>
+                <span className={controls.rangeLabel}>Measures</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={totalMeasures}
+                  value={loopFromMeasure}
+                  disabled={!loopEnabled}
+                  onChange={(e) => setLoopFromMeasure(Number(e.target.value))}
+                  aria-label="Loop from measure"
+                />
+                <span className={controls.faint}>to</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={totalMeasures}
+                  value={loopToMeasure}
+                  disabled={!loopEnabled}
+                  onChange={(e) => setLoopToMeasure(Number(e.target.value))}
+                  aria-label="Loop to measure"
+                />
+                <span className={controls.faint}>of {totalMeasures}</span>
+              </div>
+              {loopEnabled && (
+                <label className={controls.check}>
+                  <input
+                    type="checkbox"
+                    checked={autoRampChecked}
+                    onChange={(e) => setAutoRampChecked(e.target.checked)}
+                  />
+                  Speed up a little after each clean pass
+                </label>
+              )}
+            </fieldset>
 
-          <MidiChooser
-            inputs={midiInputs}
-            connectionState={midiConnectionState}
-            onSelect={(id) => void handleSelectMidi(id)}
-          />
+            <MidiChooser
+              inputs={midiInputs}
+              connectionState={midiConnectionState}
+              onSelect={(id) => void handleSelectMidi(id)}
+            />
+          </div>
         </Card>
       )}
 
       {attemptStatus === 'playing' && loopRange && (
         <Card>
-          <p>
-            Looping — pass {passNumber}
-            {autoRampEnabled ? ` — tempo ${Math.round(tempoScale * 100)}%` : ''}
-            {lastPassGrade ? ` — last pass ${Math.round(lastPassGrade.accuracy * 100)}% accurate` : ''}
-          </p>
+          <div className={controls.loopStatus} role="status">
+            <Pill tone="solid">🔁 Pass {passNumber}</Pill>
+            {autoRampEnabled && <Pill mono>Tempo {Math.round(tempoScale * 100)}%</Pill>}
+            {lastPassGrade && <Pill tone="neutral">Last pass {Math.round(lastPassGrade.accuracy * 100)}% accurate</Pill>}
+          </div>
           <Button accent="indigo" variant="secondary" onClick={() => void stopLoop()}>
             Stop looping
           </Button>
@@ -271,25 +275,25 @@ export default function StudioPlayPage() {
       )}
 
       <Card>
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-          <Button
-            accent="indigo"
-            variant={shownView === 'falling' ? 'primary' : 'secondary'}
-            onClick={() => setView('falling')}
-          >
-            Falling notes
-          </Button>
-          {canShowNotation && (
-            <Button
-              accent="indigo"
-              variant={view === 'notation' ? 'primary' : 'secondary'}
-              onClick={() => setView('notation')}
-            >
-              Notation
-            </Button>
+        <div className={controls.bar}>
+          {canShowNotation ? (
+            <Segmented
+              name="view"
+              legend="Show"
+              options={[
+                { value: 'falling' as const, label: 'Falling notes' },
+                { value: 'notation' as const, label: 'Notation' },
+              ]}
+              value={shownView}
+              onChange={setView}
+            />
+          ) : (
+            <Pill tone="neutral">Falling notes</Pill>
           )}
-          <label style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            Tempo {Math.round(tempoScale * 100)}%
+          <label className={controls.tempo}>
+            <span className={controls.tempoLabel}>
+              Tempo <span className={controls.readout}>{Math.round(tempoScale * 100)}%</span>
+            </span>
             <input
               type="range"
               min={TEMPO_MIN}
@@ -325,9 +329,10 @@ export default function StudioPlayPage() {
 
       {attemptStatus === 'complete' && grade && (
         <Card>
-          <p>
-            Accuracy: {Math.round(grade.accuracy * 100)}% — {'⭐'.repeat(grade.stars)}
-          </p>
+          <div className={stage.stars} aria-label={`${grade.stars} stars`}>
+            {'⭐'.repeat(grade.stars)}
+          </div>
+          <p className={stage.title}>{Math.round(grade.accuracy * 100)}% of the notes</p>
           <p>You are {describeRushDrag(grade.rushDragMs)}.</p>
           {describeArticulation(grade) && <p>{describeArticulation(grade)}</p>}
           {grade.evennessCv !== undefined && <p>{describeEvenness(grade.evennessCv)}</p>}

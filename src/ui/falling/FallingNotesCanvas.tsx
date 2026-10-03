@@ -13,6 +13,7 @@ import type { MasterClock } from '../../core/time/masterClock';
 import type { ChordMarker, ContentNote } from '../../core/content/types';
 import { asTicks } from '../../core/time/types';
 import { pitchToX, type KeyboardRange } from './pitchToX';
+import styles from './FallingNotesCanvas.module.css';
 
 export interface FallingNotesCanvasProps {
   clock: MasterClock;
@@ -64,6 +65,16 @@ export function FallingNotesCanvas({
 
     let rafId: number;
 
+    // US-3.21 — colours come from the design tokens on the page (the role
+    // colour: amber in Explorer, indigo in Studio), read once per mount.
+    const css = getComputedStyle(canvas);
+    const token = (name: string, fallback: string): string => css.getPropertyValue(name).trim() || fallback;
+    const roleColour = token('--role', '#3d5a7c');
+    const roleDeepColour = token('--role-deep', '#2a415c');
+    const inkColour = token('--app-ink', '#24262b');
+    const lineColour = token('--coral', '#dd6e4b');
+    const displayFont = token('--display', 'sans-serif');
+
     const draw = (): void => {
       rafId = requestAnimationFrame(draw);
 
@@ -74,8 +85,8 @@ export function FallingNotesCanvas({
       ctx.clearRect(0, 0, width, height);
 
       // Hit line
-      ctx.strokeStyle = '#888';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = lineColour;
+      ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(0, hitLineY);
       ctx.lineTo(width, hitLineY);
@@ -100,12 +111,20 @@ export function FallingNotesCanvas({
         const pxHeight = Math.max(8, durationSeconds * PIXELS_PER_SECOND);
 
         const isPending = note.groupId === pendingGroupId;
-        ctx.fillStyle = isWhite ? (isPending ? '#4a90d9' : '#2d6cb3') : isPending ? '#d9a24a' : '#b37c2d';
-        ctx.fillRect(pxX + 1, pxY - pxHeight, pxWidth, pxHeight);
+        ctx.fillStyle = isWhite ? roleColour : roleDeepColour;
+        ctx.beginPath();
+        ctx.roundRect(pxX + 1, pxY - pxHeight, pxWidth, pxHeight, 6);
+        ctx.fill();
+        // The note being waited on also gets an outline, so colour is never the only cue (NFR-008).
+        if (isPending) {
+          ctx.strokeStyle = inkColour;
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
       }
 
-      ctx.font = 'bold 20px sans-serif';
-      ctx.fillStyle = '#444';
+      ctx.font = `700 22px ${displayFont}`;
+      ctx.fillStyle = inkColour;
       ctx.textAlign = 'center';
       for (const { marker, atSeconds } of sortedMarkersRef.current) {
         if (atSeconds < windowStart) continue;
@@ -120,5 +139,5 @@ export function FallingNotesCanvas({
     return () => cancelAnimationFrame(rafId);
   }, [clock, keyboardRange, pendingGroupId, lookAheadSeconds]);
 
-  return <canvas ref={canvasRef} width={960} height={540} />;
+  return <canvas ref={canvasRef} className={styles.canvas} width={960} height={540} />;
 }

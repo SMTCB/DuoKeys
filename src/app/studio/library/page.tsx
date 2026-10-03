@@ -10,8 +10,9 @@ import Link from 'next/link';
 import { useSongLibraryStore } from '../../../runtime/stores/songLibraryStore';
 import { searchSongs, stylesOf, type SongEntry } from '../../../core/content/songLibrary';
 import { PageShell } from '../../../ui/shared/PageShell';
+import { StatusNote } from '../../../ui/shared/StatusNote';
 import { Pill } from '../../../ui/shared/Pill';
-import css from './library.module.css';
+import css from '../../../ui/shared/ListRow.module.css';
 import { Button } from '../../../ui/shared/Button';
 
 const MAX_SHOWN = 60;
@@ -78,8 +79,8 @@ export default function SongLibraryPage() {
   const found = useMemo(() => searchSongs(songs ?? [], { text, style }), [songs, text, style]);
   const styles = useMemo(() => stylesOf(songs ?? []), [songs]);
 
-  if (loadError) return <PageShell><p>Could not load the song library: {loadError}</p></PageShell>;
-  if (!songs) return <PageShell><p>Loading…</p></PageShell>;
+  if (loadError) return <PageShell><StatusNote tone="problem">Could not load the song library: {loadError}</StatusNote></PageShell>;
+  if (!songs) return <PageShell><StatusNote /></PageShell>;
 
   return (
     <PageShell>

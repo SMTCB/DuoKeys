@@ -1369,6 +1369,23 @@ of what that artifact specifies.
   shared input look; its calm-offline wording (`FR-SYN-005`) is unchanged. The
   song page and the chord-progression page use `MidiChooser`, `Segmented` and the
   star result card. No behaviour changed.
+- **The last plain screens and parts (`US-3.21`).** Loading and "could not load"
+  messages use one `StatusNote` (a picture tile and a short line) instead of bare
+  text. A branded not-found page (`app/not-found.tsx`) leads back to the profile
+  picker. The chord keybed (`ChordKeybed`) is drawn on the tokens, and a key to
+  play carries a dot and a played key a tick, so colour is not the only cue
+  (`NFR-008`). The falling-notes canvas (`TA-REN-001`) scales to the screen width
+  (it was a fixed 960 px), sits on a framed surface, takes its colours from the
+  role tokens, and outlines the note it is waiting for. Studio's own pieces are
+  list rows (`ListRow.module.css`, shared with the song library), and their
+  repertoire status is a row of 44 px toggle pills with a tick and `aria-pressed`.
+  The Studio play screen has a framed Loop group, a pill view switch, a tempo
+  readout and the star result card. Sight-reading shares those controls
+  (`Controls.module.css`). The chord explorer's last inline styles moved to its
+  stylesheet: a piano status pill, a framed now-playing card with the chord name
+  large, card headings, and your own progressions drawn as the same rows as the
+  catalogue. No behaviour changed. The notation view keeps its green / red / grey
+  correct / wrong / missed colours, because those are feedback, not brand.
 
 ---
 

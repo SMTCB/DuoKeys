@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { getAdapters } from '../../runtime/bootstrap';
 import type { ContentIndex } from '../../adapters/ports';
 import { PageShell } from '../../ui/shared/PageShell';
+import { StatusNote } from '../../ui/shared/StatusNote';
 import { ActionCard } from '../../ui/shared/ActionCard';
 
 export default function ExplorerListPage() {
@@ -24,7 +25,7 @@ export default function ExplorerListPage() {
     };
   }, []);
 
-  if (!index) return <PageShell><p>Loading…</p></PageShell>;
+  if (!index) return <PageShell><StatusNote /></PageShell>;
 
   return (
     <PageShell>

@@ -14,6 +14,7 @@ import { getAdapters } from '../../../../runtime/bootstrap';
 import { computeProgression, type SectionProgress } from '../../../../core/progression/progression';
 import { FreePlay } from '../../../../ui/explorer/FreePlay';
 import { PageShell } from '../../../../ui/shared/PageShell';
+import { StatusNote } from '../../../../ui/shared/StatusNote';
 import { Card } from '../../../../ui/shared/Card';
 import { Button } from '../../../../ui/shared/Button';
 import type { Arrangement } from '../../../../core/content/types';
@@ -59,8 +60,8 @@ export default function SessionArcPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile.id, params.arrangementId]);
 
-  if (loadError) return <PageShell><p>Could not load this piece: {loadError}</p></PageShell>;
-  if (!arrangement || !plan) return <PageShell><p>Loading…</p></PageShell>;
+  if (loadError) return <PageShell><StatusNote tone="problem">Could not load this piece: {loadError}</StatusNote></PageShell>;
+  if (!arrangement || !plan) return <PageShell><StatusNote /></PageShell>;
 
   const step = plan[currentIndex];
   if (!step) return <PageShell><p>Session complete!</p></PageShell>;

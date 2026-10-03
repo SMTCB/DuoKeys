@@ -14,6 +14,7 @@ import { PageShell } from '../../../ui/shared/PageShell';
 import { Card } from '../../../ui/shared/Card';
 import { Button } from '../../../ui/shared/Button';
 import { Segmented } from '../../../ui/shared/Segmented';
+import controls from '../../../ui/shared/Controls.module.css';
 
 const KEY_OPTIONS = ['C', 'G', 'F'];
 const BAR_OPTIONS = [4, 8, 12];
@@ -41,7 +42,7 @@ export default function SightReadingPage() {
       <h1>Sight-Reading</h1>
       <Card>
         <p>A fresh phrase every time — never one you have already memorised.</p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginTop: '1rem' }}>
+        <div className={controls.stack}>
           <Segmented
             name="keySig"
             legend="Key"
@@ -56,10 +57,9 @@ export default function SightReadingPage() {
             value={bars}
             onChange={setBars}
           />
-          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', maxWidth: '20rem' }}>
-            <span style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--app-ink-soft)' }}>
-              Tempo{' '}
-              <span style={{ fontFamily: 'var(--mono)', fontVariantNumeric: 'tabular-nums' }}>{tempoBpm} bpm</span>
+          <label className={controls.tempo}>
+            <span className={controls.tempoLabel}>
+              Tempo <span className={controls.readout}>{tempoBpm} bpm</span>
             </span>
             <input
               type="range"

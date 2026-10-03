@@ -1101,3 +1101,14 @@ the backup panel, and the setup / result states of the song page and chord-progr
 page. Checked at 375 px (no sideways scroll) on the library and the chord explorer.
 The setup and result states of the song and chord-progression pages were not seen in a
 browser (they need a connected piano).
+
+Fourth pass (`US-3.21`): nothing that can be drawn without a piano is left plain. This
+covers the loading and error notes, a not-found page, the chord keybed (dot and tick
+marks), the falling-notes canvas (fits the screen, role colours, outline on the waited
+note), the Studio pieces rows and status pills, the Studio play controls and result,
+sight-reading's tempo, and the chord explorer's top bar, now-playing card and your own
+progressions. Checked at 375 px with no sideways scroll on Studio home, the chord
+explorer, the Studio play setup, the not-found page and the error note. The canvas was
+checked on a temporary page with a stopped clock; that page is deleted. Not checked:
+the canvas while playing, the loop status, and the play result, because all three need
+a connected piano.

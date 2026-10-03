@@ -1,0 +1,10 @@
+/* US-3.21 — the falling-notes stage: scales to the screen width (it was a fixed
+   960 px and pushed phones sideways), on a framed surface. */
+.canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--app-surface);
+  border: 1.5px solid var(--app-line);
+  border-radius: var(--r-lg);
+}

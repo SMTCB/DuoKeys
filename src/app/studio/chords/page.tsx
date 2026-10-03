@@ -6,6 +6,9 @@
 // state — FR-EXP-006's free-play philosophy applied to harmony.
 // US-3.20: three tabs (Chords, Progressions, My progressions), a compact top
 // bar and a "now playing" keybed pinned to the top, so one screen holds one job.
+// US-3.21 — the last inline styles moved to chords.module.css: a piano status
+// pill, a framed now-playing card, card headings, chord groups, and your own
+// progressions drawn as the same rows as the catalogue.
 
 'use client';
 
@@ -17,16 +20,16 @@ import { GROUP_LABELS, GROUP_OF_QUALITY, type ChordGroup } from '../../../core/c
 import { chordSymbolOfId } from '../../../core/content/chordSymbols';
 import { asPitchClass } from '../../../core/content/chordTypes';
 import { PageShell } from '../../../ui/shared/PageShell';
+import { StatusNote } from '../../../ui/shared/StatusNote';
 import { Card } from '../../../ui/shared/Card';
 import { Button } from '../../../ui/shared/Button';
 import { ChordKeybed } from '../../../ui/shared/ChordKeybed';
 import { Segmented } from '../../../ui/shared/Segmented';
+import { Pill } from '../../../ui/shared/Pill';
 import styles from './chords.module.css';
 
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const PAGE_SIZE = 12;
-const ROW = { display: 'flex', flexWrap: 'wrap', gap: '0.4rem', alignItems: 'center' } as const;
-const COLUMN = { display: 'flex', flexDirection: 'column', gap: '1rem' } as const;
 
 type Tab = 'chords' | 'progressions' | 'mine';
 
@@ -99,7 +102,7 @@ export default function ChordExplorerPage() {
     return groups;
   }, [catalogue, selectedKey]);
 
-  if (!catalogue) return <PageShell><p>Loading…</p></PageShell>;
+  if (!catalogue) return <PageShell><StatusNote /></PageShell>;
 
   const myProgressions = catalogue.progressions.filter((p) => p.isUserAdded);
 
@@ -144,10 +147,14 @@ export default function ChordExplorerPage() {
 
   return (
     <PageShell>
-      <div style={{ ...ROW, justifyContent: 'space-between' }}>
-        <h1 style={{ margin: 0 }}>Chords</h1>
-        <div style={ROW}>
-          <span role="status">Piano: {isPianoConnected ? 'connected' : 'not connected'}</span>
+      <div className={styles.top}>
+        <h1>Chords</h1>
+        <div className={styles.row}>
+          <span role="status">
+            <Pill tone={isPianoConnected ? 'solid' : 'neutral'}>
+              {isPianoConnected ? '✓ Piano connected' : '🎹 No piano yet'}
+            </Pill>
+          </span>
           {midiInputs.map((input) => (
             <Button key={input.id} accent="indigo" variant="secondary" onClick={() => void selectMidiInput(input.id)}>
               {input.name}
@@ -167,21 +174,28 @@ export default function ChordExplorerPage() {
       </Card>
 
       {currentChord && (
-        <div style={{ position: 'sticky', top: 0, zIndex: 5 }}>
-          <Card>
-            <p style={{ margin: '0 0 0.4rem' }}>
-              {currentProgression
-                ? `${currentProgression.name} — chord ${currentChordIndex + 1} of ${currentProgression.chordIds.length}: `
-                : 'Play: '}
-              <strong>{chordSymbolOfId(currentChord.id)}</strong>
-              {matchResult?.kind === 'complete' && ' — nice!'}
-            </p>
+        <div className={styles.now}>
+          <div className={styles.nowHead}>
+            <div className={styles.nowText}>
+              <span className={styles.sub}>
+                {currentProgression
+                  ? `${currentProgression.name} · chord ${currentChordIndex + 1} of ${currentProgression.chordIds.length}`
+                  : 'Play this chord'}
+              </span>
+              <strong className={styles.nowChord}>{chordSymbolOfId(currentChord.id)}</strong>
+            </div>
+            {matchResult?.kind === 'complete' && (
+              <span role="status">
+                <Pill tone="solid">✓ Nice!</Pill>
+              </span>
+            )}
+          </div>
             <ChordKeybed
               target={currentChord.midiNotes.map((p) => asPitchClass(p as number))}
               played={playedPitchClasses}
             />
             {currentProgression && (
-              <div style={{ ...ROW, marginTop: '0.5rem' }}>
+              <div className={styles.row}>
                 <Button accent="indigo" variant="secondary" onClick={advanceProgression}>
                   Next chord
                 </Button>
@@ -190,7 +204,6 @@ export default function ChordExplorerPage() {
                 </Link>
               </div>
             )}
-          </Card>
         </div>
       )}
 
@@ -214,23 +227,21 @@ export default function ChordExplorerPage() {
       </div>
 
       {tab === 'chords' && (
-        <div role="tabpanel" id="panel-chords" aria-labelledby="tab-chords" style={COLUMN}>
+        <div role="tabpanel" id="panel-chords" aria-labelledby="tab-chords" className={styles.column}>
           <Card>
-            <p style={{ marginTop: 0 }}>
-              <strong>Chords that belong in {keyName}</strong> — press one to see it on the keys, then play it.
-            </p>
-            <div style={ROW}>{diatonicChords.map((chord) => chordButton(chord.id, chordSymbolOfId(chord.id)))}</div>
+            <h2 className={styles.cardTitle}>Chords that belong in {keyName}</h2>
+            <p className={styles.sub}>Press one to see it on the keys, then play it.</p>
+            <div className={styles.row}>{diatonicChords.map((chord) => chordButton(chord.id, chordSymbolOfId(chord.id)))}</div>
           </Card>
           <Card>
-            <p style={{ marginTop: 0 }}>
-              <strong>All {chordCount} chords on {keyName}</strong>
-            </p>
+            <h2 className={styles.cardTitle}>All {chordCount} chords on {keyName}</h2>
             {(['triad', 'seventh', 'other'] as const).map((group) => (
-              <details key={group} open={group === 'triad'} style={{ marginBottom: '0.5rem' }}>
-                <summary style={{ minHeight: '44px', display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                  {GROUP_LABELS[group]} ({chordsByGroup[group].length})
+              <details key={group} open={group === 'triad'} className={styles.group}>
+                <summary className={styles.summary}>
+                  {GROUP_LABELS[group]}
+                  <span className={styles.count}>{chordsByGroup[group].length}</span>
                 </summary>
-                <div style={ROW}>{chordsByGroup[group].map((chord) => chordButton(chord.id, chord.symbol))}</div>
+                <div className={styles.row}>{chordsByGroup[group].map((chord) => chordButton(chord.id, chord.symbol))}</div>
               </details>
             ))}
           </Card>
@@ -278,14 +289,14 @@ export default function ChordExplorerPage() {
             <div>
               {progressions.slice(0, shownCount).map((progression) => (
                 <div key={progression.id} className={styles.progRow}>
-                  <div style={{ minWidth: 0 }}>
+                  <div className={styles.rowText}>
                     <div className={styles.symbols}>{progression.chordIds.map(chordSymbolOfId).join('  ')}</div>
                     <div className={styles.sub}>
                       {progression.name}
                       {progression.moods.length > 0 && ` · ${progression.moods.join(', ')}`}
                     </div>
                   </div>
-                  <div style={ROW}>
+                  <div className={styles.row}>
                     <Button
                       accent="indigo"
                       variant={selectedProgressionId === progression.id ? 'primary' : 'secondary'}
@@ -313,17 +324,15 @@ export default function ChordExplorerPage() {
       )}
 
       {tab === 'mine' && (
-        <div role="tabpanel" id="panel-mine" aria-labelledby="tab-mine" style={COLUMN}>
+        <div role="tabpanel" id="panel-mine" aria-labelledby="tab-mine" className={styles.column}>
           <Card>
-            <p style={{ marginTop: 0 }}>
-              <strong>Add your own progression</strong>
-            </p>
-            <p style={{ opacity: 0.75 }}>
+            <h2 className={styles.cardTitle}>Add your own progression</h2>
+            <p className={styles.sub}>
               Type chords from a chart — <code>C G Am F</code>, <code>Dm7 G7 Cmaj7</code>, <code>Bb/D</code> — or
               numerals in the key chosen above, like <code>I V vi IV</code>. In a minor key the numerals follow the
               natural minor scale (VII is G in A minor).
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div className={styles.form}>
               <input
                 aria-label="Name (optional)"
                 placeholder="Name (optional)"
@@ -357,29 +366,38 @@ export default function ChordExplorerPage() {
             </div>
           </Card>
           <Card>
-            <p style={{ marginTop: 0 }}>My progressions ({myProgressions.length})</p>
-            {myProgressions.length === 0 && <p style={{ opacity: 0.75 }}>Nothing yet — add one above.</p>}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <h2 className={styles.cardTitle}>
+              My progressions <span className={styles.count}>{myProgressions.length}</span>
+            </h2>
+            {myProgressions.length === 0 && <p className={styles.sub}>Nothing yet — add one above.</p>}
+            <div>
               {myProgressions.map((progression) => (
-                <div key={progression.id} style={ROW}>
-                  <Button
-                    accent="indigo"
-                    variant={selectedProgressionId === progression.id ? 'primary' : 'secondary'}
-                    onClick={() => startProgression(progression.id)}
-                  >
-                    {progression.name}
-                  </Button>
-                  <Link href={`/studio/chords/play/${encodeURIComponent(progression.id)}`}>
-                    <Button accent="indigo" variant="secondary">Falling notes</Button>
-                  </Link>
-                  <Button
-                    accent="indigo"
-                    variant="secondary"
-                    aria-label={`Remove ${progression.name}`}
-                    onClick={() => void removeUserProgression(progression.id)}
-                  >
-                    Remove
-                  </Button>
+                <div key={progression.id} className={styles.progRow}>
+                  <div className={styles.rowText}>
+                    <div className={styles.symbols}>{progression.chordIds.map(chordSymbolOfId).join('  ')}</div>
+                    <div className={styles.sub}>{progression.name}</div>
+                  </div>
+                  <div className={styles.row}>
+                    <Button
+                      accent="indigo"
+                      variant={selectedProgressionId === progression.id ? 'primary' : 'secondary'}
+                      aria-pressed={selectedProgressionId === progression.id}
+                      onClick={() => startProgression(progression.id)}
+                    >
+                      Play
+                    </Button>
+                    <Link href={`/studio/chords/play/${encodeURIComponent(progression.id)}`}>
+                      <Button accent="indigo" variant="secondary">Falling notes</Button>
+                    </Link>
+                    <Button
+                      accent="indigo"
+                      variant="secondary"
+                      aria-label={`Remove ${progression.name}`}
+                      onClick={() => void removeUserProgression(progression.id)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>

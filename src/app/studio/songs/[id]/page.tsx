@@ -13,6 +13,7 @@ import { useSessionStore } from '../../../../runtime/stores/sessionStore';
 import { getAdapters } from '../../../../runtime/bootstrap';
 import { FallingNotesCanvas } from '../../../../ui/falling/FallingNotesCanvas';
 import { PageShell } from '../../../../ui/shared/PageShell';
+import { StatusNote } from '../../../../ui/shared/StatusNote';
 import { Card } from '../../../../ui/shared/Card';
 import { MidiChooser } from '../../../../ui/shared/MidiChooser';
 import stage from '../../../../ui/shared/Stage.module.css';
@@ -63,8 +64,8 @@ export default function StudioSongPage() {
     await startArrangement(arrangement, track.id, crypto.randomUUID(), new Date().toISOString(), undefined, 'wait');
   }
 
-  if (loadError) return <PageShell><p>Could not load this song: {loadError}</p></PageShell>;
-  if (!arrangement || !track) return <PageShell><p>Loading…</p></PageShell>;
+  if (loadError) return <PageShell><StatusNote tone="problem">Could not load this song: {loadError}</StatusNote></PageShell>;
+  if (!arrangement || !track) return <PageShell><StatusNote /></PageShell>;
 
   return (
     <PageShell>

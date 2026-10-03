@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useProfileStore, MAX_PROFILES } from '../runtime/stores/profileStore';
 import type { Profile } from '../core/profile/types';
 import { PageShell } from '../ui/shared/PageShell';
+import { StatusNote } from '../ui/shared/StatusNote';
 import { Card } from '../ui/shared/Card';
 import { Button } from '../ui/shared/Button';
 
@@ -56,7 +57,7 @@ export default function HomePage() {
     <PageShell>
       {loaded ? <h1>Who&apos;s playing?</h1> : <h1>DuoKeys</h1>}
 
-      {!loaded && <p>Loading…</p>}
+      {!loaded && <StatusNote />}
 
       {loaded && profiles.length > 0 && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>

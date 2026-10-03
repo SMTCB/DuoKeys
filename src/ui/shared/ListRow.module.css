@@ -1,4 +1,4 @@
-/* US-3.21 — song library rows: a picture-led row with a composer initial tile. */
+/* US-3.21 — picture-led list rows (song library, Studio pieces): tile, text, pills, actions. */
 .list {
   display: flex;
   flex-direction: column;
@@ -86,4 +86,31 @@
   margin: 0;
   color: var(--app-ink-soft);
   font-weight: 600;
+}
+
+/* A press-to-toggle pill (the Studio repertoire status): 44px, ticked when on. */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.8rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--app-line);
+  background: var(--app-surface);
+  color: var(--app-ink);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.toggle[aria-pressed='true'] {
+  background: var(--role-tint);
+  border-color: var(--role);
+  color: var(--role-deep);
+}
+
+.toggle:focus-visible {
+  outline: 3px solid var(--role);
+  outline-offset: 2px;
 }

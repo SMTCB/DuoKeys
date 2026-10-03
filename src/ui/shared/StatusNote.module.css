@@ -1,0 +1,47 @@
+/* US-3.21 — loading / problem note. */
+.note {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.1rem;
+  background: var(--app-surface);
+  border: 1.5px solid var(--app-line);
+  border-radius: var(--r-lg);
+}
+
+.tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--r-md);
+  background: var(--role-tint, var(--coral-tint));
+  font-size: 1.4rem;
+}
+
+.text {
+  min-width: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.pulse {
+  animation: status-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+  }
+}

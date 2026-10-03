@@ -13,6 +13,7 @@ import { useSessionStore } from '../../../../../runtime/stores/sessionStore';
 import { useChordExplorerStore } from '../../../../../runtime/stores/chordExplorerStore';
 import { FallingNotesCanvas } from '../../../../../ui/falling/FallingNotesCanvas';
 import { PageShell } from '../../../../../ui/shared/PageShell';
+import { StatusNote } from '../../../../../ui/shared/StatusNote';
 import { Card } from '../../../../../ui/shared/Card';
 import { Button } from '../../../../../ui/shared/Button';
 import { MidiChooser } from '../../../../../ui/shared/MidiChooser';
@@ -95,7 +96,7 @@ export default function ChordProgressionPlayPage() {
     await startArrangement(arrangement, 'chords', crypto.randomUUID(), new Date().toISOString(), undefined, 'wait');
   }
 
-  if (!catalogue) return <PageShell><p>Loading…</p></PageShell>;
+  if (!catalogue) return <PageShell><StatusNote /></PageShell>;
   if (!progression || !arrangement) {
     return (
       <PageShell>
