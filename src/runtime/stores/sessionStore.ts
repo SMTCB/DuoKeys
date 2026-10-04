@@ -68,6 +68,8 @@ interface SessionState {
   holdAtLine: boolean;
   /** A wanted note counts in any octave (chord drills); songs keep the exact pitch. */
   anyOctave: boolean;
+  /** Keys physically down right now, for the keybed. */
+  pressedPitches: readonly number[];
 
   setProfile(profile: Profile): void;
   refreshMidiInputs(): Promise<void>;
@@ -214,6 +216,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   accompanimentMode: 'silent',
   holdAtLine: true,
   anyOctave: false,
+  pressedPitches: [],
 
   setProfile(profile: Profile): void {
     set({ profile });
@@ -244,6 +247,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       const shifted = shiftTimestamp(event, asMillis(get().profile.latencyOffsetMs));
 
       if (shifted.kind === 'noteOn') {
+        set({ pressedPitches: [...get().pressedPitches.filter((p) => p !== (shifted.pitch as number)), shifted.pitch as number] });
         pedal.noteOn(shifted.pitch);
         stream.noteOn(shifted.pitch, shifted.velocity, shifted.timeStamp);
         const result = m.consume({ pitch: shifted.pitch, velocity: shifted.velocity, timeStamp: shifted.timeStamp });
@@ -285,6 +289,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
         // the attempt only ends when the adult calls stopLoop().
         if (m.state().complete && !get().loopRange) void finishAttempt(set, get);
       } else if (shifted.kind === 'noteOff') {
+        set({ pressedPitches: get().pressedPitches.filter((p) => p !== (shifted.pitch as number)) });
         const { stoppedSounding } = pedal.noteOff(shifted.pitch);
         if (stoppedSounding) {
           const closed = stream.noteOff(shifted.pitch, shifted.timeStamp);

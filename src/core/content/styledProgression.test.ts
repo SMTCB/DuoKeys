@@ -71,3 +71,22 @@ describe('styledProgressionToArrangement', () => {
     expect(styledProgressionToArrangement(prog, chords, { ...file, notes: [] }, 1)).toBeUndefined();
   });
 });
+
+describe('styledProgressionToArrangement chord assignment', () => {
+  // TS-U-CNT-044 — the three-chord loop changes chord at uneven moments, so equal time slices mislabelled F as C.
+  it('puts each chord marker on notes of that chord, even when the chords are not evenly spaced', () => {
+    const prog = find('C-I-IV-V');
+    const arrangement = styledProgressionToArrangement(prog, chords, load('pop/major/I-IV-V.mid'), 1)!;
+    const byId = new Map(chords.map((c) => [c.id, c]));
+    const markers = arrangement.chordMarkers!;
+    expect(markers.map((m) => m.symbol)).toEqual(['C', 'F', 'G']);
+    const notes = arrangement.tracks[0]!.notes;
+    markers.forEach((m, i) => {
+      const next = markers[i + 1]?.atTick ?? Number.POSITIVE_INFINITY;
+      const wanted = new Set(byId.get(prog.chordIds[i]!)!.midiNotes.map((p) => (p as number) % 12));
+      const inSegment = notes.filter((n) => (n.startTick as number) >= (m.atTick as number) && (n.startTick as number) < (next as number));
+      expect(inSegment.length).toBeGreaterThan(0);
+      for (const n of inSegment) expect(wanted.has((n.pitch as number) % 12), `${m.symbol} ${n.pitch}`).toBe(true);
+    });
+  });
+});

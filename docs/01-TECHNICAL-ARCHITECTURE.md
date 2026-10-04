@@ -680,11 +680,17 @@ needs no reading.
   at least two octaves, white-key aligned, clamped to `Profile.keyboardRange`),
   so a two-octave progression fills the screen instead of hugging one edge.
 - Note letters: every falling bar and every wanted key carries its letter name
-  (`noteName`, middle C = C4), and the chord screen prints a "Play now" line of
-  the pending pitches, so nobody has to count keys on the diagram.
+  (`noteName`, middle C = C4), every C on the keybed is named as a landmark, and
+  the chord screen prints a "Play now" line of the pending pitches, so nobody
+  has to count keys on the diagram.
 - Hit feedback: notes the matcher has accepted turn green with a tick (colour is
-  never the only cue, `NFR-008`); the pending chord is outlined; a small keybed
-  under the line marks wanted and played keys.
+  never the only cue, `NFR-008`) and clear away shortly after crossing the line;
+  the pending chord is outlined. The keybed under the line lights wanted keys in
+  the role colour (every octave of a wanted letter when `anyOctave` is on) and
+  shows green only for the keys physically down (`sessionStore.pressedPitches`),
+  so a played key is acknowledged and releasing it clears it.
+- Chord symbols are drawn as a label tab on the left edge, level with where that
+  chord's notes arrive, rather than as centred text over the lanes.
 - **Hold at the line.** In wait mode `sessionStore` calls `MasterClock.holdAt`
   when the current tick reaches the pending chord's tick and `resume` when the
   matcher moves on, so notes stop on the line until played correctly. A
@@ -1225,10 +1231,13 @@ by this extension (a test asserts its counts). Three additions sit beside it:
   `Arrangement` from one of the four bundled style files (`parseSmf`): pitches
   shifted by the key distance (folded to −6…+5), the file's own tempo, time
   signature and bar-aligned loop (two passes), simultaneous notes sharing a
-  group id. Chord markers come from the file, not a fixed bar: the loop is
-  split evenly across the chords, with a half beat of anticipation allowed.
-  Checked against the release, every file segments cleanly except at most 23 per
-  style whose progressions already differ upstream. `staticChords.ts` fetches
+  group id. Chord markers come from the file's own harmony, not a fixed bar:
+  the onsets, in time order, are walked through the chords in order and the
+  change points chosen are the ones that leave the fewest notes outside their
+  chord (a small pull towards the even split breaks ties). Equal time slices
+  were tried first and mislabelled the chords of any loop that does not change
+  chord at even moments (a three-chord loop, for one). Checked against every
+  progression in every style, no segment is left with notes of another chord. `staticChords.ts` fetches
   the file; the play page offers "Block chords" (the default, and the
   fallback if a file fails to load) and the four styles. The 12-bar blues has
   no style file.

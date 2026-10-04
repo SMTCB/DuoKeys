@@ -319,6 +319,11 @@ counts" option (default on here, `TA-MAT-002` `anyOctave`) accepts the right
 letter wherever it is played; a chord that wants one letter twice needs two
 presses. Songs keep the exact pitch.
 
+A progression bar above the canvas shows every chord of the progression as a
+chip, the one being played marked (bold, outlined, `aria-current`), finished
+ones ticked, and the round of the loop ("Round 1 of 2"). The keyboard shows green
+only for keys that are physically down.
+
 > **No web chord search.** Searching chord sites and auto-importing was
 > considered and declined: there is no public chord API, scraping breaches the
 > sites' terms and copyright, and a network read on the practice path would

@@ -212,6 +212,8 @@ grading.
 | `TS-U-CNT-039` | `pickFreePlay` avoids repeating the last pick when it can | TA-CNT-007, FR-STU-018 |
 | `TS-U-CNT-040` | `pickFreePlay` is deterministic for a given draw and returns nothing for an empty pool | TA-CNT-007, FR-STU-018 |
 | `TS-U-CNT-041` | `easyMoods` lists the moods of easy progressions only | TA-CNT-007, FR-STU-018 |
+| `TS-U-CNT-044` | A styled progression puts each chord marker on notes of that chord even when the chords are not evenly spaced in the file (`I-IV-V`) | TA-CNT-006, FR-STU-015 |
+| `TS-U-CNT-043` | `progressionPosition` reports the chord and round of the group being played, stays on the last group past the end, and is undefined with no markers | FR-STU-015 |
 | `TS-U-CNT-042` | `chordsToMusicXml` writes one whole-note measure per chord group on a two-stave part, puts notes at or above 60 on the treble and the rest on the bass, and carries the chord symbol | TA-REN-003, FR-STU-015 |
 
 `TS-U-CNT-019` is **partially** satisfied as written — `ingestChords.ts`
@@ -446,7 +448,7 @@ critical-path behaviour has a manual confirmation.
 | FR-STU-010 | TS-U-CNT-021 | — |
 | FR-STU-012 | TS-U-MAT-023…025, TS-U-CNT-019 | — |
 | FR-STU-013 | TS-U-REN-007 | — |
-| FR-STU-015 | TS-U-CNT-022…027, 042, TS-U-CLK-015, TS-U-REN-011, 012, TS-U-MAT-026, TS-I-DAT-008 | TS-M-016, TS-M-018 |
+| FR-STU-015 | TS-U-CNT-022…027, 042…044, TS-U-CLK-015, TS-U-REN-011, 012, TS-U-MAT-026, TS-I-DAT-008 | TS-M-016, TS-M-018 |
 | FR-STU-016 | TS-U-CNT-028, 029, TS-I-DAT-009 | TS-M-015 |
 | FR-STU-017 | TS-U-CNT-030…035, TS-I-DAT-010 | TS-M-017 |
 | FR-STU-018 | TS-U-CNT-036…041 | TS-M-017 |

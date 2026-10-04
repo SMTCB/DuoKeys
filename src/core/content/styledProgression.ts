@@ -60,15 +60,18 @@ export function styledProgressionToArrangement(
   const loopTicks = Math.max(barTicks, Math.ceil((file.totalTicks as number) / barTicks) * barTicks);
   const chordCount = chordEntries.length;
 
-  const loopNotes: { pitch: number; start: number; duration: number; chordIndex: number }[] = file.notes.map((n) => {
-    const shifted = (n.startTick as number) + ANTICIPATION_BEATS * beatTicks;
-    return {
-      pitch: (n.pitch as number) + offset,
-      start: n.startTick as number,
-      duration: n.durationTicks as number,
-      chordIndex: Math.min(chordCount - 1, Math.floor((shifted * chordCount) / loopTicks)),
-    };
-  });
+  const chordIndexAt = assignChords(
+    file.notes.map((n) => ({ start: n.startTick as number, pitch: (n.pitch as number) + offset })),
+    chordEntries.map((c) => new Set(c!.midiNotes.map((m) => (m as number) % 12))),
+    (start) => Math.min(chordCount - 1, Math.floor(((start + ANTICIPATION_BEATS * beatTicks) * chordCount) / loopTicks)),
+  );
+
+  const loopNotes: { pitch: number; start: number; duration: number; chordIndex: number }[] = file.notes.map((n) => ({
+    pitch: (n.pitch as number) + offset,
+    start: n.startTick as number,
+    duration: n.durationTicks as number,
+    chordIndex: chordIndexAt.get(n.startTick as number) ?? 0,
+  }));
 
   const markers: ChordMarker[] = [];
   const notes: ContentNote[] = [];
@@ -115,4 +118,58 @@ export function styledProgressionToArrangement(
     analysis: { pitchRange: 0, handPositionChanges: 0, rhythmicVocabulary: 0, handIndependence: 0, accidentalDensity: 0, overall: 1 },
     chordMarkers: markers,
   };
+}
+
+/**
+ * Which chord of the progression each onset belongs to. The style files do not
+ * change chord at evenly spaced moments (a three-chord loop may hold the first
+ * chord for a beat and a half), so equal time slices put the wrong chord on the
+ * screen. Instead the onsets, in time order, are walked through the chords in
+ * order, choosing the change points that leave the fewest notes outside their
+ * chord; the equal-slice guess only breaks ties. With fewer onsets than chords
+ * it falls back to the slice guess.
+ */
+function assignChords(
+  notes: readonly { start: number; pitch: number }[],
+  chordPitchClasses: readonly ReadonlySet<number>[],
+  sliceGuess: (start: number) => number,
+): Map<number, number> {
+  const starts = [...new Set(notes.map((n) => n.start))].sort((a, b) => a - b);
+  const chordCount = chordPitchClasses.length;
+  const result = new Map<number, number>();
+  if (starts.length < chordCount) {
+    for (const start of starts) result.set(start, sliceGuess(start));
+    return result;
+  }
+
+  const costOf = (start: number, chord: number): number => {
+    let off = 0;
+    for (const n of notes) if (n.start === start && !chordPitchClasses[chord]!.has(((n.pitch % 12) + 12) % 12)) off++;
+    return off + 0.01 * Math.abs(chord - sliceGuess(start));
+  };
+
+  const best: number[][] = [];
+  const from: number[][] = [];
+  starts.forEach((start, g) => {
+    best.push(new Array<number>(chordCount).fill(Infinity));
+    from.push(new Array<number>(chordCount).fill(0));
+    for (let c = 0; c < chordCount; c++) {
+      if (g === 0) {
+        if (c === 0) best[0]![0] = costOf(start, 0);
+        continue;
+      }
+      const stay = best[g - 1]![c]!;
+      const step = c > 0 ? best[g - 1]![c - 1]! : Infinity;
+      const prev = step < stay ? c - 1 : c;
+      best[g]![c] = Math.min(stay, step) + costOf(start, c);
+      from[g]![c] = prev;
+    }
+  });
+
+  let chord = chordCount - 1;
+  for (let g = starts.length - 1; g >= 0; g--) {
+    result.set(starts[g]!, chord);
+    chord = from[g]![chord]!;
+  }
+  return result;
 }

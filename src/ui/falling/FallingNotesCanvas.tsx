@@ -31,6 +31,8 @@ export interface FallingNotesCanvasProps {
   matcherState?: MatcherState | undefined;
   /** Any octave of a wanted note counts, so the keybed lights every key of that letter. */
   anyOctave?: boolean;
+  /** Keys physically down, shown on the keybed. */
+  pressedPitches?: readonly number[];
   /** Seconds of lead-in shown above the hit line (default: whatever fits the canvas). */
   lookAheadSeconds?: number;
   /** Fall speed in canvas pixels per second. */
@@ -51,6 +53,7 @@ export function FallingNotesCanvas({
   keyboardRange,
   matcherState,
   anyOctave = false,
+  pressedPitches,
   lookAheadSeconds,
   pixelsPerSecond = DEFAULT_PIXELS_PER_SECOND,
   chordMarkers,
@@ -58,6 +61,8 @@ export function FallingNotesCanvas({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const matcherRef = useRef<MatcherState | undefined>(matcherState);
   matcherRef.current = matcherState;
+  const pressedRef = useRef<readonly number[]>([]);
+  pressedRef.current = pressedPitches ?? [];
 
   // Sorted by tick once per notes change — the frame loop only walks the sorted array.
   const sortedNotes = useRef<ContentNote[]>([]);
@@ -134,6 +139,8 @@ export function FallingNotesCanvas({
           asTicks((note.startTick as number) + (note.durationTicks as number)),
         ) as number;
         if (endSeconds - nowAudio < -0.5) continue; // fully past the line
+        // A chord that has been played clears away once it crosses the line, so only what is still to play stays on screen.
+        if (progress !== undefined && (groupOrder.current.get(note.groupId) ?? 0) < doneGroups && secondsUntilHit < -0.12) continue;
 
         const { x, isWhite, widthUnits } = pitchToX(note.pitch, fitted);
         const pxX = x * unit;
@@ -171,14 +178,20 @@ export function FallingNotesCanvas({
       }
 
       // Chord symbols ride the stream, centred over the lanes.
-      ctx.font = `700 22px ${displayFont}`;
-      ctx.fillStyle = inkColour;
-      ctx.textAlign = 'center';
+      ctx.font = `800 24px ${displayFont}`;
+      ctx.textAlign = 'left';
       for (const marker of markersRef.current) {
         const secondsUntilHit = (clock.ticksToAudio(marker.atTick) as number) - nowAudio;
-        if (secondsUntilHit > lookAhead || secondsUntilHit < -0.5) continue;
+        if (secondsUntilHit > lookAhead || secondsUntilHit < -0.12) continue;
         const pxY = HIT_LINE_Y - secondsUntilHit * pixelsPerSecond;
-        ctx.fillText(marker.symbol, CANVAS_WIDTH / 2, pxY - 12);
+        // A label tab on the left edge, level with where that chord's notes arrive.
+        const width = ctx.measureText(marker.symbol).width + 20;
+        ctx.fillStyle = inkColour;
+        ctx.beginPath();
+        ctx.roundRect(8, pxY - 34, width, 32, 8);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(marker.symbol, 18, pxY - 10);
       }
 
       const doneNow = pitchesDone(sortedNotes.current, groupOrder.current, progress);
@@ -189,7 +202,7 @@ export function FallingNotesCanvas({
         for (let p = fitted.low as number; p <= (fitted.high as number); p++) if (classes.has(p % 12)) out.add(p);
         return out;
       };
-      drawKeybed(ctx, fitted, unit, lit(wanted), lit(doneNow), {
+      drawKeybed(ctx, fitted, unit, lit(wanted), lit(doneNow), new Set(pressedRef.current), {
         wantedColour: roleColour,
         doneColour,
         inkColour,
@@ -228,7 +241,8 @@ function drawKeybed(
   range: KeyboardRange,
   unit: number,
   wanted: ReadonlySet<number>,
-  done: ReadonlySet<number>,
+  relevant: ReadonlySet<number>,
+  pressed: ReadonlySet<number>,
   colours: { wantedColour: string; doneColour: string; inkColour: string },
 ): void {
   const top = CANVAS_HEIGHT - KEYBED_HEIGHT;
@@ -239,8 +253,17 @@ function drawKeybed(
       const w = k.widthUnits * unit;
       const h = k.isWhite ? KEYBED_HEIGHT : KEYBED_HEIGHT * 0.62;
       const isWanted = wanted.has(p);
-      const isDone = done.has(p);
-      ctx.fillStyle = isDone ? colours.doneColour : isWanted ? colours.wantedColour : k.isWhite ? '#ffffff' : '#2b2d33';
+      const isHeld = pressed.has(p);
+      const isDone = isHeld && (relevant.has(p) || isWanted);
+      ctx.fillStyle = isDone
+        ? colours.doneColour
+        : isHeld
+          ? '#b9bcc4'
+          : isWanted
+            ? colours.wantedColour
+            : k.isWhite
+              ? '#ffffff'
+              : '#2b2d33';
       ctx.fillRect(k.x * unit, top, w, h);
       ctx.strokeStyle = colours.inkColour;
       ctx.lineWidth = isWanted ? 3 : 1;

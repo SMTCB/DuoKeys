@@ -12,6 +12,9 @@ import { useParams } from 'next/navigation';
 import { useSessionStore } from '../../../../../runtime/stores/sessionStore';
 import { useChordExplorerStore } from '../../../../../runtime/stores/chordExplorerStore';
 import { noteName } from '../../../../../ui/falling/noteName';
+import { ProgressionNav } from '../../../../../ui/shared/ProgressionNav';
+import { progressionPosition } from '../../../../../core/content/progressionPosition';
+import { chordSymbolOfId } from '../../../../../core/content/chordSymbols';
 import { FallingNotesCanvas } from '../../../../../ui/falling/FallingNotesCanvas';
 import { NotationView } from '../../../../../ui/notation/NotationView';
 import { Pill } from '../../../../../ui/shared/Pill';
@@ -58,6 +61,7 @@ export default function ChordProgressionPlayPage() {
   const tempoScale = useSessionStore((s) => s.tempoScale);
   const holdAtLine = useSessionStore((s) => s.holdAtLine);
   const anyOctave = useSessionStore((s) => s.anyOctave);
+  const pressedPitches = useSessionStore((s) => s.pressedPitches);
   const setAnyOctave = useSessionStore((s) => s.setAnyOctave);
   const setTempoScale = useSessionStore((s) => s.setTempoScale);
   const setHoldAtLine = useSessionStore((s) => s.setHoldAtLine);
@@ -124,6 +128,16 @@ export default function ChordProgressionPlayPage() {
   // a rhythmic style has arpeggiated, uneven groups, so it plays as falling notes only.
   const canShowScore = style === 'block' || !styleFile;
   const shownView: PlayView = canShowScore ? view : 'falling';
+
+  const position =
+    arrangement && progression && attemptStatus === 'playing'
+      ? progressionPosition(
+          arrangement.chordMarkers ?? [],
+          activeNotes ?? arrangement.tracks[0]?.notes ?? [],
+          matcherState?.groupIndex ?? 0,
+          progression.chordIds.length,
+        )
+      : undefined;
 
   async function start(inputId?: string): Promise<void> {
     if (!arrangement) return;
@@ -211,6 +225,15 @@ export default function ChordProgressionPlayPage() {
         </Card>
       )}
 
+      {attemptStatus === 'playing' && position && (
+        <ProgressionNav
+          symbols={progression.chordIds.map((id) => chordSymbolOfId(id))}
+          currentIndex={position.chordIndex}
+          round={position.round}
+          totalRounds={position.totalRounds}
+        />
+      )}
+
       {attemptStatus === 'playing' && matcherState && matcherState.pending.length > 0 && (
         <p aria-live="polite">
           <strong>Play now:</strong>{' '}
@@ -225,6 +248,7 @@ export default function ChordProgressionPlayPage() {
           keyboardRange={profile.keyboardRange}
           matcherState={matcherState}
           anyOctave={anyOctave}
+          pressedPitches={pressedPitches}
           {...(arrangement.chordMarkers ? { chordMarkers: arrangement.chordMarkers } : {})}
         />
       )}
