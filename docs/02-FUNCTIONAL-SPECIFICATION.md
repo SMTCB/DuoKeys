@@ -319,6 +319,10 @@ counts" option (default on here, `TA-MAT-002` `anyOctave`) accepts the right
 letter wherever it is played; a chord that wants one letter twice needs two
 presses. Songs keep the exact pitch.
 
+On the chord screen, chords still to come are pale with a dashed outline, and a
+chord just played stays green at the line until the next chord has fallen in and
+turned the pending colour.
+
 A progression bar above the canvas shows every chord of the progression as a
 chip, the one being played marked (bold, outlined, `aria-current`), finished
 ones ticked, and the round of the loop ("Round 1 of 2"). The keyboard shows green

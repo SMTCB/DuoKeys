@@ -684,8 +684,10 @@ needs no reading.
   the chord screen prints a "Play now" line of the pending pitches, so nobody
   has to count keys on the diagram.
 - Hit feedback: notes the matcher has accepted turn green with a tick (colour is
-  never the only cue, `NFR-008`) and clear away shortly after crossing the line;
-  the pending chord is outlined. The keybed under the line lights wanted keys in
+  never the only cue, `NFR-008`); the pending chord is outlined. On the chord
+  screen (`stageChords`) upcoming chords are drawn pale with a dashed outline, and
+  the chord just played stays green at the line until the next chord has fallen
+  in and taken the pending colour, then it clears. The keybed under the line lights wanted keys in
   the role colour (every octave of a wanted letter when `anyOctave` is on) and
   shows green only for the keys physically down (`sessionStore.pressedPitches`),
   so a played key is acknowledged and releasing it clears it.

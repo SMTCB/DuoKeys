@@ -33,6 +33,8 @@ export interface FallingNotesCanvasProps {
   anyOctave?: boolean;
   /** Keys physically down, shown on the keybed. */
   pressedPitches?: readonly number[];
+  /** Chord-screen staging: upcoming chords look pale and dashed, and a played chord stays green at the line until the next one lands. */
+  stageChords?: boolean;
   /** Seconds of lead-in shown above the hit line (default: whatever fits the canvas). */
   lookAheadSeconds?: number;
   /** Fall speed in canvas pixels per second. */
@@ -54,6 +56,7 @@ export function FallingNotesCanvas({
   matcherState,
   anyOctave = false,
   pressedPitches,
+  stageChords = false,
   lookAheadSeconds,
   pixelsPerSecond = DEFAULT_PIXELS_PER_SECOND,
   chordMarkers,
@@ -67,6 +70,7 @@ export function FallingNotesCanvas({
   // Sorted by tick once per notes change — the frame loop only walks the sorted array.
   const sortedNotes = useRef<ContentNote[]>([]);
   const groupOrder = useRef<Map<string, number>>(new Map());
+  const groupStartTick = useRef<number[]>([]);
   const range = useRef<KeyboardRange>(keyboardRange);
 
   useEffect(() => {
@@ -74,6 +78,12 @@ export function FallingNotesCanvas({
     const order = new Map<string, number>();
     for (const n of notes) if (!order.has(n.groupId)) order.set(n.groupId, order.size);
     groupOrder.current = order;
+    const starts: number[] = [];
+    for (const n of sortedNotes.current) {
+      const g = order.get(n.groupId) ?? 0;
+      if (starts[g] === undefined) starts[g] = n.startTick as number;
+    }
+    groupStartTick.current = starts;
     range.current = fitKeyboardRange(
       notes.map((n) => n.pitch as number),
       keyboardRange,
@@ -131,6 +141,11 @@ export function FallingNotesCanvas({
       ctx.lineTo(CANVAS_WIDTH, HIT_LINE_Y);
       ctx.stroke();
 
+      // The chord just played stays at the line until the next chord has fallen in.
+      const nextStart = groupStartTick.current[doneGroups];
+      const isNextArrived = nextStart === undefined || (clock.ticksToAudio(asTicks(nextStart)) as number) - nowAudio <= 0.01;
+      const pinnedGroup = stageChords && progress !== undefined && !isNextArrived ? doneGroups - 1 : -1;
+
       for (const note of sortedNotes.current) {
         const atSeconds = clock.ticksToAudio(note.startTick) as number;
         const secondsUntilHit = atSeconds - nowAudio;
@@ -138,25 +153,36 @@ export function FallingNotesCanvas({
         const endSeconds = clock.ticksToAudio(
           asTicks((note.startTick as number) + (note.durationTicks as number)),
         ) as number;
-        if (endSeconds - nowAudio < -0.5) continue; // fully past the line
+        const groupNumber = groupOrder.current.get(note.groupId) ?? 0;
+        const isPinned = groupNumber === pinnedGroup;
+        if (!isPinned && endSeconds - nowAudio < -0.5) continue; // fully past the line
         // A chord that has been played clears away once it crosses the line, so only what is still to play stays on screen.
-        if (progress !== undefined && (groupOrder.current.get(note.groupId) ?? 0) < doneGroups && secondsUntilHit < -0.12) continue;
+        if (!isPinned && progress !== undefined && groupNumber < doneGroups && secondsUntilHit < -0.12) continue;
 
         const { x, isWhite, widthUnits } = pitchToX(note.pitch, fitted);
         const pxX = x * unit;
         const pxWidth = widthUnits * unit - 2;
-        const pxY = HIT_LINE_Y - secondsUntilHit * pixelsPerSecond;
+        const pxY = isPinned ? HIT_LINE_Y : HIT_LINE_Y - secondsUntilHit * pixelsPerSecond;
         const pxHeight = Math.max(10, (endSeconds - atSeconds) * pixelsPerSecond);
 
-        const groupNumber = groupOrder.current.get(note.groupId) ?? 0;
         const isPending = progress !== undefined && groupNumber === progress.groupIndex;
         const isDone = progress !== undefined && (groupNumber < doneGroups || (isPending && !wanted.has(note.pitch as number) && progress.pending.length > 0));
 
+        const isFuture = stageChords && progress !== undefined && groupNumber > progress.groupIndex;
+        ctx.globalAlpha = isFuture ? 0.4 : 1;
         ctx.fillStyle = isDone ? doneColour : isWhite ? roleColour : roleDeepColour;
         ctx.beginPath();
         ctx.roundRect(pxX + 1, pxY - pxHeight, pxWidth, pxHeight, 6);
         ctx.fill();
         // The chord being waited on gets an outline, and a played note a tick, so colour is never the only cue (NFR-008).
+        if (isFuture) {
+          // Upcoming notes are pale and dashed, not only a different colour (NFR-008).
+          ctx.setLineDash([6, 4]);
+          ctx.strokeStyle = roleDeepColour;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
         if (isPending && !isDone) {
           ctx.strokeStyle = inkColour;
           ctx.lineWidth = 3;
@@ -175,6 +201,7 @@ export function FallingNotesCanvas({
           ctx.textAlign = 'center';
           ctx.fillText(noteName(note.pitch as number), pxX + 1 + pxWidth / 2, pxY - 7);
         }
+        ctx.globalAlpha = 1;
       }
 
       // Chord symbols ride the stream, centred over the lanes.
@@ -211,7 +238,7 @@ export function FallingNotesCanvas({
 
     rafId = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(rafId);
-  }, [clock, lookAheadSeconds, pixelsPerSecond, anyOctave]);
+  }, [clock, lookAheadSeconds, pixelsPerSecond, anyOctave, stageChords]);
 
   return <canvas ref={canvasRef} className={styles.canvas} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />;
 }

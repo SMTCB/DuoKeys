@@ -249,6 +249,7 @@ export default function ChordProgressionPlayPage() {
           matcherState={matcherState}
           anyOctave={anyOctave}
           pressedPitches={pressedPitches}
+          stageChords
           {...(arrangement.chordMarkers ? { chordMarkers: arrangement.chordMarkers } : {})}
         />
       )}

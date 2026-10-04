@@ -421,7 +421,7 @@ These cannot be automated. Run at each sprint exit.
 | `TS-M-014` | Same golden fixtures produce identical grades on iPad and laptop | 5 | US-5.04 |
 | `TS-M-015` | A library song (one two-hand piece, one single line) is played at the real piano in wait mode: each hand lands on the right keys and a chord waits for all its notes | 3 | FR-STU-016 |
 | `TS-M-016` | **Manual, not yet run.** On the chord screen with the piano connected: pressing a chord or a progression's Play shows its keys on the keybed pinned at the top without scrolling; Next chord steps through the progression; the three tabs each show only their own content | 3 | FR-STU-015 |
-| `TS-M-018` | **Manual, not yet run.** On the chord screen with the piano connected: falling notes stop on the line until the chord is played; played notes turn green; the Speed slider slows them; the bars fill the width; Music score shows the chords and moves left to right only when the right keys are played | 3 | FR-STU-015 |
+| `TS-M-018` | **Manual, not yet run.** On the chord screen with the piano connected: falling notes stop on the line until the chord is played; played notes turn green and stay at the line until the next chord lands, with upcoming chords pale and dashed; the Speed slider slows them; the bars fill the width; Music score shows the chords and moves left to right only when the right keys are played | 3 | FR-STU-015 |
 | `TS-M-017` | **Manual, not yet run.** On a second device signed in to the same account: profiles appear after sync; a pasted chart and an imported MIDI file are added to "my songs", play at the piano in wait mode, and are still there after a reload; "Play something for me" opens a progression with its rhythm chosen | 3 | FR-STU-017, FR-STU-018 |
 
 ---
