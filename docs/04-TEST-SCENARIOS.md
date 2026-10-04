@@ -273,6 +273,7 @@ grace-note resolution is scoped as its own story.
 | `TS-U-REN-009` | `arrangementToMusicXml` maps `durationTicks` to the correct MusicXML note type and spells a sharp pitch class with `<alter>1</alter>` | TA-REN-003 |
 | `TS-U-REN-010` | `arrangementToMusicXml` emits exactly one `<note>` per source note with no synthesized rests, and throws for an unknown track or an unmapped duration | TA-REN-003 |
 | `TS-U-REN-011` | `fitKeyboardRange` pads the notes' span, keeps at least 24 semitones, aligns to white keys and clamps to the profile range | TA-REN-001, FR-STU-015 |
+| `TS-U-REN-012` | `noteName` gives middle C as C4, spells black keys with a sharp and can drop the octave | TA-REN-001, FR-STU-015 |
 
 `TS-U-REN-007` is delivered (`FallingNotesCanvas.tsx`, `US-3.14`) —
 `chordMarkers[].atTick` converts through `clock.ticksToAudio` the same way a
@@ -444,7 +445,7 @@ critical-path behaviour has a manual confirmation.
 | FR-STU-010 | TS-U-CNT-021 | — |
 | FR-STU-012 | TS-U-MAT-023…025, TS-U-CNT-019 | — |
 | FR-STU-013 | TS-U-REN-007 | — |
-| FR-STU-015 | TS-U-CNT-022…027, 042, TS-U-CLK-015, TS-U-REN-011, TS-I-DAT-008 | TS-M-016, TS-M-018 |
+| FR-STU-015 | TS-U-CNT-022…027, 042, TS-U-CLK-015, TS-U-REN-011, 012, TS-I-DAT-008 | TS-M-016, TS-M-018 |
 | FR-STU-016 | TS-U-CNT-028, 029, TS-I-DAT-009 | TS-M-015 |
 | FR-STU-017 | TS-U-CNT-030…035, TS-I-DAT-010 | TS-M-017 |
 | FR-STU-018 | TS-U-CNT-036…041 | TS-M-017 |

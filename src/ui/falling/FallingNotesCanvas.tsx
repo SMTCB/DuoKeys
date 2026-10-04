@@ -20,6 +20,7 @@ import type { MatcherState } from '../../core/match/types';
 import { asTicks } from '../../core/time/types';
 import { pitchToX, type KeyboardRange } from './pitchToX';
 import { fitKeyboardRange } from './fitRange';
+import { noteName } from './noteName';
 import styles from './FallingNotesCanvas.module.css';
 
 export interface FallingNotesCanvasProps {
@@ -157,6 +158,13 @@ export function FallingNotesCanvas({
           ctx.textAlign = 'center';
           ctx.fillText('✓', pxX + 1 + pxWidth / 2, pxY - pxHeight + 20);
         }
+        // The note's letter sits at the bottom of the bar, the end that reaches the line first.
+        if (pxWidth >= 22 && pxHeight >= 24) {
+          ctx.fillStyle = '#ffffff';
+          ctx.font = `700 ${Math.min(16, pxWidth * 0.45)}px ${displayFont}`;
+          ctx.textAlign = 'center';
+          ctx.fillText(noteName(note.pitch as number), pxX + 1 + pxWidth / 2, pxY - 7);
+        }
       }
 
       // Chord symbols ride the stream, centred over the lanes.
@@ -226,6 +234,12 @@ function drawKeybed(
       ctx.strokeStyle = colours.inkColour;
       ctx.lineWidth = isWanted ? 3 : 1;
       ctx.strokeRect(k.x * unit, top, w, h);
+      if ((isWanted || isDone) && w >= 18) {
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `700 ${Math.min(15, w * 0.45)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(noteName(p, false), k.x * unit + w / 2, top + h - 6);
+      }
     }
   }
 }

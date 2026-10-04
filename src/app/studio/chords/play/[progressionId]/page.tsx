@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useSessionStore } from '../../../../../runtime/stores/sessionStore';
 import { useChordExplorerStore } from '../../../../../runtime/stores/chordExplorerStore';
+import { noteName } from '../../../../../ui/falling/noteName';
 import { FallingNotesCanvas } from '../../../../../ui/falling/FallingNotesCanvas';
 import { NotationView } from '../../../../../ui/notation/NotationView';
 import { Pill } from '../../../../../ui/shared/Pill';
@@ -196,6 +197,16 @@ export default function ChordProgressionPlayPage() {
             </label>
           </div>
         </Card>
+      )}
+
+      {attemptStatus === 'playing' && matcherState && matcherState.pending.length > 0 && (
+        <p aria-live="polite">
+          <strong>Play now:</strong>{' '}
+          {[...matcherState.pending]
+            .sort((a, b) => (a as number) - (b as number))
+            .map((p) => noteName(p as number))
+            .join(' · ')}
+        </p>
       )}
 
       {attemptStatus === 'playing' && clock && shownView === 'falling' && (

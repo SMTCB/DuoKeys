@@ -490,6 +490,7 @@
     <li>Position is derived from <code>MasterClock.nowAudio()</code> every frame — never from an animation counter, which drifts.</li>
     <li>Off-screen notes are culled by a windowed index into the note array.</li>
     <li>Lanes fit the notes being played (<code>fitKeyboardRange</code>: 2 semitones of padding, at least two octaves, white-key aligned, clamped to <code>Profile.keyboardRange</code>), so a two-octave progression fills the screen instead of hugging one edge.</li>
+    <li>Note letters: every falling bar and every wanted key carries its letter name (<code>noteName</code>, middle C = C4), and the chord screen prints a “Play now” line of the pending pitches, so nobody has to count keys on the diagram.</li>
     <li>Hit feedback: notes the matcher has accepted turn green with a tick (colour is never the only cue, NFR-008); the pending chord is outlined; a small keybed under the line marks wanted and played keys.</li>
     <li><strong>Hold at the line.</strong> In wait mode <code>sessionStore</code> calls <code>MasterClock.holdAt</code> when the current tick reaches the pending chord's tick and <code>resume</code> when the matcher moves on, so notes stop on the line until played correctly. A per-session toggle turns it off; the sampler accompaniment also disables it, because that audio is scheduled in advance.</li>
     <li>Fall speed is the tempo-scale slider (FR-STU-004) on the chord screen; the canvas also takes a <code>pixelsPerSecond</code> prop, with no UI yet.</li>

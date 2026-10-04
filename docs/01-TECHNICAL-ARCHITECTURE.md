@@ -674,6 +674,9 @@ needs no reading.
 - Lanes fit the notes being played (`fitKeyboardRange`: 2 semitones of padding,
   at least two octaves, white-key aligned, clamped to `Profile.keyboardRange`),
   so a two-octave progression fills the screen instead of hugging one edge.
+- Note letters: every falling bar and every wanted key carries its letter name
+  (`noteName`, middle C = C4), and the chord screen prints a "Play now" line of
+  the pending pitches, so nobody has to count keys on the diagram.
 - Hit feedback: notes the matcher has accepted turn green with a tick (colour is
   never the only cue, `NFR-008`); the pending chord is outlined; a small keybed
   under the line marks wanted and played keys.
