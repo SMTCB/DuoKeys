@@ -376,6 +376,7 @@
     <li>Maintains <code>pending: Set&lt;MidiPitch&gt;</code> for the current group.</li>
     <li>Any note in <code>pending</code> → remove it; when empty, advance.</li>
     <li>Any note not in <code>pending</code> → <code>extra</code>, does not block advancement.</li>
+    <li>Option <code>anyOctave</code> (chord drills, FR-STU-015; off for songs): a played note matches the still-wanted pitch of the same pitch class nearest to it, so the right letter in any octave counts. A chord that wants one letter twice needs two presses. A different letter is still <code>extra</code>. Same octave-invariance as TA-MAT-007, but ordered and grouped.</li>
     <li>No timeouts. A six-year-old may take thirty seconds to find F♯ and that is fine.</li>
   </ul>
 

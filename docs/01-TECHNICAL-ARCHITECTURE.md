@@ -471,6 +471,11 @@ no timing judgement at all — only pitch.
 - Any note in `pending` → remove it; when empty, advance.
 - Any note not in `pending` → `extra`, does not block advancement.
 - No timeouts. A six-year-old may take thirty seconds to find F♯ and that is fine.
+- Option `anyOctave` (chord drills, `FR-STU-015`; off for songs): a played note matches the
+  still-wanted pitch of the same pitch class nearest to it, so the right letter in any
+  octave counts. A chord that wants one letter twice needs two presses. A different
+  letter is still `extra`. Same octave-invariance as `TA-MAT-007`, but ordered and
+  grouped.
 
 ### TA-MAT-003 — TimedMatcher
 

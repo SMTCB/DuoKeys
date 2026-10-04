@@ -101,4 +101,31 @@ describe('WaitMatcher', () => {
     expect(matcher.state().groupIndex).toBe(0);
     expect(matcher.state().complete).toBe(false);
   });
+
+  // TS-U-MAT-026
+  describe('anyOctave', () => {
+    it('counts the wanted letter in any octave and consumes the nearest wanted pitch', () => {
+      const matcher = new WaitMatcher({ anyOctave: true });
+      matcher.expect([note('lo', 40, 0, 'g0'), note('hi', 64, 0, 'g0'), note('next', 60, 480, 'g1')]);
+      expect(matcher.consume({ pitch: asMidiPitch(76), velocity: 80 })).toEqual({ kind: 'correct', expectedId: 'hi', deltaMs: 0 });
+      expect(matcher.consume({ pitch: asMidiPitch(52), velocity: 80 })).toEqual({ kind: 'correct', expectedId: 'lo', deltaMs: 0 });
+      expect(matcher.state().groupIndex).toBe(1);
+    });
+    it('needs a second press when the chord wants the same letter twice', () => {
+      const matcher = new WaitMatcher({ anyOctave: true });
+      matcher.expect([note('a', 47, 0, 'g0'), note('b', 71, 0, 'g0')]);
+      matcher.consume({ pitch: asMidiPitch(59), velocity: 80 });
+      expect(matcher.state().complete).toBe(false);
+      matcher.consume({ pitch: asMidiPitch(59), velocity: 80 });
+      expect(matcher.state().complete).toBe(true);
+    });
+    it('still reports a different letter as extra, and stays exact by default', () => {
+      const anyOctave = new WaitMatcher({ anyOctave: true });
+      anyOctave.expect([note('a', 64, 0, 'g0')]);
+      expect(anyOctave.consume({ pitch: asMidiPitch(65), velocity: 80 })).toEqual({ kind: 'extra', pitch: 65 });
+      const exact = new WaitMatcher();
+      exact.expect([note('a', 64, 0, 'g0')]);
+      expect(exact.consume({ pitch: asMidiPitch(76), velocity: 80 })).toEqual({ kind: 'extra', pitch: 76 });
+    });
+  });
 });

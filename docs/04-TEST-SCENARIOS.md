@@ -135,6 +135,7 @@ grading.
 | `TS-U-MAT-023` | Playing all of a chord's pitch classes, in any octave, resolves `complete` | TA-MAT-007 |
 | `TS-U-MAT-024` | A played set missing one pitch class stays `partial`, never `wrong` | TA-MAT-007 |
 | `TS-U-MAT-025` | Extra non-chord notes accumulate but never block `complete` | TA-MAT-007 |
+| `TS-U-MAT-026` | `WaitMatcher` with `anyOctave` counts the wanted letter in any octave (nearest wanted pitch), needs two presses for a doubled letter, still reports another letter as extra, and stays exact by default | TA-MAT-002, FR-STU-015 |
 
 ---
 
@@ -445,7 +446,7 @@ critical-path behaviour has a manual confirmation.
 | FR-STU-010 | TS-U-CNT-021 | — |
 | FR-STU-012 | TS-U-MAT-023…025, TS-U-CNT-019 | — |
 | FR-STU-013 | TS-U-REN-007 | — |
-| FR-STU-015 | TS-U-CNT-022…027, 042, TS-U-CLK-015, TS-U-REN-011, 012, TS-I-DAT-008 | TS-M-016, TS-M-018 |
+| FR-STU-015 | TS-U-CNT-022…027, 042, TS-U-CLK-015, TS-U-REN-011, 012, TS-U-MAT-026, TS-I-DAT-008 | TS-M-016, TS-M-018 |
 | FR-STU-016 | TS-U-CNT-028, 029, TS-I-DAT-009 | TS-M-015 |
 | FR-STU-017 | TS-U-CNT-030…035, TS-I-DAT-010 | TS-M-017 |
 | FR-STU-018 | TS-U-CNT-036…041 | TS-M-017 |

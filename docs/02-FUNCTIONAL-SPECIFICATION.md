@@ -312,6 +312,13 @@ Falling notes and Music score. The score view (`TA-REN-003`) lays the chords out
 as a scrolling grand staff whose cursor advances only on correct notes. It is
 available for block chords; a rhythmic style is falling notes only.
 
+To make a chord findable on the real piano, every falling bar and wanted key
+carries its letter name (middle C = C4), every C on the keybed is named as a
+landmark, and a "Play now" line lists the notes still needed. An "Any octave
+counts" option (default on here, `TA-MAT-002` `anyOctave`) accepts the right
+letter wherever it is played; a chord that wants one letter twice needs two
+presses. Songs keep the exact pitch.
+
 > **No web chord search.** Searching chord sites and auto-importing was
 > considered and declined: there is no public chord API, scraping breaches the
 > sites' terms and copyright, and a network read on the practice path would

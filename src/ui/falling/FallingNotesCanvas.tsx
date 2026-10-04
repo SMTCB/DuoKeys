@@ -29,6 +29,8 @@ export interface FallingNotesCanvasProps {
   keyboardRange: KeyboardRange;
   /** The matcher's progress: groups before `groupIndex` are done, `pending` pitches in the current one are still wanted. */
   matcherState?: MatcherState | undefined;
+  /** Any octave of a wanted note counts, so the keybed lights every key of that letter. */
+  anyOctave?: boolean;
   /** Seconds of lead-in shown above the hit line (default: whatever fits the canvas). */
   lookAheadSeconds?: number;
   /** Fall speed in canvas pixels per second. */
@@ -48,6 +50,7 @@ export function FallingNotesCanvas({
   notes,
   keyboardRange,
   matcherState,
+  anyOctave = false,
   lookAheadSeconds,
   pixelsPerSecond = DEFAULT_PIXELS_PER_SECOND,
   chordMarkers,
@@ -178,7 +181,15 @@ export function FallingNotesCanvas({
         ctx.fillText(marker.symbol, CANVAS_WIDTH / 2, pxY - 12);
       }
 
-      drawKeybed(ctx, fitted, unit, wanted, new Set(pitchesDone(sortedNotes.current, groupOrder.current, progress)), {
+      const doneNow = pitchesDone(sortedNotes.current, groupOrder.current, progress);
+      const lit = (pitches: Iterable<number>): Set<number> => {
+        const out = new Set<number>(pitches);
+        if (!anyOctave) return out;
+        const classes = new Set([...out].map((p) => p % 12));
+        for (let p = fitted.low as number; p <= (fitted.high as number); p++) if (classes.has(p % 12)) out.add(p);
+        return out;
+      };
+      drawKeybed(ctx, fitted, unit, lit(wanted), lit(doneNow), {
         wantedColour: roleColour,
         doneColour,
         inkColour,
@@ -187,7 +198,7 @@ export function FallingNotesCanvas({
 
     rafId = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(rafId);
-  }, [clock, lookAheadSeconds, pixelsPerSecond]);
+  }, [clock, lookAheadSeconds, pixelsPerSecond, anyOctave]);
 
   return <canvas ref={canvasRef} className={styles.canvas} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />;
 }
@@ -239,6 +250,12 @@ function drawKeybed(
         ctx.font = `700 ${Math.min(15, w * 0.45)}px sans-serif`;
         ctx.textAlign = 'center';
         ctx.fillText(noteName(p, false), k.x * unit + w / 2, top + h - 6);
+      } else if (p % 12 === 0 && w >= 18) {
+        // Every C is named, so the eye has a landmark to count from on the real piano.
+        ctx.fillStyle = colours.inkColour;
+        ctx.font = `600 ${Math.min(13, w * 0.4)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(noteName(p), k.x * unit + w / 2, top + h - 6);
       }
     }
   }

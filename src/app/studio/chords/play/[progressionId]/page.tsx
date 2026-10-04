@@ -57,11 +57,19 @@ export default function ChordProgressionPlayPage() {
   const matcherState = useSessionStore((s) => s.matcherState);
   const tempoScale = useSessionStore((s) => s.tempoScale);
   const holdAtLine = useSessionStore((s) => s.holdAtLine);
+  const anyOctave = useSessionStore((s) => s.anyOctave);
+  const setAnyOctave = useSessionStore((s) => s.setAnyOctave);
   const setTempoScale = useSessionStore((s) => s.setTempoScale);
   const setHoldAtLine = useSessionStore((s) => s.setHoldAtLine);
   const refreshMidiInputs = useSessionStore((s) => s.refreshMidiInputs);
   const selectMidiInput = useSessionStore((s) => s.selectMidiInput);
   const startArrangement = useSessionStore((s) => s.startArrangement);
+
+  // A chord drill accepts the right letter in any octave; the store flag is put back on leaving so songs stay exact.
+  useEffect(() => {
+    setAnyOctave(true);
+    return () => setAnyOctave(false);
+  }, [setAnyOctave]);
 
   useEffect(() => {
     void loadCatalogue();
@@ -160,6 +168,10 @@ export default function ChordProgressionPlayPage() {
             <input type="checkbox" checked={holdAtLine} onChange={(e) => setHoldAtLine(e.target.checked)} />
             Stop the chord at the line until I play it
           </label>
+          <label className={controls.check}>
+            <input type="checkbox" checked={anyOctave} onChange={(e) => setAnyOctave(e.target.checked)} />
+            Any octave counts (play the right letter wherever it is easiest)
+          </label>
           <p>The chords wait for you — there is no timer.</p>
           <MidiChooser inputs={midiInputs} connectionState={midiConnectionState} onSelect={(id) => void start(id)} />
         </Card>
@@ -202,10 +214,7 @@ export default function ChordProgressionPlayPage() {
       {attemptStatus === 'playing' && matcherState && matcherState.pending.length > 0 && (
         <p aria-live="polite">
           <strong>Play now:</strong>{' '}
-          {[...matcherState.pending]
-            .sort((a, b) => (a as number) - (b as number))
-            .map((p) => noteName(p as number))
-            .join(' · ')}
+          {[...matcherState.pending].sort((a, b) => (a as number) - (b as number)).map((p) => noteName(p as number, !anyOctave)).join(' · ')}
         </p>
       )}
 
@@ -215,6 +224,7 @@ export default function ChordProgressionPlayPage() {
           notes={activeNotes ?? arrangement.tracks[0]?.notes ?? []}
           keyboardRange={profile.keyboardRange}
           matcherState={matcherState}
+          anyOctave={anyOctave}
           {...(arrangement.chordMarkers ? { chordMarkers: arrangement.chordMarkers } : {})}
         />
       )}

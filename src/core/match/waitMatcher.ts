@@ -19,7 +19,14 @@ interface Group {
   expectedIds: Map<MidiPitch, string>;
 }
 
+export interface WaitMatcherOptions {
+  /** Any octave of a wanted note counts (a chord drill, not a song). Default: the exact pitch is required. */
+  anyOctave?: boolean;
+}
+
 export class WaitMatcher implements Matcher {
+  constructor(private readonly options: WaitMatcherOptions = {}) {}
+
   private groups: Group[] = [];
   private pending: Set<MidiPitch>[] = [];
   private groupIndex = 0;
@@ -46,13 +53,14 @@ export class WaitMatcher implements Matcher {
     const currentGroup = this.groups[this.groupIndex]!;
     const currentPending = this.pending[this.groupIndex]!;
 
-    if (!currentPending.has(e.pitch)) {
+    const wantedPitch = this.options.anyOctave ? nearestWantedPitch(currentPending, e.pitch) : currentPending.has(e.pitch) ? e.pitch : undefined;
+    if (wantedPitch === undefined) {
       // TS-U-MAT-006: reported, but never blocks advancement.
       return { kind: 'extra', pitch: e.pitch };
     }
 
-    const expectedId = currentGroup.expectedIds.get(e.pitch)!;
-    currentPending.delete(e.pitch);
+    const expectedId = currentGroup.expectedIds.get(wantedPitch)!;
+    currentPending.delete(wantedPitch);
     if (currentPending.size === 0) {
       this.groupIndex++;
     }
@@ -77,4 +85,14 @@ export class WaitMatcher implements Matcher {
   private rebuildPending(): void {
     this.pending = this.groups.map((g) => new Set(g.expectedIds.keys()));
   }
+}
+
+/** The still-wanted pitch with the same pitch class as `played`, nearest to it (exact pitch wins). */
+function nearestWantedPitch(pending: ReadonlySet<MidiPitch>, played: MidiPitch): MidiPitch | undefined {
+  let best: MidiPitch | undefined;
+  for (const wanted of pending) {
+    if (((wanted as number) - (played as number)) % 12 !== 0) continue;
+    if (best === undefined || Math.abs((wanted as number) - (played as number)) < Math.abs((best as number) - (played as number))) best = wanted;
+  }
+  return best;
 }

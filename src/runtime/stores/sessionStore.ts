@@ -66,6 +66,8 @@ interface SessionState {
    * off lets wait mode scroll on while still only grading pitch.
    */
   holdAtLine: boolean;
+  /** A wanted note counts in any octave (chord drills); songs keep the exact pitch. */
+  anyOctave: boolean;
 
   setProfile(profile: Profile): void;
   refreshMidiInputs(): Promise<void>;
@@ -83,6 +85,7 @@ interface SessionState {
   setAutoRamp(enabled: boolean): void;
   setAccompanimentMode(mode: AccompanimentMode): void;
   setHoldAtLine(hold: boolean): void;
+  setAnyOctave(anyOctave: boolean): void;
   /** Ends a looping attempt, grading whatever was played in the pass in progress. */
   stopLoop(): Promise<void>;
 }
@@ -210,6 +213,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   lastPassGrade: undefined,
   accompanimentMode: 'silent',
   holdAtLine: true,
+  anyOctave: false,
 
   setProfile(profile: Profile): void {
     set({ profile });
@@ -354,7 +358,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
             arrangement.tempoMap[0]?.bpm ?? 120,
             profile.toleranceScale,
           )
-        : new WaitMatcher();
+        : new WaitMatcher({ anyOctave: get().anyOctave });
     matcher.expect(allExpected);
 
     currentAttemptMeta = {
@@ -400,6 +404,9 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     set({ accompanimentMode: mode });
   },
 
+  setAnyOctave(anyOctave: boolean): void {
+    set({ anyOctave });
+  },
   setHoldAtLine(hold: boolean): void {
     set({ holdAtLine: hold });
   },
