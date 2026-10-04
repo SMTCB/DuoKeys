@@ -60,6 +60,12 @@ interface SessionState {
 
   /** FR-STU-005 — set before starting; startArrangement reads it to decide whether other tracks sound. */
   accompanimentMode: AccompanimentMode;
+  /**
+   * TA-MAT-002 — in wait mode the stream stops on the pending chord at the hit
+   * line and only moves on once it has been played. On by default; turning it
+   * off lets wait mode scroll on while still only grading pitch.
+   */
+  holdAtLine: boolean;
 
   setProfile(profile: Profile): void;
   refreshMidiInputs(): Promise<void>;
@@ -76,6 +82,7 @@ interface SessionState {
   setLoopRange(range: { startTick: Ticks; endTick: Ticks } | undefined): void;
   setAutoRamp(enabled: boolean): void;
   setAccompanimentMode(mode: AccompanimentMode): void;
+  setHoldAtLine(hold: boolean): void;
   /** Ends a looping attempt, grading whatever was played in the pass in progress. */
   stopLoop(): Promise<void>;
 }
@@ -132,6 +139,9 @@ let currentAttemptMeta:
   | undefined;
 let unsubscribeMessage: (() => void) | undefined;
 let loopPollId: number | undefined;
+let holdPollId: number | undefined;
+/** TA-MAT-002 — the onset tick of each matcher group, in matcher order, for holding the stream on the pending one. */
+let groupTicks: number[] = [];
 /** FR-STU-005 — scoped once in startArrangement, re-scheduled unchanged on each loop pass. */
 let accompanimentNotesByTrack: ContentNote[][] = [];
 
@@ -139,6 +149,13 @@ function stopLoopPolling(): void {
   if (loopPollId !== undefined) {
     cancelAnimationFrame(loopPollId);
     loopPollId = undefined;
+  }
+}
+
+function stopHoldPolling(): void {
+  if (holdPollId !== undefined) {
+    cancelAnimationFrame(holdPollId);
+    holdPollId = undefined;
   }
 }
 
@@ -192,6 +209,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   passNumber: 1,
   lastPassGrade: undefined,
   accompanimentMode: 'silent',
+  holdAtLine: true,
 
   setProfile(profile: Profile): void {
     set({ profile });
@@ -303,6 +321,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     perNote = [];
     openArticulation = new Map();
     stopLoopPolling();
+    stopHoldPolling();
 
     allExpected = notesInScope.map((n: ContentNote) => ({
       id: n.id,
@@ -311,6 +330,9 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       groupId: n.groupId,
     }));
     notesById = new Map(notesInScope.map((n) => [n.id, n]));
+    const tickOfGroup = new Map<string, number>();
+    for (const e of allExpected) if (!tickOfGroup.has(e.groupId)) tickOfGroup.set(e.groupId, e.atTick as number);
+    groupTicks = [...tickOfGroup.values()];
 
     const clock = new MasterClock(adapters.audio, arrangement.tempoMap);
     const startTick = loopRange
@@ -318,7 +340,11 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       : (targetSection ? targetSection.startTick : (arrangement.sections[0]?.startTick ?? track.notes[0]!.startTick));
     clock.start(startTick);
     if (loopRange) clock.setLoop(loopRange.startTick, loopRange.endTick);
-    if (get().accompanimentMode === 'sampler') scheduleAccompaniment(adapters.audio, clock, accompanimentNotesByTrack);
+    // A held stream would leave a pre-scheduled sampler part playing on its own, so the two never combine.
+    const isHolding = mode === 'wait' && get().holdAtLine && get().accompanimentMode !== 'sampler';
+    if (get().accompanimentMode === 'sampler' && !isHolding) {
+      scheduleAccompaniment(adapters.audio, clock, accompanimentNotesByTrack);
+    }
 
     // ADR-006 — timing is always read through MasterClock, never performance.now() directly.
     matcher =
@@ -354,6 +380,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     });
 
     if (loopRange) startLoopPolling(set, get);
+    if (isHolding) startHoldPolling(get);
   },
 
   setTempoScale(scale: number): void {
@@ -373,6 +400,10 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     set({ accompanimentMode: mode });
   },
 
+  setHoldAtLine(hold: boolean): void {
+    set({ holdAtLine: hold });
+  },
+
   async stopLoop(): Promise<void> {
     stopLoopPolling();
     get().clock?.clearLoop();
@@ -380,6 +411,30 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     await finishAttempt(set, get);
   },
 }));
+
+// TA-MAT-002 — each frame: once the stream reaches the pending chord's onset it
+// is held there; the moment the matcher moves on to the next chord it runs again.
+function startHoldPolling(get: () => SessionState): void {
+  let heldIndex = -1;
+  const poll = (): void => {
+    const clock = get().clock;
+    const m = matcher;
+    if (!clock || !m || get().attemptStatus !== 'playing') return;
+    const { groupIndex, complete } = m.state();
+    if (complete) return;
+    const tick = groupTicks[groupIndex];
+    if (tick !== undefined) {
+      if (clock.isHeld) {
+        if (groupIndex !== heldIndex) clock.resume();
+      } else if ((clock.audioToTicks(clock.nowAudio()) as number) >= tick) {
+        clock.holdAt(asTicks(tick));
+        heldIndex = groupIndex;
+      }
+    }
+    holdPollId = requestAnimationFrame(poll);
+  };
+  holdPollId = requestAnimationFrame(poll);
+}
 
 function startLoopPolling(set: (partial: Partial<SessionState>) => void, get: () => SessionState): void {
   const poll = (): void => {
@@ -430,6 +485,7 @@ async function finishAttempt(
   set: (partial: Partial<SessionState>) => void,
   get: () => SessionState,
 ): Promise<void> {
+  stopHoldPolling();
   const meta = currentAttemptMeta;
   if (!meta) return;
 

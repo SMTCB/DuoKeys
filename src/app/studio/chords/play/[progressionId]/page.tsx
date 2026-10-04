@@ -12,6 +12,9 @@ import { useParams } from 'next/navigation';
 import { useSessionStore } from '../../../../../runtime/stores/sessionStore';
 import { useChordExplorerStore } from '../../../../../runtime/stores/chordExplorerStore';
 import { FallingNotesCanvas } from '../../../../../ui/falling/FallingNotesCanvas';
+import { NotationView } from '../../../../../ui/notation/NotationView';
+import { Pill } from '../../../../../ui/shared/Pill';
+import controls from '../../../../../ui/shared/Controls.module.css';
 import { PageShell } from '../../../../../ui/shared/PageShell';
 import { StatusNote } from '../../../../../ui/shared/StatusNote';
 import { Card } from '../../../../../ui/shared/Card';
@@ -30,6 +33,11 @@ import { parseSmf, type SmfFile } from '../../../../../core/midi/smf';
 import { loadChordStyleBytes } from '../../../../../adapters/content/staticChords';
 
 type StyleChoice = 'block' | ChordStyleId;
+type PlayView = 'falling' | 'score';
+
+const TEMPO_MIN = 30;
+const TEMPO_MAX = 100;
+const TEMPO_STEP = 5;
 
 export default function ChordProgressionPlayPage() {
   const params = useParams<{ progressionId: string }>();
@@ -45,6 +53,11 @@ export default function ChordProgressionPlayPage() {
   const activeNotes = useSessionStore((s) => s.activeNotes);
   const attemptStatus = useSessionStore((s) => s.attemptStatus);
   const grade = useSessionStore((s) => s.grade);
+  const matcherState = useSessionStore((s) => s.matcherState);
+  const tempoScale = useSessionStore((s) => s.tempoScale);
+  const holdAtLine = useSessionStore((s) => s.holdAtLine);
+  const setTempoScale = useSessionStore((s) => s.setTempoScale);
+  const setHoldAtLine = useSessionStore((s) => s.setHoldAtLine);
   const refreshMidiInputs = useSessionStore((s) => s.refreshMidiInputs);
   const selectMidiInput = useSessionStore((s) => s.selectMidiInput);
   const startArrangement = useSessionStore((s) => s.startArrangement);
@@ -56,6 +69,7 @@ export default function ChordProgressionPlayPage() {
 
   const progression = catalogue?.progressions.find((p) => p.id === progressionId);
   const [style, setStyle] = useState<StyleChoice>('block');
+  const [view, setView] = useState<PlayView>('falling');
 
   // FR-STU-018 — Free play links here with ?style=pop so the suggested rhythm is already chosen.
   // Read from the address bar after mount: useSearchParams would force a Suspense boundary.
@@ -97,6 +111,11 @@ export default function ChordProgressionPlayPage() {
   const hasStyles = progression ? styleFilePath('pop', progression) !== undefined : false;
   const isStyleLoading = style !== 'block' && hasStyles && !styleFile && !styleError;
 
+  // The score draws one whole-note chord per group, which is only true of block chords —
+  // a rhythmic style has arpeggiated, uneven groups, so it plays as falling notes only.
+  const canShowScore = style === 'block' || !styleFile;
+  const shownView: PlayView = canShowScore ? view : 'falling';
+
   async function start(inputId?: string): Promise<void> {
     if (!arrangement) return;
     if (inputId !== undefined) await selectMidiInput(inputId);
@@ -136,19 +155,70 @@ export default function ChordProgressionPlayPage() {
           )}
           {styleError && <p>That rhythm could not be loaded — block chords will play instead.</p>}
           {isStyleLoading && <p>Loading the rhythm…</p>}
-          <p>The chords fall and wait for you.</p>
+          <label className={controls.check}>
+            <input type="checkbox" checked={holdAtLine} onChange={(e) => setHoldAtLine(e.target.checked)} />
+            Stop the chord at the line until I play it
+          </label>
+          <p>The chords wait for you — there is no timer.</p>
           <MidiChooser inputs={midiInputs} connectionState={midiConnectionState} onSelect={(id) => void start(id)} />
         </Card>
       )}
 
       {attemptStatus === 'playing' && clock && (
+        <Card>
+          <div className={controls.bar}>
+            {canShowScore ? (
+              <Segmented
+                name="view"
+                legend="Show"
+                options={[
+                  { value: 'falling' as const, label: 'Falling notes' },
+                  { value: 'score' as const, label: 'Music score' },
+                ]}
+                value={shownView}
+                onChange={setView}
+              />
+            ) : (
+              <Pill tone="neutral">Falling notes</Pill>
+            )}
+            <label className={controls.tempo}>
+              <span className={controls.tempoLabel}>
+                Speed <span className={controls.readout}>{Math.round(tempoScale * 100)}%</span>
+              </span>
+              <input
+                type="range"
+                min={TEMPO_MIN}
+                max={TEMPO_MAX}
+                step={TEMPO_STEP}
+                value={Math.round(tempoScale * 100)}
+                onChange={(e) => setTempoScale(Number(e.target.value) / 100)}
+              />
+            </label>
+          </div>
+        </Card>
+      )}
+
+      {attemptStatus === 'playing' && clock && shownView === 'falling' && (
         <FallingNotesCanvas
           clock={clock}
           notes={activeNotes ?? arrangement.tracks[0]?.notes ?? []}
           keyboardRange={profile.keyboardRange}
-          pendingGroupId={undefined}
+          matcherState={matcherState}
           {...(arrangement.chordMarkers ? { chordMarkers: arrangement.chordMarkers } : {})}
         />
+      )}
+
+      {attemptStatus === 'playing' && shownView === 'score' && (
+        <Card>
+          <NotationView
+            arrangement={arrangement}
+            trackId="chords"
+            groupIndex={matcherState?.groupIndex ?? 0}
+            attemptStatus={attemptStatus}
+            grade={grade}
+            layout="chords"
+          />
+        </Card>
       )}
 
       {attemptStatus === 'complete' && grade && (

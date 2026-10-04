@@ -8,6 +8,7 @@
 import { useEffect, useRef } from 'react';
 import type { OpenSheetMusicDisplay } from 'opensheetmusicdisplay';
 import { arrangementToMusicXml } from '../../core/content/toMusicXml';
+import { chordsToMusicXml } from '../../core/content/chordScoreXml';
 import type { Arrangement } from '../../core/content/types';
 import type { Grade, NoteResult } from '../../core/grade/grade';
 import type { AttemptStatus } from '../../runtime/stores/sessionStore';
@@ -21,6 +22,12 @@ interface NotationViewProps {
   groupIndex: number;
   attemptStatus: AttemptStatus;
   grade: Grade | undefined;
+  /**
+   * 'melody' (default) is the single-line staff; 'chords' is a piano grand staff
+   * with one chord per measure, drawn as one long line that scrolls left to right
+   * so the pending chord stays in view (FR-STU-015).
+   */
+  layout?: 'melody' | 'chords';
 }
 
 const OUTCOME_COLOR: Partial<Record<NoteResult['outcome'], string>> = {
@@ -29,11 +36,21 @@ const OUTCOME_COLOR: Partial<Record<NoteResult['outcome'], string>> = {
   missed: '#8b8f86',
 };
 
-export function NotationView({ arrangement, trackId, groupIndex, attemptStatus, grade }: NotationViewProps) {
+export function NotationView({ arrangement, trackId, groupIndex, attemptStatus, grade, layout = 'melody' }: NotationViewProps) {
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const osmdRef = useRef<OpenSheetMusicDisplay | undefined>(undefined);
   const groupIndexRef = useRef(groupIndex);
   groupIndexRef.current = groupIndex;
+
+  // Keeps the pending chord about a quarter of the way in, so what is coming is always on screen.
+  function followCursor(): void {
+    if (layout !== 'chords') return;
+    const scroller = scrollerRef.current;
+    const cursorEl = osmdRef.current?.cursor.cursorElement;
+    if (!scroller || !cursorEl) return;
+    scroller.scrollTo({ left: Math.max(0, cursorEl.offsetLeft - scroller.clientWidth * 0.25), behavior: 'smooth' });
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -44,14 +61,20 @@ export function NotationView({ arrangement, trackId, groupIndex, attemptStatus, 
       if (!container) return;
       const { OpenSheetMusicDisplay: OSMD } = await import('opensheetmusicdisplay');
       if (cancelled) return;
-      const osmd = new OSMD(container, { autoResize: true, drawTitle: false });
-      const xml = arrangementToMusicXml(arrangement, trackId);
+      const isChords = layout === 'chords';
+      const osmd = new OSMD(container, {
+        autoResize: true,
+        drawTitle: false,
+        ...(isChords ? { renderSingleHorizontalStaffline: true, followCursor: false } : {}),
+      });
+      const xml = isChords ? chordsToMusicXml(arrangement, trackId) : arrangementToMusicXml(arrangement, trackId);
       await osmd.load(xml);
       if (cancelled) return;
       osmd.render();
       osmd.cursor.show();
       for (let i = 0; i < groupIndexRef.current; i++) osmd.cursor.next();
       osmdRef.current = osmd;
+      followCursor();
     }
     void load();
 
@@ -60,13 +83,15 @@ export function NotationView({ arrangement, trackId, groupIndex, attemptStatus, 
       osmdRef.current = undefined;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [arrangement.id, trackId]);
+  }, [arrangement.id, trackId, layout]);
 
   useEffect(() => {
     const osmd = osmdRef.current;
     if (!osmd) return;
     osmd.cursor.reset();
     for (let i = 0; i < groupIndex; i++) osmd.cursor.next();
+    followCursor();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupIndex]);
 
   useEffect(() => {
@@ -94,5 +119,9 @@ export function NotationView({ arrangement, trackId, groupIndex, attemptStatus, 
     osmd.cursor.hide();
   }, [attemptStatus, grade, arrangement, trackId]);
 
-  return <div ref={containerRef} />;
+  return (
+    <div ref={scrollerRef} style={layout === 'chords' ? { overflowX: 'auto' } : undefined}>
+      <div ref={containerRef} />
+    </div>
+  );
 }

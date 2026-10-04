@@ -80,6 +80,8 @@ export default function StudioPlayPage() {
   const setAutoRamp = useSessionStore((s) => s.setAutoRamp);
   const setAccompanimentMode = useSessionStore((s) => s.setAccompanimentMode);
   const stopLoop = useSessionStore((s) => s.stopLoop);
+  const holdAtLine = useSessionStore((s) => s.holdAtLine);
+  const setHoldAtLine = useSessionStore((s) => s.setHoldAtLine);
 
   const [arrangement, setArrangement] = useState<Arrangement | undefined>();
   const [loadError, setLoadError] = useState<string | undefined>();
@@ -138,17 +140,6 @@ export default function StudioPlayPage() {
 
   const track = arrangement?.tracks.find((t) => t.id === selectedTrackId) ?? arrangement?.tracks[0];
   const notesForDisplay = useMemo(() => activeNotes ?? track?.notes ?? [], [activeNotes, track]);
-  const orderedGroupIds = useMemo(() => {
-    const seen: string[] = [];
-    for (const note of notesForDisplay) {
-      if (seen[seen.length - 1] !== note.groupId) seen.push(note.groupId);
-    }
-    return seen;
-  }, [notesForDisplay]);
-  const pendingGroupId =
-    matcherState && matcherState.groupIndex < orderedGroupIds.length
-      ? orderedGroupIds[matcherState.groupIndex]
-      : undefined;
 
   // FR-STU-003 — measure range picker; ticksPerMeasure is the same helper
   // toMusicXml.ts uses to bucket notes, so loop boundaries always land on a
@@ -203,6 +194,12 @@ export default function StudioPlayPage() {
               value={mode}
               onChange={setMode}
             />
+            {mode === 'wait' && (
+              <label className={controls.check}>
+                <input type="checkbox" checked={holdAtLine} onChange={(e) => setHoldAtLine(e.target.checked)} />
+                Stop the notes at the line until I play them
+              </label>
+            )}
             {arrangement.tracks.length > 1 && (
               <>
                 <Segmented
@@ -325,7 +322,7 @@ export default function StudioPlayPage() {
           clock={clock}
           notes={notesForDisplay}
           keyboardRange={profile.keyboardRange}
-          pendingGroupId={pendingGroupId}
+          matcherState={matcherState}
         />
       )}
 

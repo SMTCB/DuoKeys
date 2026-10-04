@@ -29,6 +29,7 @@ export default function StudioSongPage() {
   const activeNotes = useSessionStore((s) => s.activeNotes);
   const attemptStatus = useSessionStore((s) => s.attemptStatus);
   const grade = useSessionStore((s) => s.grade);
+  const matcherState = useSessionStore((s) => s.matcherState);
   const refreshMidiInputs = useSessionStore((s) => s.refreshMidiInputs);
   const selectMidiInput = useSessionStore((s) => s.selectMidiInput);
   const startArrangement = useSessionStore((s) => s.startArrangement);
@@ -82,7 +83,7 @@ export default function StudioSongPage() {
           clock={clock}
           notes={notesForDisplay}
           keyboardRange={profile.keyboardRange}
-          pendingGroupId={undefined}
+          matcherState={matcherState}
           {...(arrangement.chordMarkers ? { chordMarkers: arrangement.chordMarkers } : {})}
         />
       )}

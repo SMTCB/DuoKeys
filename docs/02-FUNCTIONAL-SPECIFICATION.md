@@ -303,6 +303,15 @@ chords (one bar per chord) or in one of four rhythmic styles (pop, pop 2,
 soul, hip-hop) taken from the free-midi-chords style files, transposed to
 the chosen key. The 12-bar blues has block chords only.
 
+**Playing aids on the chord screen.** The play screen offers: a "stop notes at
+the line until I play them" option (default on; in wait mode the clock is held
+on the pending chord, `TA-CLK-002`); a Speed slider (30–100 %, live); played
+notes shown green with a tick and the keys on the keybed marked; lanes fitted to
+the progression's range so the bars fill the width; and a Show switch between
+Falling notes and Music score. The score view (`TA-REN-003`) lays the chords out
+as a scrolling grand staff whose cursor advances only on correct notes. It is
+available for block chords; a rhythmic style is falling notes only.
+
 > **No web chord search.** Searching chord sites and auto-importing was
 > considered and declined: there is no public chord API, scraping breaches the
 > sites' terms and copyright, and a network read on the practice path would

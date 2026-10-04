@@ -92,6 +92,26 @@ export class MasterClock {
     this.startAudioTime = undefined;
   }
 
+  /**
+   * TA-MAT-002 — wait mode: freeze the stream exactly on `tick` (the pending
+   * chord's onset) until the player has played it. While held, ticksToAudio()
+   * stays anchored to "now", so every note keeps its distance from the hit line.
+   */
+  holdAt(tick: Ticks): void {
+    this.startTick = tick;
+    this.startAudioTime = undefined;
+  }
+
+  /** Lets a held (or paused) clock run on from the tick it stopped at. */
+  resume(): void {
+    if (this.startAudioTime !== undefined) return;
+    this.startAudioTime = this.audio.now();
+  }
+
+  get isHeld(): boolean {
+    return this.startAudioTime === undefined;
+  }
+
   setTempoScale(scale: number): void {
     if (scale < 0.3 || scale > 1.0) {
       throw new Error(`MasterClock: tempoScale ${scale} outside [0.30, 1.00] (FR-STU-004)`);

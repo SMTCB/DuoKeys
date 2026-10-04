@@ -118,4 +118,21 @@ describe('MasterClock', () => {
     expect(() => clock.setLoop(asTicks(480), asTicks(480))).toThrow();
     expect(() => clock.setLoop(asTicks(480), asTicks(0))).toThrow();
   });
+  // TA-MAT-002 — wait mode holds the stream on the pending chord
+  it('holds on a tick while audio time passes, then resumes from that tick', () => {
+    const tempoMap: TempoMap = [{ atTick: asTicks(0), bpm: 120 }];
+    const audio = new FakeAudioClock();
+    const clock = new MasterClock(audio, tempoMap);
+    clock.start(asTicks(0));
+    audio.advance(5);
+    clock.holdAt(asTicks(960));
+    expect(clock.isHeld).toBe(true);
+    audio.advance(10);
+    expect(clock.audioToTicks(audio.now())).toBe(960);
+    // a note 480 ticks ahead is still one beat (0.5 s) above the line
+    expect((clock.ticksToAudio(asTicks(1440)) as number) - (audio.now() as number)).toBeCloseTo(0.5, 6);
+    clock.resume();
+    audio.advance(0.5);
+    expect(clock.audioToTicks(audio.now())).toBeCloseTo(1440, 6);
+  });
 });

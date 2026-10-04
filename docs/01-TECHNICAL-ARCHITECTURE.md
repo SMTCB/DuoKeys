@@ -300,6 +300,13 @@ export class MasterClock {
   pause(): void;
   setTempoScale(scale: number): void;  // 0.30 – 1.00, see FR-STU-004
 
+  // Wait-mode hold: freeze musical time on a tick (the pending chord) until
+  // the matcher advances, then carry on. Positions stay anchored to "now", so
+  // notes already past the line keep their distance from it.
+  holdAt(tick: Ticks): void;
+  resume(): void;
+  get isHeld(): boolean;
+
   // FR-STU-003 — indefinite measure-range loop, driven by playback position
   // reaching the loop end, independent of whether the notes played were
   // correct (US-3.06 grades the pass separately, from Grade.accuracy).
@@ -664,6 +671,19 @@ needs no reading.
 - Position is derived from `MasterClock.nowAudio()` every frame — never from an
   animation counter, which drifts.
 - Off-screen notes are culled by a windowed index into the note array.
+- Lanes fit the notes being played (`fitKeyboardRange`: 2 semitones of padding,
+  at least two octaves, white-key aligned, clamped to `Profile.keyboardRange`),
+  so a two-octave progression fills the screen instead of hugging one edge.
+- Hit feedback: notes the matcher has accepted turn green with a tick (colour is
+  never the only cue, `NFR-008`); the pending chord is outlined; a small keybed
+  under the line marks wanted and played keys.
+- **Hold at the line.** In wait mode `sessionStore` calls `MasterClock.holdAt`
+  when the current tick reaches the pending chord's tick and `resume` when the
+  matcher moves on, so notes stop on the line until played correctly. A
+  per-session toggle turns it off; the sampler accompaniment also disables it,
+  because that audio is scheduled in advance.
+- Fall speed is the tempo-scale slider (`FR-STU-004`) on the chord screen; the
+  canvas also takes a `pixelsPerSecond` prop, with no UI yet.
 
 ### TA-REN-002 — Pitch→x mapping
 
@@ -687,6 +707,15 @@ sharp-only (no key-signature-aware enharmonics); measures are bucketed by
 enforces its own limits — single voice, no synthesized rests for gaps, no
 unmapped duration — by throwing rather than silently misrendering when a future
 content file violates them.
+
+**Chord score view (`FR-STU-015`).** `core/content/chordScoreXml.ts`
+(`chordsToMusicXml`) turns a block-chord arrangement into a grand-staff MusicXML
+document, one whole-note measure per chord group (treble at or above middle C,
+bass below), the chord symbol as a direction. `NotationView` takes a
+`layout="chords"` prop: one horizontal stave line, no auto-follow, the wrapper
+scrolled so the cursor sits a quarter of the way across, and the cursor stepped
+once per matcher group, so the score moves left to right only on correct notes.
+Limits: block chords only, key of C with sharp spelling, no per-note hit colours.
 
 ### TA-REN-004 — Route-level code splitting
 

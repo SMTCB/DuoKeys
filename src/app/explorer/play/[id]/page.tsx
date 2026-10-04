@@ -69,17 +69,6 @@ export default function ExplorerPlayPage() {
   // Uses activeNotes (the section-scoped list once playing) so it stays in
   // sync with what the matcher actually expects, not the whole track.
   const notesForDisplay = useMemo(() => activeNotes ?? track?.notes ?? [], [activeNotes, track]);
-  const orderedGroupIds = useMemo(() => {
-    const seen: string[] = [];
-    for (const note of notesForDisplay) {
-      if (seen[seen.length - 1] !== note.groupId) seen.push(note.groupId);
-    }
-    return seen;
-  }, [notesForDisplay]);
-  const pendingGroupId =
-    matcherState && matcherState.groupIndex < orderedGroupIds.length
-      ? orderedGroupIds[matcherState.groupIndex]
-      : undefined;
 
   async function handleSelectMidi(inputId: string): Promise<void> {
     if (!arrangement || !track) return;
@@ -139,7 +128,7 @@ export default function ExplorerPlayPage() {
           clock={clock}
           notes={notesForDisplay}
           keyboardRange={profile.keyboardRange}
-          pendingGroupId={pendingGroupId}
+          matcherState={matcherState}
         />
       )}
 

@@ -62,6 +62,7 @@ grading.
 | `TS-U-CLK-012` | `checkLoop` is a no-op with no loop set, or while paused | Given no loop set (or a set loop while paused), when time advances past where a loop end would be, then `checkLoop()` returns false | TA-CLK-002, FR-STU-003 |
 | `TS-U-CLK-013` | `clearLoop` removes the loop range | Given a loop set, when `clearLoop()` is called, then `loopRange` is undefined and `checkLoop()` returns false even past the old loop end | TA-CLK-002, FR-STU-003 |
 | `TS-U-CLK-014` | `setLoop` rejects a non-forward range | Given a loop end at or before the loop start, when `setLoop` is called, then it throws | TA-CLK-002, FR-STU-003 |
+| `TS-U-CLK-015` | A held clock stands still and resumes where it stopped | Given a running clock held at tick 480, when audio time advances 2 s then `resume()` is called, then the tick position is still 480 at resume and moves on afterwards | TA-CLK-002, FR-STU-015 |
 
 ---
 
@@ -210,6 +211,7 @@ grading.
 | `TS-U-CNT-039` | `pickFreePlay` avoids repeating the last pick when it can | TA-CNT-007, FR-STU-018 |
 | `TS-U-CNT-040` | `pickFreePlay` is deterministic for a given draw and returns nothing for an empty pool | TA-CNT-007, FR-STU-018 |
 | `TS-U-CNT-041` | `easyMoods` lists the moods of easy progressions only | TA-CNT-007, FR-STU-018 |
+| `TS-U-CNT-042` | `chordsToMusicXml` writes one whole-note measure per chord group on a two-stave part, puts notes at or above 60 on the treble and the rest on the bass, and carries the chord symbol | TA-REN-003, FR-STU-015 |
 
 `TS-U-CNT-019` is **partially** satisfied as written — `ingestChords.ts`
 (`US-3.13`) emits the same `ChordEntry`/`ProgressionEntry` shapes.
@@ -270,6 +272,7 @@ grace-note resolution is scoped as its own story.
 | `TS-U-REN-008` | `arrangementToMusicXml` places notes into successive measures once cumulative ticks cross a measure boundary, for both 4/4 and 3/4 | TA-REN-003 |
 | `TS-U-REN-009` | `arrangementToMusicXml` maps `durationTicks` to the correct MusicXML note type and spells a sharp pitch class with `<alter>1</alter>` | TA-REN-003 |
 | `TS-U-REN-010` | `arrangementToMusicXml` emits exactly one `<note>` per source note with no synthesized rests, and throws for an unknown track or an unmapped duration | TA-REN-003 |
+| `TS-U-REN-011` | `fitKeyboardRange` pads the notes' span, keeps at least 24 semitones, aligns to white keys and clamps to the profile range | TA-REN-001, FR-STU-015 |
 
 `TS-U-REN-007` is delivered (`FallingNotesCanvas.tsx`, `US-3.14`) —
 `chordMarkers[].atTick` converts through `clock.ticksToAudio` the same way a
@@ -414,6 +417,7 @@ These cannot be automated. Run at each sprint exit.
 | `TS-M-014` | Same golden fixtures produce identical grades on iPad and laptop | 5 | US-5.04 |
 | `TS-M-015` | A library song (one two-hand piece, one single line) is played at the real piano in wait mode: each hand lands on the right keys and a chord waits for all its notes | 3 | FR-STU-016 |
 | `TS-M-016` | **Manual, not yet run.** On the chord screen with the piano connected: pressing a chord or a progression's Play shows its keys on the keybed pinned at the top without scrolling; Next chord steps through the progression; the three tabs each show only their own content | 3 | FR-STU-015 |
+| `TS-M-018` | **Manual, not yet run.** On the chord screen with the piano connected: falling notes stop on the line until the chord is played; played notes turn green; the Speed slider slows them; the bars fill the width; Music score shows the chords and moves left to right only when the right keys are played | 3 | FR-STU-015 |
 | `TS-M-017` | **Manual, not yet run.** On a second device signed in to the same account: profiles appear after sync; a pasted chart and an imported MIDI file are added to "my songs", play at the piano in wait mode, and are still there after a reload; "Play something for me" opens a progression with its rhythm chosen | 3 | FR-STU-017, FR-STU-018 |
 
 ---
@@ -440,7 +444,7 @@ critical-path behaviour has a manual confirmation.
 | FR-STU-010 | TS-U-CNT-021 | — |
 | FR-STU-012 | TS-U-MAT-023…025, TS-U-CNT-019 | — |
 | FR-STU-013 | TS-U-REN-007 | — |
-| FR-STU-015 | TS-U-CNT-022…027, TS-I-DAT-008 | TS-M-016 |
+| FR-STU-015 | TS-U-CNT-022…027, 042, TS-U-CLK-015, TS-U-REN-011, TS-I-DAT-008 | TS-M-016, TS-M-018 |
 | FR-STU-016 | TS-U-CNT-028, 029, TS-I-DAT-009 | TS-M-015 |
 | FR-STU-017 | TS-U-CNT-030…035, TS-I-DAT-010 | TS-M-017 |
 | FR-STU-018 | TS-U-CNT-036…041 | TS-M-017 |
