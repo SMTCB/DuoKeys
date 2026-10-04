@@ -128,6 +128,7 @@ export default function ChordProgressionPlayPage() {
     const styled = styleFile ? styledProgressionToArrangement(progression, catalogue.chords, styleFile) : undefined;
     return styled ?? progressionToArrangement(progression, catalogue.chords);
   }, [catalogue, progression, styleFile]);
+  const isNumeralName = progression !== undefined && /^[b#♭♯]?[ivIV]+/.test(progression.name);
   const hasStyles = progression ? styleFilePath('pop', progression) !== undefined : false;
   const isStyleLoading = style !== 'block' && hasStyles && !styleFile && !styleError;
 
@@ -199,13 +200,30 @@ export default function ChordProgressionPlayPage() {
       <p>
         <Link href="/studio/chords">← Chord explorer</Link>
       </p>
+      <p style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center', margin: 0 }}>
+        <Pill tone="neutral">
+          Key of {KEY_NAMES[progression.key as number]}
+          {progression.mode === 'minor' ? ' minor' : ''}
+        </Pill>
+        {progression.moods.map((m) => (
+          <Pill key={m} tone="neutral">{m}</Pill>
+        ))}
+        <strong>{progression.chordIds.map((id) => chordSymbolOfId(id)).join('  ')}</strong>
+      </p>
+      {isNumeralName && (
+        <p>
+          {progression.name} is the pattern: each number is a step of the scale (I is the home chord, V the tension
+          chord that wants to go home). Capitals are major chords, small letters minor. The chords above are that
+          pattern in this key.
+        </p>
+      )}
 
       {attemptStatus === 'idle' && (
         <Card>
           {hasStyles && (
             <Segmented
               name="rhythm"
-              legend="Rhythm"
+              legend="Rhythm (the pattern the chords are played in)"
               options={([{ id: 'block', label: 'Block chords' }, ...CHORD_STYLES] as { id: StyleChoice; label: string }[]).map((choice) => ({
                 value: choice.id,
                 label: choice.label,

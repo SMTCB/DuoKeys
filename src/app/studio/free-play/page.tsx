@@ -58,6 +58,10 @@ export default function FreePlayPage() {
       ? 'Block chords'
       : (CHORD_STYLES.find((s) => s.id === suggestion.style)?.label ?? suggestion.style)
     : '';
+  const isMoodMissed = suggestion !== undefined && mood !== ANY && !suggestion.progression.moods.includes(mood);
+  const keyLabel = suggestion
+    ? `${KEY_NAMES[suggestion.progression.key as number]}${suggestion.progression.mode === 'minor' ? ' minor' : ''}`
+    : '';
   const playHref = suggestion
     ? `/studio/chords/play/${encodeURIComponent(suggestion.progression.id)}${suggestion.style === 'block' ? '' : `?style=${suggestion.style}`}`
     : '';
@@ -96,19 +100,32 @@ export default function FreePlayPage() {
         </div>
         {suggestion && (
           <div role="status" style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+            <span style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Your chords, in the key of {keyLabel}
+            </span>
             <strong style={{ fontFamily: 'var(--display)', fontSize: '1.25rem' }}>
               {suggestion.progression.chordIds.map(chordSymbolOfId).join('  ')}
             </strong>
-            <span style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-              <Pill>{styleLabel}</Pill>
-              <Pill tone="neutral">Key of {KEY_NAMES[suggestion.progression.key as number]}{suggestion.progression.mode === 'minor' ? ' minor' : ''}</Pill>
+            <span style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <span>Feels:</span>
               {suggestion.progression.moods.map((m) => (
-                <Pill key={m} tone="neutral">{m}</Pill>
+                <Pill key={m} tone={m === mood ? 'solid' : 'neutral'}>{m}</Pill>
               ))}
-              <Pill tone="neutral">{suggestion.distinctChordCount} chords</Pill>
+            </span>
+            {isMoodMissed && (
+              <p style={{ margin: 0 }}>
+                No easy {mood.toLowerCase()} chords in {keyLabel}, so this one feels different. Pick another key or tap
+                &ldquo;Another one&rdquo;.
+              </p>
+            )}
+            <span style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <span>Rhythm:</span>
+              <Pill>{styleLabel}</Pill>
             </span>
             <p style={{ margin: 0 }}>
-              Play the chords with one hand or both. They fall and wait for you, so there is no hurry.
+              The rhythm is the pattern the chords are played in, all at once (block chords) or as a groove. It is
+              picked at random; you can change it on the next screen. Play the chords with one hand or both. They fall
+              and wait for you, so there is no hurry.
             </p>
             <div>
               <Link href={playHref}>

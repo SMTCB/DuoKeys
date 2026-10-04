@@ -152,7 +152,11 @@ export default function ChordExplorerPage() {
         <div className={styles.row}>
           <span role="status">
             <Pill tone={isPianoConnected ? 'solid' : 'neutral'}>
-              {isPianoConnected ? '✓ Piano connected' : '🎹 No piano yet'}
+              {isPianoConnected
+                ? '✓ Piano connected'
+                : midiInputs.length > 0
+                  ? '🎹 Piano found, tap it to connect'
+                  : '🎹 No piano found'}
             </Pill>
           </span>
           {midiInputs.map((input) => (

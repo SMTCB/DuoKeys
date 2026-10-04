@@ -19,7 +19,7 @@ export function MidiChooser({
         <span className={styles.keys} aria-hidden="true">
           🎹
         </span>
-        <span className={styles.title}>Choose your piano</span>
+        <span className={styles.title}>{inputs.length > 0 ? 'Tap your piano to start' : 'Choose your piano'}</span>
       </div>
       <div className={styles.list}>
         {inputs.map((input) => (
@@ -33,7 +33,11 @@ export function MidiChooser({
       </div>
       <span className={styles.status}>
         <span className={`${styles.dot} ${connectionState === 'connected' ? styles.dotOn : ''}`} aria-hidden="true" />
-        Connection: {connectionState}
+        {connectionState === 'connected'
+          ? 'Piano connected'
+          : inputs.length > 0
+            ? 'Piano found, not started yet'
+            : 'No piano found. Plug it in and switch it on.'}
       </span>
     </div>
   );
