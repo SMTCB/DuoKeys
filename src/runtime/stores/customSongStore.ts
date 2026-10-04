@@ -61,6 +61,10 @@ export const useCustomSongStore = create<CustomSongState>((set, get) => ({
   async add(input) {
     const made = makeCustomSong({ ...input, id: crypto.randomUUID(), addedAtMs: Date.now() });
     if (!made.ok) return made;
+    // A file is only worth keeping if it plays: refuse one that does not parse, instead of
+    // saving it and failing later at the piano.
+    const playable = customSongToArrangement(made.song, made.song.kind === 'midi' ? base64ToBytes(made.song.data) : undefined);
+    if (!playable.ok) return { ok: false, error: playable.error };
     const songs = [...get().songs, made.song];
     await save(useSessionStore.getState().profile.id, songs);
     set({ songs });

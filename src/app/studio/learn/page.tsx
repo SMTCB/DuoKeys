@@ -4,9 +4,12 @@
 
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { generateHanonArrangement, HANON_PATTERNS } from '../../../core/content/hanon';
+import { useLearnStore } from '../../../runtime/stores/learnStore';
+import { useSessionStore } from '../../../runtime/stores/sessionStore';
 import { useGeneratedContentStore } from '../../../runtime/stores/generatedContentStore';
 import { PageShell } from '../../../ui/shared/PageShell';
 import { Card } from '../../../ui/shared/Card';
@@ -53,9 +56,26 @@ const STAGES: { label: string; blurb: string; steps: Step[] }[] = [
   },
 ];
 
+// A tick is a private note to self (FR-STU-019): one tap on, one tap off, nothing counted.
+function TickButton({ stepId }: { stepId: string }) {
+  const isDone = useLearnStore((s) => s.done.includes(stepId));
+  const toggle = useLearnStore((s) => s.toggle);
+  return (
+    <Button accent="indigo" variant="secondary" onClick={() => void toggle(stepId)} aria-pressed={isDone}>
+      {isDone ? '✓ Done' : 'Mark done'}
+    </Button>
+  );
+}
+
 export default function LearnPage() {
   const router = useRouter();
   const put = useGeneratedContentStore((s) => s.put);
+  const profileId = useSessionStore((s) => s.profile.id);
+  const loadDone = useLearnStore((s) => s.load);
+
+  useEffect(() => {
+    void loadDone();
+  }, [loadDone, profileId]);
 
   function startDrill(patternId: string): void {
     const pattern = HANON_PATTERNS.find((p) => p.id === patternId);
@@ -84,9 +104,12 @@ export default function LearnPage() {
                   <span>
                     <strong>{p.title}</strong> <Pill tone="neutral">{WARM_UP_BPM} bpm</Pill>
                   </span>
-                  <Button accent="indigo" variant="secondary" onClick={() => startDrill(p.id)}>
-                    Start
-                  </Button>
+                  <span style={{ display: 'flex', gap: '0.5rem' }}>
+                    <Button accent="indigo" variant="secondary" onClick={() => startDrill(p.id)}>
+                      Start
+                    </Button>
+                    <TickButton stepId={`drill:${p.id}`} />
+                  </span>
                 </li>
               ))}
             </ul>
@@ -98,10 +121,11 @@ export default function LearnPage() {
               </strong>
               <span>{step.why}</span>
               {step.href && (
-                <div>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   <Link href={step.href}>
                     <Button accent="indigo">{step.cta ?? 'Open'}</Button>
                   </Link>
+                  <TickButton stepId={`step:${step.title}`} />
                 </div>
               )}
             </div>

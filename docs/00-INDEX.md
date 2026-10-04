@@ -99,9 +99,9 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-STU-014 personal score import | C | — (future roadmap) | — | — |
 | FR-STU-015 my progressions & falling-notes chords | S | TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.18, US-3.20 | TS-U-CNT-022…027, TS-I-DAT-008, TS-M-016 |
 | FR-STU-016 song library | S | TA-CNT-004, TA-CNT-005, TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.19 | TS-U-CNT-028, 029, TS-I-DAT-009, TS-M-015 |
-| FR-STU-017 custom songs | S | TA-CNT-007, TA-APP-003, TA-DAT-003 | US-3.22 | TS-U-CNT-030…035, TS-M-017 |
+| FR-STU-017 custom songs | S | TA-CNT-007, TA-APP-003, TA-DAT-003 | US-3.22 | TS-U-CNT-030…035, TS-I-DAT-010, TS-M-017 |
 | FR-STU-018 free play | S | TA-CNT-007, TA-CNT-006, TA-APP-003 | US-3.22 | TS-U-CNT-036…041, TS-M-017 |
-| FR-STU-019 learn roadmap | S | TA-APP-003, TA-CNT-007 | US-3.22 | — |
+| FR-STU-019 learn roadmap | S | TA-APP-003, TA-CNT-007, TA-DAT-003 | US-3.22 | TS-I-DAT-011 |
 | FR-DUO-001 split + transpose | M | TA-DAT-001 | US-4.01 | TS-E-015, TS-M-012 |
 | FR-DUO-002 dual matchers | M | TA-MAT-001 | US-4.02 | TS-U-MAT-021, TS-G-010 |
 | FR-DUO-003 asymmetric parts | M | TA-DAT-001 | US-4.03 | TS-M-011 |
@@ -1117,3 +1117,5 @@ the canvas while playing, the loop status, and the play result, because all thre
 a connected piano.
 
 Studio in three tracks (`US-3.22`, `FR-STU-017`–`019`): Learn, Free play and Songs, with custom songs (a pasted chord chart or a MIDI / MusicXML file, kept in "my songs" on the profile's settings record, no new table), a "play something for me" generator, 15 avatars (all instruments), profile restore after sync, and the chosen profile remembered per device in localStorage. Checked in a browser at 375 px: the Songs hub, adding and replaying a chart, a direct reload of a custom song, Free play and Learn. 301 unit tests pass. Not checked: MIDI / MusicXML import through the screen, restore across two real devices (`TS-M-017`), and emoji drawing on the phone.
+
+Follow-ups to `US-3.22`: the Learn page now has "Mark done" ticks (`FR-STU-019`, `learnDone` on the settings record, `TS-I-DAT-011`); a MIDI or MusicXML file is checked when it is added and refused if it does not play (a corrupt file used to be saved and fail at play time); a MusicXML piece with an odd bar count now plays with one-bar sections instead of failing; `TS-I-DAT-010` covers the custom-song store. 309 tests pass. Now checked in a browser: MIDI and MusicXML import through the screen, the refusal of a corrupt file, ticks surviving a reload. Earlier worry withdrawn: a restore cannot exceed the four-profile limit, because the limit only gates adding a profile. Still not checked: restore across two real devices and emoji drawing on the phone.

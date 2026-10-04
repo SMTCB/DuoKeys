@@ -1233,7 +1233,7 @@ system or network: bytes come in through the adapter.
 
 ### TA-CNT-007 — Custom songs and free play
 
-`US-3.22` (`FR-STU-017`–`019`). Pure `core/content/customSong.ts` (chart parser, `custom:` ids, chart / MIDI / MusicXML to Arrangement) and `core/content/freePlay.ts` (easy-progression filter and a seeded-random picker); `runtime/stores/customSongStore.ts` keeps songs in the profile's `settings.customSongs` (so they sync with no table; MIDI bytes as base64, 400 KB cap). `profileStore` now remembers the active profile id in localStorage (a per-device convenience, never synced) so a direct page load sees that profile's songs, and the profile picker refreshes after a sync round (`syncStore.syncRound`).
+`US-3.22` (`FR-STU-017`–`019`). Pure `core/content/customSong.ts` (chart parser, `custom:` ids, chart / MIDI / MusicXML to Arrangement) and `core/content/freePlay.ts` (easy-progression filter and a seeded-random picker); `runtime/stores/customSongStore.ts` keeps songs in the profile's `settings.customSongs` (so they sync with no table; MIDI bytes as base64, 400 KB cap); a file is built into an arrangement before it is saved and refused if it does not play, and a MusicXML piece whose bar count is odd falls back to one-bar sections. <code>runtime/stores/learnStore.ts</code> keeps the Learn page's ticked steps in <code>settings.learnDone</code> (<code>FR-STU-019</code>). `profileStore` now remembers the active profile id in localStorage (a per-device convenience, never synced) so a direct page load sees that profile's songs, and the profile picker refreshes after a sync round (`syncStore.syncRound`).
 
 ---
 

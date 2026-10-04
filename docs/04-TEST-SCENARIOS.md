@@ -307,6 +307,8 @@ needs that extraction, not yet done.
 | `TS-I-DAT-007` | A library status change overwrites the same row (not append); delete removes it; a `profileId` query never leaks another profile's entries | TA-DAT-007, FR-PRO-006 |
 | `TS-I-DAT-008` | A user progression saved to the profile's settings record survives a reload, removal deletes it, and saving keeps the record's other settings fields intact | TA-DAT-003, FR-STU-015 |
 | `TS-I-DAT-009` | Songs added to "my songs" are saved once each on the profile's settings record beside its other fields, survive a reload, and removal deletes them; a malformed record yields no ids | TA-DAT-003, FR-STU-016 |
+| `TS-I-DAT-010` | A pasted chart is saved on the settings record without disturbing its other fields and plays back; songs survive a reload, stay per profile and can be removed; a chordless chart and a non-MIDI file are refused with nothing saved; a MIDI file round-trips through base64; a one-bar MusicXML piece plays | TA-DAT-003, TA-CNT-007, FR-STU-017 |
+| `TS-I-DAT-011` | A Learn tick is saved beside the record's other fields, survives a reload and can be undone; a malformed record yields no ticks | TA-DAT-003, FR-STU-019 |
 
 ### Sync
 
@@ -440,9 +442,9 @@ critical-path behaviour has a manual confirmation.
 | FR-STU-013 | TS-U-REN-007 | — |
 | FR-STU-015 | TS-U-CNT-022…027, TS-I-DAT-008 | TS-M-016 |
 | FR-STU-016 | TS-U-CNT-028, 029, TS-I-DAT-009 | TS-M-015 |
-| FR-STU-017 | TS-U-CNT-030…035 | TS-M-017 |
+| FR-STU-017 | TS-U-CNT-030…035, TS-I-DAT-010 | TS-M-017 |
 | FR-STU-018 | TS-U-CNT-036…041 | TS-M-017 |
-| FR-STU-019 | — | — |
+| FR-STU-019 | TS-I-DAT-011 | — |
 | FR-DUO-001 | TS-E-015 | TS-M-012 |
 | FR-DUO-002 | TS-U-MAT-021, TS-G-010 | TS-M-011 |
 | FR-PRO-001 | TS-U-DAT-001, 002, TS-I-DAT-006, TS-E-005 | — |

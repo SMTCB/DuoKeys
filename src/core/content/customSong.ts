@@ -146,7 +146,13 @@ export function customSongToArrangement(song: CustomSong, midiBytes?: Uint8Array
       return made ? { ok: true, arrangement: made } : { ok: false, error: 'that file has no notes' };
     }
     const source = parseMusicXml(song.data, { id: song.id });
-    return { ok: true, arrangement: buildArrangementFromSource({ ...source, id: song.id, title: song.title }) };
+    const named = { ...source, id: song.id, title: song.title };
+    try {
+      return { ok: true, arrangement: buildArrangementFromSource(named) };
+    } catch {
+      // An odd number of bars does not split into 2-bar sections; one-bar sections always do.
+      return { ok: true, arrangement: buildArrangementFromSource({ ...named, barsPerQuest: 1 }) };
+    }
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }

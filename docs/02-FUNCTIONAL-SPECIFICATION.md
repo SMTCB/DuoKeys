@@ -357,7 +357,7 @@ falling notes.
 
 The adult can add a song that is not in the library, such as a pop song they want to learn, and it is kept in "my songs" with the library pieces so they can come back to it. Two ways in, both from material the user already has: paste a chord chart (section headings such as Verse and Chorus, chord symbols above or between the lyrics), or import a MIDI or MusicXML file. A pasted chart shows "Found N chords in M sections" before it is saved; lyric lines are skipped, and chords the app cannot read are listed rather than guessed.
 
-A chart plays as one bar per chord at 70 bpm in the same wait-mode falling-notes view as every other song; a MIDI or MusicXML file plays as its notes, with the same hand selector, loop and tempo controls. The song, its source (the chart text or the file bytes, base64) and its title are stored on the profile's settings record beside saved library songs, so it syncs with no new table and is capped at 400 KB per song.
+A chart plays as one bar per chord at 70 bpm in the same wait-mode falling-notes view as every other song; a MIDI or MusicXML file plays as its notes, with the same hand selector, loop and tempo controls. The song, its source (the chart text or the file bytes, base64) and its title are stored on the profile's settings record beside saved library songs, so it syncs with no new table and is capped at 400 KB per song. A file that does not parse, or has no notes, is refused when it is added, with a plain message, instead of being saved and failing later at the piano.
 
 Limits: DuoKeys does not fetch or bundle charts or scores. The user brings the content. Turning a recording into MIDI is not offered.
 
@@ -373,9 +373,9 @@ Limits: this is a suggestion generator over the shipped progression catalogue, n
 
 **Realised by:** `TA-APP-003`, `TA-CNT-007` · `US-3.22`
 
-The adult returning to the piano can open one page that lays out a short route: warm the hands with the slow Hanon drills (60 bpm), read a little (sight-reading), learn four chords that cover most pop songs (the chord library), then play to unwind (Free play and Songs). Every step opens a tool that already exists, in any order; the page has no scores, ticks or streaks (NFR-012).
+The adult returning to the piano can open one page that lays out a short route: warm the hands with the slow Hanon drills (60 bpm), read a little (sight-reading), learn four chords that cover most pop songs (the chord library), then play to unwind (Free play and Songs). Every step opens a tool that already exists, in any order; the page has no scores or streaks (NFR-012). Each drill and step has a "Mark done" button: a private note to self, one tap to undo, never counted, timed or expired, kept on the profile's settings record.
 
-Limits: the route is fixed text and does not remember what has been done.
+Limits: the route itself is fixed text; the ticks do not unlock or reorder anything.
 
 ### FR-STU-014 — Personal score import (`C`)
 
