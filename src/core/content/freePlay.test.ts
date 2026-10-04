@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { asPitchClass, type ProgressionEntry } from './chordTypes';
-import { easyMoods, isEasyProgression, pickFreePlay } from './freePlay';
+import { easyMoods, isEasyProgression, pickFreePlay, sameProgressionInKey } from './freePlay';
 
 const prog = (id: string, chordIds: string[], moods: string[], mode: 'major' | 'minor' = 'major'): ProgressionEntry => ({
   id,
@@ -45,5 +45,22 @@ describe('pickFreePlay', () => {
 describe('easyMoods', () => {
   it('lists moods of easy progressions only', () => {
     expect(easyMoods([EASY, HARD, OTHER])).toEqual(['Joyful', 'Relaxed']);
+  });
+});
+
+describe('key choice', () => {
+  // TS-U-CNT-045
+  const inKey = (key: number): ProgressionEntry => ({ ...EASY, id: `k${key}`, name: 'I-V-vi-IV', key: asPitchClass(key) });
+  const all = [inKey(0), inKey(2), inKey(7), { ...OTHER, name: 'I-IV', key: asPitchClass(2) }];
+
+  it('pickFreePlay stays in the chosen key', () => {
+    expect(pickFreePlay(all, { key: asPitchClass(7) }, () => 0)?.progression.id).toBe('k7');
+    expect(pickFreePlay(all, { key: asPitchClass(5) }, () => 0)).toBeUndefined();
+  });
+
+  it('sameProgressionInKey finds the same degrees in another key, and nothing for typed-in ones', () => {
+    expect(sameProgressionInKey(all, inKey(0), asPitchClass(2))?.id).toBe('k2');
+    expect(sameProgressionInKey(all, inKey(0), asPitchClass(5))).toBeUndefined();
+    expect(sameProgressionInKey(all, { ...inKey(0), isUserAdded: true }, asPitchClass(2))).toBeUndefined();
   });
 });

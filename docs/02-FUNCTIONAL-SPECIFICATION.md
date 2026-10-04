@@ -325,8 +325,11 @@ turned the pending colour.
 
 A progression bar above the canvas shows every chord of the progression as a
 chip, the one being played marked (bold, outlined, `aria-current`), finished
-ones ticked, and the round of the loop ("Round 1 of 2"). The keyboard shows green
-only for keys that are physically down.
+ones ticked, and the round of the loop ("Round 1 of 2"). The keyboard keeps the keys
+of the chord just played green until the next chord lands. A Key picker on the
+chord screen, before and during play, moves the same progression to another key
+(same degrees, so the same mood); during play it restarts on the new notes.
+Progressions typed in by the adult stay in their own key.
 
 > **No web chord search.** Searching chord sites and auto-importing was
 > considered and declined: there is no public chord API, scraping breaches the
@@ -390,7 +393,7 @@ Limits: DuoKeys does not fetch or bundle charts or scores. The user brings the c
 
 **Realised by:** `TA-CNT-007`, `TA-CNT-006`, `TA-APP-003` · `US-3.22`
 
-The adult can sit down at the piano and be given something easy to play with no decisions: pick a feeling or leave it on "Surprise me", and the app chooses a short progression of at most four easy chords (major, minor, seventh, suspended) and a rhythm to play them in. "Another one" never repeats the last suggestion. Playing opens the chord-progression page with the rhythm already chosen; the chords fall and wait, there is no score and no timer. The chord library stays one tap away.
+The adult can sit down at the piano and be given something easy to play with no decisions: pick a feeling or leave it on "Surprise me", and the app chooses a short progression of at most four easy chords (major, minor, seventh, suspended) and a rhythm to play them in. "Another one" never repeats the last suggestion. Playing opens the chord-progression page with the rhythm already chosen; the chords fall and wait, there is no score and no timer. A Key picker ("Any key" or one of the twelve) fixes the scale of the suggestion; choosing a key after a suggestion moves that same progression there, so the mood is kept, and the suggestion names its key. The chord library stays one tap away.
 
 Limits: this is a suggestion generator over the shipped progression catalogue, not a composer. There is no mode in which the app plays the other hand.
 

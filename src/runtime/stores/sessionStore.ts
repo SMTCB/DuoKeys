@@ -426,8 +426,11 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
 // TA-MAT-002 — each frame: once the stream reaches the pending chord's onset it
 // is held there; the moment the matcher moves on to the next chord it runs again.
+const HOLD_DWELL_MS = 600;
+
 function startHoldPolling(get: () => SessionState): void {
   let heldIndex = -1;
+  let completedAtMs: number | undefined;
   const poll = (): void => {
     const clock = get().clock;
     const m = matcher;
@@ -437,7 +440,14 @@ function startHoldPolling(get: () => SessionState): void {
     const tick = groupTicks[groupIndex];
     if (tick !== undefined) {
       if (clock.isHeld) {
-        if (groupIndex !== heldIndex) clock.resume();
+        if (groupIndex !== heldIndex) {
+          // The played chord stays on the line for a beat, so the player sees it turn green before the next one falls.
+          completedAtMs ??= performance.now();
+          if (performance.now() - completedAtMs >= HOLD_DWELL_MS) {
+            completedAtMs = undefined;
+            clock.resume();
+          }
+        }
       } else if ((clock.audioToTicks(clock.nowAudio()) as number) >= tick) {
         clock.holdAt(asTicks(tick));
         heldIndex = groupIndex;

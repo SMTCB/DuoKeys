@@ -2,7 +2,7 @@
 // rhythm for the adult who just wants to sit down and play without choosing. Pure;
 // randomness is injected (ADR-005), so the same draw gives the same suggestion.
 
-import type { ProgressionEntry } from './chordTypes';
+import type { PitchClass, ProgressionEntry } from './chordTypes';
 import { chordFromId } from './chordSymbols';
 import { CHORD_STYLES, styleFilePath, type ChordStyleId } from './styledProgression';
 
@@ -46,10 +46,10 @@ function pick<T>(items: readonly T[], random: () => number): T | undefined {
  */
 export function pickFreePlay(
   progressions: readonly ProgressionEntry[],
-  options: { mood?: string; avoidId?: string },
+  options: { mood?: string; avoidId?: string; key?: PitchClass },
   random: () => number,
 ): FreePlaySuggestion | undefined {
-  const easy = progressions.filter(isEasyProgression);
+  const easy = progressions.filter(isEasyProgression).filter((p) => options.key === undefined || p.key === options.key);
   const moody = options.mood ? easy.filter((p) => p.moods.includes(options.mood!)) : easy;
   let pool = moody.length > 0 ? moody : easy;
   if (options.avoidId !== undefined && pool.length > 1) pool = pool.filter((p) => p.id !== options.avoidId);
@@ -62,4 +62,25 @@ export function pickFreePlay(
     style: chosen ? chosen.id : 'block',
     distinctChordCount: new Set(progression.chordIds).size,
   };
+}
+
+/**
+ * The same progression (same degrees, so the same mood) in another key, or undefined when the
+ * catalogue has none, as it does for a progression the adult typed in.
+ */
+export function sameProgressionInKey(
+  progressions: readonly ProgressionEntry[],
+  progression: ProgressionEntry,
+  key: PitchClass,
+): ProgressionEntry | undefined {
+  if (progression.isUserAdded) return undefined;
+  const isRepeat = progression.id.endsWith('~2');
+  return progressions.find(
+    (p) =>
+      !p.isUserAdded &&
+      p.key === key &&
+      p.name === progression.name &&
+      p.mode === progression.mode &&
+      p.id.endsWith('~2') === isRepeat,
+  );
 }

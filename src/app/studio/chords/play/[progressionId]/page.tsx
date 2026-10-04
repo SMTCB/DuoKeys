@@ -6,9 +6,11 @@
 
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { sameProgressionInKey } from '../../../../../core/content/freePlay';
+import { asPitchClass } from '../../../../../core/content/chordTypes';
 import { useSessionStore } from '../../../../../runtime/stores/sessionStore';
 import { useChordExplorerStore } from '../../../../../runtime/stores/chordExplorerStore';
 import { noteName } from '../../../../../ui/falling/noteName';
@@ -39,13 +41,17 @@ import { loadChordStyleBytes } from '../../../../../adapters/content/staticChord
 type StyleChoice = 'block' | ChordStyleId;
 type PlayView = 'falling' | 'score';
 
+const KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
 const TEMPO_MIN = 30;
 const TEMPO_MAX = 100;
 const TEMPO_STEP = 5;
 
 export default function ChordProgressionPlayPage() {
   const params = useParams<{ progressionId: string }>();
-  const progressionId = decodeURIComponent(params.progressionId);
+  const restartOnKeyChange = useRef(false);
+  // Held in state so a key change can swap it without re-rendering the route (which would drop a game in play).
+  const [progressionId, setProgressionId] = useState(() => decodeURIComponent(params.progressionId));
 
   const catalogue = useChordExplorerStore((s) => s.catalogue);
   const loadCatalogue = useChordExplorerStore((s) => s.loadCatalogue);
@@ -94,11 +100,12 @@ export default function ChordProgressionPlayPage() {
   const [styleError, setStyleError] = useState(false);
 
   // FR-STU-015: a rhythmic style is fetched and parsed on choosing it; 'block' needs no file.
+  // Keyed on the file's path, which does not change with the key, so transposing keeps the loaded rhythm.
+  const stylePath = style !== 'block' && progression ? styleFilePath(style, progression) : undefined;
   useEffect(() => {
     setStyleFile(undefined);
     setStyleError(false);
-    if (style === 'block' || !progression) return;
-    const path = styleFilePath(style, progression);
+    const path = stylePath;
     if (!path) return;
     let cancelled = false;
     void loadChordStyleBytes(path)
@@ -114,7 +121,7 @@ export default function ChordProgressionPlayPage() {
     return () => {
       cancelled = true;
     };
-  }, [style, progression]);
+  }, [stylePath]);
 
   const arrangement = useMemo(() => {
     if (!catalogue || !progression) return undefined;
@@ -138,6 +145,37 @@ export default function ChordProgressionPlayPage() {
           progression.chordIds.length,
         )
       : undefined;
+
+  // The same progression in another key keeps its degrees, so it keeps its mood.
+  function changeKey(value: string): void {
+    if (!catalogue || !progression) return;
+    const moved = sameProgressionInKey(catalogue.progressions, progression, asPitchClass(Number(value)));
+    if (!moved) return;
+    restartOnKeyChange.current = attemptStatus === 'playing';
+    setProgressionId(moved.id);
+    window.history.replaceState(null, '', `/studio/chords/play/${encodeURIComponent(moved.id)}${style === 'block' ? '' : `?style=${style}`}`);
+  }
+  const keyPicker = progression && !progression.isUserAdded && (
+    <label className={controls.tempo}>
+      <span className={controls.tempoLabel}>Key</span>
+      <select value={String(progression.key)} onChange={(e) => changeKey(e.target.value)} aria-label="Key">
+        {KEY_NAMES.map((name, i) => (
+          <option key={name} value={String(i)}>
+            {name}
+            {progression.mode === 'minor' ? ' minor' : ''}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+
+  // After a key change mid-play, start again on the transposed notes.
+  useEffect(() => {
+    if (!restartOnKeyChange.current || !arrangement) return;
+    restartOnKeyChange.current = false;
+    void start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [arrangement]);
 
   async function start(inputId?: string): Promise<void> {
     if (!arrangement) return;
@@ -176,6 +214,7 @@ export default function ChordProgressionPlayPage() {
               onChange={setStyle}
             />
           )}
+          {keyPicker}
           {styleError && <p>That rhythm could not be loaded — block chords will play instead.</p>}
           {isStyleLoading && <p>Loading the rhythm…</p>}
           <label className={controls.check}>
@@ -208,6 +247,7 @@ export default function ChordProgressionPlayPage() {
             ) : (
               <Pill tone="neutral">Falling notes</Pill>
             )}
+            {keyPicker}
             <label className={controls.tempo}>
               <span className={controls.tempoLabel}>
                 Speed <span className={controls.readout}>{Math.round(tempoScale * 100)}%</span>

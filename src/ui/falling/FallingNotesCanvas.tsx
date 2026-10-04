@@ -222,6 +222,9 @@ export function FallingNotesCanvas({
       }
 
       const doneNow = pitchesDone(sortedNotes.current, groupOrder.current, progress);
+      // The chord just played keeps its keys green on the keybed for as long as its bars stay at the line.
+      const doneKeys = new Set<number>(doneNow);
+      if (pinnedGroup >= 0) for (const n of sortedNotes.current) if (groupOrder.current.get(n.groupId) === pinnedGroup) doneKeys.add(n.pitch as number);
       const lit = (pitches: Iterable<number>): Set<number> => {
         const out = new Set<number>(pitches);
         if (!anyOctave) return out;
@@ -229,7 +232,7 @@ export function FallingNotesCanvas({
         for (let p = fitted.low as number; p <= (fitted.high as number); p++) if (classes.has(p % 12)) out.add(p);
         return out;
       };
-      drawKeybed(ctx, fitted, unit, lit(wanted), lit(doneNow), new Set(pressedRef.current), {
+      drawKeybed(ctx, fitted, unit, wanted, lit(wanted), doneKeys, new Set(pressedRef.current), {
         wantedColour: roleColour,
         doneColour,
         inkColour,
@@ -267,8 +270,9 @@ function drawKeybed(
   ctx: CanvasRenderingContext2D,
   range: KeyboardRange,
   unit: number,
+  exactWanted: ReadonlySet<number>,
   wanted: ReadonlySet<number>,
-  relevant: ReadonlySet<number>,
+  played: ReadonlySet<number>,
   pressed: ReadonlySet<number>,
   colours: { wantedColour: string; doneColour: string; inkColour: string },
 ): void {
@@ -281,7 +285,9 @@ function drawKeybed(
       const h = k.isWhite ? KEYBED_HEIGHT : KEYBED_HEIGHT * 0.62;
       const isWanted = wanted.has(p);
       const isHeld = pressed.has(p);
-      const isDone = isHeld && (relevant.has(p) || isWanted);
+      const isDone = played.has(p) || (isHeld && isWanted);
+      // The exact key a bar is aimed at is solid; other octaves of the same letter are a lighter hint.
+      const isExact = exactWanted.has(p);
       ctx.fillStyle = isDone
         ? colours.doneColour
         : isHeld
@@ -291,10 +297,13 @@ function drawKeybed(
             : k.isWhite
               ? '#ffffff'
               : '#2b2d33';
+      const isHint = isWanted && !isExact && !isDone && !isHeld;
+      ctx.globalAlpha = isHint ? 0.4 : 1;
       ctx.fillRect(k.x * unit, top, w, h);
       ctx.strokeStyle = colours.inkColour;
-      ctx.lineWidth = isWanted ? 3 : 1;
+      ctx.lineWidth = isExact ? 3 : 1;
       ctx.strokeRect(k.x * unit, top, w, h);
+      ctx.globalAlpha = 1;
       if ((isWanted || isDone) && w >= 18) {
         ctx.fillStyle = '#ffffff';
         ctx.font = `700 ${Math.min(15, w * 0.45)}px sans-serif`;

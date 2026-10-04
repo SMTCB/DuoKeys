@@ -212,6 +212,7 @@ grading.
 | `TS-U-CNT-039` | `pickFreePlay` avoids repeating the last pick when it can | TA-CNT-007, FR-STU-018 |
 | `TS-U-CNT-040` | `pickFreePlay` is deterministic for a given draw and returns nothing for an empty pool | TA-CNT-007, FR-STU-018 |
 | `TS-U-CNT-041` | `easyMoods` lists the moods of easy progressions only | TA-CNT-007, FR-STU-018 |
+| `TS-U-CNT-045` | `pickFreePlay` stays in a chosen key, and `sameProgressionInKey` finds the same degrees in another key and nothing for a typed-in progression | TA-CNT-007, FR-STU-015, FR-STU-018 |
 | `TS-U-CNT-044` | A styled progression puts each chord marker on notes of that chord even when the chords are not evenly spaced in the file (`I-IV-V`) | TA-CNT-006, FR-STU-015 |
 | `TS-U-CNT-043` | `progressionPosition` reports the chord and round of the group being played, stays on the last group past the end, and is undefined with no markers | FR-STU-015 |
 | `TS-U-CNT-042` | `chordsToMusicXml` writes one whole-note measure per chord group on a two-stave part, puts notes at or above 60 on the treble and the rest on the bass, and carries the chord symbol | TA-REN-003, FR-STU-015 |
@@ -421,7 +422,7 @@ These cannot be automated. Run at each sprint exit.
 | `TS-M-014` | Same golden fixtures produce identical grades on iPad and laptop | 5 | US-5.04 |
 | `TS-M-015` | A library song (one two-hand piece, one single line) is played at the real piano in wait mode: each hand lands on the right keys and a chord waits for all its notes | 3 | FR-STU-016 |
 | `TS-M-016` | **Manual, not yet run.** On the chord screen with the piano connected: pressing a chord or a progression's Play shows its keys on the keybed pinned at the top without scrolling; Next chord steps through the progression; the three tabs each show only their own content | 3 | FR-STU-015 |
-| `TS-M-018` | **Manual, not yet run.** On the chord screen with the piano connected: falling notes stop on the line until the chord is played; played notes turn green and stay at the line until the next chord lands, with upcoming chords pale and dashed; the Speed slider slows them; the bars fill the width; Music score shows the chords and moves left to right only when the right keys are played | 3 | FR-STU-015 |
+| `TS-M-018` | **Manual, not yet run.** On the chord screen with the piano connected: falling notes stop on the line until the chord is played; played notes turn green and stay at the line until the next chord lands, with upcoming chords pale and dashed, the keybed keeping the played keys green, and the Key picker moving the progression to another key; the Speed slider slows them; the bars fill the width; Music score shows the chords and moves left to right only when the right keys are played | 3 | FR-STU-015 |
 | `TS-M-017` | **Manual, not yet run.** On a second device signed in to the same account: profiles appear after sync; a pasted chart and an imported MIDI file are added to "my songs", play at the piano in wait mode, and are still there after a reload; "Play something for me" opens a progression with its rhythm chosen | 3 | FR-STU-017, FR-STU-018 |
 
 ---
@@ -448,10 +449,10 @@ critical-path behaviour has a manual confirmation.
 | FR-STU-010 | TS-U-CNT-021 | — |
 | FR-STU-012 | TS-U-MAT-023…025, TS-U-CNT-019 | — |
 | FR-STU-013 | TS-U-REN-007 | — |
-| FR-STU-015 | TS-U-CNT-022…027, 042…044, TS-U-CLK-015, TS-U-REN-011, 012, TS-U-MAT-026, TS-I-DAT-008 | TS-M-016, TS-M-018 |
+| FR-STU-015 | TS-U-CNT-022…027, 042…045, TS-U-CLK-015, TS-U-REN-011, 012, TS-U-MAT-026, TS-I-DAT-008 | TS-M-016, TS-M-018 |
 | FR-STU-016 | TS-U-CNT-028, 029, TS-I-DAT-009 | TS-M-015 |
 | FR-STU-017 | TS-U-CNT-030…035, TS-I-DAT-010 | TS-M-017 |
-| FR-STU-018 | TS-U-CNT-036…041 | TS-M-017 |
+| FR-STU-018 | TS-U-CNT-036…041, 045 | TS-M-017 |
 | FR-STU-019 | TS-I-DAT-011 | — |
 | FR-DUO-001 | TS-E-015 | TS-M-012 |
 | FR-DUO-002 | TS-U-MAT-021, TS-G-010 | TS-M-011 |

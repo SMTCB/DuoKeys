@@ -687,10 +687,12 @@ needs no reading.
   never the only cue, `NFR-008`); the pending chord is outlined. On the chord
   screen (`stageChords`) upcoming chords are drawn pale with a dashed outline, and
   the chord just played stays green at the line until the next chord has fallen
-  in and taken the pending colour, then it clears. The keybed under the line lights wanted keys in
-  the role colour (every octave of a wanted letter when `anyOctave` is on) and
-  shows green only for the keys physically down (`sessionStore.pressedPitches`),
-  so a played key is acknowledged and releasing it clears it.
+  in and taken the pending colour, then it clears. The keybed under the line marks the key each
+  bar is aimed at (solid, thick outline), shows other octaves of the same letter
+  as a faint hint when `anyOctave` is on, and keeps the keys of the chord just
+  played green until the next chord lands, so a played key stays visible after
+  the finger lifts. A key held that is not wanted is grey. After a chord is
+  completed the hold resumes only after a short dwell (`HOLD_DWELL_MS`, 600 ms).
 - Chord symbols are drawn as a label tab on the left edge, level with where that
   chord's notes arrive, rather than as centred text over the lanes.
 - **Hold at the line.** In wait mode `sessionStore` calls `MasterClock.holdAt`
