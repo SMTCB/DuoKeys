@@ -74,6 +74,7 @@ export default function ChordProgressionPlayPage() {
   const refreshMidiInputs = useSessionStore((s) => s.refreshMidiInputs);
   const selectMidiInput = useSessionStore((s) => s.selectMidiInput);
   const startArrangement = useSessionStore((s) => s.startArrangement);
+  const endSession = useSessionStore((s) => s.endSession);
 
   // A chord drill accepts the right letter in any octave; the store flag is put back on leaving so songs stay exact.
   useEffect(() => {
@@ -85,6 +86,13 @@ export default function ChordProgressionPlayPage() {
     void loadCatalogue();
     void refreshMidiInputs();
   }, [loadCatalogue, refreshMidiInputs]);
+
+  // The session store outlives the page: without this, arriving from another attempt shows its
+  // notes (and what was played in them) instead of the idle card for this progression.
+  useEffect(() => {
+    endSession();
+    return endSession;
+  }, [endSession]);
 
   const progression = catalogue?.progressions.find((p) => p.id === progressionId);
   const [style, setStyle] = useState<StyleChoice>('block');

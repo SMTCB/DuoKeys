@@ -90,6 +90,8 @@ interface SessionState {
   setAnyOctave(anyOctave: boolean): void;
   /** Ends a looping attempt, grading whatever was played in the pass in progress. */
   stopLoop(): Promise<void>;
+  /** Drops the attempt in progress without grading it, so the next screen starts clean. */
+  endSession(): void;
 }
 
 /** FR-STU-003/FR-STU-005 — a track's notes restricted to a section and/or loop range, shared by the practised track and every accompaniment track so both scope identically. */
@@ -414,6 +416,19 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   },
   setHoldAtLine(hold: boolean): void {
     set({ holdAtLine: hold });
+  },
+  endSession(): void {
+    stopLoopPolling();
+    stopHoldPolling();
+    set({
+      attemptStatus: 'idle',
+      clock: undefined,
+      matcherState: undefined,
+      activeNotes: undefined,
+      arrangement: undefined,
+      grade: undefined,
+      pressedPitches: [],
+    });
   },
 
   async stopLoop(): Promise<void> {

@@ -690,8 +690,11 @@ needs no reading.
   in and taken the pending colour, then it clears. The keybed under the line marks the key each
   bar is aimed at (solid, thick outline), shows other octaves of the same letter
   as a faint hint when `anyOctave` is on, and keeps the keys of the chord just
-  played green until the next chord lands, so a played key stays visible after
-  the finger lifts. A key held that is not wanted is grey. After a chord is
+  played green for about half a second (`PLAYED_STAY_MS`, 600 ms, the same as
+  the hold dwell) and then clears, so a played key stays visible after the finger
+  lifts but nothing lingers while the next chord is still far off. The session is
+  dropped (`endSession`) when the chord page opens or closes, so one attempt's
+  notes and progress never show on the next screen. A key held that is not wanted is grey. After a chord is
   completed the hold resumes only after a short dwell (`HOLD_DWELL_MS`, 600 ms).
 - Chord symbols are drawn as a label tab on the left edge, level with where that
   chord's notes arrive, rather than as centred text over the lanes.

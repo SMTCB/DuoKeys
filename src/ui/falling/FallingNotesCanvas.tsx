@@ -71,6 +71,8 @@ export function FallingNotesCanvas({
   const sortedNotes = useRef<ContentNote[]>([]);
   const groupOrder = useRef<Map<string, number>>(new Map());
   const groupStartTick = useRef<number[]>([]);
+  const lastDoneGroups = useRef(0);
+  const doneAtMs = useRef(0);
   const range = useRef<KeyboardRange>(keyboardRange);
 
   useEffect(() => {
@@ -141,10 +143,15 @@ export function FallingNotesCanvas({
       ctx.lineTo(CANVAS_WIDTH, HIT_LINE_Y);
       ctx.stroke();
 
-      // The chord just played stays at the line until the next chord has fallen in.
+      // The chord just played stays green at the line for a moment, then clears (and the next chord falls in).
+      if (doneGroups !== lastDoneGroups.current) {
+        lastDoneGroups.current = doneGroups;
+        doneAtMs.current = performance.now();
+      }
+      const isRecentlyDone = performance.now() - doneAtMs.current < PLAYED_STAY_MS;
       const nextStart = groupStartTick.current[doneGroups];
       const isNextArrived = nextStart === undefined || (clock.ticksToAudio(asTicks(nextStart)) as number) - nowAudio <= 0.01;
-      const pinnedGroup = stageChords && progress !== undefined && !isNextArrived ? doneGroups - 1 : -1;
+      const pinnedGroup = stageChords && progress !== undefined && isRecentlyDone && !isNextArrived ? doneGroups - 1 : -1;
 
       for (const note of sortedNotes.current) {
         const atSeconds = clock.ticksToAudio(note.startTick) as number;
@@ -157,7 +164,7 @@ export function FallingNotesCanvas({
         const isPinned = groupNumber === pinnedGroup;
         if (!isPinned && endSeconds - nowAudio < -0.5) continue; // fully past the line
         // A chord that has been played clears away once it crosses the line, so only what is still to play stays on screen.
-        if (!isPinned && progress !== undefined && groupNumber < doneGroups && secondsUntilHit < -0.12) continue;
+        if (!isPinned && progress !== undefined && groupNumber < doneGroups && secondsUntilHit < 0.02) continue;
 
         const { x, isWhite, widthUnits } = pitchToX(note.pitch, fitted);
         const pxX = x * unit;
@@ -245,6 +252,9 @@ export function FallingNotesCanvas({
 
   return <canvas ref={canvasRef} className={styles.canvas} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />;
 }
+
+/** How long a played chord stays green at the line; matches the hold dwell in sessionStore. */
+const PLAYED_STAY_MS = 600;
 
 function whiteKeyPx(range: KeyboardRange): number {
   const last = pitchToX(range.high, range);

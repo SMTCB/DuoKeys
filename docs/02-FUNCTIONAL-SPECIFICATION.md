@@ -326,7 +326,7 @@ turned the pending colour.
 A progression bar above the canvas shows every chord of the progression as a
 chip, the one being played marked (bold, outlined, `aria-current`), finished
 ones ticked, and the round of the loop ("Round 1 of 2"). The keyboard keeps the keys
-of the chord just played green until the next chord lands. A Key picker on the
+of the chord just played green for about half a second, then clears. A Key picker on the
 chord screen, before and during play, moves the same progression to another key
 (same degrees, so the same mood); during play it restarts on the new notes.
 Progressions typed in by the adult stay in their own key.
