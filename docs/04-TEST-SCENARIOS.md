@@ -198,6 +198,18 @@ grading.
 | `TS-U-CNT-027` | `styledProgressionToArrangement` keeps the style file's tempo, one marker per chord per pass, simultaneous notes in one group on the PPQ grid, transposes by the key offset (folded to −6…+5), declines an empty file; `styleFilePath` names a bundled file for every non-blues progression in every style | TA-CNT-006, FR-STU-015 |
 | `TS-U-CNT-028` | `searchSongs` finds a piece by any words of its title, composer, opus or style, ignoring accents and punctuation ("etude" finds "Étude"), needs every word, and filters by style; `smfToArrangement` reads two note tracks as right then left hand and a single track split at middle C, adds a both-hands track, groups notes that begin together across the hands, scales the file's ticks to 480 PPQ and keeps its tempo, declines a file with no notes; `isMonophonic` says whether a track is a single line | TA-CNT-006, FR-STU-016 |
 | `TS-U-CNT-029` | Every Mutopia MIDI file in `content/sources/mutopia/mid` parses with `parseSmf` and converts to a non-empty arrangement (skipped when the mirror is absent) | TA-CNT-006, TA-CNT-005, FR-STU-016 |
+| `TS-U-CNT-030` | `parseChordChart` keeps chord lines, skips lyric lines and notes the sections | TA-CNT-007, FR-STU-017 |
+| `TS-U-CNT-031` | `parseChordChart` reports chord-shaped tokens it cannot read | TA-CNT-007, FR-STU-017 |
+| `TS-U-CNT-032` | `chartToArrangement` builds one bar per chord and carries the chart sections | TA-CNT-007, FR-STU-017 |
+| `TS-U-CNT-033` | `chartToArrangement` returns nothing for a chart with no chords | TA-CNT-007, FR-STU-017 |
+| `TS-U-CNT-034` | `makeCustomSong` rejects a nameless song and a chordless chart | TA-CNT-007, FR-STU-017 |
+| `TS-U-CNT-035` | A chart round-trips through `makeCustomSong` and `customSongToArrangement` | TA-CNT-007, FR-STU-017 |
+| `TS-U-CNT-036` | `isEasyProgression` accepts few plain chords and rejects many or unusual ones | TA-CNT-007, FR-STU-018 |
+| `TS-U-CNT-037` | `pickFreePlay` only suggests easy progressions, narrowed by mood | TA-CNT-007, FR-STU-018 |
+| `TS-U-CNT-038` | `pickFreePlay` falls back to the whole easy pool when the mood has none | TA-CNT-007, FR-STU-018 |
+| `TS-U-CNT-039` | `pickFreePlay` avoids repeating the last pick when it can | TA-CNT-007, FR-STU-018 |
+| `TS-U-CNT-040` | `pickFreePlay` is deterministic for a given draw and returns nothing for an empty pool | TA-CNT-007, FR-STU-018 |
+| `TS-U-CNT-041` | `easyMoods` lists the moods of easy progressions only | TA-CNT-007, FR-STU-018 |
 
 `TS-U-CNT-019` is **partially** satisfied as written — `ingestChords.ts`
 (`US-3.13`) emits the same `ChordEntry`/`ProgressionEntry` shapes.
@@ -400,6 +412,7 @@ These cannot be automated. Run at each sprint exit.
 | `TS-M-014` | Same golden fixtures produce identical grades on iPad and laptop | 5 | US-5.04 |
 | `TS-M-015` | A library song (one two-hand piece, one single line) is played at the real piano in wait mode: each hand lands on the right keys and a chord waits for all its notes | 3 | FR-STU-016 |
 | `TS-M-016` | **Manual, not yet run.** On the chord screen with the piano connected: pressing a chord or a progression's Play shows its keys on the keybed pinned at the top without scrolling; Next chord steps through the progression; the three tabs each show only their own content | 3 | FR-STU-015 |
+| `TS-M-017` | **Manual, not yet run.** On a second device signed in to the same account: profiles appear after sync; a pasted chart and an imported MIDI file are added to "my songs", play at the piano in wait mode, and are still there after a reload; "Play something for me" opens a progression with its rhythm chosen | 3 | FR-STU-017, FR-STU-018 |
 
 ---
 
@@ -427,6 +440,9 @@ critical-path behaviour has a manual confirmation.
 | FR-STU-013 | TS-U-REN-007 | — |
 | FR-STU-015 | TS-U-CNT-022…027, TS-I-DAT-008 | TS-M-016 |
 | FR-STU-016 | TS-U-CNT-028, 029, TS-I-DAT-009 | TS-M-015 |
+| FR-STU-017 | TS-U-CNT-030…035 | TS-M-017 |
+| FR-STU-018 | TS-U-CNT-036…041 | TS-M-017 |
+| FR-STU-019 | — | — |
 | FR-DUO-001 | TS-E-015 | TS-M-012 |
 | FR-DUO-002 | TS-U-MAT-021, TS-G-010 | TS-M-011 |
 | FR-PRO-001 | TS-U-DAT-001, 002, TS-I-DAT-006, TS-E-005 | — |

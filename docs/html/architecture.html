@@ -756,6 +756,9 @@ IndexedDB          ◀──pull── Supabase   <i>(only on a fresh device)</i
   </ul>
   <p>A converted piece is generated at play time and never stored as content; attempts record the synthetic id <code>mutopia-&lt;n&gt;</code>. <code>core/</code> still touches no file system or network: bytes come in through the adapter.</p>
 
+  <h3 id="TA-CNT-007" data-toc="Custom songs and free play"><span class="aid">TA-CNT-007</span> Custom songs and free play</h3>
+  <p>Pure <code>core/content/customSong.ts</code> (chart parser, <code>custom:</code> ids, chart / MIDI / MusicXML to Arrangement) and <code>core/content/freePlay.ts</code> (easy-progression filter and a seeded-random picker); <code>runtime/stores/customSongStore.ts</code> keeps songs in the profile's <code>settings.customSongs</code> (so they sync with no table; MIDI bytes as base64, 400 KB cap). <code>profileStore</code> now remembers the active profile id in localStorage (a per-device convenience, never synced) so a direct page load sees that profile's songs, and the profile picker refreshes after a sync round (<code>syncStore.syncRound</code>).</p>
+
   <!-- ============================================================ 11. Shell -->
   <h2 id="shell" data-toc="Application shell"><span class="num">11</span>Application shell</h2>
 
@@ -787,11 +790,14 @@ IndexedDB          ◀──pull── Supabase   <i>(only on a fresh device)</i
 /explorer/[arrangementId]/session   <i>session arc — warm-up, quests, wind-down (TA-APP-005)</i>
 /explorer/ninja                <i>Note Ninja</i>
 /explorer/free-play            <i>ungraded free play (FR-EXP-006)</i>
-/studio                       <i>adult home</i>
+/studio                       <i>adult home — three tracks (FR-STU-017–019)</i>
 /studio/practice/[id]         <i>OSMD + matcher</i>
 /studio/drills                <i>Hanon / sight-reading generators</i>
 /studio/chords                 <i>chord &amp; progression explorer + my progressions (TA-CNT-006, TA-MAT-007)</i>
-/studio/chords/play/[progressionId]  <i>a progression as falling notes (FR-STU-015)</i>
+/studio/chords/play/[progressionId]  <i>a progression as falling notes (FR-STU-015); ?style= preselects the rhythm</i>
+/studio/learn                 <i>track 1 — roadmap and slow Hanon drills (FR-STU-019)</i>
+/studio/free-play             <i>track 2 — "play something for me" (FR-STU-018)</i>
+/studio/songs                 <i>track 3 — my songs, add a song, library (FR-STU-017)</i>
 /studio/songs/[id]             <i>lead-sheet song mode (FR-STU-013)</i>
 /studio/library                 <i>song library — search, add to my songs (FR-STU-016, TA-CNT-006)</i>
 /studio/play/[id]              <i>also plays library songs, id mutopia-&lt;n&gt; (FR-STU-016)</i>

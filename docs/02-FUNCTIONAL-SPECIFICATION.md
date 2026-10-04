@@ -351,6 +351,32 @@ falling notes.
 > dynamics are flat. Pieces are classical, Baroque, folk and a little jazz; a
 > pop song would need a source with a licence that allows it.
 
+### FR-STU-017 — Custom songs — "my songs" you bring yourself (`S`)
+
+**Realised by:** `TA-CNT-007`, `TA-APP-003`, `TA-DAT-003` · `US-3.22`
+
+The adult can add a song that is not in the library, such as a pop song they want to learn, and it is kept in "my songs" with the library pieces so they can come back to it. Two ways in, both from material the user already has: paste a chord chart (section headings such as Verse and Chorus, chord symbols above or between the lyrics), or import a MIDI or MusicXML file. A pasted chart shows "Found N chords in M sections" before it is saved; lyric lines are skipped, and chords the app cannot read are listed rather than guessed.
+
+A chart plays as one bar per chord at 70 bpm in the same wait-mode falling-notes view as every other song; a MIDI or MusicXML file plays as its notes, with the same hand selector, loop and tempo controls. The song, its source (the chart text or the file bytes, base64) and its title are stored on the profile's settings record beside saved library songs, so it syncs with no new table and is capped at 400 KB per song.
+
+Limits: DuoKeys does not fetch or bundle charts or scores. The user brings the content. Turning a recording into MIDI is not offered.
+
+### FR-STU-018 — Free play — "play something for me" (`S`)
+
+**Realised by:** `TA-CNT-007`, `TA-CNT-006`, `TA-APP-003` · `US-3.22`
+
+The adult can sit down at the piano and be given something easy to play with no decisions: pick a feeling or leave it on "Surprise me", and the app chooses a short progression of at most four easy chords (major, minor, seventh, suspended) and a rhythm to play them in. "Another one" never repeats the last suggestion. Playing opens the chord-progression page with the rhythm already chosen; the chords fall and wait, there is no score and no timer. The chord library stays one tap away.
+
+Limits: this is a suggestion generator over the shipped progression catalogue, not a composer. There is no mode in which the app plays the other hand.
+
+### FR-STU-019 — Learn — a gentle path back (`S`)
+
+**Realised by:** `TA-APP-003`, `TA-CNT-007` · `US-3.22`
+
+The adult returning to the piano can open one page that lays out a short route: warm the hands with the slow Hanon drills (60 bpm), read a little (sight-reading), learn four chords that cover most pop songs (the chord library), then play to unwind (Free play and Songs). Every step opens a tool that already exists, in any order; the page has no scores, ticks or streaks (NFR-012).
+
+Limits: the route is fixed text and does not remember what has been done.
+
 ### FR-STU-014 — Personal score import (`C`)
 
 **Status:** Future roadmap — deliberately out of MVP (v1) scope. Raised by
@@ -612,13 +638,13 @@ leaves the device.
 | Module | Must | Should | Could | Total |
 |---|---|---|---|---|
 | Explorer | 5 | 3 | 1 | 9 |
-| Studio | 8 | 6 | 2 | 16 |
+| Studio | 8 | 9 | 2 | 19 |
 | Duet | 3 | 1 | 0 | 4 |
 | Profiles | 4 | 1 | 1 | 6 |
 | Content | 4 | 0 | 1 | 5 |
 | Sync | 4 | 1 | 0 | 5 |
 | System | 7 | 1 | 0 | 8 |
-| **Total** | **35** | **13** | **5** | **53** |
+| **Total** | **35** | **16** | **5** | **56** |
 
 *(System's Must count was previously misstated as 6/8 — corrected to 7/8 here;
 `FR-SYS-001`–`005` and `007`–`008` are all `M`, only `FR-SYS-006` is `S`.)*

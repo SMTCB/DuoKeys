@@ -13,8 +13,9 @@ import { PageShell } from '../ui/shared/PageShell';
 import { StatusNote } from '../ui/shared/StatusNote';
 import { Card } from '../ui/shared/Card';
 import { Button } from '../ui/shared/Button';
-
-const AVATARS = ['🎹', '🐣', '🦊', '🐢', '🌟', '🎧'];
+import { AVATARS } from '../ui/shared/avatars';
+import { SyncPanel } from '../ui/studio/SyncPanel';
+import { useSyncStore } from '../runtime/stores/syncStore';
 
 export default function HomePage() {
   const router = useRouter();
@@ -26,12 +27,27 @@ export default function HomePage() {
 
   const [displayName, setDisplayName] = useState('');
   const [role, setRole] = useState<Profile['role']>('explorer');
-  const [avatar, setAvatar] = useState(AVATARS[0]);
+  const [avatar, setAvatar] = useState<string>(AVATARS[0]?.emoji ?? '🎹');
   const [isAdding, setIsAdding] = useState(false);
+
+  const syncRound = useSyncStore((s) => s.syncRound);
+  const isSyncSignedIn = useSyncStore((s) => s.email !== undefined);
+  const isSyncConfigured = useSyncStore((s) => s.configured);
+  const [restoredCount, setRestoredCount] = useState(0);
 
   useEffect(() => {
     void loadProfiles();
   }, [loadProfiles]);
+
+  // A sync can pull profiles in from another device; show them without a reload.
+  useEffect(() => {
+    if (syncRound === 0) return;
+    const before = useProfileStore.getState().profiles.length;
+    void loadProfiles().then(() => {
+      const gained = useProfileStore.getState().profiles.length - before;
+      if (gained > 0) setRestoredCount((n) => n + gained);
+    });
+  }, [syncRound, loadProfiles]);
 
   function choose(profile: Profile): void {
     selectProfile(profile.id);
@@ -83,6 +99,12 @@ export default function HomePage() {
         </div>
       )}
 
+      {loaded && restoredCount > 0 && (
+        <p role="status">
+          ✓ Brought {restoredCount === 1 ? 'one profile' : `${restoredCount} profiles`} over from your other device.
+        </p>
+      )}
+
       {loaded && canAdd && !isFormShown && (
         <div>
           <Button accent="coral" variant="secondary" onClick={() => setIsAdding(true)}>
@@ -108,13 +130,14 @@ export default function HomePage() {
           <div role="group" aria-label="Avatar" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {AVATARS.map((a) => (
               <Button
-                key={a}
+                key={a.emoji}
                 type="button"
-                variant={avatar === a ? 'primary' : 'secondary'}
-                onClick={() => setAvatar(a)}
-                aria-pressed={avatar === a}
+                variant={avatar === a.emoji ? 'primary' : 'secondary'}
+                onClick={() => setAvatar(a.emoji)}
+                aria-pressed={avatar === a.emoji}
+                aria-label={a.name}
               >
-                {a}
+                {a.emoji}
               </Button>
             ))}
           </div>
@@ -150,6 +173,15 @@ export default function HomePage() {
             {!displayName.trim() && <span style={{ opacity: 0.75 }}>Type a name to start</span>}
           </div>
         </Card>
+      )}
+
+      {loaded && isSyncConfigured && (
+        <details open={profiles.length === 0 && !isSyncSignedIn} className="restore">
+          <summary style={{ minHeight: '44px', display: 'flex', alignItems: 'center', cursor: 'pointer', fontWeight: 600 }}>
+            {profiles.length === 0 ? 'Used DuoKeys on another device? Bring your profiles over' : 'Backup and other devices (grown-ups)'}
+          </summary>
+          <SyncPanel />
+        </details>
       )}
     </PageShell>
   );

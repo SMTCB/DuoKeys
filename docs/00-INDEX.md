@@ -99,6 +99,9 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-STU-014 personal score import | C | — (future roadmap) | — | — |
 | FR-STU-015 my progressions & falling-notes chords | S | TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.18, US-3.20 | TS-U-CNT-022…027, TS-I-DAT-008, TS-M-016 |
 | FR-STU-016 song library | S | TA-CNT-004, TA-CNT-005, TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.19 | TS-U-CNT-028, 029, TS-I-DAT-009, TS-M-015 |
+| FR-STU-017 custom songs | S | TA-CNT-007, TA-APP-003, TA-DAT-003 | US-3.22 | TS-U-CNT-030…035, TS-M-017 |
+| FR-STU-018 free play | S | TA-CNT-007, TA-CNT-006, TA-APP-003 | US-3.22 | TS-U-CNT-036…041, TS-M-017 |
+| FR-STU-019 learn roadmap | S | TA-APP-003, TA-CNT-007 | US-3.22 | — |
 | FR-DUO-001 split + transpose | M | TA-DAT-001 | US-4.01 | TS-E-015, TS-M-012 |
 | FR-DUO-002 dual matchers | M | TA-MAT-001 | US-4.02 | TS-U-MAT-021, TS-G-010 |
 | FR-DUO-003 asymmetric parts | M | TA-DAT-001 | US-4.03 | TS-M-011 |
@@ -1112,3 +1115,5 @@ explorer, the Studio play setup, the not-found page and the error note. The canv
 checked on a temporary page with a stopped clock; that page is deleted. Not checked:
 the canvas while playing, the loop status, and the play result, because all three need
 a connected piano.
+
+Studio in three tracks (`US-3.22`, `FR-STU-017`–`019`): Learn, Free play and Songs, with custom songs (a pasted chord chart or a MIDI / MusicXML file, kept in "my songs" on the profile's settings record, no new table), a "play something for me" generator, 15 avatars (all instruments), profile restore after sync, and the chosen profile remembered per device in localStorage. Checked in a browser at 375 px: the Songs hub, adding and replaying a chart, a direct reload of a custom song, Free play and Learn. 301 unit tests pass. Not checked: MIDI / MusicXML import through the screen, restore across two real devices (`TS-M-017`), and emoji drawing on the phone.

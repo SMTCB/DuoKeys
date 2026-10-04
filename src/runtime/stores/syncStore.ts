@@ -18,6 +18,8 @@ interface SyncState {
   linkSent: boolean;
   /** A plain-language problem with the last sign-in attempt, for the adult. */
   signInProblem: string | undefined;
+  /** Counts completed syncs, so a screen can reload what a sync just pulled in. */
+  syncRound: number;
 
   init(): Promise<void>;
   signIn(email: string): Promise<void>;
@@ -63,6 +65,7 @@ export const useSyncStore = create<SyncState>((set, get) => ({
   pending: 0,
   linkSent: false,
   signInProblem: undefined,
+  syncRound: 0,
 
   async init(): Promise<void> {
     if (started || !isSyncConfigured) return;
@@ -114,6 +117,10 @@ export const useSyncStore = create<SyncState>((set, get) => ({
     }
     set({ status: 'syncing', email: user.email });
     const outcome = await engine.sync();
-    set({ status: STATUS_OF[outcome], pending: await engine.pendingCount().catch(() => 0) });
+    set({
+      status: STATUS_OF[outcome],
+      pending: await engine.pendingCount().catch(() => 0),
+      syncRound: get().syncRound + 1,
+    });
   },
 }));

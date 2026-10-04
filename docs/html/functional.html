@@ -49,7 +49,7 @@
       <thead><tr><th>Prefix</th><th>Module</th><th>Count</th></tr></thead>
       <tbody>
         <tr><td><code>FR-EXP-*</code></td><td><a href="#explorer">Explorer — the child's experience</a></td><td class="n">9</td></tr>
-        <tr><td><code>FR-STU-*</code></td><td><a href="#studio">Studio — the adult's experience</a></td><td class="n">16</td></tr>
+        <tr><td><code>FR-STU-*</code></td><td><a href="#studio">Studio — the adult's experience</a></td><td class="n">19</td></tr>
         <tr><td><code>FR-DUO-*</code></td><td><a href="#duet">Duet — four hands together</a></td><td class="n">4</td></tr>
         <tr><td><code>FR-PRO-*</code></td><td><a href="#profiles">Profiles, progression and rewards</a></td><td class="n">5</td></tr>
         <tr><td><code>FR-CON-*</code></td><td><a href="#content">Content and repertoire</a></td><td class="n">5</td></tr>
@@ -254,6 +254,28 @@
   </div>
 
   <div class="req">
+    <h3 id="FR-STU-017" data-toc="Custom songs"><span class="aid">FR-STU-017</span> Custom songs — "my songs" you bring yourself <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-CNT-007 · TA-APP-003 · TA-DAT-003 · US-3.22</p>
+    <p>The adult can add a song that is not in the library, such as a pop song they want to learn, and it is kept in "my songs" with the library pieces so they can come back to it. Two ways in, both from material the user already has: paste a chord chart (section headings such as Verse and Chorus, chord symbols above or between the lyrics), or import a MIDI or MusicXML file. A pasted chart shows "Found N chords in M sections" before it is saved; lyric lines are skipped, and chords the app cannot read are listed rather than guessed.</p>
+    <p>A chart plays as one bar per chord at 70 bpm in the same wait-mode falling-notes view as every other song; a MIDI or MusicXML file plays as its notes, with the same hand selector, loop and tempo controls. The song, its source (the chart text or the file bytes, base64) and its title are stored on the profile's settings record beside saved library songs, so it syncs with no new table and is capped at 400 KB per song.</p>
+    <p>Limits: DuoKeys does not fetch or bundle charts or scores. The user brings the content. Turning a recording into MIDI is not offered.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-018" data-toc="Free play"><span class="aid">FR-STU-018</span> Free play — "play something for me" <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-CNT-007 · TA-CNT-006 · TA-APP-003 · US-3.22</p>
+    <p>The adult can sit down at the piano and be given something easy to play with no decisions: pick a feeling or leave it on "Surprise me", and the app chooses a short progression of at most four easy chords (major, minor, seventh, suspended) and a rhythm to play them in. "Another one" never repeats the last suggestion. Playing opens the chord-progression page with the rhythm already chosen; the chords fall and wait, there is no score and no timer. The chord library stays one tap away.</p>
+    <p>Limits: this is a suggestion generator over the shipped progression catalogue, not a composer. There is no mode in which the app plays the other hand.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-019" data-toc="Learn"><span class="aid">FR-STU-019</span> Learn — a gentle path back <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-APP-003 · TA-CNT-007 · US-3.22</p>
+    <p>The adult returning to the piano can open one page that lays out a short route: warm the hands with the slow Hanon drills (60 bpm), read a little (sight-reading), learn four chords that cover most pop songs (the chord library), then play to unwind (Free play and Songs). Every step opens a tool that already exists, in any order; the page has no scores, ticks or streaks (NFR-012).</p>
+    <p>Limits: the route is fixed text and does not remember what has been done.</p>
+  </div>
+
+  <div class="req">
     <h3 id="FR-STU-014"data-toc="Personal score import"><span class="aid">FR-STU-014</span> Personal score import <span class="pri C">C</span></h3>
     <p class="by"><b>Status</b> Future roadmap — deliberately out of MVP (v1) scope. Raised by the adult user and confirmed as a nice-to-have, not a blocker; revisit after v1 ships. Flagged as an open architecture question below, not only an unscheduled story</p>
     <p>The end state: the adult receives an already-digitised sheet from a teacher (MusicXML, or a scan run through OMR) and brings it into DuoKeys to practise against — the same idea as FR-STU-011's Mutopia/OpenScore ingest, but for one personal file rather than the shared catalogue.</p>
@@ -445,13 +467,13 @@
     <thead><tr><th>Module</th><th>Must</th><th>Should</th><th>Could</th><th>Total</th></tr></thead>
     <tbody>
       <tr><td><a href="#explorer">Explorer</a></td><td class="n">5</td><td class="n">3</td><td class="n">1</td><td class="n">9</td></tr>
-      <tr><td><a href="#studio">Studio</a></td><td class="n">8</td><td class="n">6</td><td class="n">2</td><td class="n">16</td></tr>
+      <tr><td><a href="#studio">Studio</a></td><td class="n">8</td><td class="n">9</td><td class="n">2</td><td class="n">19</td></tr>
       <tr><td><a href="#duet">Duet</a></td><td class="n">3</td><td class="n">1</td><td class="n">0</td><td class="n">4</td></tr>
       <tr><td><a href="#profiles">Profiles</a></td><td class="n">4</td><td class="n">1</td><td class="n">1</td><td class="n">6</td></tr>
       <tr><td><a href="#content">Content</a></td><td class="n">4</td><td class="n">0</td><td class="n">1</td><td class="n">5</td></tr>
       <tr><td><a href="#sync">Sync</a></td><td class="n">4</td><td class="n">1</td><td class="n">0</td><td class="n">5</td></tr>
       <tr><td><a href="#system">System</a></td><td class="n">7</td><td class="n">1</td><td class="n">0</td><td class="n">8</td></tr>
-      <tr class="tot"><td><strong>Total</strong></td><td class="n">35</td><td class="n">13</td><td class="n">5</td><td class="n">53</td></tr>
+      <tr class="tot"><td><strong>Total</strong></td><td class="n">35</td><td class="n">16</td><td class="n">5</td><td class="n">56</td></tr>
     </tbody>
   </table></div>
   <div class="note"><p><span class="k">Correction</span>System's Must count was previously misstated as 6/8 — corrected to 7/8 here; FR-SYS-001–005 and 007–008 are all M, only FR-SYS-006 is S.</p></div>

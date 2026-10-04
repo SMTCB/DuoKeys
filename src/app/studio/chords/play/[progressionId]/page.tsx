@@ -56,6 +56,13 @@ export default function ChordProgressionPlayPage() {
 
   const progression = catalogue?.progressions.find((p) => p.id === progressionId);
   const [style, setStyle] = useState<StyleChoice>('block');
+
+  // FR-STU-018 — Free play links here with ?style=pop so the suggested rhythm is already chosen.
+  // Read from the address bar after mount: useSearchParams would force a Suspense boundary.
+  useEffect(() => {
+    const wanted = new URLSearchParams(window.location.search).get('style');
+    if (wanted && CHORD_STYLES.some((s) => s.id === wanted)) setStyle(wanted as ChordStyleId);
+  }, []);
   const [styleFile, setStyleFile] = useState<SmfFile | undefined>(undefined);
   const [styleError, setStyleError] = useState(false);
 

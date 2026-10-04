@@ -1231,6 +1231,10 @@ A converted piece is generated at play time and never stored as content;
 attempts record the synthetic id `mutopia-<n>`. `core/` still touches no file
 system or network: bytes come in through the adapter.
 
+### TA-CNT-007 — Custom songs and free play
+
+`US-3.22` (`FR-STU-017`–`019`). Pure `core/content/customSong.ts` (chart parser, `custom:` ids, chart / MIDI / MusicXML to Arrangement) and `core/content/freePlay.ts` (easy-progression filter and a seeded-random picker); `runtime/stores/customSongStore.ts` keeps songs in the profile's `settings.customSongs` (so they sync with no table; MIDI bytes as base64, 400 KB cap). `profileStore` now remembers the active profile id in localStorage (a per-device convenience, never synced) so a direct page load sees that profile's songs, and the profile picker refreshes after a sync round (`syncStore.syncRound`).
+
 ---
 
 ## 11. Application shell
@@ -1266,11 +1270,14 @@ here — that is the whole of ADR-002's cost.
 /explorer/[arrangementId]/session   session arc — warm-up, quests, wind-down (TA-APP-005)
 /explorer/ninja                Note Ninja
 /explorer/free-play            ungraded free play (FR-EXP-006)
-/studio                       adult home
+/studio                       adult home — three tracks (FR-STU-017–019)
 /studio/practice/[id]         OSMD + matcher
 /studio/drills                Hanon / sight-reading generators
 /studio/chords                 chord & progression explorer + my progressions (TA-CNT-006, TA-MAT-007)
-/studio/chords/play/[progressionId]  a progression as falling notes (FR-STU-015)
+/studio/chords/play/[progressionId]  a progression as falling notes (FR-STU-015); ?style= preselects the rhythm
+/studio/learn                 track 1 — roadmap and slow Hanon drills (FR-STU-019)
+/studio/free-play             track 2 — "play something for me" (FR-STU-018)
+/studio/songs                 track 3 — my songs, add a song, library (FR-STU-017)
 /studio/songs/[id]             lead-sheet song mode (FR-STU-013)
 /studio/library                 song library — search, add to my songs (FR-STU-016, TA-CNT-006)
 /studio/play/[id]              also plays library songs, id mutopia-<n> (FR-STU-016)

@@ -27,6 +27,8 @@ import stage from '../../../../ui/shared/Stage.module.css';
 import type { Arrangement, Track } from '../../../../core/content/types';
 import { ticksPerMeasure } from '../../../../core/content/toMusicXml';
 import { asTicks } from '../../../../core/time/types';
+import { loadCustomArrangement, useCustomSongStore } from '../../../../runtime/stores/customSongStore';
+import { isCustomSongId } from '../../../../core/content/customSong';
 import { loadSongBytes, loadSongIndex } from '../../../../adapters/content/staticSongs';
 import { parseSmf } from '../../../../core/midi/smf';
 import { isMonophonic, smfToArrangement } from '../../../../core/content/songLibrary';
@@ -49,7 +51,14 @@ function trackLabel(track: Track): string {
 
 export default function StudioPlayPage() {
   const params = useParams<{ id: string }>();
+  const arrangementId = decodeURIComponent(params.id);
   const getGenerated = useGeneratedContentStore((s) => s.get);
+  const customTitle = useCustomSongStore((s) => s.songs.find((x) => x.id === arrangementId)?.title);
+  const loadCustomSongs = useCustomSongStore((s) => s.load);
+  const activeProfileId = useSessionStore((s) => s.profile.id);
+  useEffect(() => {
+    if (isCustomSongId(arrangementId)) void loadCustomSongs();
+  }, [arrangementId, loadCustomSongs, activeProfileId]);
   const profile = useSessionStore((s) => s.profile);
   const midiInputs = useSessionStore((s) => s.midiInputs);
   const midiConnectionState = useSessionStore((s) => s.midiConnectionState);
@@ -91,24 +100,27 @@ export default function StudioPlayPage() {
     // US-3.10 — a sight-reading phrase lives only in generatedContentStore
     // (never baked into content/sources/, TA-CNT-004), so check there first
     // before falling back to the normal build-time content backend.
-    const generated = getGenerated(params.id);
+    const generated = getGenerated(arrangementId);
     if (generated) {
       setArrangement(generated);
       setSelectedTrackId(generated.tracks[0]?.id);
       return;
     }
     let cancelled = false;
+    setLoadError(undefined);
     // FR-STU-016 — a song from the library is a MIDI file converted on the spot.
-    const load: Promise<Arrangement> = params.id.startsWith('mutopia-')
-      ? Promise.all([loadSongBytes(params.id), loadSongIndex().catch(() => undefined)]).then(([bytes, index]) => {
+    const load: Promise<Arrangement> = isCustomSongId(arrangementId)
+      ? loadCustomArrangement(arrangementId)
+      : arrangementId.startsWith('mutopia-')
+      ? Promise.all([loadSongBytes(arrangementId), loadSongIndex().catch(() => undefined)]).then(([bytes, index]) => {
           if (!bytes) throw new Error('that song file is missing from this copy of the library');
           const parsed = parseSmf(bytes);
           if (!parsed.ok) throw new Error(parsed.error);
-          const made = smfToArrangement(parsed.file, { id: params.id, title: index?.songs.find((x) => x.id === params.id)?.title ?? params.id });
+          const made = smfToArrangement(parsed.file, { id: arrangementId, title: index?.songs.find((x) => x.id === arrangementId)?.title ?? arrangementId });
           if (!made) throw new Error('that file has no notes');
           return made;
         })
-      : getAdapters().content.arrangement(params.id);
+      : getAdapters().content.arrangement(arrangementId);
     load
       .then((a) => {
         if (!cancelled) {
@@ -116,11 +128,13 @@ export default function StudioPlayPage() {
           setSelectedTrackId(a.tracks[0]?.id);
         }
       })
-      .catch((e: unknown) => setLoadError(e instanceof Error ? e.message : String(e)));
+      .catch((e: unknown) => {
+        if (!cancelled) setLoadError(e instanceof Error ? e.message : String(e));
+      });
     return () => {
       cancelled = true;
     };
-  }, [params.id, getGenerated]);
+  }, [arrangementId, getGenerated, profile.id]);
 
   const track = arrangement?.tracks.find((t) => t.id === selectedTrackId) ?? arrangement?.tracks[0];
   const notesForDisplay = useMemo(() => activeNotes ?? track?.notes ?? [], [activeNotes, track]);
@@ -174,7 +188,7 @@ export default function StudioPlayPage() {
 
   return (
     <PageShell>
-      <h1>{params.id.startsWith('mutopia-') ? (arrangement.sections[0]?.label ?? arrangement.id) : arrangement.id}</h1>
+      <h1>{customTitle ?? (arrangementId.startsWith('mutopia-') ? (arrangement.sections[0]?.label ?? arrangement.id) : arrangement.id)}</h1>
 
       {attemptStatus === 'idle' && (
         <Card>

@@ -195,6 +195,7 @@ Note Ninja, styling.
 | `US-3.19` | As an adult, I can search a library of real piano pieces from my own platform, add the ones I want to "my songs", and play them as falling notes with the hand selector, loop and tempo tools, so that I have somewhere to plug in the piano and start playing. | FR-STU-016 | TA-CNT-004, TA-CNT-005, TA-CNT-006, TA-REN-001, TA-DAT-003 | 5 |
 | `US-3.20` | As an adult, I can open the chord screen and find one job per tab (chords, progressions, my progressions) with the keybed pinned at the top and each progression shown as the chords I will play, so that I am not scrolling through five thousand pixels of buttons to find a chord. | FR-STU-015 | TA-APP-003, TA-CNT-006 | 3 |
 | `US-3.21` | As a user, I see the DuoKeys logo and my role colour (amber Explorer, indigo Studio) on every screen, and every screen (the homes, quest map, play screens, falling notes, sight-reading, practice, song library, chord explorer, backup panel, loading and not-found pages) uses the same picture cards, pill choices and form controls, so that the app looks like the approved design instead of plain boxes. | — | TA-APP-006 | 3 |
+| `US-3.22` | As an adult, I can open Studio and find three tracks (Learn, Free play, Songs); get an easy progression and rhythm suggested with one tap; and add a song that is not in the library, by pasting its chords or importing a MIDI or MusicXML file, and find it again in "my songs", so that I can sit down, unwind and still learn the songs I care about. | FR-STU-017, FR-STU-018, FR-STU-019 | TA-APP-003, TA-CNT-007 | 5 |
 
 **Exit criteria**
 - You use it for your own practice for a week and prefer it to the alternative.
@@ -255,10 +256,10 @@ original brief is delivered.
 | 0 | Hardware spike | 6 | 1–2 days |
 | 1 | Walking skeleton | 34 | ~1 week |
 | 2 | Child's loop | 60 | ~2 weeks |
-| 3 | Adult's loop | 71 | ~2 weeks |
+| 3 | Adult's loop | 76 | ~2 weeks |
 | 4 | Duet & dashboard | 35 | ~2 weeks |
 | 5 | iPad (optional) | 16 | ~1 week |
-| | **v1 total (0–4)** | **206** | **~7 weeks** |
+| | **v1 total (0–4)** | **211** | **~7 weeks** |
 
 Points are load-bearing only *within* a sprint; the calendar estimates assume
 part-time evening work, which is the realistic mode for this project.
