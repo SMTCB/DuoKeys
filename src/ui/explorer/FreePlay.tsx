@@ -1,6 +1,7 @@
 // TA-APP-003 `/explorer/free-play` — US-2.19. No grading, no matcher, no
 // Attempt written (FR-EXP-006 is explicitly ungraded): every noteOn above
-// VELOCITY_FLOOR just sounds and shows the note name, cleared on noteOff.
+// VELOCITY_FLOOR just sounds and shows the note name, the lit key and the note on the staff; they stay on
+// the last note after release so the child can look, and only the sound stops on noteOff.
 // Component-local state, no store — this component is also mounted directly
 // by the session-arc route (US-2.17) for its warm-up/wind-down steps, and a
 // dedicated store would only add indirection neither caller needs.
@@ -13,6 +14,8 @@ import type { MidiInputInfo, MidiConnectionState, VoiceHandle } from '../../adap
 import { MidiDecoder, type MidiPitch } from '../../core/midi/decode';
 import { VELOCITY_FLOOR } from '../../core/match/types';
 import { midiPitchToNoteName } from '../../core/content/noteName';
+import { NoteKeys } from '../shared/NoteKeys';
+import { NoteStaff } from '../shared/NoteStaff';
 import { MidiChooser } from '../shared/MidiChooser';
 import { Card } from '../shared/Card';
 import stage from '../shared/Stage.module.css';
@@ -50,7 +53,6 @@ export function FreePlay() {
           adapters.audio.stopNote(handle);
           voices.delete(event.pitch);
         }
-        setLastPitch((current) => (current === event.pitch ? undefined : current));
       }
     });
 
@@ -73,6 +75,12 @@ export function FreePlay() {
     <section className={stage.stage}>
       <p className={stage.title}>Play anything!</p>
       <div className={stage.bigNote}>{lastPitch !== undefined ? midiPitchToNoteName(lastPitch) : '🎹'}</div>
+      {lastPitch !== undefined && (
+        <div className={stage.noteViews}>
+          <NoteKeys pitches={[lastPitch]} />
+          <NoteStaff pitches={[lastPitch]} />
+        </div>
+      )}
     </section>
   );
 }

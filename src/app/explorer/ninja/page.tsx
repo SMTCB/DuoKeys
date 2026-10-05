@@ -10,6 +10,8 @@ import { useNoteNinjaStore } from '../../../runtime/stores/noteNinjaStore';
 import { useSessionStore } from '../../../runtime/stores/sessionStore';
 import { midiPitchToNoteName } from '../../../core/content/noteName';
 import { getAdapters } from '../../../runtime/bootstrap';
+import { NoteKeys } from '../../../ui/shared/NoteKeys';
+import { NoteStaff } from '../../../ui/shared/NoteStaff';
 import { RewardBurst } from '../../../ui/shared/RewardBurst';
 import { PageShell } from '../../../ui/shared/PageShell';
 import { Card } from '../../../ui/shared/Card';
@@ -96,6 +98,10 @@ export default function NoteNinjaPage() {
         <div className={stage.stage}>
           <Pill mono>Streak {streak}</Pill>
           <div className={stage.bigNote}>{midiPitchToNoteName(currentPitch)}</div>
+          <div className={stage.noteViews}>
+            <NoteKeys pitches={[currentPitch]} />
+            <NoteStaff pitches={[currentPitch]} />
+          </div>
           {lastResult && <RewardBurst />}
           {lastResult?.band === 'fast' && <span className={stage.bandFast}>Fast! ⚡</span>}
           {lastResult?.band === 'correct' && <span className={stage.bandCorrect}>Nice! ✅</span>}

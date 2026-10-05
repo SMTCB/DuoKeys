@@ -105,7 +105,7 @@ its sections are cleared, not the default demand.
 
 **Realised by:** `TA-DAT-003` (`flashcards`)
 
-A flashcard mini-game: a note appears on a simplified staff, the child plays it.
+A flashcard mini-game: a note appears on a simplified staff, the child plays it. The card shows the note three ways at once: its letter, the key lit on a two-octave keyboard (the same lit key as the falling view), and the note on a piano score (treble and bass staves).
 
 **Response-time bands replace the spec's 5-second timer:**
 
@@ -125,7 +125,7 @@ sufficient; SM-2 is over-engineered here).
 
 An unstructured mode where every key press triggers a visual and a sound with no
 grading whatsoever. This is not filler — it is where a six-year-old discovers that
-the instrument responds to them, and it costs almost nothing to build.
+the instrument responds to them, and it costs almost nothing to build. Each note shows its letter, the lit key on a two-octave keyboard and the note on a piano score; they stay on the last note after the key is released.
 
 ### FR-EXP-007 — Generous grading (`M`)
 
