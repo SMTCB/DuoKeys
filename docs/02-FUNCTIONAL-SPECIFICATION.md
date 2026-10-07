@@ -80,6 +80,8 @@ Coloured bars descend toward a hit line drawn directly above an on-screen keybed
 The keybed highlights the key each bar will land on. Left and right hands are
 distinguished by colour **and** by bar shape (`NFR-008`).
 
+The Explorer play screen also offers a Falling notes / Music score switch (`TA-REN-003`); the score is optional and never replaces the falling view as the default.
+
 The spatial mapping from screen to hands requires no music reading — this is the
 on-ramp that makes notation learnable later rather than being a prerequisite now.
 
@@ -279,7 +281,7 @@ grid plus the melody, closer to a lead sheet than a full score. Reuses
 already fits `TA-DAT-001`'s existing `Track`/`ContentNote` shape at a coarse
 difficulty, rendered with the existing falling-notes view (`TA-REN-001`)
 rather than a new renderer, with chord symbols overlaid as text at their
-tick position. Positioned as the easy on-ramp before `FR-STU-001`'s full
+tick position. The lead-sheet screen, like every falling-notes screen offers the same Show switch falling-notes screen, can show the melody as a Music score as well as falling notes (`TA-REN-003`). Positioned as the easy on-ramp before `FR-STU-001`'s full
 notation view, not a replacement for it — depends on `FR-STU-012` existing
 first, and on `FR-STU-011`/`FR-CON-*` for a specific song's melody data if it
 isn't already in the catalogue.
@@ -309,8 +311,8 @@ on the pending chord, `TA-CLK-002`); a Speed slider (30–100 %, live); played
 notes shown green with a tick and the keys on the keybed marked; lanes fitted to
 the progression's range so the bars fill the width; and a Show switch between
 Falling notes and Music score. The score view (`TA-REN-003`) lays the chords out
-as a scrolling grand staff whose cursor advances only on correct notes. It is
-available for block chords; a rhythmic style is falling notes only.
+as a scrolling grand staff whose cursor advances only on correct notes, for every
+rhythm style.
 
 To make a chord findable on the real piano, every falling bar and wanted key
 carries its letter name (middle C = C4), every C on the keybed is named as a

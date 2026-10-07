@@ -750,14 +750,7 @@ enforces its own limits — single voice, no synthesized rests for gaps, no
 unmapped duration — by throwing rather than silently misrendering when a future
 content file violates them.
 
-**Chord score view (`FR-STU-015`).** `core/content/chordScoreXml.ts`
-(`chordsToMusicXml`) turns a block-chord arrangement into a grand-staff MusicXML
-document, one whole-note measure per chord group (treble at or above middle C,
-bass below), the chord symbol as a direction. `NotationView` takes a
-`layout="chords"` prop: one horizontal stave line, no auto-follow, the wrapper
-scrolled so the cursor sits a quarter of the way across, and the cursor stepped
-once per matcher group, so the score moves left to right only on correct notes.
-Limits: block chords only, key of C with sharp spelling, no per-note hit colours.
+**Chord score view (`FR-STU-015`) — superseded.** The OSMD chord layout (`chordScoreXml.ts`, `NotationView layout="chords"`) is no longer used by the chord screen; it now uses the scrolling score below, which handles arpeggiated styles too.
 
 **Scrolling score for any song (`FR-STU-016`).** The song page's second view is
 not OSMD: `core/content/scoreLayout.ts` places every note of every track on a
@@ -770,7 +763,7 @@ two hands, which the single-voice `toMusicXml` cannot. Limits: no rests, beams,
 ties or key signature. `core/content/detectKey.ts` (`detectKey`) estimates the
 key from duration-weighted pitch classes and `core/content/transpose.ts` moves an
 arrangement by whole semitones within the keyboard range; the page grades and
-plays the moved copy. `TS-U-CNT-051`, `TS-U-CNT-052`.
+plays the moved copy. `ScrollingScore` takes an optional `notes` list (the matcher's `activeNotes`, so a quest section or loop is drawn as played) and, with no `preferSharps`, spells by the detected key. It is the Music score view on every falling-notes screen: chord progressions, lead-sheet songs, Explorer play and songs (`FR-STU-015`, `FR-STU-013`, `FR-EXP-002`). `TS-U-CNT-051`, `TS-U-CNT-052`.
 
 ### TA-REN-004 — Route-level code splitting
 

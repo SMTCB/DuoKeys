@@ -18,7 +18,7 @@ import { ProgressionNav } from '../../../../../ui/shared/ProgressionNav';
 import { progressionPosition } from '../../../../../core/content/progressionPosition';
 import { chordSymbolOfId } from '../../../../../core/content/chordSymbols';
 import { FallingNotesCanvas } from '../../../../../ui/falling/FallingNotesCanvas';
-import { NotationView } from '../../../../../ui/notation/NotationView';
+import { ScrollingScore } from '../../../../../ui/score/ScrollingScore';
 import { Pill } from '../../../../../ui/shared/Pill';
 import controls from '../../../../../ui/shared/Controls.module.css';
 import { PageShell } from '../../../../../ui/shared/PageShell';
@@ -140,10 +140,7 @@ export default function ChordProgressionPlayPage() {
   const hasStyles = progression ? styleFilePath('pop', progression) !== undefined : false;
   const isStyleLoading = style !== 'block' && hasStyles && !styleFile && !styleError;
 
-  // The score draws one whole-note chord per group, which is only true of block chords —
-  // a rhythmic style has arpeggiated, uneven groups, so it plays as falling notes only.
-  const canShowScore = style === 'block' || !styleFile;
-  const shownView: PlayView = canShowScore ? view : 'falling';
+  const shownView: PlayView = view;
 
   const position =
     arrangement && progression && attemptStatus === 'playing'
@@ -259,20 +256,16 @@ export default function ChordProgressionPlayPage() {
       {attemptStatus === 'playing' && clock && (
         <Card>
           <div className={controls.bar}>
-            {canShowScore ? (
-              <Segmented
-                name="view"
-                legend="Show"
-                options={[
-                  { value: 'falling' as const, label: 'Falling notes' },
-                  { value: 'score' as const, label: 'Music score' },
-                ]}
-                value={shownView}
-                onChange={setView}
-              />
-            ) : (
-              <Pill tone="neutral">Falling notes</Pill>
-            )}
+            <Segmented
+              name="view"
+              legend="Show"
+              options={[
+                { value: 'falling' as const, label: 'Falling notes' },
+                { value: 'score' as const, label: 'Music score' },
+              ]}
+              value={shownView}
+              onChange={setView}
+            />
             {keyPicker}
             <label className={controls.tempo}>
               <span className={controls.tempoLabel}>
@@ -321,16 +314,13 @@ export default function ChordProgressionPlayPage() {
       )}
 
       {attemptStatus === 'playing' && shownView === 'score' && (
-        <Card>
-          <NotationView
-            arrangement={arrangement}
-            trackId="chords"
-            groupIndex={matcherState?.groupIndex ?? 0}
-            attemptStatus={attemptStatus}
-            grade={grade}
-            layout="chords"
-          />
-        </Card>
+        <ScrollingScore
+          arrangement={arrangement}
+          trackId="chords"
+          groupIndex={matcherState?.groupIndex ?? 0}
+          isFinished={false}
+          notes={activeNotes ?? undefined}
+        />
       )}
 
       {attemptStatus === 'complete' && grade && (

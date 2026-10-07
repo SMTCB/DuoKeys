@@ -8,6 +8,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import controls from '../../../../ui/shared/Controls.module.css';
+import { Segmented } from '../../../../ui/shared/Segmented';
+import { ScrollingScore } from '../../../../ui/score/ScrollingScore';
 import { useParams } from 'next/navigation';
 import { useSessionStore } from '../../../../runtime/stores/sessionStore';
 import { getAdapters } from '../../../../runtime/bootstrap';
@@ -43,6 +46,7 @@ export default function StudioSongPage() {
   }, [endSession]);
 
   const [arrangement, setArrangement] = useState<Arrangement | undefined>();
+  const [view, setView] = useState<'falling' | 'score'>('falling');
   const [loadError, setLoadError] = useState<string | undefined>();
 
   useEffect(() => {
@@ -86,7 +90,28 @@ export default function StudioSongPage() {
         </Card>
       )}
 
-      {attemptStatus === 'playing' && clock && (
+      {attemptStatus === 'playing' && (
+        <Card>
+          <div className={controls.bar}>
+            <Segmented
+              name="view"
+              legend="Show"
+              options={[
+                { value: 'falling' as const, label: 'Falling notes' },
+                { value: 'score' as const, label: 'Music score' },
+              ]}
+              value={view}
+              onChange={setView}
+            />
+          </div>
+        </Card>
+      )}
+
+      {attemptStatus === 'playing' && view === 'score' && (
+        <ScrollingScore arrangement={arrangement} trackId={track.id} groupIndex={matcherState?.groupIndex ?? 0} isFinished={false} notes={activeNotes ?? undefined} />
+      )}
+
+      {attemptStatus === 'playing' && clock && view === 'falling' && (
         <FallingNotesCanvas
           clock={clock}
           notes={notesForDisplay}

@@ -7,7 +7,8 @@
 'use client';
 
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
-import type { Arrangement } from '../../core/content/types';
+import type { Arrangement, ContentNote } from '../../core/content/types';
+import { detectKey } from '../../core/content/detectKey';
 import {
   BASS_BOTTOM_STEP,
   TREBLE_BOTTOM_STEP,
@@ -47,14 +48,23 @@ export function ScrollingScore({
   groupIndex,
   preferSharps,
   isFinished,
+  notes,
 }: {
   arrangement: Arrangement;
   trackId: string;
   groupIndex: number;
-  preferSharps: boolean;
+  /** Spell black keys with sharps; left out, it follows the key the notes are in. */
+  preferSharps?: boolean;
   isFinished: boolean;
+  /** The notes the matcher is actually expecting for `trackId` (a quest section, say), if fewer than the whole track. */
+  notes?: ContentNote[] | undefined;
 }) {
-  const layout = useMemo(() => layoutScore(arrangement, trackId, preferSharps), [arrangement, trackId, preferSharps]);
+  const shown = useMemo(
+    () => (notes ? { ...arrangement, tracks: arrangement.tracks.map((t) => (t.id === trackId ? { ...t, notes } : t)) } : arrangement),
+    [arrangement, trackId, notes],
+  );
+  const sharps = preferSharps ?? detectKey(shown)?.isSharpKey ?? true;
+  const layout = useMemo(() => layoutScore(shown, trackId, sharps), [shown, trackId, sharps]);
   const frameRef = useRef<HTMLDivElement>(null);
   const [frameWidth, setFrameWidth] = useState(640);
   useLayoutEffect(() => {
