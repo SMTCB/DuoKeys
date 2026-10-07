@@ -3,8 +3,8 @@
 // Sharps are drawn with a ♯ in front of the natural below them.
 
 const HALF = 9; // vertical distance between a line and the next space
-const STEP_TOP = 50; // highest step in view
-const STEP_BOTTOM = 8; // lowest step in view
+const STEP_TOP = 42; // highest step in view (a few steps above the treble staff), grown for higher notes
+const STEP_BOTTOM = 14; // lowest step in view, grown for lower notes
 const LEFT = 70;
 const WIDTH = 300;
 const NOTE_X = 210;
@@ -20,7 +20,7 @@ function stepOf(pitch: number): number {
 const TREBLE_LINES = [30, 32, 34, 36, 38]; // E4 G4 B4 D5 F5
 const BASS_LINES = [18, 20, 22, 24, 26]; // G2 B2 D3 F3 A3
 
-const y = (step: number): number => (STEP_TOP - step) * HALF + 20;
+const yFrom = (top: number) => (step: number): number => (top - step) * HALF + 20;
 
 /** Even steps that need a short line to carry a note on or beyond them. */
 function ledgerSteps(step: number): number[] {
@@ -39,7 +39,10 @@ function ledgerSteps(step: number): number[] {
 
 export function NoteStaff({ pitches }: { pitches: readonly number[] }) {
   const sorted = [...new Set(pitches)].sort((a, b) => a - b);
-  const height = (STEP_TOP - STEP_BOTTOM) * HALF + 40;
+  const top = Math.max(STEP_TOP, ...sorted.map((p) => stepOf(p) + 3));
+  const bottom = Math.min(STEP_BOTTOM, ...sorted.map((p) => stepOf(p) - 3));
+  const y = yFrom(top);
+  const height = (top - bottom) * HALF + 40;
   const heads = sorted.map((pitch, i) => {
     const step = stepOf(pitch);
     const prev = sorted[i - 1];
@@ -55,15 +58,15 @@ export function NoteStaff({ pitches }: { pitches: readonly number[] }) {
       viewBox={`0 0 ${WIDTH + 20} ${height}`}
       role="img"
       aria-label="The note on a piano score"
-      style={{ width: '100%', maxWidth: 220, height: 'auto' }}
+      style={{ width: '100%', maxWidth: 260, height: 'auto' }}
     >
       {TREBLE_LINES.map((s) => line(s, `t${s}`))}
       {BASS_LINES.map((s) => line(s, `b${s}`))}
       <line x1={LEFT} x2={LEFT} y1={y(38)} y2={y(18)} stroke="var(--app-ink)" strokeWidth={2} />
-      <text x={LEFT + 8} y={y(31) + 4} fontSize={64} fill="var(--app-ink)" aria-hidden="true">
+      <text x={LEFT + 6} y={y(30) + 10} fontSize={80} fill="var(--app-ink)" aria-hidden="true">
         {'\u{1D11E}'}
       </text>
-      <text x={LEFT + 8} y={y(25) + 6} fontSize={52} fill="var(--app-ink)" aria-hidden="true">
+      <text x={LEFT + 6} y={y(22) + 2} fontSize={58} fill="var(--app-ink)" aria-hidden="true">
         {'\u{1D122}'}
       </text>
       {heads.map((h) => (

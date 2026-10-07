@@ -46,9 +46,32 @@ export function normaliseForSearch(text: string): string {
     .trim();
 }
 
+export type SongLevel = 1 | 2 | 3 | 4 | 5;
+
+export const SONG_LEVEL_LABEL: Readonly<Record<SongLevel, string>> = {
+  1: 'Beginner',
+  2: 'Easy',
+  3: 'Medium',
+  4: 'Hard',
+  5: 'Expert',
+};
+
+// Upper bound of notes per bar for each level. The index carries no hand-scored difficulty, so
+// this is an estimate of how busy the page is; the bands split the 576 library pieces about evenly.
+const LEVEL_NOTES_PER_BAR: readonly number[] = [10, 13, 17, 22];
+
+/** How hard a library piece probably is, from how many notes it packs into a bar. */
+export function songLevel(song: Pick<SongEntry, 'noteCount' | 'bars'>): SongLevel {
+  const notesPerBar = song.noteCount / Math.max(1, song.bars);
+  const index = LEVEL_NOTES_PER_BAR.findIndex((limit) => notesPerBar <= limit);
+  return (index === -1 ? 5 : index + 1) as SongLevel;
+}
+
 export interface SongFilter {
   text?: string;
   style?: string;
+  /** Only pieces at this estimated level. */
+  level?: SongLevel;
 }
 
 /** Every word typed must appear somewhere in title, composer, opus or style. Order is kept (the index is already sorted). */
@@ -56,6 +79,7 @@ export function searchSongs(songs: readonly SongEntry[], filter: SongFilter): So
   const words = normaliseForSearch(filter.text ?? '').split(' ').filter(Boolean);
   return songs.filter((s) => {
     if (filter.style && s.style !== filter.style) return false;
+    if (filter.level !== undefined && songLevel(s) !== filter.level) return false;
     if (words.length === 0) return true;
     const hay = normaliseForSearch(`${s.title} ${s.composer} ${s.opus} ${s.style}`);
     return words.every((w) => hay.includes(w));

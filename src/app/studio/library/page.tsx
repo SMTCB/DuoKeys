@@ -8,7 +8,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSongLibraryStore } from '../../../runtime/stores/songLibraryStore';
-import { searchSongs, stylesOf, type SongEntry } from '../../../core/content/songLibrary';
+import { SONG_LEVEL_LABEL, searchSongs, songLevel, stylesOf, type SongEntry, type SongLevel } from '../../../core/content/songLibrary';
 import { PageShell } from '../../../ui/shared/PageShell';
 import { StatusNote } from '../../../ui/shared/StatusNote';
 import { Pill } from '../../../ui/shared/Pill';
@@ -33,6 +33,7 @@ function SongRow({ song, isSaved, onAdd, onRemove }: { song: SongEntry; isSaved:
           {[song.style, song.instrument].filter(Boolean).map((t) => (
             <Pill key={t} tone="neutral">{t}</Pill>
           ))}
+          <Pill tone="neutral">{SONG_LEVEL_LABEL[songLevel(song)]}</Pill>
           <Pill tone="neutral" mono>{song.bars} bars</Pill>
           {isSaved && <Pill>✓ In my songs</Pill>}
         </span>
@@ -70,13 +71,14 @@ export default function SongLibraryPage() {
   const removeSong = useSongLibraryStore((s) => s.removeSong);
   const [text, setText] = useState('');
   const [style, setStyle] = useState('');
+  const [level, setLevel] = useState<SongLevel | undefined>();
 
   useEffect(() => {
     void load();
   }, [load]);
 
   const saved = useMemo(() => (songs ?? []).filter((s) => savedSongIds.includes(s.id)), [songs, savedSongIds]);
-  const found = useMemo(() => searchSongs(songs ?? [], { text, style }), [songs, text, style]);
+  const found = useMemo(() => searchSongs(songs ?? [], { text, style, ...(level === undefined ? {} : { level }) }), [songs, text, style, level]);
   const styles = useMemo(() => stylesOf(songs ?? []), [songs]);
 
   if (loadError) return <PageShell><StatusNote tone="problem">Could not load the song library: {loadError}</StatusNote></PageShell>;
@@ -118,7 +120,18 @@ export default function SongLibraryPage() {
               <option key={s} value={s}>{s}</option>
             ))}
           </select>
+          <select
+            aria-label="Difficulty"
+            value={level ?? ''}
+            onChange={(e) => setLevel(e.target.value === '' ? undefined : (Number(e.target.value) as SongLevel))}
+          >
+            <option value="">All levels</option>
+            {([1, 2, 3, 4, 5] as const).map((l) => (
+              <option key={l} value={l}>{SONG_LEVEL_LABEL[l]}</option>
+            ))}
+          </select>
         </div>
+        <p className={css.status}>Level is estimated from how many notes each bar holds.</p>
         <p role="status" className={css.status}>
           {found.length === 0
             ? 'Nothing matches — try fewer words.'

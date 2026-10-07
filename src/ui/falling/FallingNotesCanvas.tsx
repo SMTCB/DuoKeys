@@ -319,12 +319,15 @@ function drawKeybed(
         ctx.font = `700 ${Math.min(15, w * 0.45)}px sans-serif`;
         ctx.textAlign = 'center';
         ctx.fillText(noteName(p, false), k.x * unit + w / 2, top + h - 6);
-      } else if (p % 12 === 0 && w >= 18) {
-        // Every C is named, so the eye has a landmark to count from on the real piano.
+      } else if (k.isWhite && w >= 16) {
+        // Every white key is named (letter only; each C also carries its octave number), so a
+        // child can find the key by reading it, and the adult has a landmark to count from.
         ctx.fillStyle = colours.inkColour;
-        ctx.font = `600 ${Math.min(13, w * 0.4)}px sans-serif`;
+        ctx.globalAlpha = p % 12 === 0 ? 1 : 0.55;
+        ctx.font = `${p % 12 === 0 ? 700 : 600} ${Math.min(13, w * 0.5)}px sans-serif`;
         ctx.textAlign = 'center';
-        ctx.fillText(noteName(p), k.x * unit + w / 2, top + h - 6);
+        ctx.fillText(p % 12 === 0 ? noteName(p) : noteName(p, false), k.x * unit + w / 2, top + h - 6);
+        ctx.globalAlpha = 1;
       }
     }
   }

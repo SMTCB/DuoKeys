@@ -710,7 +710,10 @@ needs no reading.
 
 Worth isolating and unit-testing (`TS-U-REN-*`): white keys tile uniformly, black
 keys are inset and overlap, the pattern repeats every octave with 2–3 grouping.
-Derived once from `Profile.keyboardRange`.
+Each black key's centre sits near the boundary of its two white neighbours (C♯ and
+F♯ a little left of it, D♯ and A♯ right, G♯ in the middle), as on a real keybed, so a
+child can find the key from the diagram (`TS-U-REN-013`). Derived once from
+`Profile.keyboardRange`.
 
 ### TA-REN-003 — Notation (OpenSheetMusicDisplay)
 

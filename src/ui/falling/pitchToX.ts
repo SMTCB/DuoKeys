@@ -26,14 +26,15 @@ const PITCH_CLASS_IS_WHITE: readonly boolean[] = [
 ];
 
 // Fraction of one white-key width that each black key sits to the right of
-// the white key immediately to its left — reproduces the printed keybed's
-// 2-3 grouping (C#/D# cluster near D; F#/G#/A# cluster near G).
+// the white key immediately to its left. Each black key is centred a little off the
+// boundary between its two white neighbours, as on a real keybed: C# and F# lean left,
+// D# and A# lean right, G# sits on the boundary (so the 2 and 3 groupings look right).
 const BLACK_KEY_INSET: Readonly<Record<number, number>> = {
-  1: 0.65, // C#
-  3: 0.35, // D#
-  6: 0.7, // F#
-  8: 0.5, // G#
-  10: 0.3, // A#
+  1: 0.64, // C#
+  3: 0.78, // D#
+  6: 0.6, // F#
+  8: 0.71, // G#
+  10: 0.82, // A#
 };
 
 export const BLACK_KEY_WIDTH_UNITS = 0.6;

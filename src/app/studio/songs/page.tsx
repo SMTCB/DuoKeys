@@ -1,7 +1,8 @@
-// TA-APP-003 `/studio/songs` — track 3, Songs (FR-STU-017). "My songs" holds everything
-// the adult is learning: library pieces they added and songs they brought in themselves
-// (a pasted chord chart, a MIDI file or a MusicXML file). Adding a song saves it to the
-// profile's settings record, so it is here the next time and on the other device.
+// TA-APP-003 `/studio/songs` — track 3, Songs (FR-STU-017). Five ways in, as five tiles: the
+// song library, paste a chord chart, upload a MIDI file, upload a score (MusicXML or
+// compressed .mxl) and the starter pieces. "My songs" below holds everything the adult is
+// learning. Adding a song saves it to the profile's settings record, so it is here the next
+// time and on the other device.
 
 'use client';
 
@@ -9,6 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { getAdapters } from '../../../runtime/bootstrap';
 import type { ContentIndex } from '../../../adapters/ports';
+import { mxlToMusicXml } from '../../../adapters/content/mxl';
 import { useSessionStore } from '../../../runtime/stores/sessionStore';
 import { useLibraryStore } from '../../../runtime/stores/libraryStore';
 import { useSongLibraryStore } from '../../../runtime/stores/songLibraryStore';
@@ -19,132 +21,183 @@ import { StatusNote } from '../../../ui/shared/StatusNote';
 import { Card } from '../../../ui/shared/Card';
 import { Button } from '../../../ui/shared/Button';
 import { Pill } from '../../../ui/shared/Pill';
-import { Segmented } from '../../../ui/shared/Segmented';
 import { LibraryControl } from '../../../ui/studio/LibraryControl';
 import css from '../../../ui/shared/ListRow.module.css';
+import options from '../../../ui/studio/SongOptions.module.css';
 
-type AddWay = 'chart' | 'file';
+type OptionId = 'paste' | 'midi' | 'score' | 'starter';
 
-const KIND_LABEL: Record<CustomSongKind, string> = { chart: 'Chord chart', midi: 'MIDI file', musicxml: 'MusicXML' };
+const KIND_LABEL: Record<CustomSongKind, string> = { chart: 'Chord chart', midi: 'MIDI file', musicxml: 'Score' };
 const field = { font: 'inherit', padding: '0.7rem 0.9rem', minHeight: '44px', width: '100%', boxSizing: 'border-box' } as const;
+const labelStyle = { display: 'flex', flexDirection: 'column', gap: '0.4rem' } as const;
 
-function AddSong({ onAdded }: { onAdded: (title: string) => void }) {
+function NameFields({
+  title,
+  artist,
+  setTitle,
+  setArtist,
+  placeholder,
+}: {
+  title: string;
+  artist: string;
+  setTitle(v: string): void;
+  setArtist(v: string): void;
+  placeholder?: string;
+}) {
+  return (
+    <>
+      <label style={labelStyle}>
+        Song name
+        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={placeholder ?? 'Wonderwall'} style={field} />
+      </label>
+      <label style={labelStyle}>
+        Artist (optional)
+        <input value={artist} onChange={(e) => setArtist(e.target.value)} placeholder="Oasis" style={field} />
+      </label>
+    </>
+  );
+}
+
+function PastePanel({ onAdded }: { onAdded: (title: string) => void }) {
   const add = useCustomSongStore((s) => s.add);
-  const [way, setWay] = useState<AddWay>('chart');
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
   const [chart, setChart] = useState('');
   const [problem, setProblem] = useState<string | undefined>();
+  const preview = useMemo(() => parseChordChart(chart), [chart]);
 
-  const preview = useMemo(() => (way === 'chart' ? parseChordChart(chart) : undefined), [way, chart]);
-
-  async function saveChart(): Promise<void> {
+  async function save(): Promise<void> {
     const r = await add({ title, artist, kind: 'chart', data: chart });
     if (!r.ok) return setProblem(r.error);
     setProblem(undefined);
     setChart('');
-    onAdded(r.song.title);
     setTitle('');
     setArtist('');
-  }
-
-  async function saveFile(file: File | undefined): Promise<void> {
-    if (!file) return;
-    if (file.size > MAX_CUSTOM_BYTES) return setProblem('That file is too big (the limit is 400 KB).');
-    const isXml = /\.(musicxml|xml)$/i.test(file.name);
-    const isMidi = /\.(mid|midi)$/i.test(file.name);
-    if (!isXml && !isMidi) return setProblem('Choose a .mid, .midi, .musicxml or .xml file.');
-    const kind: CustomSongKind = isXml ? 'musicxml' : 'midi';
-    const data = isXml ? await file.text() : bytesToBase64(new Uint8Array(await file.arrayBuffer()));
-    const name = title.trim() || file.name.replace(/\.[^.]+$/, '');
-    const r = await add({ title: name, artist, kind, data });
-    if (!r.ok) return setProblem(r.error);
-    setProblem(undefined);
     onAdded(r.song.title);
-    setTitle('');
-    setArtist('');
   }
 
   return (
     <Card>
-      <h2>Add a song</h2>
-      <p>
-        Want to learn something that is not in the library? Bring your own chords or file. It is saved to My songs on this
-        profile. DuoKeys does not fetch songs for you — copy the chords from a chart you like.
-      </p>
-      <Segmented
-        name="add-way"
-        legend="How do you have it?"
-        value={way}
-        onChange={setWay}
-        options={[
-          { value: 'chart', label: 'Paste chords' },
-          { value: 'file', label: 'Import a file' },
-        ]}
-      />
-      <label style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.75rem' }}>
-        Song name
-        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Wonderwall" style={field} />
-      </label>
-      <label style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.75rem' }}>
-        Artist (optional)
-        <input value={artist} onChange={(e) => setArtist(e.target.value)} placeholder="Oasis" style={field} />
-      </label>
-
-      {way === 'chart' ? (
-        <>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.75rem' }}>
-            Chords from the chart
-            <textarea
-              value={chart}
-              onChange={(e) => setChart(e.target.value)}
-              rows={9}
-              placeholder={'[Verse]\nEm7  G  Dsus4  A7sus4\n\n[Chorus]\nC  D  Em'}
-              style={{ ...field, fontFamily: 'var(--mono, monospace)' }}
-            />
-          </label>
-          <p role="status" style={{ marginTop: '0.5rem' }}>
-            {chart.trim() === ''
-              ? 'Paste the chord lines. Lyrics are fine — they are skipped.'
-              : preview && preview.chordIds.length > 0
-                ? `Found ${preview.chordIds.length} chords${preview.sections.length > 0 ? ` in ${preview.sections.length} sections` : ''}.${
-                    preview.unsupported.length > 0 ? ` Could not read: ${[...new Set(preview.unsupported)].join(', ')}.` : ''
-                  }`
-                : 'No chords found yet.'}
-          </p>
-          <div style={{ marginTop: '0.5rem' }}>
-            <Button accent="indigo" onClick={() => void saveChart()} disabled={!title.trim() || !preview || preview.chordIds.length === 0}>
-              Save to My songs
-            </Button>
-          </div>
-        </>
-      ) : (
-        <div style={{ marginTop: '0.75rem' }}>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            MIDI or MusicXML file
-            <input
-              type="file"
-              accept=".mid,.midi,.musicxml,.xml"
-              onChange={(e) => {
-                void saveFile(e.target.files?.[0]);
-                e.target.value = '';
-              }}
-              style={field}
-            />
-          </label>
-          <p style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
-            Notes become falling notes you can play along with. Leave the name empty to use the file name. Most scores export
-            MusicXML from MuseScore; one instrument part at a time.
-          </p>
+      <div className={options.panel}>
+        <h2>Add a song by pasting its chords</h2>
+        <p className={options.note}>Copy the chords from a chart you like. DuoKeys does not fetch songs for you.</p>
+        <NameFields title={title} artist={artist} setTitle={setTitle} setArtist={setArtist} />
+        <label style={labelStyle}>
+          Chords from the chart
+          <textarea
+            value={chart}
+            onChange={(e) => setChart(e.target.value)}
+            rows={9}
+            placeholder={'[Verse]\nEm7  G  Dsus4  A7sus4\n\n[Chorus]\nC  D  Em'}
+            style={{ ...field, fontFamily: 'var(--mono, monospace)' }}
+          />
+        </label>
+        <p role="status" className={options.note}>
+          {chart.trim() === ''
+            ? 'Paste the chord lines. Lyrics are fine, they are skipped.'
+            : preview.chordIds.length > 0
+              ? `Found ${preview.chordIds.length} chords${preview.sections.length > 0 ? ` in ${preview.sections.length} sections` : ''}.${
+                  preview.unsupported.length > 0 ? ` Could not read: ${[...new Set(preview.unsupported)].join(', ')}.` : ''
+                }`
+              : 'No chords found yet.'}
+        </p>
+        <div>
+          <Button accent="indigo" onClick={() => void save()} disabled={!title.trim() || preview.chordIds.length === 0}>
+            Save to My songs
+          </Button>
         </div>
-      )}
-      {problem && <p role="alert">{problem}</p>}
+        {problem && <p role="alert">{problem}</p>}
+      </div>
     </Card>
   );
 }
 
+/** One panel for both file kinds: a MIDI file, or a score exported as MusicXML / compressed MusicXML. */
+function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: string) => void }) {
+  const add = useCustomSongStore((s) => s.add);
+  const [title, setTitle] = useState('');
+  const [artist, setArtist] = useState('');
+  const [problem, setProblem] = useState<string | undefined>();
+  const isScore = way === 'score';
+
+  async function save(file: File | undefined): Promise<void> {
+    if (!file) return;
+    if (file.size > MAX_CUSTOM_BYTES) return setProblem('That file is too big (the limit is 400 KB).');
+    const isXml = /\.(musicxml|xml)$/i.test(file.name);
+    const isMxl = /\.mxl$/i.test(file.name);
+    const isMidi = /\.(mid|midi)$/i.test(file.name);
+    if (isScore ? !isXml && !isMxl : !isMidi) {
+      return setProblem(
+        isScore
+          ? /\.(pdf|png|jpe?g|heic|gif)$/i.test(file.name)
+            ? 'A PDF or a photo of a score cannot be read yet. Export it as MusicXML from a notation program (see below).'
+            : 'Choose a .musicxml, .xml or .mxl file.'
+          : 'Choose a .mid or .midi file.',
+      );
+    }
+    let data: string;
+    try {
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      data = isMidi ? bytesToBase64(bytes) : isMxl ? await mxlToMusicXml(bytes) : await file.text();
+    } catch (e) {
+      return setProblem(e instanceof Error ? e.message : 'That file could not be read.');
+    }
+    if (!isMidi && data.length > MAX_CUSTOM_BYTES) return setProblem('That score is too big once unzipped (the limit is 400 KB).');
+    const r = await add({ title: title.trim() || file.name.replace(/\.[^.]+$/, ''), artist, kind: isMidi ? 'midi' : 'musicxml', data });
+    if (!r.ok) return setProblem(r.error);
+    setProblem(undefined);
+    setTitle('');
+    setArtist('');
+    onAdded(r.song.title);
+  }
+
+  return (
+    <Card>
+      <div className={options.panel}>
+        <h2>{isScore ? 'Add a song from a score' : 'Add a song from a MIDI file'}</h2>
+        <p className={options.note}>
+          {isScore
+            ? 'Upload the score as a MusicXML file. DuoKeys turns its notes into falling notes you can play.'
+            : 'Upload a MIDI file. Its notes become falling notes you can play.'}{' '}
+          Leave the name empty to use the file name.
+        </p>
+        <NameFields title={title} artist={artist} setTitle={setTitle} setArtist={setArtist} placeholder="Leave empty to use the file name" />
+        <label style={labelStyle}>
+          {isScore ? 'Score file (.musicxml, .xml or .mxl)' : 'MIDI file (.mid or .midi)'}
+          <input
+            type="file"
+            accept={isScore ? '.musicxml,.xml,.mxl' : '.mid,.midi'}
+            onChange={(e) => {
+              void save(e.target.files?.[0]);
+              e.target.value = '';
+            }}
+            style={field}
+          />
+        </label>
+        {isScore && (
+          <p className={options.note}>
+            Have a PDF or a photo of the page? It cannot be read directly, because reading printed music from an image needs a
+            separate tool. Open it in MuseScore (or a scanning tool such as Audiveris), save it as MusicXML, then upload that
+            here. One piano part at a time works best.
+          </p>
+        )}
+        {problem && <p role="alert">{problem}</p>}
+      </div>
+    </Card>
+  );
+}
+
+const TILES: { id: OptionId | 'library'; icon: string; name: string; hint: string }[] = [
+  { id: 'library', icon: '📚', name: 'Song library', hint: '570+ piano pieces to search' },
+  { id: 'paste', icon: '📋', name: 'Paste chords', hint: 'From a chord chart you like' },
+  { id: 'midi', icon: '🎹', name: 'Upload MIDI', hint: 'A .mid or .midi file' },
+  { id: 'score', icon: '🎼', name: 'Upload a score', hint: 'MusicXML (.musicxml, .mxl)' },
+  { id: 'starter', icon: '⭐', name: 'Starter pieces', hint: 'Short pieces to begin with' },
+];
+
 export default function SongsHubPage() {
   const [index, setIndex] = useState<ContentIndex | undefined>();
+  const [open, setOpen] = useState<OptionId | undefined>();
   const [justAdded, setJustAdded] = useState<string | undefined>();
   const profile = useSessionStore((s) => s.profile);
   const loadLibrary = useLibraryStore((s) => s.loadLibrary);
@@ -177,17 +230,70 @@ export default function SongsHubPage() {
 
   if (!index) return <PageShell><StatusNote /></PageShell>;
 
+  function added(title: string): void {
+    setJustAdded(title);
+    setOpen(undefined);
+  }
+
   return (
     <PageShell>
       <h1>Songs</h1>
       <p>
-        Pick up where you are learning. <Link href="/studio">Back to Studio</Link>
+        Choose how to get a song. <Link href="/studio">Back to Studio</Link>
       </p>
+
+      <ul className={options.tiles} aria-label="Ways to add a song">
+        {TILES.map((t) => {
+          const optionId = t.id === 'library' ? undefined : t.id;
+          return (
+          <li key={t.id}>
+            {optionId === undefined ? (
+              <Link href="/studio/library" className={options.tile}>
+                <span className={options.icon} aria-hidden="true">{t.icon}</span>
+                <span className={options.name}>{t.name}</span>
+                <span className={options.hint}>{t.hint}</span>
+              </Link>
+            ) : (
+              <button
+                type="button"
+                className={options.tile}
+                aria-expanded={open === optionId}
+                onClick={() => setOpen((cur) => (cur === optionId ? undefined : optionId))}
+              >
+                <span className={options.icon} aria-hidden="true">{t.icon}</span>
+                <span className={options.name}>{t.name}</span>
+                <span className={options.hint}>{t.hint}</span>
+              </button>
+            )}
+          </li>
+          );
+        })}
+      </ul>
+
+      {open === 'paste' && <PastePanel onAdded={added} />}
+      {open === 'midi' && <FilePanel way="midi" onAdded={added} />}
+      {open === 'score' && <FilePanel way="score" onAdded={added} />}
+      {open === 'starter' && (
+        <section aria-label="Starter pieces" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <h2>Starter pieces</h2>
+          <ul className={css.list}>
+            {index.pieces.map((piece) => (
+              <li key={piece.id} className={css.row}>
+                <span className={css.tile} aria-hidden="true">♪</span>
+                <div className={css.body}>
+                  <Link className={css.title} href={`/studio/play/${piece.defaultArrangementId}`}>{piece.title}</Link>
+                </div>
+                <LibraryControl profileId={profile.id} arrangementId={piece.defaultArrangementId} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section aria-label="My songs" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         <h2>My songs ({total})</h2>
         {justAdded && <p role="status">✓ “{justAdded}” is saved in My songs.</p>}
-        {total === 0 && <p>Nothing here yet. Add a song below, or find one in the <Link href="/studio/library">song library</Link>.</p>}
+        {total === 0 && <p>Nothing here yet. Pick one of the options above.</p>}
         <ul className={css.list}>
           {customSongs.map((s) => (
             <li key={s.id} className={css.row}>
@@ -221,27 +327,6 @@ export default function SongsHubPage() {
           ))}
         </ul>
       </section>
-
-      <AddSong onAdded={setJustAdded} />
-
-      <Card>
-        <h2>Find in the library</h2>
-        <p>570+ piano and harpsichord pieces, free to play and share.</p>
-        <Link href="/studio/library"><Button accent="indigo" variant="secondary">Open the song library</Button></Link>
-      </Card>
-
-      <h2>Starter pieces</h2>
-      <ul className={css.list}>
-        {index.pieces.map((piece) => (
-          <li key={piece.id} className={css.row}>
-            <span className={css.tile} aria-hidden="true">♪</span>
-            <div className={css.body}>
-              <Link className={css.title} href={`/studio/play/${piece.defaultArrangementId}`}>{piece.title}</Link>
-            </div>
-            <LibraryControl profileId={profile.id} arrangementId={piece.defaultArrangementId} />
-          </li>
-        ))}
-      </ul>
     </PageShell>
   );
 }

@@ -32,6 +32,7 @@ import { isCustomSongId } from '../../../../core/content/customSong';
 import { loadSongBytes, loadSongIndex } from '../../../../adapters/content/staticSongs';
 import { parseSmf } from '../../../../core/midi/smf';
 import { isMonophonic, smfToArrangement } from '../../../../core/content/songLibrary';
+import { noteName } from '../../../../ui/falling/noteName';
 import { describeArticulation, describeEvenness, describeRushDrag } from '../../../../core/grade/grade';
 
 type StudioView = 'falling' | 'notation';
@@ -82,6 +83,11 @@ export default function StudioPlayPage() {
   const stopLoop = useSessionStore((s) => s.stopLoop);
   const holdAtLine = useSessionStore((s) => s.holdAtLine);
   const setHoldAtLine = useSessionStore((s) => s.setHoldAtLine);
+  const anyOctave = useSessionStore((s) => s.anyOctave);
+  const setAnyOctave = useSessionStore((s) => s.setAnyOctave);
+
+  // Octave matching is a per-piece choice, so it never leaks into the next screen.
+  useEffect(() => () => setAnyOctave(false), [setAnyOctave]);
 
   const [arrangement, setArrangement] = useState<Arrangement | undefined>();
   const [loadError, setLoadError] = useState<string | undefined>();
@@ -198,6 +204,12 @@ export default function StudioPlayPage() {
               <label className={controls.check}>
                 <input type="checkbox" checked={holdAtLine} onChange={(e) => setHoldAtLine(e.target.checked)} />
                 Stop the notes at the line until I play them
+              </label>
+            )}
+            {mode === 'wait' && (
+              <label className={controls.check}>
+                <input type="checkbox" checked={anyOctave} onChange={(e) => setAnyOctave(e.target.checked)} />
+                Any octave counts (play the right letter on any part of the keyboard)
               </label>
             )}
             {arrangement.tracks.length > 1 && (
@@ -317,12 +329,20 @@ export default function StudioPlayPage() {
         </div>
       </Card>
 
+      {attemptStatus === 'playing' && mode === 'wait' && holdAtLine && matcherState && matcherState.pending.length > 0 && (
+        <p aria-live="polite">
+          <strong>Waiting for you. Play:</strong>{' '}
+          {[...matcherState.pending].sort((a, b) => (a as number) - (b as number)).map((p) => noteName(p as number, !anyOctave)).join(' · ')}
+        </p>
+      )}
+
       {shownView === 'falling' && attemptStatus === 'playing' && clock && (
         <FallingNotesCanvas
           clock={clock}
           notes={notesForDisplay}
           keyboardRange={profile.keyboardRange}
           matcherState={matcherState}
+          anyOctave={anyOctave}
         />
       )}
 

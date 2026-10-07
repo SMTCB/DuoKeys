@@ -38,6 +38,16 @@ describe('pitchToX (TS-U-REN)', () => {
     expect(cSharp.x).toBeLessThan(d.x);
   });
 
+  it('TS-U-REN-013: black keys are centred close to the boundary of the two white keys beside them, as on a real keybed', () => {
+    // [black pitch, boundary between its white neighbours in white-key units from C4's left edge]
+    const cases: [number, number][] = [[61, 1], [63, 2], [66, 4], [68, 5], [70, 6]];
+    for (const [pitch, boundary] of cases) {
+      const b = pitchToX(asMidiPitch(pitch), { low: asMidiPitch(60), high: asMidiPitch(72) });
+      const centre = b.x + b.widthUnits / 2;
+      expect(Math.abs(centre - boundary)).toBeLessThan(0.15);
+    }
+  });
+
   it('TS-U-REN-005: the pattern repeats every octave — same pitch class is 7 white-key-units further per octave', () => {
     const c4 = pitchToX(asMidiPitch(60), RANGE);
     const c5 = pitchToX(asMidiPitch(72), RANGE);

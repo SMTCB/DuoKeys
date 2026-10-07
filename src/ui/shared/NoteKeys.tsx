@@ -3,11 +3,12 @@
 // (pitchToX, TA-REN-002). The lit key carries a dot as well as the colour (NFR-008).
 
 import { asMidiPitch } from '../../core/midi/decode';
+import { noteName } from '../falling/noteName';
 import { pitchToX } from '../falling/pitchToX';
 
 const UNIT = 40;
-const WHITE_HEIGHT = 130;
-const BLACK_HEIGHT = 80;
+const WHITE_HEIGHT = 150;
+const BLACK_HEIGHT = 92;
 
 /** Two octaves from a C, placed so the note is not at an edge. */
 export function keysWindowStart(pitches: readonly number[]): number {
@@ -46,10 +47,25 @@ export function NoteKeys({ pitches }: { pitches: readonly number[] }) {
               stroke={isLit ? 'var(--role-deep)' : 'var(--app-ink)'}
               strokeWidth={isLit ? 3 : 1.5}
             />
-            {isLit && <circle cx={x + w / 2} cy={h - 16} r={7} fill="#ffffff" />}
-            {k.isWhite && k.pitch % 12 === 0 && !isLit && (
-              <text x={x + w / 2} y={h - 8} textAnchor="middle" fontSize={13} fill="var(--app-ink-faint)">
-                C
+            {isLit && (
+              <>
+                <circle cx={x + w / 2} cy={h - 40} r={5} fill="#ffffff" />
+                <text x={x + w / 2} y={h - 12} textAnchor="middle" fontSize={k.isWhite ? 18 : 13} fontWeight={800} fill="#ffffff">
+                  {noteName(k.pitch, false)}
+                </text>
+              </>
+            )}
+            {k.isWhite && !isLit && (
+              <text
+                x={x + w / 2}
+                y={h - 9}
+                textAnchor="middle"
+                fontSize={k.pitch % 12 === 0 ? 15 : 13}
+                fontWeight={k.pitch % 12 === 0 ? 800 : 600}
+                fill="var(--app-ink)"
+                opacity={k.pitch % 12 === 0 ? 1 : 0.55}
+              >
+                {k.pitch % 12 === 0 ? noteName(k.pitch) : noteName(k.pitch, false)}
               </text>
             )}
           </g>

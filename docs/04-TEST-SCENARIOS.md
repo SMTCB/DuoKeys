@@ -212,6 +212,8 @@ grading.
 | `TS-U-CNT-039` | `pickFreePlay` avoids repeating the last pick when it can | TA-CNT-007, FR-STU-018 |
 | `TS-U-CNT-040` | `pickFreePlay` is deterministic for a given draw and returns nothing for an empty pool | TA-CNT-007, FR-STU-018 |
 | `TS-U-CNT-041` | `easyMoods` lists the moods of easy progressions only | TA-CNT-007, FR-STU-018 |
+| `TS-U-CNT-046` | `songLevel` bands a piece from its notes per bar, and `searchSongs` filters by that level | TA-CNT-004, FR-STU-016 |
+| `TS-U-CNT-047` | `mxlToMusicXml` reads stored and deflated `.mxl` archives, follows `container.xml`, and refuses a non-zip | TA-CNT-007, FR-STU-017 |
 | `TS-U-CNT-045` | `pickFreePlay` stays in a chosen key, and `sameProgressionInKey` finds the same degrees in another key and nothing for a typed-in progression | TA-CNT-007, FR-STU-015, FR-STU-018 |
 | `TS-U-CNT-044` | A styled progression puts each chord marker on notes of that chord even when the chords are not evenly spaced in the file (`I-IV-V`) | TA-CNT-006, FR-STU-015 |
 | `TS-U-CNT-043` | `progressionPosition` reports the chord and round of the group being played, stays on the last group past the end, and is undefined with no markers | FR-STU-015 |
@@ -278,6 +280,7 @@ grace-note resolution is scoped as its own story.
 | `TS-U-REN-010` | `arrangementToMusicXml` emits exactly one `<note>` per source note with no synthesized rests, and throws for an unknown track or an unmapped duration | TA-REN-003 |
 | `TS-U-REN-011` | `fitKeyboardRange` pads the notes' span, keeps at least 24 semitones, aligns to white keys and clamps to the profile range | TA-REN-001, FR-STU-015 |
 | `TS-U-REN-012` | `noteName` gives middle C as C4, spells black keys with a sharp and can drop the octave | TA-REN-001, FR-STU-015 |
+| `TS-U-REN-013` | Each black key's centre is within 0.15 of the boundary between its two white neighbours, as on a real keybed | TA-REN-002, FR-EXP-005 |
 
 `TS-U-REN-007` is delivered (`FallingNotesCanvas.tsx`, `US-3.14`) —
 `chordMarkers[].atTick` converts through `clock.ticksToAudio` the same way a

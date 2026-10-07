@@ -361,7 +361,7 @@ licence and links to the piece's own Mutopia page, which is how attribution is
 met.
 
 **Search and "add to my songs".** Search matches every typed word against title,
-composer, opus and style, ignoring accents and punctuation, with a style filter.
+composer, opus and style, ignoring accents and punctuation, with a style filter and a difficulty filter (Beginner to Expert). Difficulty is an estimate from how many notes each bar holds, not a rating from the publisher, and the screen says so.
 "Add" saves the song's id on the profile's `settings` record — the same place
 as `FR-STU-015`'s progressions, so it syncs with no new table. The MIDI bytes
 stay static assets, downloaded on play.
@@ -383,11 +383,11 @@ falling notes.
 
 **Realised by:** `TA-CNT-007`, `TA-APP-003`, `TA-DAT-003` · `US-3.22`
 
-The adult can add a song that is not in the library, such as a pop song they want to learn, and it is kept in "my songs" with the library pieces so they can come back to it. Two ways in, both from material the user already has: paste a chord chart (section headings such as Verse and Chorus, chord symbols above or between the lyrics), or import a MIDI or MusicXML file. A pasted chart shows "Found N chords in M sections" before it is saved; lyric lines are skipped, and chords the app cannot read are listed rather than guessed.
+The adult can add a song that is not in the library, such as a pop song they want to learn, and it is kept in "my songs" with the library pieces so they can come back to it. The Songs screen shows five tiles: the song library, paste chords, upload MIDI, upload a score, and the starter pieces; the three that add a song open a short form below the tiles. The ways to add one, all from material the user already has: paste a chord chart (section headings such as Verse and Chorus, chord symbols above or between the lyrics), upload a MIDI file, or upload a score exported as MusicXML (`.musicxml`, `.xml`) or compressed MusicXML (`.mxl`). A pasted chart shows "Found N chords in M sections" before it is saved; lyric lines are skipped, and chords the app cannot read are listed rather than guessed.
 
-A chart plays as one bar per chord at 70 bpm in the same wait-mode falling-notes view as every other song; a MIDI or MusicXML file plays as its notes, with the same hand selector, loop and tempo controls. The song, its source (the chart text or the file bytes, base64) and its title are stored on the profile's settings record beside saved library songs, so it syncs with no new table and is capped at 400 KB per song. A file that does not parse, or has no notes, is refused when it is added, with a plain message, instead of being saved and failing later at the piano.
+A chart plays as one bar per chord at 70 bpm in the same wait-mode falling-notes view as every other song; a MIDI or MusicXML file plays as its notes, with the same hand selector, loop and tempo controls. A `.mxl` file is unzipped in the browser (`adapters/content/mxl.ts`) and stored as plain MusicXML. The song, its source (the chart text or the file bytes, base64) and its title are stored on the profile's settings record beside saved library songs, so it syncs with no new table and is capped at 400 KB per song. A file that does not parse, or has no notes, is refused when it is added, with a plain message, instead of being saved and failing later at the piano.
 
-Limits: DuoKeys does not fetch or bundle charts or scores. The user brings the content. Turning a recording into MIDI is not offered.
+Limits: DuoKeys does not fetch or bundle charts or scores. The user brings the content. Turning a recording into MIDI is not offered. A PDF or a photo of a score is not read: that needs optical music recognition, which is a separate tool and not local-first, so the screen says to export MusicXML from a notation program (MuseScore, or a scanner such as Audiveris) and upload that.
 
 ### FR-STU-018 — Free play — "play something for me" (`S`)
 

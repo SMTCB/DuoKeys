@@ -3,7 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { parseSmf } from '../midi/smf';
-import { isMonophonic, normaliseForSearch, searchSongs, smfToArrangement, stylesOf, type SongEntry } from './songLibrary';
+import { isMonophonic, normaliseForSearch, searchSongs, smfToArrangement, songLevel, stylesOf, type SongEntry } from './songLibrary';
 
 const be32 = (n: number): number[] => [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255];
 const be16 = (n: number): number[] => [(n >>> 8) & 255, n & 255];
@@ -130,5 +130,16 @@ describe('every mirrored Mutopia file', () => {
       if (!smfToArrangement(r.file, { id: f, title: f })) failures.push(`${f}: no notes`);
     }
     expect(failures).toEqual([]);
+  });
+});
+
+describe('songLevel (TS-U-CNT-046)', () => {
+  it('bands a piece by notes per bar and filters on it', () => {
+    const sparse = song({ id: 's', noteCount: 80, bars: 10 });
+    const busy = song({ id: 'b', noteCount: 400, bars: 10 });
+    expect(songLevel(sparse)).toBe(1);
+    expect(songLevel(song({ noteCount: 150, bars: 10 }))).toBe(3);
+    expect(songLevel(busy)).toBe(5);
+    expect(searchSongs([sparse, busy], { level: 5 }).map((x) => x.id)).toEqual(['b']);
   });
 });
