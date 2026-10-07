@@ -76,6 +76,14 @@ export default function StudioPlayPage() {
   const refreshMidiInputs = useSessionStore((s) => s.refreshMidiInputs);
   const selectMidiInput = useSessionStore((s) => s.selectMidiInput);
   const startArrangement = useSessionStore((s) => s.startArrangement);
+  const endSession = useSessionStore((s) => s.endSession);
+
+  // The session store outlives the page: without this, arriving from another piece shows that
+  // piece's notes (and what was played in them) under this piece's title.
+  useEffect(() => {
+    endSession();
+    return endSession;
+  }, [endSession]);
   const setTempoScale = useSessionStore((s) => s.setTempoScale);
   const setLoopRange = useSessionStore((s) => s.setLoopRange);
   const setAutoRamp = useSessionStore((s) => s.setAutoRamp);

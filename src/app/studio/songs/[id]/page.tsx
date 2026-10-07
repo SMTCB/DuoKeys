@@ -33,6 +33,14 @@ export default function StudioSongPage() {
   const refreshMidiInputs = useSessionStore((s) => s.refreshMidiInputs);
   const selectMidiInput = useSessionStore((s) => s.selectMidiInput);
   const startArrangement = useSessionStore((s) => s.startArrangement);
+  const endSession = useSessionStore((s) => s.endSession);
+
+  // The session store outlives the page: without this, arriving from another piece shows that
+  // piece's notes (and what was played in them) under this piece's title.
+  useEffect(() => {
+    endSession();
+    return endSession;
+  }, [endSession]);
 
   const [arrangement, setArrangement] = useState<Arrangement | undefined>();
   const [loadError, setLoadError] = useState<string | undefined>();
