@@ -243,6 +243,40 @@ function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: s
   );
 }
 
+function RenameForm({
+  title,
+  artist,
+  onSave,
+  onDone,
+}: {
+  title: string;
+  artist: string;
+  onSave(title: string, artist: string): Promise<{ ok: true } | { ok: false; error: string }>;
+  onDone(): void;
+}) {
+  const [t, setT] = useState(title);
+  const [a, setA] = useState(artist);
+  const [problem, setProblem] = useState<string | undefined>();
+  const field = { font: 'inherit', padding: '0.5rem 0.7rem', minHeight: '44px' } as const;
+  return (
+    <form
+      style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
+      onSubmit={(e) => {
+        e.preventDefault();
+        void onSave(t, a).then((r) => (r.ok ? onDone() : setProblem(r.error)));
+      }}
+    >
+      <input aria-label="Song name" value={t} onChange={(e) => setT(e.target.value)} style={field} />
+      <input aria-label="Artist (optional)" value={a} onChange={(e) => setA(e.target.value)} placeholder="Artist (optional)" style={field} />
+      {problem && <p role="alert">{problem}</p>}
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <Button accent="indigo" type="submit">Save name</Button>
+        <Button accent="indigo" variant="secondary" type="button" onClick={onDone}>Cancel</Button>
+      </div>
+    </form>
+  );
+}
+
 const TILES: { id: OptionId | 'library'; icon: string; name: string; hint: string }[] = [
   { id: 'library', icon: '📚', name: 'Song library', hint: '570+ piano pieces to search' },
   { id: 'paste', icon: '📋', name: 'Paste chords', hint: 'From a chord chart you like' },
@@ -260,6 +294,8 @@ export default function SongsHubPage() {
   const customSongs = useCustomSongStore((s) => s.songs);
   const loadCustom = useCustomSongStore((s) => s.load);
   const removeCustom = useCustomSongStore((s) => s.remove);
+  const renameCustom = useCustomSongStore((s) => s.rename);
+  const [renaming, setRenaming] = useState<string | undefined>();
   const librarySongs = useSongLibraryStore((s) => s.songs);
   const savedSongIds = useSongLibraryStore((s) => s.savedSongIds);
   const loadSongs = useSongLibraryStore((s) => s.load);
@@ -355,12 +391,24 @@ export default function SongsHubPage() {
             <li key={s.id} className={css.row}>
               <span className={css.tile} aria-hidden="true">{s.title.trim().charAt(0).toUpperCase() || '♪'}</span>
               <div className={css.body}>
-                <Link className={css.title} href={`/studio/play/${encodeURIComponent(s.id)}`}>{s.title}</Link>
-                {s.artist && <span className={css.composer}>{s.artist}</span>}
+                {renaming === s.id ? (
+                  <RenameForm
+                    title={s.title}
+                    artist={s.artist}
+                    onSave={(t, a) => renameCustom(s.id, t, a)}
+                    onDone={() => setRenaming(undefined)}
+                  />
+                ) : (
+                  <>
+                    <Link className={css.title} href={`/studio/play/${encodeURIComponent(s.id)}`}>{s.title}</Link>
+                    {s.artist && <span className={css.composer}>{s.artist}</span>}
+                  </>
+                )}
                 <span className={css.meta}><Pill tone="neutral">{KIND_LABEL[s.kind]}</Pill><Pill>Mine</Pill></span>
               </div>
               <div className={css.actions}>
                 <Link href={`/studio/play/${encodeURIComponent(s.id)}`}><Button accent="indigo">Play</Button></Link>
+                <Button accent="indigo" variant="secondary" onClick={() => setRenaming(s.id)}>Rename</Button>
                 <Button accent="indigo" variant="secondary" onClick={() => void removeCustom(s.id)}>Remove</Button>
               </div>
               <LibraryControl profileId={profile.id} arrangementId={s.id} />

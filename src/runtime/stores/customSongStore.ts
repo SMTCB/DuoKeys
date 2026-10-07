@@ -18,6 +18,7 @@ interface CustomSongState {
   songs: CustomSong[];
   load(): Promise<void>;
   add(input: { title: string; artist: string; kind: CustomSongKind; data: string }): Promise<{ ok: true; song: CustomSong } | { ok: false; error: string }>;
+  rename(id: string, title: string, artist: string): Promise<{ ok: true } | { ok: false; error: string }>;
   remove(id: string): Promise<void>;
 }
 
@@ -69,6 +70,15 @@ export const useCustomSongStore = create<CustomSongState>((set, get) => ({
     await save(useSessionStore.getState().profile.id, songs);
     set({ songs });
     return made;
+  },
+
+  async rename(id, title, artist) {
+    const name = title.trim();
+    if (!name) return { ok: false, error: 'Give the song a name' };
+    const songs = get().songs.map((s) => (s.id === id ? { ...s, title: name, artist: artist.trim() } : s));
+    await save(useSessionStore.getState().profile.id, songs);
+    set({ songs });
+    return { ok: true };
   },
 
   async remove(id) {
