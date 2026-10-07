@@ -1,6 +1,6 @@
 // TA-APP-003 `/studio/songs` — track 3, Songs (FR-STU-017). Five ways in, as five tiles: the
 // song library, paste a chord chart, upload a MIDI file, upload a score (MusicXML or
-// compressed .mxl) and the starter pieces. "My songs" below holds everything the adult is
+// compressed .mxl, or a PDF / picture read by the optional local score reader) and the starter pieces. "My songs" below holds everything the adult is
 // learning. Adding a song saves it to the profile's settings record, so it is here the next
 // time and on the other device.
 
@@ -11,17 +11,20 @@ import Link from 'next/link';
 import { getAdapters } from '../../../runtime/bootstrap';
 import type { ContentIndex } from '../../../adapters/ports';
 import { mxlToMusicXml } from '../../../adapters/content/mxl';
+import { scanScore } from '../../../adapters/content/omrClient';
 import { useSessionStore } from '../../../runtime/stores/sessionStore';
 import { useLibraryStore } from '../../../runtime/stores/libraryStore';
 import { useSongLibraryStore } from '../../../runtime/stores/songLibraryStore';
 import { bytesToBase64, useCustomSongStore } from '../../../runtime/stores/customSongStore';
 import { MAX_CUSTOM_BYTES, parseChordChart, type CustomSongKind } from '../../../core/content/customSong';
+import { parseMusicXmlWithReport, withTempo } from '../../../core/content/parseMusicXml';
 import { PageShell } from '../../../ui/shared/PageShell';
 import { StatusNote } from '../../../ui/shared/StatusNote';
 import { Card } from '../../../ui/shared/Card';
 import { Button } from '../../../ui/shared/Button';
 import { Pill } from '../../../ui/shared/Pill';
 import { LibraryControl } from '../../../ui/studio/LibraryControl';
+import { ScanReview, type ScanSummary } from '../../../ui/studio/ScanReview';
 import css from '../../../ui/shared/ListRow.module.css';
 import options from '../../../ui/studio/SongOptions.module.css';
 
@@ -118,10 +121,56 @@ function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: s
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
   const [problem, setProblem] = useState<string | undefined>();
+  const [scan, setScan] = useState<{ xml: string; name: string; summary: ScanSummary } | undefined>();
+  const [isReading, setIsReading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [needsReader, setNeedsReader] = useState(false);
   const isScore = way === 'score';
+
+  // ADR-010: a PDF or picture goes to the score reader on this computer, then to a check screen.
+  async function readScan(file: File): Promise<void> {
+    setProblem(undefined);
+    setNeedsReader(false);
+    setScan(undefined);
+    setIsReading(true);
+    const result = await scanScore(file);
+    setIsReading(false);
+    if (!result.ok) {
+      if (result.reason === 'unavailable') setNeedsReader(true);
+      else setProblem(result.message);
+      return;
+    }
+    try {
+      const { source, report } = parseMusicXmlWithReport(result.musicXml, { id: 'scan' });
+      const noteCount = source.tracks.reduce((sum, t) => sum + t.notes.filter((n) => !n.rest).length, 0);
+      setScan({
+        xml: result.musicXml,
+        name: file.name,
+        summary: { ...report, noteCount, tempoBpm: source.tempoBpm },
+      });
+    } catch (e) {
+      setProblem(`The scan could not be turned into a song: ${e instanceof Error ? e.message : 'unreadable'}`);
+    }
+  }
+
+  async function saveScan(tempoBpm: number | undefined): Promise<void> {
+    if (!scan) return;
+    const data = tempoBpm === undefined ? scan.xml : withTempo(scan.xml, tempoBpm);
+    if (data.length > MAX_CUSTOM_BYTES) return setProblem('That score is too big (the limit is 400 KB).');
+    setIsSaving(true);
+    const r = await add({ title: title.trim() || scan.name.replace(/\.[^.]+$/, ''), artist, kind: 'musicxml', data });
+    setIsSaving(false);
+    if (!r.ok) return setProblem(r.error);
+    setProblem(undefined);
+    setScan(undefined);
+    setTitle('');
+    setArtist('');
+    onAdded(r.song.title);
+  }
 
   async function save(file: File | undefined): Promise<void> {
     if (!file) return;
+    if (isScore && /\.(pdf|png|jpe?g)$/i.test(file.name)) return readScan(file);
     if (file.size > MAX_CUSTOM_BYTES) return setProblem('That file is too big (the limit is 400 KB).');
     const isXml = /\.(musicxml|xml)$/i.test(file.name);
     const isMxl = /\.mxl$/i.test(file.name);
@@ -129,9 +178,9 @@ function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: s
     if (isScore ? !isXml && !isMxl : !isMidi) {
       return setProblem(
         isScore
-          ? /\.(pdf|png|jpe?g|heic|gif)$/i.test(file.name)
-            ? 'A PDF or a photo of a score cannot be read yet. Export it as MusicXML from a notation program (see below).'
-            : 'Choose a .musicxml, .xml or .mxl file.'
+          ? /\.(heic|gif)$/i.test(file.name)
+            ? 'Save the picture as a PNG or JPG first.'
+            : 'Choose a .musicxml, .xml, .mxl, .pdf, .png or .jpg file.'
           : 'Choose a .mid or .midi file.',
       );
     }
@@ -157,16 +206,16 @@ function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: s
         <h2>{isScore ? 'Add a song from a score' : 'Add a song from a MIDI file'}</h2>
         <p className={options.note}>
           {isScore
-            ? 'Upload the score as a MusicXML file. DuoKeys turns its notes into falling notes you can play.'
+            ? 'Upload the score as a MusicXML file, or a PDF or picture of printed piano music. DuoKeys turns its notes into falling notes you can play.'
             : 'Upload a MIDI file. Its notes become falling notes you can play.'}{' '}
           Leave the name empty to use the file name.
         </p>
         <NameFields title={title} artist={artist} setTitle={setTitle} setArtist={setArtist} placeholder="Leave empty to use the file name" />
         <label style={labelStyle}>
-          {isScore ? 'Score file (.musicxml, .xml or .mxl)' : 'MIDI file (.mid or .midi)'}
+          {isScore ? 'Score file (.musicxml, .xml, .mxl, .pdf, .png or .jpg)' : 'MIDI file (.mid or .midi)'}
           <input
             type="file"
-            accept={isScore ? '.musicxml,.xml,.mxl' : '.mid,.midi'}
+            accept={isScore ? '.musicxml,.xml,.mxl,.pdf,.png,.jpg,.jpeg' : '.mid,.midi'}
             onChange={(e) => {
               void save(e.target.files?.[0]);
               e.target.value = '';
@@ -174,13 +223,20 @@ function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: s
             style={field}
           />
         </label>
-        {isScore && (
-          <p className={options.note}>
-            Have a PDF or a photo of the page? It cannot be read directly, because reading printed music from an image needs a
-            separate tool. Open it in MuseScore (or a scanning tool such as Audiveris), save it as MusicXML, then upload that
-            here. One piano part at a time works best.
-          </p>
+        {isReading && <p role="status">Reading the score. This can take a minute.</p>}
+        {needsReader && (
+          <div role="alert" className={options.note}>
+            <p>
+              Reading a PDF or picture needs the DuoKeys score reader running on this computer. It is free, needs Docker, and
+              nothing leaves your computer. In a terminal, from the DuoKeys folder:
+            </p>
+            <pre style={{ overflowX: 'auto' }}>
+              docker build -t duokeys-omr tools/omr{'\n'}docker run --rm -p 127.0.0.1:8765:8765 duokeys-omr
+            </pre>
+            <p>Then choose the file again. A MusicXML file from MuseScore needs none of this.</p>
+          </div>
         )}
+        {scan && <ScanReview summary={scan.summary} isSaving={isSaving} onSave={(bpm) => void saveScan(bpm)} onCancel={() => setScan(undefined)} />}
         {problem && <p role="alert">{problem}</p>}
       </div>
     </Card>
@@ -191,7 +247,7 @@ const TILES: { id: OptionId | 'library'; icon: string; name: string; hint: strin
   { id: 'library', icon: '📚', name: 'Song library', hint: '570+ piano pieces to search' },
   { id: 'paste', icon: '📋', name: 'Paste chords', hint: 'From a chord chart you like' },
   { id: 'midi', icon: '🎹', name: 'Upload MIDI', hint: 'A .mid or .midi file' },
-  { id: 'score', icon: '🎼', name: 'Upload a score', hint: 'MusicXML (.musicxml, .mxl)' },
+  { id: 'score', icon: '🎼', name: 'Upload a score', hint: 'MusicXML, PDF or picture' },
   { id: 'starter', icon: '⭐', name: 'Starter pieces', hint: 'Short pieces to begin with' },
 ];
 

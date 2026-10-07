@@ -215,6 +215,8 @@ grading.
 | `TS-U-CNT-046` | `songLevel` bands a piece from its notes per bar, and `searchSongs` filters by that level | TA-CNT-004, FR-STU-016 |
 | `TS-U-CNT-047` | `mxlToMusicXml` reads stored and deflated `.mxl` archives, follows `container.xml`, and refuses a non-zip | TA-CNT-007, FR-STU-017 |
 | `TS-U-CNT-048` | `parseMusicXml` places several voices on one staff by time (absolute `atTick`), keeps a one-voice staff sequential, and an overrunning bar does not move the next bar | TA-CNT-001, FR-STU-017 |
+| `TS-U-CNT-049` | `parseMusicXmlWithReport` lists overlong and short bars and whether a tempo was found; `withTempo` writes a clamped tempo | TA-CNT-001, FR-STU-017 |
+| `TS-U-CNT-050` | `omrClient` reports "not running" without throwing, posts the file under its name, unzips the result and turns a refusal into a plain message | TA-CNT-007, FR-STU-017 |
 | `TS-U-CNT-045` | `pickFreePlay` stays in a chosen key, and `sameProgressionInKey` finds the same degrees in another key and nothing for a typed-in progression | TA-CNT-007, FR-STU-015, FR-STU-018 |
 | `TS-U-CNT-044` | A styled progression puts each chord marker on notes of that chord even when the chords are not evenly spaced in the file (`I-IV-V`) | TA-CNT-006, FR-STU-015 |
 | `TS-U-CNT-043` | `progressionPosition` reports the chord and round of the group being played, stays on the last group past the end, and is undefined with no markers | FR-STU-015 |
@@ -455,7 +457,7 @@ critical-path behaviour has a manual confirmation.
 | FR-STU-013 | TS-U-REN-007 | — |
 | FR-STU-015 | TS-U-CNT-022…027, 042…045, TS-U-CLK-015, TS-U-REN-011, 012, TS-U-MAT-026, TS-I-DAT-008 | TS-M-016, TS-M-018 |
 | FR-STU-016 | TS-U-CNT-028, 029, TS-I-DAT-009 | TS-M-015 |
-| FR-STU-017 | TS-U-CNT-030…035, TS-I-DAT-010 | TS-M-017 |
+| FR-STU-017 | TS-U-CNT-030…035, 047…050, TS-I-DAT-010 | TS-M-017 |
 | FR-STU-018 | TS-U-CNT-036…041, 045 | TS-M-017 |
 | FR-STU-019 | TS-I-DAT-011 | — |
 | FR-DUO-001 | TS-E-015 | TS-M-012 |

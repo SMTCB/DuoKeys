@@ -91,7 +91,29 @@ function pitchToName(pitch: RawPitch): string {
 // gets a neutral accidental-density score until that table is extended.
 const FIFTHS_TO_KEY: Record<number, string> = { [-1]: 'F', 0: 'C', 1: 'G' };
 
+/** What the parser noticed while reading — a scanned score's mistakes show up here (FR-STU-017). */
+export interface MusicXmlReport {
+  /** Number of bars read. */
+  bars: number;
+  /** Bar numbers (1-based) that hold more beats than the time signature allows. */
+  overlongBars: number[];
+  /** Bar numbers that hold fewer beats than the time signature, apart from a first or last bar. */
+  shortBars: number[];
+  /** False when the file states no tempo, so the default is being used. */
+  hasTempo: boolean;
+}
+
+/** States a tempo on the first bar of a file that has none (the parser reads `<sound tempo>` on a measure). */
+export function withTempo(xml: string, bpm: number): string {
+  const safe = Math.round(Math.min(240, Math.max(30, bpm)));
+  return xml.replace(/<measure[ >][^>]*>?/, (open) => `${open}<sound tempo="${safe}"/>`);
+}
+
 export function parseMusicXml(xml: string, options: MusicXmlImportOptions): SourceInput {
+  return parseMusicXmlWithReport(xml, options).source;
+}
+
+export function parseMusicXmlWithReport(xml: string, options: MusicXmlImportOptions): { source: SourceInput; report: MusicXmlReport } {
   const doc = xmlParser.parse(xml) as Record<string, unknown>;
   const score = doc['score-partwise'] as Record<string, unknown> | undefined;
   if (!score) throw new Error('parseMusicXml: not a <score-partwise> document (score-timewise is not supported)');
@@ -143,6 +165,8 @@ export function parseMusicXml(xml: string, options: MusicXmlImportOptions): Sour
   }
 
   let measureStartTick = 0;
+  const overlongBars: number[] = [];
+  const shortBars: number[] = [];
 
   function captureTempo(sound: Record<string, unknown> | undefined): void {
     if (!sound || capturedTempo || sound['@_tempo'] === undefined) return;
@@ -150,7 +174,7 @@ export function parseMusicXml(xml: string, options: MusicXmlImportOptions): Sour
     capturedTempo = true;
   }
 
-  for (const measure of measures) {
+  for (const [measureIndex, measure] of measures.entries()) {
     const attributes = measure['attributes'] as Record<string, unknown> | undefined;
     if (attributes) {
       if (typeof attributes['divisions'] === 'number') divisions = attributes['divisions'] as number;
@@ -226,6 +250,9 @@ export function parseMusicXml(xml: string, options: MusicXmlImportOptions): Sour
     const barTicks = timeSig[0] * PPQ * (4 / timeSig[1]);
     let measureEndTick = measureStartTick;
     for (const { cursorTick } of cursors.values()) measureEndTick = Math.max(measureEndTick, cursorTick);
+    const heldTicks = measureEndTick - measureStartTick;
+    if (heldTicks > barTicks) overlongBars.push(measureIndex + 1);
+    else if (heldTicks < barTicks && measureIndex > 0 && measureIndex < measures.length - 1) shortBars.push(measureIndex + 1);
     measureStartTick = Math.min(measureEndTick, measureStartTick + barTicks);
   }
 
@@ -272,7 +299,7 @@ export function parseMusicXml(xml: string, options: MusicXmlImportOptions): Sour
         : { id: 'lh', role: 'lh' as TrackRole, hand: 'L', notes };
     });
 
-  return {
+  const source: SourceInput = {
     id: options.id,
     title: String(title),
     tempoBpm,
@@ -281,4 +308,5 @@ export function parseMusicXml(xml: string, options: MusicXmlImportOptions): Sour
     tracks,
     ...(options.barsPerQuest !== undefined ? { barsPerQuest: options.barsPerQuest } : {}),
   };
+  return { source, report: { bars: measures.length, overlongBars, shortBars, hasTempo: capturedTempo } };
 }

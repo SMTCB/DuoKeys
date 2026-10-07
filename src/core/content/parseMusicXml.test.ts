@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseMusicXml } from './parseMusicXml';
+import { parseMusicXml, parseMusicXmlWithReport, withTempo } from './parseMusicXml';
 import { buildArrangementFromSource } from './buildArrangement';
 
 // A single-part <score-partwise> shell around one or more <measure> bodies,
@@ -165,6 +165,21 @@ describe('parseMusicXml', () => {
     expect(source.tracks.map((t) => t.id)).toEqual(['rh', 'lh']);
     expect(source.tracks[0]!.notes).toEqual([{ pitch: 'C5', durationTicks: 1920 }]);
     expect(source.tracks[1]!.notes.map((n) => [n.pitch, n.atTick])).toEqual([['C3', 0], ['E2', 0], ['G3', 960]]);
+  });
+
+  it('reports bars that do not add up, and whether a tempo was stated (TS-U-CNT-049)', () => {
+    const note = (step: string, duration: number) =>
+      `<note><pitch><step>${step}</step><octave>4</octave></pitch><duration>${duration}</duration><voice>1</voice><staff>1</staff></note>`;
+    const xml = score(`<measure number="1">${ATTRS}${note('C', 16)}</measure>
+      <measure number="2">${note('D', 20)}</measure>
+      <measure number="3">${note('E', 8)}</measure>
+      <measure number="4">${note('F', 16)}</measure>
+      <measure number="5">${note('G', 4)}</measure>`);
+    const { report } = parseMusicXmlWithReport(xml, { id: 'report' });
+    expect(report).toEqual({ bars: 5, overlongBars: [2], shortBars: [3], hasTempo: false });
+    expect(parseMusicXmlWithReport(withTempo(xml, 60), { id: 'tempo' }).report.hasTempo).toBe(true);
+    expect(parseMusicXml(withTempo(xml, 60), { id: 'tempo' }).tempoBpm).toBe(60);
+    expect(parseMusicXml(withTempo(xml, 999), { id: 'tempo' }).tempoBpm).toBe(240);
   });
 
   it('throws on a grace note', () => {

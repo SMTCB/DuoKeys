@@ -153,6 +153,24 @@ a content rewrite.
 future second instrument, but no content filtering or forced transposition is
 required for the primary instrument.
 
+### ADR-010 — An optional local score reader for PDFs and pictures
+
+**Status:** Accepted, 7 Oct 2026
+**Context:** The adult wants to bring a printed pop song (a PDF) in as a playable song.
+Turning a page into notes is optical music recognition. A language model was tried and
+rejected: it misread pitches and dropped chords. Audiveris (open source, free) read the
+pitches of a test piece well and the rhythm less well.
+**Decision:** Audiveris runs in a Docker container on the user's own computer
+(`tools/omr`, a small HTTP wrapper, port 8765 published on `127.0.0.1` only, CORS for
+localhost pages only). The app reaches it through `adapters/content/omrClient.ts`. The
+reader is optional: it is never on a practice path, and when it is not running the
+Songs screen says how to start it. The scanned score returns as MusicXML and takes the
+same import as any other score, preceded by a check screen that lists bars whose beats
+do not add up and asks for a speed when the scan found none.
+**Consequences:** A score page goes only to localhost, so `NFR-010` still holds. Nothing
+is stored by the service. The result is a draft: rhythm in busy bars and the tempo are
+often wrong, which is why the check screen exists. Plain-language limits are shown to the user.
+
 ---
 
 ## 1. Module boundaries
@@ -1292,7 +1310,7 @@ system or network: bytes come in through the adapter.
 
 ### TA-CNT-007 — Custom songs and free play
 
-`US-3.22` (`FR-STU-017`–`019`). Pure `core/content/customSong.ts` (chart parser, `custom:` ids, chart / MIDI / MusicXML to Arrangement) and `core/content/freePlay.ts` (easy-progression filter and a seeded-random picker); `runtime/stores/customSongStore.ts` keeps songs in the profile's `settings.customSongs` (so they sync with no table; MIDI bytes as base64, 400 KB cap); a file is built into an arrangement before it is saved and refused if it does not play, and a MusicXML piece whose bar count is odd falls back to one-bar sections. <code>runtime/stores/learnStore.ts</code> keeps the Learn page's ticked steps in <code>settings.learnDone</code> (<code>FR-STU-019</code>). `profileStore` now remembers the active profile id in localStorage (a per-device convenience, never synced) so a direct page load sees that profile's songs, and the profile picker refreshes after a sync round (`syncStore.syncRound`).
+`US-3.22` (`FR-STU-017`–`019`). Pure `core/content/customSong.ts` (chart parser, `custom:` ids, chart / MIDI / MusicXML to Arrangement) and `core/content/freePlay.ts` (easy-progression filter and a seeded-random picker); `runtime/stores/customSongStore.ts` keeps songs in the profile's `settings.customSongs` (so they sync with no table; MIDI bytes as base64, 400 KB cap); a file is built into an arrangement before it is saved and refused if it does not play, and a MusicXML piece whose bar count is odd falls back to one-bar sections. A PDF or picture of a score (`ADR-010`) goes through `adapters/content/omrClient.ts` to the optional local Audiveris service in `tools/omr`; the MusicXML that returns is read by `parseMusicXmlWithReport` (pure), which also reports bars with too many or too few beats and whether a tempo was found, and `withTempo` writes the speed the player chose before the song is saved (`ui/studio/ScanReview.tsx` is the check screen). <code>runtime/stores/learnStore.ts</code> keeps the Learn page's ticked steps in <code>settings.learnDone</code> (<code>FR-STU-019</code>). `profileStore` now remembers the active profile id in localStorage (a per-device convenience, never synced) so a direct page load sees that profile's songs, and the profile picker refreshes after a sync round (`syncStore.syncRound`).
 
 ---
 

@@ -36,7 +36,7 @@
 <main>
   <div class="mast">
     <h1>Technical <em>architecture</em></h1>
-    <p class="lede">Nine closed decisions, five ports, three time domains and one rule that keeps them honest: dependencies point inward only.</p>
+    <p class="lede">Ten closed decisions, five ports, three time domains and one rule that keeps them honest: dependencies point inward only.</p>
     <div class="meta">
       <span>Doc <b>TECH</b></span><span>Version <b>1.0</b></span><span>2 September 2026</span><span>Status <b>Baselined</b></span>
     </div>
@@ -136,6 +136,14 @@
     <h3 id="ADR-009" data-toc="Full 88-key instrument"><span class="aid">ADR-009</span> Instrument is a full 88-key with sustain pedal</h3>
     <p class="by"><b>Status</b> Accepted, 2 Sep 2026</p>
     <p><strong>Decision.</strong> <code>Profile.keyboardRange</code> remains in the model as a safety net for a future second instrument, but no content filtering or forced transposition is required for the primary instrument.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="ADR-010" data-toc="Optional local score reader"><span class="aid">ADR-010</span> An optional local score reader for PDFs and pictures</h3>
+    <p class="by"><b>Status</b> Accepted, 7 Oct 2026</p>
+    <p><strong>Context.</strong> The adult wants to bring a printed pop song (a PDF) in as a playable song. Turning a page into notes is optical music recognition. A language model was tried and rejected: it misread pitches and dropped chords. Audiveris (open source, free) read the pitches of a test piece well and the rhythm less well.</p>
+    <p><strong>Decision.</strong> Audiveris runs in a Docker container on the user's own computer (<code>tools/omr</code>, a small HTTP wrapper, port 8765 published on <code>127.0.0.1</code> only, CORS for localhost pages only). The app reaches it through <code>adapters/content/omrClient.ts</code>. The reader is optional: it is never on a practice path, and when it is not running the Songs screen says how to start it. The scanned score returns as MusicXML and takes the same import as any other score, preceded by a check screen that lists bars whose beats do not add up and asks for a speed when the scan found none.</p>
+    <p><strong>Consequences.</strong> A score page goes only to localhost, so NFR-010 still holds. Nothing is stored by the service. The result is a draft: rhythm in busy bars and the tempo are often wrong, which is why the check screen exists. Plain-language limits are shown to the user.</p>
   </div>
 
   <!-- ============================================================ 1. Ports -->
@@ -773,7 +781,7 @@ IndexedDB          ◀──pull── Supabase   <i>(only on a fresh device)</i
   <p>A converted piece is generated at play time and never stored as content; attempts record the synthetic id <code>mutopia-&lt;n&gt;</code>. <code>core/</code> still touches no file system or network: bytes come in through the adapter.</p>
 
   <h3 id="TA-CNT-007" data-toc="Custom songs and free play"><span class="aid">TA-CNT-007</span> Custom songs and free play</h3>
-  <p>Pure <code>core/content/customSong.ts</code> (chart parser, <code>custom:</code> ids, chart / MIDI / MusicXML to Arrangement) and <code>core/content/freePlay.ts</code> (easy-progression filter and a seeded-random picker); <code>runtime/stores/customSongStore.ts</code> keeps songs in the profile's <code>settings.customSongs</code> (so they sync with no table; MIDI bytes as base64, 400 KB cap); a file is built into an arrangement before it is saved and refused if it does not play, and a MusicXML piece whose bar count is odd falls back to one-bar sections. <code>runtime/stores/learnStore.ts</code> keeps the Learn page's ticked steps in <code>settings.learnDone</code> (<code>FR-STU-019</code>). <code>profileStore</code> now remembers the active profile id in localStorage (a per-device convenience, never synced) so a direct page load sees that profile's songs, and the profile picker refreshes after a sync round (<code>syncStore.syncRound</code>).</p>
+  <p>Pure <code>core/content/customSong.ts</code> (chart parser, <code>custom:</code> ids, chart / MIDI / MusicXML to Arrangement) and <code>core/content/freePlay.ts</code> (easy-progression filter and a seeded-random picker); <code>runtime/stores/customSongStore.ts</code> keeps songs in the profile's <code>settings.customSongs</code> (so they sync with no table; MIDI bytes as base64, 400 KB cap); a file is built into an arrangement before it is saved and refused if it does not play, and a MusicXML piece whose bar count is odd falls back to one-bar sections. A PDF or picture of a score (ADR-010) goes through <code>adapters/content/omrClient.ts</code> to the optional local Audiveris service in <code>tools/omr</code>; the MusicXML that returns is read by <code>parseMusicXmlWithReport</code> (pure), which also reports bars with too many or too few beats and whether a tempo was found, and <code>withTempo</code> writes the speed the player chose before the song is saved (<code>ui/studio/ScanReview.tsx</code> is the check screen). <code>runtime/stores/learnStore.ts</code> keeps the Learn page's ticked steps in <code>settings.learnDone</code> (<code>FR-STU-019</code>). <code>profileStore</code> now remembers the active profile id in localStorage (a per-device convenience, never synced) so a direct page load sees that profile's songs, and the profile picker refreshes after a sync round (<code>syncStore.syncRound</code>).</p>
 
   <!-- ============================================================ 11. Shell -->
   <h2 id="shell" data-toc="Application shell"><span class="num">11</span>Application shell</h2>

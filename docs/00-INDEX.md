@@ -11,7 +11,7 @@ a six-year-old and an adult beginner to play — separately, and together.
 
 | # | Document | ID | Contains |
 |---|---|---|---|
-| 01 | [Technical Architecture](01-TECHNICAL-ARCHITECTURE.md) | `TECH` | 9 ADRs, ports & adapters, clock, MIDI pipeline, matcher, grading, renderers, data model, sync, content pipeline, 12 NFRs, 8 risks |
+| 01 | [Technical Architecture](01-TECHNICAL-ARCHITECTURE.md) | `TECH` | 10 ADRs, ports & adapters, clock, MIDI pipeline, matcher, grading, renderers, data model, sync, content pipeline, 12 NFRs, 8 risks |
 | 02 | [Functional Specification](02-FUNCTIONAL-SPECIFICATION.md) | `FUNC` | 52 requirements across 7 modules (4 proposed, unscheduled), prioritised MoSCoW |
 | 03 | [Sprint Plan & User Stories](03-SPRINT-PLAN.md) | `SPRINT` | 6 sprints, 72 user stories, each mapped to FR and TA IDs |
 | 04 | [Test Scenarios](04-TEST-SCENARIOS.md) | `TEST` | ~130 scenarios across 5 tiers, with a coverage matrix |
@@ -53,7 +53,7 @@ components cite decisions. Never the other way round.
 
 ---
 
-## The nine decisions everything rests on
+## The ten decisions everything rests on
 
 | ADR | Decision |
 |---|---|
@@ -66,6 +66,7 @@ components cite decisions. Never the other way round.
 | `ADR-007` | **Tempo-relative tolerance with a floor.** A flat ±150 ms is wrong at both 60 and 160 bpm. |
 | `ADR-008` | **Follow mainstream beginner pedagogy.** Faber/Alfred/Bastien agree on a four-stage order; use it. |
 | `ADR-009` | **88 keys, sustain pedal, class-compliant USB.** |
+| `ADR-010` | **Optional local score reader.** A PDF or picture of a score is read by Audiveris in Docker on the user's own machine; never on a practice path; localhost only. |
 
 ---
 
@@ -99,7 +100,7 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-STU-014 personal score import | C | — (future roadmap) | — | — |
 | FR-STU-015 my progressions & falling-notes chords | S | TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.18, US-3.20 | TS-U-CNT-022…027, 042…045, TS-U-CLK-015, TS-U-REN-011, 012, TS-U-MAT-026, TS-I-DAT-008, TS-M-016, TS-M-018 |
 | FR-STU-016 song library | S | TA-CNT-004, TA-CNT-005, TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.19 | TS-U-CNT-028, 029, 046, TS-I-DAT-009, TS-M-015 |
-| FR-STU-017 custom songs | S | TA-CNT-007, TA-APP-003, TA-DAT-003 | US-3.22 | TS-U-CNT-030…035, 047, 048, TS-I-DAT-010, TS-M-017 |
+| FR-STU-017 custom songs | S | TA-CNT-007, TA-APP-003, TA-DAT-003 | US-3.22 | TS-U-CNT-030…035, 047…050, TS-I-DAT-010, TS-M-017 |
 | FR-STU-018 free play | S | TA-CNT-007, TA-CNT-006, TA-APP-003 | US-3.22 | TS-U-CNT-036…041, 045, TS-M-017 |
 | FR-STU-019 learn roadmap | S | TA-APP-003, TA-CNT-007, TA-DAT-003 | US-3.22 | TS-I-DAT-011 |
 | FR-DUO-001 split + transpose | M | TA-DAT-001 | US-4.01 | TS-E-015, TS-M-012 |

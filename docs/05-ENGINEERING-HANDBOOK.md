@@ -104,6 +104,7 @@ duokeys/
 │   │   ├── bootstrap.ts           ← composition root (TA-APP-002)
 │   │   └── stores/                ← Zustand session state
 │   └── app/                       ← Next.js App Router routes (TA-APP-003)
+├── tools/omr/                     ← optional local score reader (ADR-010): Dockerfile + server.py
 ├── test/
 │   ├── fixtures/                  ← PerformanceFixture .json files
 │   └── golden/                    ← TS-G-* expected grades
