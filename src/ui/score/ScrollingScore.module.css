@@ -1,0 +1,76 @@
+.frame {
+  position: relative;
+  overflow: hidden;
+  border: 1.5px solid var(--app-line);
+  border-radius: var(--r-md);
+  background: var(--app-surface);
+}
+
+.strip {
+  display: block;
+  transition: transform 0.35s ease-out;
+  will-change: transform;
+}
+
+.nowLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 2px dashed var(--app-ink-faint);
+  pointer-events: none;
+}
+
+.line {
+  stroke: var(--app-ink-soft);
+  stroke-width: 1;
+}
+
+.bar {
+  stroke: var(--app-ink-faint);
+  stroke-width: 1;
+}
+
+.barNumber {
+  fill: var(--app-ink-faint);
+  font-size: 10px;
+}
+
+.clef {
+  fill: var(--app-ink-soft);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.note {
+  fill: var(--app-ink);
+  stroke: var(--app-ink);
+}
+
+.hollow {
+  fill: var(--app-surface);
+}
+
+.other {
+  opacity: 0.55;
+}
+
+.done {
+  opacity: 0.3;
+}
+
+.now {
+  fill: #e8743b;
+  stroke: #e8743b;
+}
+
+.nowHollow {
+  fill: var(--app-surface);
+  stroke: #e8743b;
+  stroke-width: 2.5;
+}
+
+.accidental {
+  fill: var(--app-ink);
+  font-size: 15px;
+}

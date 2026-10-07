@@ -99,7 +99,7 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-STU-013 lead-sheet song mode | M | TA-DAT-001 (ext), TA-REN-001 | US-3.14 | TS-U-REN-007 |
 | FR-STU-014 personal score import | C | — (future roadmap) | — | — |
 | FR-STU-015 my progressions & falling-notes chords | S | TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.18, US-3.20 | TS-U-CNT-022…027, 042…045, TS-U-CLK-015, TS-U-REN-011, 012, TS-U-MAT-026, TS-I-DAT-008, TS-M-016, TS-M-018 |
-| FR-STU-016 song library | S | TA-CNT-004, TA-CNT-005, TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.19 | TS-U-CNT-028, 029, 046, TS-I-DAT-009, TS-M-015 |
+| FR-STU-016 song library | S | TA-CNT-004, TA-CNT-005, TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.19 | TS-U-CNT-028, 029, 046, 051, 052, TS-I-DAT-009, TS-M-015 |
 | FR-STU-017 custom songs | S | TA-CNT-007, TA-APP-003, TA-DAT-003 | US-3.22 | TS-U-CNT-030…035, 047…050, TS-I-DAT-010, TS-M-017 |
 | FR-STU-018 free play | S | TA-CNT-007, TA-CNT-006, TA-APP-003 | US-3.22 | TS-U-CNT-036…041, 045, TS-M-017 |
 | FR-STU-019 learn roadmap | S | TA-APP-003, TA-CNT-007, TA-DAT-003 | US-3.22 | TS-I-DAT-011 |
@@ -1055,8 +1055,7 @@ different feature). No ADR and no new component ID: it extends `TA-CNT-006`
   songs", play), linked from `/studio`; play reuses `/studio/play/[id]`
   (`mutopia-<n>` ids). "Add" stores the id on the profile's settings record, so
   it syncs; the MIDI is a static asset fetched on play.
-- **Limits:** MIDI only, so no engraved score and no notation view for a full
-  piece; Mutopia's MIDI is flat in dynamics. The hand split is by track order,
+- **Limits:** MIDI only, so no engraved score (the score view is drawn from the notes, without rests or beams); Mutopia's MIDI is flat in dynamics. The hand split is by track order,
   else middle C — worth checking on real pieces at the piano (`TS-M-015`).
 - Tests: `TS-U-CNT-028`, `029`, `TS-I-DAT-009`. 289 unit tests pass.
 - **Not verified at a real piano.**

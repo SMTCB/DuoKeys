@@ -370,8 +370,7 @@ stay static assets, downloaded on play.
 hands, Right hand and Left hand (two note tracks are read as right then left;
 a single track is split at middle C). Notes that begin together form one
 group, so a chord, or both hands landing together, is one decision in wait mode.
-The notation view is offered only for a single line; a full piece plays as
-falling notes.
+The play screen shows the piece in one of two views, switched by a "Show" control: falling notes, or Music score. The score is a grand staff that slides from right to left, the note being waited for sitting on a dashed line; it steps along each time a chord is played, and notes already played fade, so it works for chords and two hands as well as a single line. Spacing follows time, so a quarter note is always the same width. The hand being practised is drawn solid and the other hand lighter. Rests are not drawn and note lengths are shown by head and stem only, with no beams or key signature (each sharp or flat is written beside its note). The piece's key is worked out from its notes (Krumhansl–Schmuckler, longest notes counting most) and shown beside a Key control that moves the whole piece up or down by up to twelve semitones, staying on the keyboard; moving it mid-play starts again on the moved notes. The key is a best guess: a MusicXML key signature is not read and a MIDI file has none.
 
 > **Limits.** Only MIDI is mirrored, so there is no engraved score for a
 > song — MIDI carries no beaming, voices or articulation marks. Mutopia's MIDI

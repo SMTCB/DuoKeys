@@ -8,13 +8,13 @@
 
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useSessionStore, type AccompanimentMode, type PracticeMode } from '../../../../runtime/stores/sessionStore';
 import { useGeneratedContentStore } from '../../../../runtime/stores/generatedContentStore';
 import { getAdapters } from '../../../../runtime/bootstrap';
 import { FallingNotesCanvas } from '../../../../ui/falling/FallingNotesCanvas';
-import { NotationView } from '../../../../ui/notation/NotationView';
+import { ScrollingScore } from '../../../../ui/score/ScrollingScore';
 import { PageShell } from '../../../../ui/shared/PageShell';
 import { StatusNote } from '../../../../ui/shared/StatusNote';
 import { Card } from '../../../../ui/shared/Card';
@@ -31,11 +31,13 @@ import { loadCustomArrangement, useCustomSongStore } from '../../../../runtime/s
 import { isCustomSongId } from '../../../../core/content/customSong';
 import { loadSongBytes, loadSongIndex } from '../../../../adapters/content/staticSongs';
 import { parseSmf } from '../../../../core/midi/smf';
-import { isMonophonic, smfToArrangement } from '../../../../core/content/songLibrary';
+import { smfToArrangement } from '../../../../core/content/songLibrary';
+import { detectKey, keyName, prefersSharps } from '../../../../core/content/detectKey';
+import { transposeArrangement, transposeLimits } from '../../../../core/content/transpose';
 import { noteName } from '../../../../ui/falling/noteName';
 import { describeArticulation, describeEvenness, describeRushDrag } from '../../../../core/grade/grade';
 
-type StudioView = 'falling' | 'notation';
+type StudioView = 'falling' | 'score';
 
 const TEMPO_MIN = 30;
 const TEMPO_MAX = 100;
@@ -97,7 +99,9 @@ export default function StudioPlayPage() {
   // Octave matching is a per-piece choice, so it never leaks into the next screen.
   useEffect(() => () => setAnyOctave(false), [setAnyOctave]);
 
-  const [arrangement, setArrangement] = useState<Arrangement | undefined>();
+  const [loadedArrangement, setArrangement] = useState<Arrangement | undefined>();
+  const [semitones, setSemitones] = useState(0);
+  const restartOnTranspose = useRef(false);
   const [loadError, setLoadError] = useState<string | undefined>();
   const [mode, setMode] = useState<PracticeMode>('wait');
   const [view, setView] = useState<StudioView>('falling');
@@ -152,6 +156,19 @@ export default function StudioPlayPage() {
     };
   }, [arrangementId, getGenerated, profile.id]);
 
+  // FR-STU-016 — the key is worked out from the notes; moving it changes every note, so what is
+  // shown, graded and played all come from the moved copy.
+  const detectedKey = useMemo(() => (loadedArrangement ? detectKey(loadedArrangement) : undefined), [loadedArrangement]);
+  const limits = useMemo(
+    () => (loadedArrangement ? transposeLimits(loadedArrangement, profile.keyboardRange.low as number, profile.keyboardRange.high as number) : { down: 0, up: 0 }),
+    [loadedArrangement, profile.keyboardRange],
+  );
+  const arrangement = useMemo(
+    () => (loadedArrangement ? transposeArrangement(loadedArrangement, semitones) : undefined),
+    [loadedArrangement, semitones],
+  );
+  useEffect(() => setSemitones(0), [arrangementId]);
+
   const track = arrangement?.tracks.find((t) => t.id === selectedTrackId) ?? arrangement?.tracks[0];
   const notesForDisplay = useMemo(() => activeNotes ?? track?.notes ?? [], [activeNotes, track]);
 
@@ -184,9 +201,22 @@ export default function StudioPlayPage() {
     await startArrangement(arrangement, track.id, crypto.randomUUID(), new Date().toISOString(), undefined, mode);
   }
 
-  // FR-STU-016 — notation can only draw a single line; a full piece plays as falling notes only.
-  const canShowNotation = track ? isMonophonic(track) : true;
-  const shownView: StudioView = canShowNotation ? view : 'falling';
+  function changeSemitones(value: number): void {
+    restartOnTranspose.current = attemptStatus === 'playing';
+    setSemitones(value);
+  }
+  // After moving the key mid-play, start again on the moved notes.
+  useEffect(() => {
+    if (!restartOnTranspose.current || !arrangement || !track) return;
+    restartOnTranspose.current = false;
+    void startArrangement(arrangement, track.id, crypto.randomUUID(), new Date().toISOString(), undefined, mode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [arrangement]);
+
+  const shownKey = detectedKey ? keyName((detectedKey.tonicPitchClass + semitones + 120) % 12, detectedKey.mode) : undefined;
+  const sharps = detectedKey ? prefersSharps((detectedKey.tonicPitchClass + semitones + 120) % 12, detectedKey.mode) : true;
+
+  const shownView: StudioView = view;
 
   if (loadError) return <PageShell><StatusNote tone="problem">Could not load this piece: {loadError}</StatusNote></PageShell>;
   if (!arrangement || !track) return <PageShell><StatusNote /></PageShell>;
@@ -307,20 +337,29 @@ export default function StudioPlayPage() {
 
       <Card>
         <div className={controls.bar}>
-          {canShowNotation ? (
-            <Segmented
-              name="view"
-              legend="Show"
-              options={[
-                { value: 'falling' as const, label: 'Falling notes' },
-                { value: 'notation' as const, label: 'Notation' },
-              ]}
-              value={shownView}
-              onChange={setView}
-            />
-          ) : (
-            <Pill tone="neutral">Falling notes</Pill>
-          )}
+          <Segmented
+            name="view"
+            legend="Show"
+            options={[
+              { value: 'falling' as const, label: 'Falling notes' },
+              { value: 'score' as const, label: 'Music score' },
+            ]}
+            value={shownView}
+            onChange={setView}
+          />
+          <label className={controls.tempo}>
+            <span className={controls.tempoLabel}>
+              Key{shownKey ? ` (${shownKey})` : ''}
+            </span>
+            <select value={String(semitones)} onChange={(e) => changeSemitones(Number(e.target.value))} aria-label="Move the key">
+              {Array.from({ length: 25 }, (_, i) => i - 12).map((n) => (
+                <option key={n} value={String(n)} disabled={n < limits.down || n > limits.up}>
+                  {n === 0 ? 'As written' : n > 0 ? `${n} higher` : `${-n} lower`}
+                  {detectedKey ? ` — ${keyName((detectedKey.tonicPitchClass + n + 120) % 12, detectedKey.mode)}` : ''}
+                </option>
+              ))}
+            </select>
+          </label>
           <label className={controls.tempo}>
             <span className={controls.tempoLabel}>
               Tempo <span className={controls.readout}>{Math.round(tempoScale * 100)}%</span>
@@ -354,16 +393,14 @@ export default function StudioPlayPage() {
         />
       )}
 
-      {shownView === 'notation' && (
-        <Card>
-          <NotationView
-            arrangement={arrangement}
-            trackId={track.id}
-            groupIndex={matcherState?.groupIndex ?? 0}
-            attemptStatus={attemptStatus}
-            grade={grade}
-          />
-        </Card>
+      {shownView === 'score' && (
+        <ScrollingScore
+          arrangement={arrangement}
+          trackId={track.id}
+          groupIndex={matcherState?.groupIndex ?? 0}
+          preferSharps={sharps}
+          isFinished={attemptStatus === 'complete'}
+        />
       )}
 
       {attemptStatus === 'complete' && grade && (

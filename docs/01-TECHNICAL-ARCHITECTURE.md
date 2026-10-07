@@ -759,6 +759,19 @@ scrolled so the cursor sits a quarter of the way across, and the cursor stepped
 once per matcher group, so the score moves left to right only on correct notes.
 Limits: block chords only, key of C with sharp spelling, no per-note hit colours.
 
+**Scrolling score for any song (`FR-STU-016`).** The song page's second view is
+not OSMD: `core/content/scoreLayout.ts` places every note of every track on a
+grand staff (x from the tick at 64 px per quarter, y from the diatonic step,
+treble at or above middle C, sharps or flats chosen by the key) and
+`ui/score/ScrollingScore.tsx` draws it as one SVG strip, translated so the
+pending group sits a quarter of the way across and stepped on each matcher group
+(`groupTicks` is indexed like `MatcherState.groupIndex`). It handles chords and
+two hands, which the single-voice `toMusicXml` cannot. Limits: no rests, beams,
+ties or key signature. `core/content/detectKey.ts` (`detectKey`) estimates the
+key from duration-weighted pitch classes and `core/content/transpose.ts` moves an
+arrangement by whole semitones within the keyboard range; the page grades and
+plays the moved copy. `TS-U-CNT-051`, `TS-U-CNT-052`.
+
 ### TA-REN-004 — Route-level code splitting
 
 OSMD is large. It is dynamically imported on Studio routes only and must never
@@ -1294,7 +1307,7 @@ MIDI, searched in-app and played as falling notes. Four additions:
   ticks per quarter to 480 PPQ, tracks `both` / `rh` / `lh` (two note tracks
   read as right then left; one track split at middle C), notes that begin
   together sharing a group id, the file's tempo changes, and one section.
-  `isMonophonic` tells the play page whether the notation view could draw it.
+  `isMonophonic` is kept but the play page no longer needs it: its score view draws any track set.
 - **Shell.** `adapters/content/staticSongs.ts` fetches the index and the bytes
   (same shape as `staticChords.ts`; not a port method, for the same reason).
   `runtime/stores/songLibraryStore.ts` keeps "my songs" as `savedSongIds` on the
