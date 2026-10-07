@@ -7,13 +7,16 @@
 //
 // Scope, deliberately: a single <score-partwise> <part> (solo piano — the
 // "Adult module" case TA-CNT-004 describes; four-hands duets stay
-// hand-authored JSON for now), up to two staves (treble/bass -> rh/lh), one
-// voice per staff (MusicXML's <backup>/<forward> stream-interleaving is what
-// lets several voices share a staff; this parser buckets notes by <staff>
-// alone, so a second voice on the same staff would silently interleave into
-// the wrong sequence — it throws instead), and a single global tempo/time/key
+// hand-authored JSON for now), up to two staves (treble/bass -> rh/lh), and a
+// single global tempo/time/key
 // signature taken from the file's first <attributes>/<sound> (mid-piece
 // changes are flattened, matching TA-CNT-001's single tempoMap entry today).
+// Several voices on one staff (what OMR output and dense piano scores have) are
+// placed by time, not by file order: each voice runs its own cursor from the
+// start of the measure, and a staff with more than one voice is emitted with
+// absolute `atTick` starts. A staff with one voice keeps the plain sequential
+// form. <backup>/<forward> are not read — every voice is assumed to begin at
+// the bar line.
 // No grace notes, unpitched (percussion) notes, or double sharps/flats.
 // Anything past that scope throws a specific, actionable error rather than
 // silently mis-importing — consistent with TA-CNT-005's fail-the-build
@@ -114,19 +117,32 @@ export function parseMusicXml(xml: string, options: MusicXmlImportOptions): Sour
   let capturedTime = false;
   let capturedKey = false;
 
-  const staffNotes = new Map<string, SourceNoteInput[]>();
-  const staffVoices = new Map<string, Set<string>>();
+  interface VoiceEvent {
+    startTick: number;
+    durationTicks: number;
+    pitch?: string;
+    isRest: boolean;
+    isChord: boolean;
+  }
+  const staffVoices = new Map<string, Map<string, VoiceEvent[]>>();
   const staffOrder: string[] = [];
 
-  function staffTrack(staffKey: string): SourceNoteInput[] {
-    let track = staffNotes.get(staffKey);
-    if (!track) {
-      track = [];
-      staffNotes.set(staffKey, track);
+  function voiceEvents(staffKey: string, voiceKey: string): VoiceEvent[] {
+    let voices = staffVoices.get(staffKey);
+    if (!voices) {
+      voices = new Map();
+      staffVoices.set(staffKey, voices);
       staffOrder.push(staffKey);
     }
-    return track;
+    let events = voices.get(voiceKey);
+    if (!events) {
+      events = [];
+      voices.set(voiceKey, events);
+    }
+    return events;
   }
+
+  let measureStartTick = 0;
 
   function captureTempo(sound: Record<string, unknown> | undefined): void {
     if (!sound || capturedTempo || sound['@_tempo'] === undefined) return;
@@ -156,6 +172,7 @@ export function parseMusicXml(xml: string, options: MusicXmlImportOptions): Sour
     captureTempo(measure['sound'] as Record<string, unknown> | undefined); // some exporters put <sound> directly on <measure>
 
     const notes = (measure['note'] as RawNote[] | undefined) ?? [];
+    const cursors = new Map<string, { cursorTick: number; lastStartTick: number }>();
     for (const note of notes) {
       if (hasKey(note, 'grace')) {
         throw new Error('parseMusicXml: grace notes are not supported — remove or simplify them before importing');
@@ -166,40 +183,50 @@ export function parseMusicXml(xml: string, options: MusicXmlImportOptions): Sour
 
       const staffKey = note.staff !== undefined ? String(note.staff) : '1';
       const voiceKey = note.voice !== undefined ? String(note.voice) : '1';
-      const seenVoices = staffVoices.get(staffKey) ?? new Set<string>();
-      seenVoices.add(voiceKey);
-      staffVoices.set(staffKey, seenVoices);
-      if (seenVoices.size > 1) {
-        throw new Error(
-          `parseMusicXml: staff ${staffKey} has more than one voice (${[...seenVoices].join(', ')}) — only one voice per staff is supported; simplify the score before importing`,
-        );
+      const cursorKey = `${staffKey}:${voiceKey}`;
+      let cursor = cursors.get(cursorKey);
+      if (!cursor) {
+        cursor = { cursorTick: measureStartTick, lastStartTick: measureStartTick };
+        cursors.set(cursorKey, cursor);
       }
 
       const durationTicks = Math.round(((note.duration ?? 0) * PPQ) / divisions);
       const isChord = hasKey(note, 'chord');
       const isRest = hasKey(note, 'rest');
-      const track = staffTrack(staffKey);
+      const events = voiceEvents(staffKey, voiceKey);
+      const startTick = isChord ? cursor.lastStartTick : cursor.cursorTick;
 
       if (isRest) {
-        track.push({ durationTicks, rest: true });
+        events.push({ startTick, durationTicks, isRest: true, isChord: false });
       } else if (note.pitch) {
         const pitch = pitchToName(note.pitch);
         const ties = tieTypes(note);
         if (ties.includes('stop')) {
-          const previous = track[track.length - 1];
-          if (!previous || previous.rest || previous.pitch !== pitch) {
+          const previous = events[events.length - 1];
+          if (!previous || previous.isRest || previous.pitch !== pitch) {
             throw new Error(
               `parseMusicXml: <tie type="stop"> on ${pitch} doesn't follow a matching ${pitch} note — tied notes must be consecutive in the same voice`,
             );
           }
           previous.durationTicks += durationTicks;
         } else {
-          track.push(isChord ? { pitch, durationTicks, chord: true } : { pitch, durationTicks });
+          events.push({ startTick, durationTicks, pitch, isRest: false, isChord });
         }
       } else {
         throw new Error('parseMusicXml: <note> has neither <pitch> nor <rest>');
       }
+      if (!isChord) {
+        cursor.lastStartTick = cursor.cursorTick;
+        cursor.cursorTick += durationTicks;
+      }
     }
+    // A bar never runs longer than the time signature: scanned scores (OMR) often carry a
+    // voice that overruns its bar, and letting that push the next bar later drifts the rest
+    // of the piece off the bar grid. The overrunning notes stay; the next bar starts on time.
+    const barTicks = timeSig[0] * PPQ * (4 / timeSig[1]);
+    let measureEndTick = measureStartTick;
+    for (const { cursorTick } of cursors.values()) measureEndTick = Math.max(measureEndTick, cursorTick);
+    measureStartTick = Math.min(measureEndTick, measureStartTick + barTicks);
   }
 
   if (staffOrder.length === 0) throw new Error('parseMusicXml: no notes found in the part');
@@ -210,7 +237,35 @@ export function parseMusicXml(xml: string, options: MusicXmlImportOptions): Sour
   const tracks: SourceTrackInput[] = [...staffOrder]
     .sort()
     .map((staffKey, i): SourceTrackInput => {
-      const notes = staffNotes.get(staffKey)!;
+      const voices = [...staffVoices.get(staffKey)!.values()];
+      // One voice that plays straight through keeps the plain sequential form; several voices,
+      // or a bar that was clamped (its notes no longer follow on from each other), need real starts.
+      const onlyVoice = voices.length === 1 ? voices[0]! : undefined;
+      let cursorTick = 0;
+      let lastStartTick = 0;
+      const isSequential =
+        onlyVoice !== undefined &&
+        onlyVoice.every((e) => {
+          const expectedStart = e.isChord ? lastStartTick : cursorTick;
+          if (!e.isChord) {
+            lastStartTick = cursorTick;
+            cursorTick += e.durationTicks;
+          }
+          return e.startTick === expectedStart;
+        });
+      const notes: SourceNoteInput[] = isSequential
+        ? onlyVoice!.map((e) =>
+            e.isRest
+              ? { durationTicks: e.durationTicks, rest: true }
+              : e.isChord
+                ? { pitch: e.pitch!, durationTicks: e.durationTicks, chord: true }
+                : { pitch: e.pitch!, durationTicks: e.durationTicks },
+          )
+        : voices
+            .flat()
+            .filter((e) => !e.isRest)
+            .sort((x, y) => x.startTick - y.startTick)
+            .map((e) => ({ pitch: e.pitch!, durationTicks: e.durationTicks, atTick: e.startTick }));
       if (staffOrder.length === 1) return { id: 'melody', role: 'melody' as TrackRole, notes };
       return i === 0
         ? { id: 'rh', role: 'rh' as TrackRole, hand: 'R', notes }

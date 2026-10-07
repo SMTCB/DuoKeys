@@ -1083,9 +1083,12 @@ MusicXML file has no field for those), via `src/core/content/parseMusicXml.ts`.
 Scope is bounded deliberately, matching `TA-CNT-005`'s fail-the-build philosophy —
 anything past it throws a specific, actionable error rather than silently
 mis-importing: a single `<part>` (solo piano only; four-hands duets stay
-hand-authored JSON), up to two staves (treble/bass → `rh`/`lh` tracks), one voice
-per staff (MusicXML's `<backup>`/`<forward>` multi-voice-per-staff interleaving is
-not implemented), and a single global tempo/time/key signature taken from the
+hand-authored JSON), up to two staves (treble/bass → `rh`/`lh` tracks), several
+voices per staff placed by time (each voice runs its own cursor from the bar line, and
+a staff with more than one voice is emitted with absolute `atTick` starts; `<backup>`
+and `<forward>` are not read, and a bar never runs past the time signature so an
+overrunning scanned bar cannot shift later bars; `SourceInput.roundUpToBars` lets a
+scanned score whose length is not a whole bar load), and a single global tempo/time/key signature taken from the
 file's first `<attributes>`/`<sound>` (mid-piece changes are flattened). Ties are
 merged (a `<tie type="stop">` extends the preceding same-pitch note's duration
 rather than becoming a second onset — the one case in this scope that gets

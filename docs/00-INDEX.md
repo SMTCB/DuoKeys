@@ -99,7 +99,7 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-STU-014 personal score import | C | — (future roadmap) | — | — |
 | FR-STU-015 my progressions & falling-notes chords | S | TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.18, US-3.20 | TS-U-CNT-022…027, 042…045, TS-U-CLK-015, TS-U-REN-011, 012, TS-U-MAT-026, TS-I-DAT-008, TS-M-016, TS-M-018 |
 | FR-STU-016 song library | S | TA-CNT-004, TA-CNT-005, TA-CNT-006, TA-REN-001, TA-DAT-003 | US-3.19 | TS-U-CNT-028, 029, 046, TS-I-DAT-009, TS-M-015 |
-| FR-STU-017 custom songs | S | TA-CNT-007, TA-APP-003, TA-DAT-003 | US-3.22 | TS-U-CNT-030…035, 047, TS-I-DAT-010, TS-M-017 |
+| FR-STU-017 custom songs | S | TA-CNT-007, TA-APP-003, TA-DAT-003 | US-3.22 | TS-U-CNT-030…035, 047, 048, TS-I-DAT-010, TS-M-017 |
 | FR-STU-018 free play | S | TA-CNT-007, TA-CNT-006, TA-APP-003 | US-3.22 | TS-U-CNT-036…041, 045, TS-M-017 |
 | FR-STU-019 learn roadmap | S | TA-APP-003, TA-CNT-007, TA-DAT-003 | US-3.22 | TS-I-DAT-011 |
 | FR-DUO-001 split + transpose | M | TA-DAT-001 | US-4.01 | TS-E-015, TS-M-012 |
@@ -791,8 +791,10 @@ pipeline.
   MusicXML → `SourceInput`, using `fast-xml-parser` (new dependency). Scope
   is deliberately bounded and documented in the file's own header and in
   `TA-CNT-001`: one `<part>` (solo piano), up to two staves (→ `rh`/`lh`),
-  one voice per staff (`<backup>`/`<forward>` interleaving unimplemented — a
-  second voice on a staff throws instead of silently mis-sequencing), a
+  several voices per staff placed by time (each voice runs its own cursor from
+  the bar line; `<backup>`/`<forward>` are not read; a bar never runs past the
+  time signature, so an overrunning scanned bar cannot push later bars off the
+  grid), a
   single global tempo/time/key taken from the file's first
   `<attributes>`/`<sound>`. Ties ARE merged — a `<tie type="stop">` extends
   the preceding same-pitch note's duration rather than becoming a second

@@ -8,7 +8,7 @@ import { noteNameToMidiPitch } from './noteName';
 import { segmentFallback } from './segmentSections';
 import { scoreDifficulty } from './difficulty';
 import { groupNotesByTicks } from '../match/types';
-import { asTicks, type Ticks } from '../time/types';
+import { PPQ, asTicks, type Ticks } from '../time/types';
 import type { Arrangement, ChordMarker, ContentNote, Track, TrackRole } from './types';
 
 export interface SourceNoteInput {
@@ -19,6 +19,8 @@ export interface SourceNoteInput {
   rest?: boolean;
   /** Shares the previous (non-rest) note's start tick instead of advancing the cursor — a simultaneous onset. */
   chord?: boolean;
+  /** Absolute start tick; overrides the cursor and `chord`. Used where several voices share a track and overlap. */
+  atTick?: number;
 }
 
 export interface SourceTrackInput {
@@ -37,6 +39,8 @@ export interface SourceInput {
   tracks: SourceTrackInput[];
   /** TA-CNT-001 stage 5 fallback quest-section length, in bars. Default 2 (the documented fallback). */
   barsPerQuest?: number;
+  /** Scanned scores rarely add up exactly: round the length up to a whole bar instead of refusing the piece. */
+  roundUpToBars?: boolean;
   /** FR-STU-013 — lead-sheet chord symbols; absent for content with no authored harmony. */
   chordMarkers?: { atTick: number; symbol: string }[];
 }
@@ -51,7 +55,9 @@ function buildTrack(sourceTrack: SourceTrackInput): Track {
     }
     if (n.pitch === undefined) throw new Error(`buildArrangementFromSource: note ${i} has no pitch and is not a rest`);
     const pitch = noteNameToMidiPitch(n.pitch);
-    const atTick = asTicks(n.chord ? (withTicks[withTicks.length - 1]?.atTick ?? cursorTick) : cursorTick);
+    const atTick = asTicks(
+      n.atTick !== undefined ? n.atTick : n.chord ? (withTicks[withTicks.length - 1]?.atTick ?? cursorTick) : cursorTick,
+    );
     withTicks.push({ id: `n${i + 1}`, atTick, pitch, durationTicks: n.durationTicks });
     if (!n.chord) cursorTick += n.durationTicks;
   });
@@ -77,10 +83,14 @@ export function buildArrangementFromSource(source: SourceInput): Arrangement {
   // Max over every note's end, not just the last one in tick order: a chord
   // note shares its base note's start tick but can carry a shorter duration,
   // so the note that starts last isn't guaranteed to end last.
-  const totalTicks: Ticks = tracks.reduce((max, t) => {
+  const contentTicks: Ticks = tracks.reduce((max, t) => {
     const trackEnd = t.notes.reduce((m, n) => Math.max(m, (n.startTick as number) + (n.durationTicks as number)), 0);
     return asTicks(Math.max(max as number, trackEnd));
   }, asTicks(0));
+  const ticksPerBar = source.timeSig[0] * PPQ * (4 / source.timeSig[1]);
+  const totalTicks: Ticks = source.roundUpToBars
+    ? asTicks(Math.ceil((contentTicks as number) / ticksPerBar) * ticksPerBar)
+    : contentTicks;
 
   const analysis = scoreDifficulty(tracks, source.keySig);
   const sections = segmentFallback(totalTicks, source.timeSig, source.title, source.barsPerQuest ?? 2);

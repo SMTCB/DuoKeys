@@ -214,6 +214,7 @@ grading.
 | `TS-U-CNT-041` | `easyMoods` lists the moods of easy progressions only | TA-CNT-007, FR-STU-018 |
 | `TS-U-CNT-046` | `songLevel` bands a piece from its notes per bar, and `searchSongs` filters by that level | TA-CNT-004, FR-STU-016 |
 | `TS-U-CNT-047` | `mxlToMusicXml` reads stored and deflated `.mxl` archives, follows `container.xml`, and refuses a non-zip | TA-CNT-007, FR-STU-017 |
+| `TS-U-CNT-048` | `parseMusicXml` places several voices on one staff by time (absolute `atTick`), keeps a one-voice staff sequential, and an overrunning bar does not move the next bar | TA-CNT-001, FR-STU-017 |
 | `TS-U-CNT-045` | `pickFreePlay` stays in a chosen key, and `sameProgressionInKey` finds the same degrees in another key and nothing for a typed-in progression | TA-CNT-007, FR-STU-015, FR-STU-018 |
 | `TS-U-CNT-044` | A styled progression puts each chord marker on notes of that chord even when the chords are not evenly spaced in the file (`I-IV-V`) | TA-CNT-006, FR-STU-015 |
 | `TS-U-CNT-043` | `progressionPosition` reports the chord and round of the group being played, stays on the last group past the end, and is undefined with no markers | FR-STU-015 |

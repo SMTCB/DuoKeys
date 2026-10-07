@@ -114,12 +114,57 @@ describe('parseMusicXml', () => {
     expect(() => parseMusicXml(xml, { id: 'duet' })).toThrow(/multi-part/);
   });
 
-  it('throws when a staff carries more than one voice', () => {
+  it('places two voices on one staff by time, not by file order (TS-U-CNT-048)', () => {
+    // voice 1: C4 half, D4 half; voice 2: E4 whole — the two overlap in one bar.
     const xml = score(`<measure number="1">${ATTRS}
-      <note><pitch><step>C</step><octave>4</octave></pitch><duration>4</duration><voice>1</voice><staff>1</staff></note>
-      <note><pitch><step>E</step><octave>4</octave></pitch><duration>4</duration><voice>2</voice><staff>1</staff></note>
+      <note><pitch><step>C</step><octave>4</octave></pitch><duration>8</duration><voice>1</voice><staff>1</staff></note>
+      <note><pitch><step>D</step><octave>4</octave></pitch><duration>8</duration><voice>1</voice><staff>1</staff></note>
+      <backup><duration>16</duration></backup>
+      <note><pitch><step>E</step><octave>4</octave></pitch><duration>16</duration><voice>2</voice><staff>1</staff></note>
+    </measure>
+    <measure number="2">
+      <note><pitch><step>G</step><octave>4</octave></pitch><duration>16</duration><voice>1</voice><staff>1</staff></note>
     </measure>`);
-    expect(() => parseMusicXml(xml, { id: 'two-voices' })).toThrow(/more than one voice/);
+    const source = parseMusicXml(xml, { id: 'two-voices' });
+    expect(source.tracks[0]!.notes).toEqual([
+      { pitch: 'C4', durationTicks: 960, atTick: 0 },
+      { pitch: 'E4', durationTicks: 1920, atTick: 0 },
+      { pitch: 'D4', durationTicks: 960, atTick: 960 },
+      { pitch: 'G4', durationTicks: 1920, atTick: 1920 },
+    ]);
+    const notes = buildArrangementFromSource(source).tracks[0]!.notes;
+    expect(notes.map((n) => [n.pitch, n.startTick])).toEqual([[60, 0], [64, 0], [62, 960], [67, 1920]]);
+    expect(notes[0]!.groupId).toBe(notes[1]!.groupId);
+  });
+
+  it('does not let an overrunning bar push the next bar later (TS-U-CNT-048)', () => {
+    // bar 1 holds 5 beats in 4/4 (a scanned score's rhythm error); bar 2 must still start at tick 1920.
+    const xml = score(`<measure number="1">${ATTRS}
+      <note><pitch><step>C</step><octave>4</octave></pitch><duration>20</duration><voice>1</voice><staff>1</staff></note>
+    </measure>
+    <measure number="2">
+      <note><pitch><step>D</step><octave>4</octave></pitch><duration>16</duration><voice>1</voice><staff>1</staff></note>
+    </measure>`);
+    const source = parseMusicXml(xml, { id: 'overrun' });
+    expect(source.tracks[0]!.notes).toEqual([
+      { pitch: 'C4', durationTicks: 2400, atTick: 0 },
+      { pitch: 'D4', durationTicks: 1920, atTick: 1920 },
+    ]);
+  });
+
+  it('keeps each staff on its own track when only one staff has several voices (TS-U-CNT-048)', () => {
+    const xml = score(`<measure number="1">${ATTRS}
+      <note><pitch><step>C</step><octave>5</octave></pitch><duration>16</duration><voice>1</voice><staff>1</staff></note>
+      <backup><duration>16</duration></backup>
+      <note><pitch><step>C</step><octave>3</octave></pitch><duration>8</duration><voice>5</voice><staff>2</staff></note>
+      <note><pitch><step>G</step><octave>3</octave></pitch><duration>8</duration><voice>5</voice><staff>2</staff></note>
+      <backup><duration>16</duration></backup>
+      <note><pitch><step>E</step><octave>2</octave></pitch><duration>16</duration><voice>6</voice><staff>2</staff></note>
+    </measure>`);
+    const source = parseMusicXml(xml, { id: 'two-staves' });
+    expect(source.tracks.map((t) => t.id)).toEqual(['rh', 'lh']);
+    expect(source.tracks[0]!.notes).toEqual([{ pitch: 'C5', durationTicks: 1920 }]);
+    expect(source.tracks[1]!.notes.map((n) => [n.pitch, n.atTick])).toEqual([['C3', 0], ['E2', 0], ['G3', 960]]);
   });
 
   it('throws on a grace note', () => {

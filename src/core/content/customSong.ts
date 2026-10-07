@@ -151,7 +151,12 @@ export function customSongToArrangement(song: CustomSong, midiBytes?: Uint8Array
       return { ok: true, arrangement: buildArrangementFromSource(named) };
     } catch {
       // An odd number of bars does not split into 2-bar sections; one-bar sections always do.
-      return { ok: true, arrangement: buildArrangementFromSource({ ...named, barsPerQuest: 1 }) };
+      try {
+        return { ok: true, arrangement: buildArrangementFromSource({ ...named, barsPerQuest: 1 }) };
+      } catch {
+        // A scanned score's bars rarely add up exactly (FR-STU-017): round up to a whole bar.
+        return { ok: true, arrangement: buildArrangementFromSource({ ...named, barsPerQuest: 1, roundUpToBars: true }) };
+      }
     }
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
