@@ -23,7 +23,7 @@
 
 .solid {
   background: var(--role-deep);
-  color: #fff;
+  color: var(--cream);
 }
 
 .mono {

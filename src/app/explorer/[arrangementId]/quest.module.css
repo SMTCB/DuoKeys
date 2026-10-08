@@ -68,12 +68,12 @@ a.stop:hover {
 
 .done .node {
   background: var(--amber);
-  color: #fff;
+  color: var(--on-amber);
 }
 
 .current .node {
   background: var(--amber);
-  color: #fff;
+  color: var(--on-amber);
   box-shadow: 0 0 0 5px var(--amber-tint-2);
 }
 

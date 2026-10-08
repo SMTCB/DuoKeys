@@ -20,9 +20,9 @@
     "content:build:songs": "tsx content/build/ingestSongs.ts"
   },
   "dependencies": {
-    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/nunito": "^5.3.0",
+    "@fontsource/bagel-fat-one": "^5.3.0",
     "@fontsource/ibm-plex-mono": "^5.3.0",
-    "@fontsource/plus-jakarta-sans": "^5.3.0",
     "@supabase/supabase-js": "^2.47.10",
     "fast-xml-parser": "^5.11.1",
     "idb": "^8.0.1",

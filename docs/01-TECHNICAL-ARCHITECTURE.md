@@ -176,6 +176,62 @@ often wrong, which is why the check screen exists. Plain-language limits are sho
 origin is refused. Opening the service to the Vercel origin is possible but would also need the
 browser's local-network permission prompt; it is left undone and is a new ADR if wanted.
 
+### ADR-011 — MIDI files come from the piano first; audio-to-MIDI is deferred
+
+**Status:** Accepted, 8 Oct 2026 (a decision only; nothing built)
+**Context:** The adult asked whether Spotify's open-source basic-pitch (audio to MIDI,
+Apache-2.0, a TypeScript build that runs in the browser) could make `.mid` files from
+the piano, or from a song given as a YouTube or Spotify link.
+**Decision:**
+1. **Piano first.** A `.mid` file of a performance is made from the MIDI the piano already
+   sends (timestamped note-on, note-off and sustain events), not from audio. No model is
+   needed. This extends `FR-PRO-005` (recording) with a Standard MIDI File writer beside
+   `parseSmf` (`src/core/midi/smf.ts`). It is not scheduled; `FR-PRO-005` stays priority `C`.
+2. **Audio-to-MIDI is deferred.** If built later, basic-pitch runs in the browser behind a
+   new port method, with lazily loaded model weights, for the user's own recordings
+   (a phone clip, a microphone take) only. It would be optional and off every practice
+   path, so `NFR-010` (no audio leaves the device) and `ADR-003` hold. Its output is a
+   draft and would take the check-screen step used for scanned scores (`ADR-010`). That
+   is a new ADR and new `FR-*` when taken up.
+3. **No link import.** Spotify streams are DRM-protected and the Web API gives no raw
+   audio. Pulling YouTube audio breaks YouTube's terms of service and cannot satisfy the
+   licence entry every piece of content needs (`TA-CNT-005`). Neither is built.
+**Consequences:** No code, port, dependency or requirement count changes. Known limits to
+keep in mind: basic-pitch is good on solo piano and poor on a full band mix. Public-domain
+scores (Mutopia, `TA-CNT-006`), chord charts and the local score reader (`ADR-010`) remain
+the routes for songs the user has no file for.
+
+### ADR-012 — A bolder palette for navigation; practice screens stay calm
+
+**Status:** Accepted, 8 Oct 2026. Supersedes, in part, the palette rule in `TA-APP-006`
+("a hue is never repurposed outside its role").
+**Context:** The screens read as bland. The adult chose a "Pop" direction, modelled on the
+Pop Co-op template: a cream ground, flat blocks of tomato, mustard, peach and cornflower,
+a chunky rounded display face and ink outlines. That look mixes hues, which the
+one-hue-per-role rule forbids. The adult also set a limit: screens with the piano, falling
+notes or a score must not fill up with colours and shapes, or they stop being readable.
+**Decision:**
+1. **Pop palette.** The role families keep their names and take Pop colours: amber is
+   mustard (Explorer), indigo is cornflower (Studio), coral is tomato (shared and duet).
+2. **Hues may mix on navigation and reward surfaces only:** the family screen and the
+   Explorer and Studio homes now; result cards and the quest map may follow. There, tiles
+   use any palette colour and carry flat Pop shapes (`PopShape`, decorative, hidden from
+   assistive technology), always beside a title, so colour is never the only cue (`NFR-008`).
+3. **Practice surfaces stay calm.** `PageShell` takes `tone="bold" | "calm"`; calm is the
+   default and every practice screen is calm (cream ground, a thin role stripe, no
+   shapes). The falling notes, the score's now-marker and the chord keybed read only
+   `--play-note` / `--play-note-deep` (one note colour per role, chosen to stand out on
+   white) and ink. The notation's green / red / grey feedback is unchanged.
+4. **Type:** Bagel Fat One (display), Nunito (UI and body), IBM Plex Mono (numbers), all
+   self-hosted from `@fontsource` packages.
+5. **Contrast:** text on a role fill uses `--on-role` (ink on mustard and tomato, cream on
+   cornflower); the focus ring is ink, since mustard does not show on cream.
+**Consequences:** Light only still holds. Two font packages are swapped
+(Bricolage Grotesque and Plus Jakarta Sans out). The DuoKeys Design Reference mockups no
+longer match the live homes until they are redrawn. No `FR-*`, port or data change. The
+practice screens are the check: if a Pop colour or shape ever appears on one, that is a
+bug against this ADR.
+
 ---
 
 ## 1. Module boundaries
@@ -1408,7 +1464,7 @@ screen mockups plus the logo lockups; this section is the code-facing summary
 of what that artifact specifies.
 
 - **Tokens as CSS custom properties**, one shared stylesheet
-  (`src/ui/shared/tokens.css`), consumed by CSS Modules per component — never
+  (`src/app/globals.css`; earlier drafts said `tokens.css`), consumed by CSS Modules per component — never
   a per-component hard-coded hex or `px` value for anything the token system
   already names.
   - **Palette:** a light paper ground (`--app-paper`) and ink
@@ -1416,9 +1472,11 @@ of what that artifact specifies.
     amber for Explorer/child surfaces, indigo for Studio/adult surfaces,
     coral reserved exclusively for shared "both players" moments (duet
     screens). A hue is never repurposed outside its role — coral appearing
-    on a single-player screen would be a bug, not a style choice.
-  - **Type:** Bricolage Grotesque (display/headings), Plus Jakarta Sans
-    (UI/body), IBM Plex Mono (numbers — tempo %, rush/drag ms, star counts,
+    on a single-player screen would be a bug, not a style choice. **Relaxed by `ADR-012`:**
+    hues may now mix on navigation and reward surfaces; practice surfaces keep one note
+    colour per role (see the Pop restyle bullet below).
+  - **Type:** Bagel Fat One (display/headings) and Nunito (UI/body) since
+    `ADR-012` (originally Bricolage Grotesque and Plus Jakarta Sans), IBM Plex Mono (numbers — tempo %, rush/drag ms, star counts,
     anything tabular), self-hosted via `next/font/local` from `@fontsource` packages — a build never needs Google Fonts.
   - **Shared components:** an on-screen keybed (one component, recoloured by
     role token — amber in Explorer, indigo in Studio, split amber/indigo in
@@ -1481,6 +1539,19 @@ of what that artifact specifies.
   large, card headings, and your own progressions drawn as the same rows as the
   catalogue. No behaviour changed. The notation view keeps its green / red / grey
   correct / wrong / missed colours, because those are feedback, not brand.
+- **Pop restyle (`US-3.23`, `ADR-012`).** The tokens in `src/app/globals.css` now carry the
+  Pop palette (`--cream`, `--tomato`, `--mustard`, `--peach`, `--cornflower` and their deep
+  shades), with the role families mapped onto it and `--on-amber` / `--on-indigo` /
+  `--on-coral` for text on a fill. `PageShell` takes `tone`: `bold` on the three navigation
+  homes (the Studio home sits on cornflower), `calm` everywhere else, and it sets `--on-role`,
+  `--play-note` and `--play-note-deep` per role. `ActionCard` has a `row` look (a cream card
+  with an ink outline and a `PopShape` picture) and a `tile` look (a colour block with one
+  large rounded corner), laid out by `ActionGrid` / `ActionList`; cards, buttons and the
+  family tiles press down into a hard ink shadow (`--press-shadow`), with no movement under
+  reduced motion (`NFR-011`). The logo and favicon are redrawn in the palette. Practice
+  surfaces read only `--play-*` and ink: `FallingNotesCanvas` (ink hit line), `ChordKeybed`
+  and the scrolling score's now-marker. Emoji avatars on the family screen are the user's
+  own choice and stay.
 
 ---
 

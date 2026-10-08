@@ -1,7 +1,8 @@
+/* US-3.23 / ADR-012 — a calm cream panel with the Pop ink outline. */
 .card {
   background: var(--app-surface);
-  border: 1px solid var(--app-line);
+  color: var(--app-ink);
+  border: 2px solid var(--app-ink);
   border-radius: var(--r-lg);
   padding: 1.5rem;
-  box-shadow: 0 8px 20px rgba(36, 38, 43, 0.06);
 }

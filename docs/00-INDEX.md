@@ -11,7 +11,7 @@ a six-year-old and an adult beginner to play — separately, and together.
 
 | # | Document | ID | Contains |
 |---|---|---|---|
-| 01 | [Technical Architecture](01-TECHNICAL-ARCHITECTURE.md) | `TECH` | 10 ADRs, ports & adapters, clock, MIDI pipeline, matcher, grading, renderers, data model, sync, content pipeline, 12 NFRs, 8 risks |
+| 01 | [Technical Architecture](01-TECHNICAL-ARCHITECTURE.md) | `TECH` | 12 ADRs, ports & adapters, clock, MIDI pipeline, matcher, grading, renderers, data model, sync, content pipeline, 12 NFRs, 8 risks |
 | 02 | [Functional Specification](02-FUNCTIONAL-SPECIFICATION.md) | `FUNC` | 52 requirements across 7 modules (4 proposed, unscheduled), prioritised MoSCoW |
 | 03 | [Sprint Plan & User Stories](03-SPRINT-PLAN.md) | `SPRINT` | 6 sprints, 72 user stories, each mapped to FR and TA IDs |
 | 04 | [Test Scenarios](04-TEST-SCENARIOS.md) | `TEST` | ~130 scenarios across 5 tiers, with a coverage matrix |
@@ -53,7 +53,7 @@ components cite decisions. Never the other way round.
 
 ---
 
-## The ten decisions everything rests on
+## The twelve decisions everything rests on
 
 | ADR | Decision |
 |---|---|
@@ -67,6 +67,8 @@ components cite decisions. Never the other way round.
 | `ADR-008` | **Follow mainstream beginner pedagogy.** Faber/Alfred/Bastien agree on a four-stage order; use it. |
 | `ADR-009` | **88 keys, sustain pedal, class-compliant USB.** |
 | `ADR-010` | **Optional local score reader.** A PDF or picture of a score is read by Audiveris in Docker on the user's own machine; never on a practice path; localhost only. |
+| `ADR-011` | **MIDI from the piano first.** A `.mid` of a performance comes from the piano's own MIDI (extends `FR-PRO-005`); basic-pitch audio-to-MIDI is deferred and, if built, browser-side for the user's own recordings; no YouTube or Spotify link import. Decision only, nothing built. |
+| `ADR-012` | **Bolder palette, calm practice screens.** The Pop palette (cream, tomato, mustard, peach, cornflower); hues may mix on navigation and reward surfaces; screens with the piano, falling notes or a score read only one note colour per role and ink. Relaxes `TA-APP-006`'s one-hue-per-role rule. |
 
 ---
 
@@ -1121,3 +1123,18 @@ a connected piano.
 Studio in three tracks (`US-3.22`, `FR-STU-017`–`019`): Learn, Free play and Songs, with custom songs (a pasted chord chart or a MIDI / MusicXML file, kept in "my songs" on the profile's settings record, no new table), a "play something for me" generator, 15 avatars (all instruments), profile restore after sync, and the chosen profile remembered per device in localStorage. Checked in a browser at 375 px: the Songs hub, adding and replaying a chart, a direct reload of a custom song, Free play and Learn. 301 unit tests pass. Not checked: MIDI / MusicXML import through the screen, restore across two real devices (`TS-M-017`), and emoji drawing on the phone.
 
 Follow-ups to `US-3.22`: the Learn page now has "Mark done" ticks (`FR-STU-019`, `learnDone` on the settings record, `TS-I-DAT-011`); a MIDI or MusicXML file is checked when it is added and refused if it does not play (a corrupt file used to be saved and fail at play time); a MusicXML piece with an odd bar count now plays with one-bar sections instead of failing; `TS-I-DAT-010` covers the custom-song store. 309 tests pass. Now checked in a browser: MIDI and MusicXML import through the screen, the refusal of a corrupt file, ticks surviving a reload. Earlier worry withdrawn: a restore cannot exceed the four-profile limit, because the limit only gates adding a profile. Still not checked: restore across two real devices and emoji drawing on the phone.
+
+## Update — Pop restyle, first pass (2026-10-08)
+
+`US-3.23` under `TA-APP-006` and new `ADR-012`, no FR. The palette moves to the Pop
+direction (cream ground, tomato / mustard / peach / cornflower, Bagel Fat One and Nunito,
+ink outlines, a hard ink press shadow). The family screen and the Explorer and Studio
+homes are bold: colour-block tiles with Pop shapes in place of emoji pictures (the
+family's own emoji avatars stay). Every other screen is calm, and the practice surfaces
+(falling notes, chord keybed, the score's now-marker) read only the `--play-*` note
+colours and ink. Checked in the browser at desktop and 375 px (no sideways scroll) on the
+Explorer home, the Studio home, the empty family screen and the play setup screen; 354 unit
+tests, typecheck and lint pass. Not checked: the family screen with profiles on it, and the
+falling notes and score while playing (they need a connected piano). Still to do in a
+second pass: the quest map, result cards and empty states, and redrawing the Design
+Reference mockups.

@@ -103,14 +103,15 @@ export function FallingNotesCanvas({
 
     let rafId: number;
 
-    // US-3.21 — colours come from the design tokens on the page (the role
-    // colour: amber in Explorer, indigo in Studio), read once per mount.
+    // US-3.21 — colours come from the design tokens on the page, read once per mount.
+    // US-3.23 / ADR-012 — a practice surface reads only the --play-* note colours
+    // and ink, never the decorative Pop palette, so the bars stay legible (NFR-002).
     const css = getComputedStyle(canvas);
     const token = (name: string, fallback: string): string => css.getPropertyValue(name).trim() || fallback;
-    const roleColour = token('--role', '#3d5a7c');
-    const roleDeepColour = token('--role-deep', '#2a415c');
+    const roleColour = token('--play-note', '#3d5a7c');
+    const roleDeepColour = token('--play-note-deep', '#2a415c');
     const inkColour = token('--app-ink', '#24262b');
-    const lineColour = token('--coral', '#dd6e4b');
+    const lineColour = inkColour;
     const displayFont = token('--display', 'sans-serif');
     const doneColour = '#2f9e5c';
 

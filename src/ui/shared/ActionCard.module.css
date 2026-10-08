@@ -1,30 +1,45 @@
+/* US-3.23 / ADR-012 — the Pop card: a cream row for lists, a colour-block tile
+   for the home grids. Both press down into a hard ink shadow. */
+
+.card,
+.tile {
+  position: relative;
+  color: var(--app-ink);
+  text-decoration: none;
+  box-shadow: var(--press-shadow);
+  transition: transform 120ms ease-out, box-shadow 120ms ease-out;
+}
+
+.card:hover,
+.tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 var(--app-ink);
+}
+
+.card:active,
+.tile:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--app-ink);
+  transition-duration: 60ms;
+}
+
+/* ---- row ---- */
+
 .card {
   display: flex;
   align-items: center;
   gap: 1rem;
-  min-height: 72px;
-  padding: 1rem 1.25rem;
+  min-height: 76px;
+  padding: 0.9rem 1.25rem 0.9rem 0.9rem;
   background: var(--app-surface);
-  border: 1px solid var(--app-line);
+  border: 2px solid var(--app-ink);
   border-radius: var(--r-lg);
-  box-shadow: 0 8px 20px rgba(36, 38, 43, 0.06);
-  color: var(--app-ink);
-  text-decoration: none;
-  transition: transform 80ms ease, border-color 80ms ease;
-}
-
-.card:hover {
-  border-color: var(--role);
-}
-
-.card:active {
-  transform: scale(0.99);
 }
 
 .icon {
   flex: none;
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: var(--r-md);
   background: var(--role-tint);
   color: var(--role-deep);
@@ -32,8 +47,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--display);
-  font-weight: 800;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
 }
 
 .text {
@@ -46,19 +60,130 @@
 
 .title {
   font-family: var(--display);
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  line-height: 1.15;
 }
 
 .description {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 600;
   line-height: 1.4;
+  color: var(--app-ink-soft);
+}
+
+.meta {
+  font-size: 0.85rem;
+  font-weight: 700;
   color: var(--app-ink-soft);
 }
 
 .arrow {
   flex: none;
-  color: var(--role-deep);
+  font-weight: 800;
+  font-size: 1.35rem;
+}
+
+/* ---- tile ---- */
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.2rem;
+  min-height: 150px;
+  padding: 1.1rem 1.2rem;
+  overflow: hidden;
+  background: var(--tile-bg);
+  color: var(--tile-on);
+  border: 2px solid var(--app-ink);
+  border-radius: var(--r-md);
+}
+
+.tileShape {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+}
+
+.tileIcon {
+  font-family: var(--display);
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.tileTitle {
+  font-family: var(--display);
+  font-size: 1.35rem;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.tileDescription {
+  font-size: 0.95rem;
   font-weight: 700;
-  font-size: 1.25rem;
+  line-height: 1.35;
+}
+
+.tileMeta {
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+/* ---- layouts ---- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.gridSmall {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+.gridSmall .tile {
+  min-height: 130px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+@media (max-width: 380px) {
+  .grid:not(.gridSmall) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- the one big corner ---- */
+
+.corner_tl {
+  border-top-left-radius: var(--r-pop);
+}
+
+.corner_tr {
+  border-top-right-radius: var(--r-pop);
+}
+
+.corner_br {
+  border-bottom-right-radius: var(--r-pop);
+}
+
+.corner_bl {
+  border-bottom-left-radius: var(--r-pop);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .tile {
+    transition: none;
+  }
+
+  .card:hover,
+  .tile:hover {
+    transform: none;
+    box-shadow: var(--press-shadow);
+  }
 }

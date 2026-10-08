@@ -39,19 +39,20 @@
   padding-bottom: 0.35rem;
 }
 
+/* ADR-012 — a practice surface: only the --play-* colours and ink. */
 .white.target {
   background: var(--role-tint);
-  border-color: var(--role);
+  border-color: var(--play-note);
 }
 
 .black.target {
-  background: var(--role);
-  border-color: var(--role-deep);
+  background: var(--play-note);
+  border-color: var(--play-note-deep);
 }
 
 .played {
-  background: var(--role-deep);
-  border-color: var(--role-deep);
+  background: var(--play-note-deep);
+  border-color: var(--play-note-deep);
 }
 
 .mark {
@@ -63,7 +64,7 @@
 
 .black .mark,
 .played .mark {
-  color: #fff;
+  color: var(--cream);
 }
 
 .legend {

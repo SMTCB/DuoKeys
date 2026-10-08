@@ -1,15 +1,32 @@
 .shell {
+  --ground: var(--app-paper);
+  --on-ground: var(--app-ink);
   min-height: 100vh;
-  background: var(--app-paper);
-  /* A soft wash of the role colour at the top, fading to paper. */
-  background-image: linear-gradient(to bottom, var(--role-tint) 0, var(--app-paper) 220px);
-  background-repeat: no-repeat;
+  background: var(--ground);
+  color: var(--on-ground);
   padding: 1.25rem 1.5rem 4rem;
   overflow-x: clip;
 }
 
+/* ADR-012 — calm pages (and every practice screen): cream ground, a thin role
+   stripe across the top, nothing decorative. */
+.calm {
+  border-top: 6px solid var(--role);
+}
+
+/* Bold pages are navigation homes. The Studio home sits on cornflower; the
+   Explorer and family homes stay cream and get their colour from the tiles. */
+.bold.studio {
+  --ground: var(--cornflower);
+  --on-ground: var(--cream);
+}
+
+.bold h1 {
+  font-size: clamp(2.4rem, 8vw, 3.4rem);
+}
+
 .inner {
-  max-width: 720px;
+  max-width: 760px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -35,20 +52,25 @@
   text-decoration: none;
 }
 
+/* The Pop pill: a filled role-colour lozenge with an ink outline. */
 .rolePill {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding: 0 1.1rem;
+  padding: 0 1.2rem;
   border-radius: 99px;
-  background: var(--app-surface);
-  border: 1px solid var(--app-line);
-  color: var(--role-deep);
-  font-weight: 700;
-  font-size: 0.85rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  background: var(--role);
+  border: 2px solid var(--app-ink);
+  color: var(--on-role);
+  font-family: var(--display);
+  font-size: 1rem;
   text-decoration: none;
+  box-shadow: 0 2px 0 var(--app-ink);
+}
+
+.bold.studio .rolePill {
+  background: var(--cream);
+  color: var(--cornflower-deep);
 }
 
 .rolePill::before {
@@ -56,6 +78,6 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--role);
+  background: currentColor;
   margin-right: 0.5rem;
 }

@@ -60,13 +60,13 @@
 }
 
 .now {
-  fill: #e8743b;
-  stroke: #e8743b;
+  fill: var(--play-note, #e8743b);
+  stroke: var(--play-note, #e8743b);
 }
 
 .nowHollow {
   fill: var(--app-surface);
-  stroke: #e8743b;
+  stroke: var(--play-note, #e8743b);
   stroke-width: 2.5;
 }
 

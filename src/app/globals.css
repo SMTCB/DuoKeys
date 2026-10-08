@@ -1,36 +1,63 @@
-/* US-3.16 — design tokens, matching the approved DuoKeys Design Reference
-   (duokeys_ui_concepts.html) exactly. One light theme only — no dark mode
-   toggle, per the Build Board's recorded decision. */
+/* US-3.16 — design tokens. ADR-012 / US-3.23 — the Pop palette: a cream
+   ground, a warm dark-brown ink, and four colour-block hues (tomato, mustard,
+   peach, cornflower). One light theme only — no dark-mode toggle.
+
+   The role families keep their names (amber = Explorer, indigo = Studio,
+   coral = shared) so every component that reads them follows the new palette;
+   what changed is that the hues may now mix as decoration on navigation and
+   reward surfaces. Practice surfaces (falling notes, the score, the keybed)
+   stay calm and read only the --play-* tokens PageShell sets per role. */
 
 :root {
-  --app-paper: #f4f6f0;
-  --app-surface: #ffffff;
-  --app-surface-2: #ecefe6;
-  --app-ink: #24262b;
-  --app-ink-soft: #5c6059;
-  --app-ink-faint: #8b8f86;
-  --app-line: #dee2d6;
+  /* The palette. */
+  --cream: #fff8e8;
+  --tomato: #eb533e;
+  --tomato-deep: #b8321f;
+  --mustard: #fcd77a;
+  --peach: #ee9f5e;
+  --cornflower: #4a72af;
+  --cornflower-deep: #2b4a7c;
 
-  --amber: #e19b34;
-  --amber-deep: #b9791d;
-  --amber-tint: #fbead0;
-  --amber-tint-2: #f7ddb4;
+  --app-paper: var(--cream);
+  --app-surface: #fffdf6;
+  --app-surface-2: #f6ecd6;
+  --app-ink: #380d02;
+  --app-ink-soft: #6b3f2e;
+  --app-ink-faint: #8c6a5a;
+  --app-line: #ead9bb;
 
-  --indigo: #3d5a7c;
-  --indigo-deep: #2a415c;
-  --indigo-tint: #dce4ec;
-  --indigo-tint-2: #c4d2e0;
+  /* Explorer: mustard and peach. Text in the family uses -deep (5:1 on mustard). */
+  --amber: var(--mustard);
+  --amber-deep: #8f4310;
+  --amber-tint: #fdebbe;
+  --amber-tint-2: #f8d995;
+  --on-amber: var(--app-ink);
 
-  --coral: #dd6e4b;
-  --coral-deep: #b8532f;
-  --coral-tint: #fbe1d6;
+  /* Studio: cornflower. */
+  --indigo: var(--cornflower);
+  --indigo-deep: var(--cornflower-deep);
+  --indigo-tint: #dce5f3;
+  --indigo-tint-2: #c3d2ea;
+  --on-indigo: var(--cream);
+
+  /* Shared / duet: tomato. Small cream text on tomato fails contrast, so text
+     on the tomato fill is ink; buttons use the deeper tomato with cream. */
+  --coral: var(--tomato);
+  --coral-deep: var(--tomato-deep);
+  --coral-tint: #fbdad3;
+  --on-coral: var(--app-ink);
 
   --r-sm: 8px;
   --r-md: 14px;
   --r-lg: 22px;
   --r-xl: 28px;
+  /* The Pop corner: one big rounded corner on a tile. */
+  --r-pop: 44px;
 
-  --display: var(--font-display), 'Segoe UI', sans-serif;
+  /* Tactile press: a hard ink shadow that the element sinks into. */
+  --press-shadow: 0 3px 0 var(--app-ink);
+
+  --display: var(--font-display), 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
   --ui: var(--font-ui), 'Segoe UI', sans-serif;
   --mono: var(--font-mono), ui-monospace, monospace;
 }
@@ -49,6 +76,8 @@ body {
   background: var(--app-paper);
   color: var(--app-ink);
   font-family: var(--ui);
+  /* The display face has a single weight; never let the browser fake a bold. */
+  font-synthesis-weight: none;
 }
 
 h1,
@@ -61,15 +90,19 @@ h3 {
 
 /* US-3.21 - page titles follow the Design Reference scale. */
 h1 {
-  font-weight: 700;
-  font-size: 2rem;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
+  font-weight: 400;
+  font-size: clamp(2rem, 6vw, 2.75rem);
+  line-height: 1.05;
+  letter-spacing: 0.005em;
 }
 
 h2 {
-  font-weight: 700;
-  font-size: 1.25rem;
+  font-weight: 400;
+  font-size: 1.35rem;
+}
+
+h3 {
+  font-weight: 400;
 }
 
 button {
@@ -105,14 +138,15 @@ select:focus-visible,
 textarea:focus-visible,
 button:focus-visible,
 a:focus-visible {
-  outline: 3px solid var(--role, var(--coral));
+  /* Ink, not the role hue: mustard on cream would be an invisible ring. */
+  outline: 3px solid var(--app-ink);
   outline-offset: 2px;
 }
 
 input[type='checkbox'],
 input[type='radio'],
 input[type='range'] {
-  accent-color: var(--role, var(--coral));
+  accent-color: var(--role-deep, var(--coral-deep));
 }
 
 input[type='checkbox'],

@@ -28,7 +28,7 @@
 .current {
   border: 3px solid var(--app-ink);
   background: var(--role);
-  color: #fff;
+  color: var(--on-role);
   font-weight: 800;
 }
 

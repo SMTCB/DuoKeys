@@ -1,0 +1,74 @@
+/* US-3.23 / ADR-012 — the family screen: each person is a Pop colour block
+   (mustard for a kid, cornflower for an adult) with their own emoji. The name
+   is always there too, so colour is never the only cue (NFR-008). */
+
+.people {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.9rem;
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  min-height: 150px;
+  padding: 1rem 1.1rem;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  border: 2px solid var(--app-ink);
+  border-radius: var(--r-md);
+  box-shadow: var(--press-shadow);
+  transition: transform 120ms ease-out, box-shadow 120ms ease-out;
+}
+
+.person:nth-child(4n + 1) { border-top-left-radius: var(--r-pop); }
+.person:nth-child(4n + 2) { border-top-right-radius: var(--r-pop); }
+.person:nth-child(4n + 3) { border-bottom-right-radius: var(--r-pop); }
+.person:nth-child(4n + 4) { border-bottom-left-radius: var(--r-pop); }
+
+.person:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 var(--app-ink);
+}
+
+.person:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+
+.kid {
+  background: var(--mustard);
+  color: var(--app-ink);
+}
+
+.adult {
+  background: var(--cornflower);
+  color: var(--cream);
+}
+
+.avatar {
+  font-size: 2.8rem;
+  line-height: 1;
+}
+
+.name {
+  font-family: var(--display);
+  font-size: 1.35rem;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .person {
+    transition: none;
+  }
+
+  .person:hover {
+    transform: none;
+    box-shadow: var(--press-shadow);
+  }
+}

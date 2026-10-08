@@ -2,6 +2,7 @@
 // for that person's four-digit PIN, and "New family member" makes another (emoji, name, kid or
 // adult, PIN). The PIN is a door-latch on a shared screen, not security (FR-PRO-001). Selecting a
 // profile propagates it into sessionStore, which every Explorer page already reads reactively.
+// US-3.23 / ADR-012 — a bold navigation home: each person is a Pop colour tile.
 
 'use client';
 
@@ -16,6 +17,7 @@ import { Card } from '../ui/shared/Card';
 import { Button } from '../ui/shared/Button';
 import { AVATARS } from '../ui/shared/avatars';
 import { useSyncStore } from '../runtime/stores/syncStore';
+import styles from './family.module.css';
 
 const fieldStyle = { font: 'inherit', padding: '0.7rem 0.9rem', minHeight: '44px', width: '100%', boxSizing: 'border-box' } as const;
 const pinStyle = { ...fieldStyle, fontSize: '1.5rem', letterSpacing: '0.5rem', maxWidth: '10rem' } as const;
@@ -87,28 +89,28 @@ export default function HomePage() {
   ];
 
   return (
-    <PageShell>
+    <PageShell tone={asking || isAdding ? 'calm' : 'bold'}>
       {loaded ? <h1>Who&apos;s playing?</h1> : <h1>DuoKeys</h1>}
 
       {!loaded && <StatusNote />}
 
       {loaded && !isAdding && !asking && (
         <>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div className={styles.people}>
             {profiles.map((p) => (
-              <Button
+              <button
                 key={p.id}
-                accent={p.role === 'student' ? 'indigo' : 'amber'}
+                type="button"
+                className={[styles.person, p.role === 'student' ? styles.adult : styles.kid].join(' ')}
                 onClick={() => {
                   setAsking(p);
                   setTypedPin('');
                   setIsWrongPin(false);
                 }}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem', minWidth: '7rem', borderRadius: '1.5rem', padding: '1rem 1.25rem' }}
               >
-                <span style={{ fontSize: '2.5rem', lineHeight: 1 }} aria-hidden="true">{p.avatar}</span>
-                <span>{p.displayName}</span>
-              </Button>
+                <span className={styles.avatar} aria-hidden="true">{p.avatar}</span>
+                <span className={styles.name}>{p.displayName}</span>
+              </button>
             ))}
           </div>
           {canAdd && (

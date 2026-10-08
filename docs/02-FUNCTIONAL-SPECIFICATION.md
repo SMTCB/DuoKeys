@@ -520,6 +520,9 @@ Capture a performance as a note stream and play it back through the sampler, wit
 the score or falling notes following along. Useful for "listen to what you did"
 and delightful for a child.
 
+A recorded performance should also be exportable as a `.mid` file, written from the
+piano's own note and sustain events with no audio model (`ADR-011`). Not scheduled.
+
 ### FR-PRO-006 — Saved / in-progress repertoire (`M`)
 
 **Realised by:** `TA-DAT-007` · `US-3.15`

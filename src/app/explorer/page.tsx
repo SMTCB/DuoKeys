@@ -2,6 +2,9 @@
 // `/explorer/[arrangementId]`'s quest map. Client component: `ContentBackend`
 // is fetch-based (TA-PORT-003), same reasoning as the quest map it links
 // into.
+// US-3.23 / ADR-012 — a bold navigation home: Pop colour tiles. The colours
+// cycle for variety; each tile also carries its title and number, so colour is
+// never the only cue (NFR-008).
 
 'use client';
 
@@ -10,7 +13,12 @@ import { getAdapters } from '../../runtime/bootstrap';
 import type { ContentIndex } from '../../adapters/ports';
 import { PageShell } from '../../ui/shared/PageShell';
 import { StatusNote } from '../../ui/shared/StatusNote';
-import { ActionCard } from '../../ui/shared/ActionCard';
+import { ActionCard, ActionGrid } from '../../ui/shared/ActionCard';
+import type { PopCorner } from '../../ui/shared/ActionCard';
+import type { PopColour } from '../../ui/shared/PopShape';
+
+const PIECE_COLOURS: PopColour[] = ['mustard', 'peach', 'cream', 'cornflower'];
+const PIECE_CORNERS: PopCorner[] = ['tl', 'tr', 'br', 'bl'];
 
 export default function ExplorerListPage() {
   const [index, setIndex] = useState<ContentIndex | undefined>();
@@ -25,24 +33,47 @@ export default function ExplorerListPage() {
     };
   }, []);
 
-  if (!index) return <PageShell><StatusNote /></PageShell>;
+  if (!index) return <PageShell tone="bold"><StatusNote /></PageShell>;
 
   return (
-    <PageShell>
+    <PageShell tone="bold">
       <h1>What shall we play?</h1>
-      <ActionCard href="/explorer/ninja" icon="♪" title="Note Ninja" description="Find the note, as fast as you can." />
-      <ActionCard href="/explorer/free-play" icon="✦" title="Free Play" description="Press any key and make some music." />
+      <ActionGrid>
+        <ActionCard
+          variant="tile"
+          colour="tomato"
+          shape="circle"
+          shapeColour="mustard"
+          corner="tl"
+          href="/explorer/ninja"
+          title="Note Ninja"
+          description="Find the note, fast!"
+        />
+        <ActionCard
+          variant="tile"
+          colour="cornflower"
+          shape="quarter"
+          shapeColour="peach"
+          corner="tr"
+          href="/explorer/free-play"
+          title="Free Play"
+          description="Press any key and make music."
+        />
+      </ActionGrid>
       <h2>Pieces</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      <ActionGrid min="small">
         {index.pieces.map((piece, i) => (
           <ActionCard
             key={piece.id}
+            variant="tile"
+            colour={PIECE_COLOURS[i % PIECE_COLOURS.length] ?? 'mustard'}
+            corner={PIECE_CORNERS[i % PIECE_CORNERS.length] ?? 'tl'}
             href={`/explorer/${piece.defaultArrangementId}`}
             icon={i + 1}
             title={piece.title}
           />
         ))}
-      </div>
+      </ActionGrid>
     </PageShell>
   );
 }
