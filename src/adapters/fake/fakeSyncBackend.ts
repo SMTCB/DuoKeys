@@ -12,6 +12,10 @@ export class FakeSyncBackend implements SyncBackend {
     this.user = { id: 'fake-user', email };
   }
 
+  async signInWithPassword(username: string): Promise<void> {
+    this.user = { id: 'fake-user', email: `${username}@household.duokeys` };
+  }
+
   async signOut(): Promise<void> {
     this.user = null;
   }

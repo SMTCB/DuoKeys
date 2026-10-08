@@ -5,6 +5,7 @@
 
 import { create } from 'zustand';
 import { getAdapters, isSyncConfigured, setEnqueueListener } from '../bootstrap';
+import { displayName } from '../../adapters/sync/supabaseBackend';
 import { SyncEngine, type KeyValueStore, type SyncOutcome } from '../syncEngine';
 
 export type SyncStatus = 'unavailable' | 'signed-out' | 'backed-up' | 'syncing' | 'behind';
@@ -23,6 +24,7 @@ interface SyncState {
 
   init(): Promise<void>;
   signIn(email: string): Promise<void>;
+  signInWithPassword(username: string, password: string): Promise<void>;
   signOut(): Promise<void>;
   syncNow(): Promise<void>;
 }
@@ -103,6 +105,25 @@ export const useSyncStore = create<SyncState>((set, get) => ({
     }
   },
 
+  async signInWithPassword(username: string, password: string): Promise<void> {
+    set({ signInProblem: undefined });
+    try {
+      await getAdapters().sync.signInWithPassword(username, password);
+      await get().syncNow();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '';
+      set({
+        signInProblem: /wrong password/.test(message)
+          ? 'That username is taken with a different password. Try the password again.'
+          : /confirmation/.test(message)
+            ? 'The backup account needs one setting changed in Supabase (turn off "Confirm email"). See the setup notes.'
+            : /password/i.test(message) && /least|short|weak/i.test(message)
+              ? 'Pick a password with at least 6 characters.'
+              : 'Could not sign in. Check your connection, then try again.',
+      });
+    }
+  },
+
   async signOut(): Promise<void> {
     await getAdapters().sync.signOut().catch(() => undefined);
     set({ status: 'signed-out', email: undefined, pending: 0, linkSent: false });
@@ -115,7 +136,7 @@ export const useSyncStore = create<SyncState>((set, get) => ({
       set({ status: 'signed-out', email: undefined });
       return;
     }
-    set({ status: 'syncing', email: user.email });
+    set({ status: 'syncing', email: displayName(user.email) });
     const outcome = await engine.sync();
     set({
       status: STATUS_OF[outcome],

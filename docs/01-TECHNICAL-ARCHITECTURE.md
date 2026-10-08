@@ -237,6 +237,8 @@ export interface StorageBackend {
 
 export interface SyncBackend {
   signIn(email: string): Promise<void>;             // passwordless link
+  /** Household username + password; creates the account the first time that username is used. */
+  signInWithPassword(username: string, password: string): Promise<void>;
   signOut(): Promise<void>;
   currentUser(): Promise<SyncUser | null>;
   push(ops: OutboxOp[]): Promise<PushResult>;
@@ -952,8 +954,8 @@ IndexedDB          ◀──pull── Supabase   (only on a fresh device)
 
 ### TA-SYN-002 — Auth
 
-Passwordless email link, adult account only. The child never has credentials. One
-Supabase user owns all profiles in the household.
+Household username and password (`signInWithPassword`; magic link remains on the port but the panel no longer offers it), adult only. The child never has credentials. One
+Supabase user owns all profiles in the household. The username becomes `name@household.duokeys`, an address that cannot receive mail, so no email service or redirect allow-list is involved; Supabase must have "Confirm email" turned off.
 
 ### TA-SYN-003 — Conflict policy
 
@@ -1058,12 +1060,11 @@ transaction (B sees none of A's rows and cannot write under A's profile; `attemp
 update/delete refused for the owner; stale write skipped, newer applied; anon
 refused). It does not go through PostgREST/JWT.
 
-The `SyncBackend` adapter (`SupabaseBackend`, `adapters/sync/`) and magic-link
+The `SyncBackend` adapter (`SupabaseBackend`, `adapters/sync/`) and household username/password
 sign-in (`US-2.02`, `SyncPanel` on the Studio screen) are built and selected when
 `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` are set; otherwise
 `FakeSyncBackend`. **Not yet verified:** a live end-to-end push/pull with a real
-signed-in user. Deployment must add the site URL to Supabase's redirect allow-list,
-and the built-in SMTP rate-limits magic-link emails.
+signed-in user. Both the local and the deployed site must be built with the same Supabase URL and anon key and signed in with the same household username, which is what makes them one library.
 
 ---
 

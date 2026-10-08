@@ -389,9 +389,9 @@
   <h2 id="sync" data-toc="Accounts and sync"><span class="num">06</span>Accounts and sync</h2>
 
   <div class="req">
-    <h3 id="FR-SYN-001" data-toc="Passwordless adult account"><span class="aid">FR-SYN-001</span> Passwordless adult account <span class="pri M">M</span></h3>
+    <h3 id="FR-SYN-001" data-toc="Household account"><span class="aid">FR-SYN-001</span> Household account <span class="pri M">M</span></h3>
     <p class="by"><b>Realised by</b> TA-SYN-002</p>
-    <p>Email magic link. One account per household, owned by the adult. The child never has credentials.</p>
+    <p>One shared household login: a username and password the adult types once per device (the first use of a username creates the account). The child never has credentials. The username is wrapped in an address that cannot receive mail (name@household.duokeys) because Supabase Auth wants an email; the password is hashed by Supabase Auth, not stored by the app.</p>
   </div>
 
   <div class="req">

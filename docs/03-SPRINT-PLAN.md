@@ -114,7 +114,7 @@ Note Ninja, styling.
 | ID | Story | FR | TA | Pts |
 |---|---|---|---|---|
 | `US-2.01` | As a family, we have separate profiles with our own names, avatars and calibration, switchable in one tap without a password. | FR-PRO-001 | TA-DAT-004 | 3 |
-| `US-2.02` | As the adult, I sign in with an email magic link, so that the household has an account without the child having credentials. | FR-SYN-001 | TA-SYN-002 | 3 |
+| `US-2.02` | As the adult, I sign in with a household username and password, so that the household has an account without the child having credentials. | FR-SYN-001 | TA-SYN-002 | 3 |
 | `US-2.03` | As the system, I queue every syncable write to an outbox and flush it in the background when online, never blocking a practice session. | FR-SYN-002 | TA-SYN-001, TA-SYN-004 | 5 |
 | `US-2.04` | As the adult, signing in on a new laptop restores all profiles and practice history, so that a lost machine does not cost a year of progress. | FR-SYN-003 | TA-SYN-001, TA-SYN-003 | 3 |
 | `US-2.05` | As the household, my data is protected by row-level security on every table, so that no other account can read it. | FR-SYS-008 | TA-SYN-005 | 2 |

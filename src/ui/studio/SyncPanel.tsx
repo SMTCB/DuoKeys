@@ -1,4 +1,4 @@
-// US-2.02 — the adult's backup panel: email magic link, calm status, sign out.
+// US-2.02 — the adult's backup panel: household username and password, calm status, sign out.
 // Adult-only (TA-SYN-002) and deliberately free of error language about being
 // offline (FR-SYN-005): "waiting to back up" is a state, not a failure.
 
@@ -18,8 +18,9 @@ const STATUS_TEXT: Record<SyncStatus, string> = {
 };
 
 export function SyncPanel() {
-  const { configured, status, email, pending, linkSent, signInProblem, init, signIn, signOut } = useSyncStore();
-  const [address, setAddress] = useState('');
+  const { configured, status, email, pending, linkSent, signInProblem, init, signInWithPassword, signOut } = useSyncStore();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     void init();
@@ -31,7 +32,7 @@ export function SyncPanel() {
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
-    if (address.trim()) void signIn(address);
+    if (username.trim() && password) void signInWithPassword(username, password);
   }
 
   return (
@@ -56,21 +57,35 @@ export function SyncPanel() {
         </p>
       ) : (
         <form onSubmit={onSubmit} style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
-          <label htmlFor="sync-email" style={{ position: 'absolute', left: '-9999px' }}>
-            Your email address
+          <label htmlFor="sync-user" style={{ position: 'absolute', left: '-9999px' }}>
+            Household username
           </label>
           <input
-            id="sync-email"
-            type="email"
+            id="sync-user"
             required
-            autoComplete="email"
-            placeholder="you@example.com"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            style={{ flex: '1 1 14rem', minWidth: 0 }}
+            autoComplete="username"
+            autoCapitalize="none"
+            placeholder="Household username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            style={{ flex: '1 1 10rem', minWidth: 0 }}
+          />
+          <label htmlFor="sync-pass" style={{ position: 'absolute', left: '-9999px' }}>
+            Password
+          </label>
+          <input
+            id="sync-pass"
+            type="password"
+            required
+            minLength={6}
+            autoComplete="current-password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={{ flex: '1 1 10rem', minWidth: 0 }}
           />
           <Button accent="indigo" type="submit">
-            Email me a sign-in link
+            Sign in or create
           </Button>
         </form>
       )}

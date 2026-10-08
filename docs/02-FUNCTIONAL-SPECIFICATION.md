@@ -570,12 +570,11 @@ invent them algorithmically — bad fingering advice is worse than none.
 
 ## 6. Accounts and sync
 
-### FR-SYN-001 — Passwordless adult account (`M`)
+### FR-SYN-001 — Household account (`M`)
 
 **Realised by:** `TA-SYN-002`
 
-Email magic link. One account per household, owned by the adult. The child never
-has credentials.
+One shared household login: a username and password the adult types once per device (the first use of a username creates the account). The child never has credentials. The username is wrapped in an address that cannot receive mail (`name@household.duokeys`) because Supabase Auth wants an email; the password is hashed by Supabase Auth, not stored by the app.
 
 ### FR-SYN-002 — Background sync (`M`)
 

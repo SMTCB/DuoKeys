@@ -218,6 +218,7 @@ grading.
 | `TS-U-CNT-049` | `parseMusicXmlWithReport` lists overlong and short bars and whether a tempo was found; `withTempo` writes a clamped tempo | TA-CNT-001, FR-STU-017 |
 | `TS-U-CNT-050` | `omrClient` reports "not running" without throwing, posts the file under its name, unzips the result and turns a refusal into a plain message | TA-CNT-007, FR-STU-017 |
 | `TS-U-CNT-051` | `detectKey` finds G major and A minor from short tunes, says nothing about a handful of notes and spells flat keys with flats; `transposeArrangement` moves every note without touching the original and `transposeLimits` stops at the keyboard edges | TA-REN-003, FR-STU-016 |
+| `TS-U-SYN-010` | A household username becomes one stable mail-proof address (case and spaces ignored) and is shown back plainly | TA-SYN-002, FR-SYN-001 |
 | `TS-U-CNT-052` | `layoutScore` puts E4 and G2 on the bottom lines, spells black keys as asked, spaces notes by time, splits hands at middle C and lists the played track's groups in matcher order | TA-REN-003, FR-STU-016 |
 | `TS-U-CNT-045` | `pickFreePlay` stays in a chosen key, and `sameProgressionInKey` finds the same degrees in another key and nothing for a typed-in progression | TA-CNT-007, FR-STU-015, FR-STU-018 |
 | `TS-U-CNT-044` | A styled progression puts each chord marker on notes of that chord even when the chords are not evenly spaced in the file (`I-IV-V`) | TA-CNT-006, FR-STU-015 |

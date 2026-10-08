@@ -117,7 +117,7 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-CON-002 beginner catalogue | M | TA-CNT-003 | US-2.09 | TS-U-CNT-012, TS-M-006 |
 | FR-CON-003 segmentation | M | TA-CNT-001 | US-2.07 | TS-U-CNT-007, 008 |
 | FR-CON-004 licence gate | M | TA-CNT-005 | US-2.08 | TS-U-CNT-009, 010 |
-| FR-SYN-001 auth | M | TA-SYN-002 | US-1.03, US-2.02 (built) | TS-I-SYN-004 (DB-level, passes) |
+| FR-SYN-001 auth | M | TA-SYN-002 | US-1.03, US-2.02 (built) | TS-I-SYN-004 (DB-level, passes), TS-U-SYN-010 |
 | FR-SYN-002 background sync | M | TA-SYN-001/004/007 | US-2.03 (built) | TS-I-SYN-001…003 (pass), 009 |
 | FR-SYN-003 device restore | M | TA-SYN-001/007 | US-2.04 (built) | TS-I-SYN-005 (pass), TS-E-009 |
 | FR-SYN-004 sync status | S | TA-SYN-004 | US-4.11 | — |

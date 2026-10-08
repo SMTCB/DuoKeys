@@ -16,6 +16,7 @@ class ScriptedBackend implements SyncBackend {
   remote: PulledChange[] = [];
   pullCalls: Cursor[] = [];
   async signIn(): Promise<void> {}
+  async signInWithPassword(): Promise<void> {}
   async signOut(): Promise<void> {}
   async currentUser() {
     return this.user;

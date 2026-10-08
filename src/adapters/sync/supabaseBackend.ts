@@ -55,6 +55,11 @@ export function isPermanentRejection(error: PostgrestFailure): boolean {
   return /^2[23]/.test(error.code ?? '');
 }
 
+/** The household login is a username; Supabase Auth wants an email, so the username is wrapped in one that can never receive mail. */
+export const HOUSEHOLD_DOMAIN = 'household.duokeys';
+export const householdEmail = (username: string): string => `${username.trim().toLowerCase().replace(/\s+/g, '')}@${HOUSEHOLD_DOMAIN}`;
+export const displayName = (email: string): string => email.replace(new RegExp(`@${HOUSEHOLD_DOMAIN}$`), '');
+
 export class SupabaseBackend implements SyncBackend {
   private readonly client: SupabaseClient;
   private readonly redirectTo: string | undefined;
@@ -74,6 +79,17 @@ export class SupabaseBackend implements SyncBackend {
       options: this.redirectTo === undefined ? {} : { emailRedirectTo: this.redirectTo },
     });
     if (error) throw new Error(error.message);
+  }
+
+  async signInWithPassword(username: string, password: string): Promise<void> {
+    const email = householdEmail(username);
+    const signedIn = await this.client.auth.signInWithPassword({ email, password });
+    if (!signedIn.error) return;
+    if (!/invalid login credentials/i.test(signedIn.error.message)) throw new Error(signedIn.error.message);
+    // Either a wrong password or a first visit: try to create the account; an existing one refuses.
+    const created = await this.client.auth.signUp({ email, password });
+    if (created.error) throw new Error(/already|registered/i.test(created.error.message) ? 'wrong password' : created.error.message);
+    if (!created.data.session) throw new Error('email confirmation is on');
   }
 
   async signOut(): Promise<void> {
