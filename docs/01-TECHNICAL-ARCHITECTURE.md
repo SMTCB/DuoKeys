@@ -1552,6 +1552,17 @@ of what that artifact specifies.
   surfaces read only `--play-*` and ink: `FallingNotesCanvas` (ink hit line), `ChordKeybed`
   and the scrolling score's now-marker. Emoji avatars on the family screen are the user's
   own choice and stay.
+- **Pop restyle, second pass (`US-3.24`).** The quest map is `tone="bold"`: cream stop
+  cards with an ink outline and one large rounded corner, round nodes cycling tomato,
+  mustard, cornflower and peach (the reward node is ink with a mustard star, a locked node
+  is grey with a dashed card) and a dashed ink trail. `ResultCard` (`src/ui/shared`)
+  replaces the plain completion card on Explorer play, Studio play, chord progressions and
+  song play: a role-coloured block with the stars in a cream pill, the score as the title
+  and two decorative `PopShape`s, with actions in a cream strip below. It appears only
+  after the attempt, so the practice surface is still calm while playing. `EmptyState`
+  gives the empty Studio lists (songs, progressions, library search) three shapes beside a
+  title and a hint; the not-found page uses the same shapes. The doc set's `_doc.css` and
+  the Build Board take the same palette and type.
 
 ---
 

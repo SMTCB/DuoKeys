@@ -23,7 +23,7 @@ import { MidiChooser } from '../../../../ui/shared/MidiChooser';
 import { Segmented } from '../../../../ui/shared/Segmented';
 import { Pill } from '../../../../ui/shared/Pill';
 import controls from '../../../../ui/shared/Controls.module.css';
-import stage from '../../../../ui/shared/Stage.module.css';
+import { ResultCard } from '../../../../ui/shared/ResultCard';
 import type { Arrangement, Track } from '../../../../core/content/types';
 import { ticksPerMeasure } from '../../../../core/content/toMusicXml';
 import { asTicks } from '../../../../core/time/types';
@@ -404,15 +404,11 @@ export default function StudioPlayPage() {
       )}
 
       {attemptStatus === 'complete' && grade && (
-        <Card>
-          <div className={stage.stars} aria-label={`${grade.stars} stars`}>
-            {'⭐'.repeat(grade.stars)}
-          </div>
-          <p className={stage.title}>{Math.round(grade.accuracy * 100)}% of the notes</p>
+        <ResultCard stars={grade.stars} title={`${Math.round(grade.accuracy * 100)}% of the notes`}>
           <p>You are {describeRushDrag(grade.rushDragMs)}.</p>
           {describeArticulation(grade) && <p>{describeArticulation(grade)}</p>}
           {grade.evennessCv !== undefined && <p>{describeEvenness(grade.evennessCv)}</p>}
-        </Card>
+        </ResultCard>
       )}
     </PageShell>
   );

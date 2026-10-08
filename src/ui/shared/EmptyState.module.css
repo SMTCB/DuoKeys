@@ -1,0 +1,41 @@
+/* US-3.24 / ADR-012 — a cream panel with a dashed ink outline: "a space
+   waiting to be filled", not an error. */
+.empty {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 2px dashed var(--app-ink-faint);
+  border-radius: var(--r-lg);
+  background: var(--app-surface);
+  color: var(--app-ink);
+}
+
+.shapes {
+  flex: none;
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.small {
+  margin-bottom: 4px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.title {
+  font-family: var(--display);
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.hint {
+  font-size: 0.92rem;
+  color: var(--app-ink-soft);
+}

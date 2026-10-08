@@ -4,8 +4,23 @@
     {
       "name": "duokeys-dev",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3000
+    },
+    {
+      "name": "docs-static",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4310",
+        "--directory",
+        "docs/html"
+      ],
+      "port": 4310
     }
   ]
 }

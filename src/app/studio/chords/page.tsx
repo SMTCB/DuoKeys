@@ -26,6 +26,7 @@ import { Button } from '../../../ui/shared/Button';
 import { ChordKeybed } from '../../../ui/shared/ChordKeybed';
 import { Segmented } from '../../../ui/shared/Segmented';
 import { Pill } from '../../../ui/shared/Pill';
+import { EmptyState } from '../../../ui/shared/EmptyState';
 import styles from './chords.module.css';
 
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -373,7 +374,7 @@ export default function ChordExplorerPage() {
             <h2 className={styles.cardTitle}>
               My progressions <span className={styles.count}>{myProgressions.length}</span>
             </h2>
-            {myProgressions.length === 0 && <p className={styles.sub}>Nothing yet — add one above.</p>}
+            {myProgressions.length === 0 && <EmptyState title="Nothing yet">Add a progression above and it will wait here.</EmptyState>}
             <div>
               {myProgressions.map((progression) => (
                 <div key={progression.id} className={styles.progRow}>

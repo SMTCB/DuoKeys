@@ -12,6 +12,7 @@ import { SONG_LEVEL_LABEL, searchSongs, songLevel, stylesOf, type SongEntry, typ
 import { PageShell } from '../../../ui/shared/PageShell';
 import { StatusNote } from '../../../ui/shared/StatusNote';
 import { Pill } from '../../../ui/shared/Pill';
+import { EmptyState } from '../../../ui/shared/EmptyState';
 import css from '../../../ui/shared/ListRow.module.css';
 import { Button } from '../../../ui/shared/Button';
 
@@ -139,6 +140,7 @@ export default function SongLibraryPage() {
               ? `Showing the first ${MAX_SHOWN} of ${found.length} — type more to narrow it down.`
               : `${found.length} found.`}
         </p>
+        {found.length === 0 && <EmptyState title="No songs found">Try a shorter search, or set the level back to All levels.</EmptyState>}
         <ul className={css.list}>
         {found.slice(0, MAX_SHOWN).map((s) => (
           <SongRow

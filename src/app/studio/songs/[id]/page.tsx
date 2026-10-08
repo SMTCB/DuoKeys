@@ -19,7 +19,7 @@ import { PageShell } from '../../../../ui/shared/PageShell';
 import { StatusNote } from '../../../../ui/shared/StatusNote';
 import { Card } from '../../../../ui/shared/Card';
 import { MidiChooser } from '../../../../ui/shared/MidiChooser';
-import stage from '../../../../ui/shared/Stage.module.css';
+import { ResultCard } from '../../../../ui/shared/ResultCard';
 import type { Arrangement } from '../../../../core/content/types';
 import { describeRushDrag } from '../../../../core/grade/grade';
 
@@ -122,13 +122,9 @@ export default function StudioSongPage() {
       )}
 
       {attemptStatus === 'complete' && grade && (
-        <Card>
-          <div className={stage.stars} aria-label={`${grade.stars} stars`}>
-            {'⭐'.repeat(grade.stars)}
-          </div>
-          <p className={stage.title}>{Math.round(grade.accuracy * 100)}% of the notes</p>
+        <ResultCard stars={grade.stars} title={`${Math.round(grade.accuracy * 100)}% of the notes`}>
           <p>You are {describeRushDrag(grade.rushDragMs)}.</p>
-        </Card>
+        </ResultCard>
       )}
     </PageShell>
   );

@@ -16,13 +16,13 @@ import { useSessionStore, type PracticeMode } from '../../../../runtime/stores/s
 import { useSessionArcStore } from '../../../../runtime/stores/sessionArcStore';
 import { getAdapters } from '../../../../runtime/bootstrap';
 import { FallingNotesCanvas } from '../../../../ui/falling/FallingNotesCanvas';
-import { RewardBurst } from '../../../../ui/shared/RewardBurst';
 import { PageShell } from '../../../../ui/shared/PageShell';
 import { StatusNote } from '../../../../ui/shared/StatusNote';
 import { Card } from '../../../../ui/shared/Card';
 import { Button } from '../../../../ui/shared/Button';
 import { MidiChooser } from '../../../../ui/shared/MidiChooser';
 import stage from '../../../../ui/shared/Stage.module.css';
+import { ResultCard } from '../../../../ui/shared/ResultCard';
 import type { Arrangement } from '../../../../core/content/types';
 
 export default function ExplorerPlayPage() {
@@ -164,23 +164,24 @@ export default function ExplorerPlayPage() {
       )}
 
       {attemptStatus === 'complete' && grade && (
-        <Card>
-          <div className={stage.stage}>
-            <RewardBurst />
-            <div className={stage.stars}>{'⭐'.repeat(grade.stars) || 'Try this one again!'}</div>
-          </div>
-          {arcActive && (
-            <Button
-              accent="amber"
-              onClick={() => {
-                advanceArc();
-                router.push(`/explorer/${arrangement.id}/session`);
-              }}
-            >
-              Continue your session
-            </Button>
-          )}
-        </Card>
+        <ResultCard
+          stars={grade.stars}
+          title={grade.stars >= 3 ? 'Amazing playing!' : grade.stars === 2 ? 'Great playing!' : 'You did it!'}
+          hasBurst
+          actions={
+            arcActive ? (
+              <Button
+                accent="amber"
+                onClick={() => {
+                  advanceArc();
+                  router.push(`/explorer/${arrangement.id}/session`);
+                }}
+              >
+                Continue your session
+              </Button>
+            ) : undefined
+          }
+        />
       )}
     </PageShell>
   );

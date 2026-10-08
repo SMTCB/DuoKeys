@@ -7,9 +7,8 @@
   padding: 1.5rem;
   text-align: center;
   background: var(--app-surface);
-  border: 1px solid var(--app-line);
+  border: 2px solid var(--app-ink);
   border-radius: var(--r-xl);
-  box-shadow: 0 8px 20px rgba(36, 38, 43, 0.06);
 }
 
 .bigNote {
@@ -133,4 +132,12 @@
   align-items: center;
   justify-content: center;
   width: 100%;
+}
+
+/* US-3.24 — the shape cluster on the "no page here" screen (a navigation
+   surface; never used on a practice screen). */
+.popCluster {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
 }

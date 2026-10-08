@@ -1,10 +1,15 @@
+/* US-3.24 / ADR-012 — the quest map is a navigation surface, so it is bold:
+   each stop is a cream card with an ink outline that presses into a hard ink
+   shadow, and its node is a colour block from the Pop palette. State is
+   always carried by text too ("Start here", "Locked", "Play again"), never by
+   colour alone (NFR-008). */
 .path {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
 .step {
@@ -22,75 +27,98 @@
   padding-left: 12%;
 }
 
-/* The dotted trail between stops. */
+/* The trail between stops: a chunky ink dash. */
 .step:not(:last-child)::after {
   content: '';
   position: absolute;
   left: 50%;
   top: 100%;
-  height: 1.25rem;
-  border-left: 3px dotted var(--amber-tint-2);
+  height: 1.5rem;
+  border-left: 4px dashed var(--app-ink);
+  opacity: 0.35;
 }
 
 .stop {
   display: flex;
   align-items: center;
   gap: 0.9rem;
-  min-height: 72px;
+  min-height: 76px;
   max-width: 100%;
-  padding: 0.75rem 1.1rem 0.75rem 0.75rem;
+  padding: 0.7rem 1.2rem 0.7rem 0.7rem;
   background: var(--app-surface);
-  border: 1px solid var(--app-line);
-  border-radius: 99px;
-  box-shadow: 0 8px 20px rgba(36, 38, 43, 0.06);
+  border: 2px solid var(--app-ink);
+  border-radius: var(--r-lg);
+  box-shadow: var(--press-shadow);
   color: var(--app-ink);
   text-decoration: none;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.left .stop {
+  border-top-left-radius: var(--r-pop);
+}
+
+.right .stop {
+  border-top-right-radius: var(--r-pop);
 }
 
 a.stop:hover {
-  border-color: var(--role);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 var(--app-ink);
+}
+
+a.stop:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--app-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stop {
+    transition: none;
+  }
+  a.stop:hover,
+  a.stop:active {
+    transform: none;
+  }
 }
 
 .node {
+  position: relative;
   flex: none;
-  width: 48px;
-  height: 48px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
+  border: 2px solid var(--app-ink);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--display);
-  font-weight: 800;
-  font-size: 1.2rem;
-  background: var(--amber-tint);
-  color: var(--amber-deep);
+  font-size: 1.35rem;
+  background: var(--node-bg, var(--mustard));
+  color: var(--node-on, var(--app-ink));
 }
 
-.done .node {
-  background: var(--amber);
-  color: var(--on-amber);
-}
-
-.current .node {
-  background: var(--amber);
-  color: var(--on-amber);
-  box-shadow: 0 0 0 5px var(--amber-tint-2);
-}
-
+/* "Start here" gets a mustard flag, the strongest call on the page. */
 .current .stop {
-  border: 2px solid var(--amber);
+  background: var(--mustard);
+}
+
+.current .sub {
+  color: var(--app-ink);
+  font-weight: 800;
 }
 
 .locked .stop {
   background: var(--app-surface-2);
+  border-style: dashed;
   box-shadow: none;
   color: var(--app-ink-soft);
 }
 
 .locked .node {
-  background: var(--app-line);
-  color: var(--app-ink-soft);
-  font-size: 1rem;
+  --node-bg: var(--app-line);
+  --node-on: var(--app-ink-soft);
+  border-style: dashed;
 }
 
 .text {
@@ -102,12 +130,13 @@ a.stop:hover {
 
 .label {
   font-family: var(--display);
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
+  line-height: 1.15;
 }
 
 .sub {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  font-weight: 700;
   color: var(--app-ink-soft);
 }
 

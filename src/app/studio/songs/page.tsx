@@ -23,6 +23,7 @@ import { StatusNote } from '../../../ui/shared/StatusNote';
 import { Card } from '../../../ui/shared/Card';
 import { Button } from '../../../ui/shared/Button';
 import { Pill } from '../../../ui/shared/Pill';
+import { EmptyState } from '../../../ui/shared/EmptyState';
 import { LibraryControl } from '../../../ui/studio/LibraryControl';
 import { ScanReview, type ScanSummary } from '../../../ui/studio/ScanReview';
 import css from '../../../ui/shared/ListRow.module.css';
@@ -385,7 +386,7 @@ export default function SongsHubPage() {
       <section aria-label="My songs" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         <h2>My songs ({total})</h2>
         {justAdded && <p role="status">✓ “{justAdded}” is saved in My songs.</p>}
-        {total === 0 && <p>Nothing here yet. Pick one of the options above.</p>}
+        {total === 0 && <EmptyState title="Nothing here yet">Pick one of the options above to add a song.</EmptyState>}
         <ul className={css.list}>
           {customSongs.map((s) => (
             <li key={s.id} className={css.row}>

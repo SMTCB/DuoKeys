@@ -197,6 +197,7 @@ Note Ninja, styling.
 | `US-3.21` | As a user, I see the DuoKeys logo and my role colour (amber Explorer, indigo Studio) on every screen, and every screen (the homes, quest map, play screens, falling notes, sight-reading, practice, song library, chord explorer, backup panel, loading and not-found pages) uses the same picture cards, pill choices and form controls, so that the app looks like the approved design instead of plain boxes. | — | TA-APP-006 | 3 |
 | `US-3.22` | As an adult, I can open Studio and find three tracks (Learn, Free play, Songs); get an easy progression and rhythm suggested with one tap; and add a song that is not in the library, by pasting its chords or importing a MIDI or MusicXML file, and find it again in "my songs", so that I can sit down, unwind and still learn the songs I care about. | FR-STU-017, FR-STU-018, FR-STU-019 | TA-APP-003, TA-CNT-007 | 5 |
 | `US-3.23` | As a user, I see a bolder, playful look (a cream ground, colour-block tiles in tomato, mustard, peach and cornflower, chunky display type and ink outlines) on the family screen and the Explorer and Studio homes, while every screen with the piano, falling notes or a score stays calm and uses only one note colour per role, so that the app feels inviting without making the practice screens hard to read. | — | TA-APP-006 | 3 |
+| `US-3.24` | As a user, I see the same playful look carried onto the quest map (cream stop cards with colour nodes and a dashed trail), the result card after a piece (a role-coloured block with stars and flat shapes), the empty lists in Studio and the not-found page, while the practice screens stay calm, so that the bold look reaches every reward and navigation moment and not only the homes. | — | TA-APP-006 | 3 |
 
 **Exit criteria**
 - You use it for your own practice for a week and prefer it to the alternative.
@@ -257,10 +258,10 @@ original brief is delivered.
 | 0 | Hardware spike | 6 | 1–2 days |
 | 1 | Walking skeleton | 34 | ~1 week |
 | 2 | Child's loop | 60 | ~2 weeks |
-| 3 | Adult's loop | 79 | ~2 weeks |
+| 3 | Adult's loop | 82 | ~2 weeks |
 | 4 | Duet & dashboard | 35 | ~2 weeks |
 | 5 | iPad (optional) | 16 | ~1 week |
-| | **v1 total (0–4)** | **214** | **~7 weeks** |
+| | **v1 total (0–4)** | **217** | **~7 weeks** |
 
 Points are load-bearing only *within* a sprint; the calendar estimates assume
 part-time evening work, which is the realistic mode for this project.

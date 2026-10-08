@@ -26,8 +26,8 @@ import { StatusNote } from '../../../../../ui/shared/StatusNote';
 import { Card } from '../../../../../ui/shared/Card';
 import { Button } from '../../../../../ui/shared/Button';
 import { MidiChooser } from '../../../../../ui/shared/MidiChooser';
-import stage from '../../../../../ui/shared/Stage.module.css';
 import { Segmented } from '../../../../../ui/shared/Segmented';
+import { ResultCard } from '../../../../../ui/shared/ResultCard';
 import { progressionToArrangement } from '../../../../../core/content/progressionArrangement';
 import {
   CHORD_STYLES,
@@ -324,15 +324,17 @@ export default function ChordProgressionPlayPage() {
       )}
 
       {attemptStatus === 'complete' && grade && (
-        <Card>
-          <div className={stage.stars} aria-label={`${grade.stars} stars`}>
-            {'⭐'.repeat(grade.stars)}
-          </div>
-          <p className={stage.title}>Round finished — {Math.round(grade.accuracy * 100)}% of the chord notes</p>
-          <Button accent="indigo" onClick={() => void start()}>
-            Play it again
-          </Button>
-        </Card>
+        <ResultCard
+          stars={grade.stars}
+          title={`${Math.round(grade.accuracy * 100)}% of the chord notes`}
+          actions={
+            <Button accent="indigo" onClick={() => void start()}>
+              Play it again
+            </Button>
+          }
+        >
+          <p>Round finished.</p>
+        </ResultCard>
       )}
     </PageShell>
   );

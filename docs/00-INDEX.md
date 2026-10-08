@@ -1138,3 +1138,18 @@ tests, typecheck and lint pass. Not checked: the family screen with profiles on 
 falling notes and score while playing (they need a connected piano). Still to do in a
 second pass: the quest map, result cards and empty states, and redrawing the Design
 Reference mockups.
+
+## Update — Pop restyle, second pass (2026-10-08)
+
+`US-3.24` under `TA-APP-006`, no FR, no ADR (`ADR-012` already allows hues on navigation
+and reward surfaces). The quest map is bold (cream stop cards, colour nodes, a dashed
+trail); a new `ResultCard` replaces the plain completion card on the four play screens
+that grade; a new `EmptyState` fills the empty Studio lists; the not-found page uses Pop
+shapes. The doc set's `docs/html/_doc.css` and the Build Board artifact are restyled in the
+same palette and type, with the Build Board's status line rewritten as readable sentences.
+Typecheck, lint and 354 unit tests pass. Checked in the browser: the quest map (current
+and locked stops) at desktop and 375 px, the Explorer and Studio result cards, the songs
+empty state, the not-found page and the doc pages in light and dark. Not checked: a done
+or reward quest stop (needs attempts) and the result card reached by actually playing
+(needs the piano). The Songs screen's option tiles still use emoji pictures; left for a
+later pass.

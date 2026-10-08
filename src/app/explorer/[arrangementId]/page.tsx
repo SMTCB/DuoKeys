@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useSessionStore } from '../../../runtime/stores/sessionStore';
@@ -17,7 +17,13 @@ import type { Arrangement } from '../../../core/content/types';
 import type { Attempt } from '../../../core/data/attempt';
 import { PageShell } from '../../../ui/shared/PageShell';
 import { StatusNote } from '../../../ui/shared/StatusNote';
+import { POP_FILL, POP_ON } from '../../../ui/shared/PopShape';
+import type { PopColour } from '../../../ui/shared/PopShape';
 import styles from './quest.module.css';
+
+// US-3.24 / ADR-012 — the quest map is a navigation surface: each stop's node
+// takes the next palette colour, so the path reads as a run of bright beads.
+const NODE_COLOURS: readonly PopColour[] = ['tomato', 'mustard', 'cornflower', 'peach'];
 
 export default function ExplorerMapPage() {
   const params = useParams<{ arrangementId: string }>();
@@ -55,7 +61,7 @@ export default function ExplorerMapPage() {
   const currentId = progress.find((p) => p.unlocked && !p.attempted)?.sectionId;
 
   return (
-    <PageShell>
+    <PageShell tone="bold">
       <h1>Quest Map</h1>
       <ol className={styles.path}>
         {progress.map((p, i) => {
@@ -64,9 +70,15 @@ export default function ExplorerMapPage() {
           const isReward = p.kind === 'reward';
           const isCurrent = p.sectionId === currentId;
           const stateClass = !p.unlocked ? styles.locked : isCurrent ? styles.current : p.attempted ? styles.done : styles.open;
+          const nodeColour = isReward ? 'ink' : NODE_COLOURS[i % NODE_COLOURS.length] ?? 'mustard';
+          // Locked stops stay grey (the stylesheet's dashed look); only open stops take a colour.
+          const nodeStyle = !p.unlocked ? undefined : {
+            ['--node-bg' as string]: POP_FILL[nodeColour],
+            ['--node-on' as string]: isReward ? 'var(--mustard)' : POP_ON[nodeColour],
+          } as CSSProperties;
           const body = (
             <>
-              <span className={styles.node} aria-hidden="true">
+              <span className={styles.node} aria-hidden="true" style={nodeStyle}>
                 {p.unlocked ? (isReward ? '★' : i + 1) : '🔒'}
               </span>
               <span className={styles.text}>
