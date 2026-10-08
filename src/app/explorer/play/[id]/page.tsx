@@ -23,6 +23,7 @@ import { Button } from '../../../../ui/shared/Button';
 import { MidiChooser } from '../../../../ui/shared/MidiChooser';
 import stage from '../../../../ui/shared/Stage.module.css';
 import { ResultCard } from '../../../../ui/shared/ResultCard';
+import { usePieceTitle } from '../../../../ui/shared/usePieceTitle';
 import type { Arrangement } from '../../../../core/content/types';
 
 export default function ExplorerPlayPage() {
@@ -74,6 +75,7 @@ export default function ExplorerPlayPage() {
     };
   }, [params.id]);
 
+  const pieceTitle = usePieceTitle(arrangement?.pieceId);
   const track = arrangement?.tracks[0];
   // Sequential distinct groupIds, in the same order WaitMatcher.expect() saw
   // them (notes are already tick-sorted) — this is what lets a numeric
@@ -96,7 +98,7 @@ export default function ExplorerPlayPage() {
       <Link href={`/explorer/${arrangement.id}`} className={stage.back}>
         ← Quest map
       </Link>
-      <h1>{arrangement.id}</h1>
+      <h1>{pieceTitle ?? arrangement.id}</h1>
 
       {attemptStatus === 'idle' && (
         <Card>

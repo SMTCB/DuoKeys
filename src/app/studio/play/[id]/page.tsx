@@ -24,6 +24,7 @@ import { Segmented } from '../../../../ui/shared/Segmented';
 import { Pill } from '../../../../ui/shared/Pill';
 import controls from '../../../../ui/shared/Controls.module.css';
 import { ResultCard } from '../../../../ui/shared/ResultCard';
+import { usePieceTitle } from '../../../../ui/shared/usePieceTitle';
 import type { Arrangement, Track } from '../../../../core/content/types';
 import { ticksPerMeasure } from '../../../../core/content/toMusicXml';
 import { asTicks } from '../../../../core/time/types';
@@ -217,13 +218,14 @@ export default function StudioPlayPage() {
   const sharps = detectedKey ? prefersSharps((detectedKey.tonicPitchClass + semitones + 120) % 12, detectedKey.mode) : true;
 
   const shownView: StudioView = view;
+  const pieceTitle = usePieceTitle(arrangement?.pieceId);
 
   if (loadError) return <PageShell><StatusNote tone="problem">Could not load this piece: {loadError}</StatusNote></PageShell>;
   if (!arrangement || !track) return <PageShell><StatusNote /></PageShell>;
 
   return (
     <PageShell>
-      <h1>{customTitle ?? (arrangementId.startsWith('mutopia-') ? (arrangement.sections[0]?.label ?? arrangement.id) : arrangement.id)}</h1>
+      <h1>{customTitle ?? (arrangementId.startsWith('mutopia-') ? (arrangement.sections[0]?.label ?? arrangement.id) : (pieceTitle ?? arrangement.id))}</h1>
 
       {attemptStatus === 'idle' && (
         <Card>
