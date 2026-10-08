@@ -34,8 +34,8 @@ export interface StorageBackend {
 
 export interface SyncBackend {
   signIn(email: string): Promise<void>; // passwordless link
-  /** Household username + password; creates the account the first time that username is used. */
-  signInWithPassword(username: string, password: string): Promise<void>;
+  /** Household username + 4–6 digit PIN; creates the account the first time that username is used. */
+  signInWithPassword(username: string, pin: string): Promise<void>;
   signOut(): Promise<void>;
   currentUser(): Promise<SyncUser | null>;
   push(ops: OutboxOp[]): Promise<PushResult>;

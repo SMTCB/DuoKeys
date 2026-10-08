@@ -24,7 +24,7 @@ interface SyncState {
 
   init(): Promise<void>;
   signIn(email: string): Promise<void>;
-  signInWithPassword(username: string, password: string): Promise<void>;
+  signInWithPassword(username: string, pin: string): Promise<void>;
   signOut(): Promise<void>;
   syncNow(): Promise<void>;
 }
@@ -105,20 +105,20 @@ export const useSyncStore = create<SyncState>((set, get) => ({
     }
   },
 
-  async signInWithPassword(username: string, password: string): Promise<void> {
+  async signInWithPassword(username: string, pin: string): Promise<void> {
     set({ signInProblem: undefined });
     try {
-      await getAdapters().sync.signInWithPassword(username, password);
+      await getAdapters().sync.signInWithPassword(username, pin);
       await get().syncNow();
     } catch (err) {
       const message = err instanceof Error ? err.message : '';
       set({
         signInProblem: /wrong password/.test(message)
-          ? 'That username is taken with a different password. Try the password again.'
+          ? 'That name is already used with a different PIN. Try the PIN again.'
           : /confirmation/.test(message)
             ? 'The backup account needs one setting changed in Supabase (turn off "Confirm email"). See the setup notes.'
             : /password/i.test(message) && /least|short|weak/i.test(message)
-              ? 'Pick a password with at least 6 characters.'
+              ? 'Use a PIN of 4 to 6 digits.'
               : 'Could not sign in. Check your connection, then try again.',
       });
     }

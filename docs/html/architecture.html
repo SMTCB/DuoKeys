@@ -200,8 +200,8 @@
 
 <b>export interface</b> <u>SyncBackend</u> {
   <s>signIn</s>(email: string): Promise&lt;void&gt;;             <i>// passwordless link</i>
-  /** Household username + password; creates the account the first time that username is used. */
-  <s>signInWithPassword</s>(username: string, password: string): Promise&lt;void&gt;;
+  /** Household username + 4–6 digit PIN; creates the account the first time that username is used. */
+  <s>signInWithPassword</s>(username: string, pin: string): Promise&lt;void&gt;;
   <s>signOut</s>(): Promise&lt;void&gt;;
   <s>currentUser</s>(): Promise&lt;<u>SyncUser</u> | null&gt;;
   <s>push</s>(ops: <u>OutboxOp</u>[]): Promise&lt;<u>PushResult</u>&gt;;
@@ -633,7 +633,7 @@
 IndexedDB          ◀──pull── Supabase   <i>(only on a fresh device)</i></pre>
 
   <h3 id="TA-SYN-002" data-toc="Auth"><span class="aid">TA-SYN-002</span> Auth</h3>
-  <p>Household username and password (<code>signInWithPassword</code>; magic link remains on the port but the panel no longer offers it), adult only. The child never has credentials. One Supabase user owns all profiles in the household. The username becomes <code>name@household.duokeys</code>, an address that cannot receive mail, so no email service or redirect allow-list is involved; Supabase must have &ldquo;Confirm email&rdquo; turned off.</p>
+  <p>Household family name and 4–6 digit PIN (<code>signInWithPassword</code>, PIN padded to <code>duokeys-&lt;pin&gt;</code>; magic link remains on the port but the panel no longer offers it), adult only. The child never has credentials. One Supabase user owns all profiles in the household. The username becomes <code>name@household.duokeys</code>, an address that cannot receive mail, so no email service or redirect allow-list is involved; Supabase must have &ldquo;Confirm email&rdquo; turned off.</p>
 
   <h3 id="TA-SYN-003" data-toc="Conflict policy"><span class="aid">TA-SYN-003</span> Conflict policy</h3>
   <div class="tw"><table>
@@ -677,7 +677,7 @@ IndexedDB          ◀──pull── Supabase   <i>(only on a fresh device)</i
     <li><code>attempts.grade</code> and <code>attempts.events</code> are <code>jsonb</code> — <code>TA-DAT-002</code> embeds them — so a change to the grade shape needs no server migration.</li>
   </ul>
   <div class="warn"><p><span class="k">Verified</span>Anonymous <code>GET</code>/<code>POST</code> against all four tables is refused (401 / <code>42501</code>). <code>TS-I-SYN-004</code> <strong>passes</strong> at the database level — <code>supabase/tests/rls.sql</code> runs as two authenticated roles in a rolled-back transaction (B sees none of A's rows and cannot write under A's profile; <code>attempts</code> update/delete refused for the owner; stale write skipped, newer applied; anon refused). It does not go through PostgREST/JWT.</p>
-  <p>The <code>SyncBackend</code> adapter (<code>SupabaseBackend</code>, <code>adapters/sync/</code>) and household username/password sign-in (<code>US-2.02</code>, <code>SyncPanel</code> on the Studio screen) are built and selected when <code>NEXT_PUBLIC_SUPABASE_URL</code>/<code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> are set; otherwise <code>FakeSyncBackend</code>. <strong>Not yet verified:</strong> a live end-to-end push/pull with a real signed-in user. Both the local and the deployed site must be built with the same Supabase URL and anon key and signed in with the same household username, which is what makes them one library.</p></div>
+  <p>The <code>SyncBackend</code> adapter (<code>SupabaseBackend</code>, <code>adapters/sync/</code>) and household name and PIN sign-in (<code>US-2.02</code>, <code>SyncPanel</code> on the Studio screen) are built and selected when <code>NEXT_PUBLIC_SUPABASE_URL</code>/<code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> are set; otherwise <code>FakeSyncBackend</code>. <strong>Not yet verified:</strong> a live end-to-end push/pull with a real signed-in user. Both the local and the deployed site must be built with the same Supabase URL and anon key and signed in with the same household username, which is what makes them one library.</p></div>
 
   <!-- ============================================================ 10. Content -->
   <h2 id="content" data-toc="Content pipeline"><span class="num">10</span>Content pipeline</h2>

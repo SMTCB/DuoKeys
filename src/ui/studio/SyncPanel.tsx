@@ -1,4 +1,4 @@
-// US-2.02 — the adult's backup panel: household username and password, calm status, sign out.
+// US-2.02 — the adult's backup panel: household name and PIN, calm status, sign out.
 // Adult-only (TA-SYN-002) and deliberately free of error language about being
 // offline (FR-SYN-005): "waiting to back up" is a state, not a failure.
 
@@ -20,7 +20,7 @@ const STATUS_TEXT: Record<SyncStatus, string> = {
 export function SyncPanel() {
   const { configured, status, email, pending, linkSent, signInProblem, init, signInWithPassword, signOut } = useSyncStore();
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [pin, setPin] = useState('');
 
   useEffect(() => {
     void init();
@@ -32,14 +32,14 @@ export function SyncPanel() {
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
-    if (username.trim() && password) void signInWithPassword(username, password);
+    if (username.trim() && /^\d{4,6}$/.test(pin)) void signInWithPassword(username, pin);
   }
 
   return (
     <Card>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
         <span aria-hidden="true" style={{ display: 'grid', placeItems: 'center', width: '2.5rem', height: '2.5rem', borderRadius: 'var(--r-md)', background: 'var(--indigo-tint, var(--role-tint))', fontSize: '1.25rem' }}>☁️</span>
-        <strong style={{ fontFamily: 'var(--display)', fontSize: '1.05rem' }}>Backup and other devices</strong>
+        <strong style={{ fontFamily: 'var(--display)', fontSize: '1.05rem' }}>{isSignedIn ? 'Backup and other devices' : 'Sign in'}</strong>
       </div>
       {isSignedIn ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
@@ -58,34 +58,36 @@ export function SyncPanel() {
       ) : (
         <form onSubmit={onSubmit} style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
           <label htmlFor="sync-user" style={{ position: 'absolute', left: '-9999px' }}>
-            Household username
+            Family name
           </label>
           <input
             id="sync-user"
             required
             autoComplete="username"
             autoCapitalize="none"
-            placeholder="Household username"
+            placeholder="Family name"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             style={{ flex: '1 1 10rem', minWidth: 0 }}
           />
           <label htmlFor="sync-pass" style={{ position: 'absolute', left: '-9999px' }}>
-            Password
+            PIN
           </label>
           <input
             id="sync-pass"
             type="password"
+            inputMode="numeric"
             required
-            minLength={6}
+            pattern="[0-9]{4,6}"
+            maxLength={6}
             autoComplete="current-password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            placeholder="PIN (4–6 digits)"
+            value={pin}
+            onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
             style={{ flex: '1 1 10rem', minWidth: 0 }}
           />
           <Button accent="indigo" type="submit">
-            Sign in or create
+            Enter
           </Button>
         </form>
       )}

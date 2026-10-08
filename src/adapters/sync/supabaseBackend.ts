@@ -58,6 +58,8 @@ export function isPermanentRejection(error: PostgrestFailure): boolean {
 /** The household login is a username; Supabase Auth wants an email, so the username is wrapped in one that can never receive mail. */
 export const HOUSEHOLD_DOMAIN = 'household.duokeys';
 export const householdEmail = (username: string): string => `${username.trim().toLowerCase().replace(/\s+/g, '')}@${HOUSEHOLD_DOMAIN}`;
+/** Supabase wants 6+ characters and a PIN has 4, so the PIN is padded with a fixed prefix. This is a family door-latch, not real security. */
+export const householdPassword = (pin: string): string => `duokeys-${pin.trim()}`;
 export const displayName = (email: string): string => email.replace(new RegExp(`@${HOUSEHOLD_DOMAIN}$`), '');
 
 export class SupabaseBackend implements SyncBackend {
@@ -81,8 +83,9 @@ export class SupabaseBackend implements SyncBackend {
     if (error) throw new Error(error.message);
   }
 
-  async signInWithPassword(username: string, password: string): Promise<void> {
+  async signInWithPassword(username: string, pin: string): Promise<void> {
     const email = householdEmail(username);
+    const password = householdPassword(pin);
     const signedIn = await this.client.auth.signInWithPassword({ email, password });
     if (!signedIn.error) return;
     if (!/invalid login credentials/i.test(signedIn.error.message)) throw new Error(signedIn.error.message);

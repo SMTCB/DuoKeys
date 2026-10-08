@@ -574,7 +574,7 @@ invent them algorithmically — bad fingering advice is worse than none.
 
 **Realised by:** `TA-SYN-002`
 
-One shared household login: a username and password the adult types once per device (the first use of a username creates the account). The child never has credentials. The username is wrapped in an address that cannot receive mail (`name@household.duokeys`) because Supabase Auth wants an email; the password is hashed by Supabase Auth, not stored by the app.
+One shared household login on the profile screen: a family name and a 4–6 digit PIN typed once per device (the first use of a name creates the account). It is a family door-latch, not real security. The child never has credentials. The username is wrapped in an address that cannot receive mail (`name@household.duokeys`) because Supabase Auth wants an email; the PIN is padded to a password (`duokeys-1234`) and hashed by Supabase Auth, not stored by the app.
 
 ### FR-SYN-002 — Background sync (`M`)
 

@@ -176,9 +176,9 @@ export default function HomePage() {
       )}
 
       {loaded && isSyncConfigured && (
-        <details open={profiles.length === 0 && !isSyncSignedIn} className="restore">
+        <details open={!isSyncSignedIn} className="restore">
           <summary style={{ minHeight: '44px', display: 'flex', alignItems: 'center', cursor: 'pointer', fontWeight: 600 }}>
-            {profiles.length === 0 ? 'Used DuoKeys on another device? Bring your profiles over' : 'Backup and other devices (grown-ups)'}
+            {isSyncSignedIn ? 'Backup and other devices (grown-ups)' : 'Sign in to share profiles between devices (grown-ups)'}
           </summary>
           <SyncPanel />
         </details>
