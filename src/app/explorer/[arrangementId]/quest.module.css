@@ -4,6 +4,7 @@
    always carried by text too ("Start here", "Locked", "Play again"), never by
    colour alone (NFR-008). */
 .path {
+  position: relative;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -12,9 +13,22 @@
   gap: 1.5rem;
 }
 
+/* The trail: one chunky ink dash down the middle. Every stop is wider than half
+   the column, so the trail runs behind each card and joins them into a path. */
+.path::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 1.5rem;
+  bottom: 1.5rem;
+  border-left: 4px dashed var(--app-ink);
+  opacity: 0.35;
+}
+
 .step {
   display: flex;
   position: relative;
+  z-index: 1;
 }
 
 .left {
@@ -27,23 +41,13 @@
   padding-left: 12%;
 }
 
-/* The trail between stops: a chunky ink dash. */
-.step:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 100%;
-  height: 1.5rem;
-  border-left: 4px dashed var(--app-ink);
-  opacity: 0.35;
-}
-
 .stop {
   display: flex;
   align-items: center;
   gap: 0.9rem;
   min-height: 76px;
-  max-width: 100%;
+  width: min(100%, max(22rem, 62%));
+  box-sizing: border-box;
   padding: 0.7rem 1.2rem 0.7rem 0.7rem;
   background: var(--app-surface);
   border: 2px solid var(--app-ink);
@@ -145,6 +149,7 @@ a.stop:active {
 }
 
 .stars {
-  font-size: 0.95rem;
-  letter-spacing: 0.1em;
+  display: flex;
+  gap: 0.15rem;
+  margin-top: 0.15rem;
 }

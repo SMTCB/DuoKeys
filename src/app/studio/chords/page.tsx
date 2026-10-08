@@ -156,8 +156,8 @@ export default function ChordExplorerPage() {
               {isPianoConnected
                 ? '✓ Piano connected'
                 : midiInputs.length > 0
-                  ? '🎹 Piano found, tap it to connect'
-                  : '🎹 No piano found'}
+                  ? 'Piano found, tap it to connect'
+                  : 'No piano found'}
             </Pill>
           </span>
           {midiInputs.map((input) => (

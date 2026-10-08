@@ -21,24 +21,42 @@
   color: var(--app-ink);
   text-decoration: none;
   background: var(--app-surface);
-  border: 2px solid var(--app-line);
-  border-radius: var(--r-xl);
+  border: 2px solid var(--app-ink);
+  border-radius: var(--r-lg);
+  box-shadow: var(--press-shadow);
   cursor: pointer;
   box-sizing: border-box;
+  transition: transform 120ms ease-out, box-shadow 120ms ease-out;
 }
 
 .tile:hover {
-  border-color: var(--role);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 var(--app-ink);
 }
 
+.tile:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--app-ink);
+}
+
+/* The open way stays pressed in, with a role-colour fill so it reads without hover. */
 .tile[aria-expanded='true'] {
-  border-color: var(--role-deep);
-  box-shadow: inset 0 0 0 1px var(--role-deep);
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--app-ink);
+  background: var(--cream);
+  outline: 3px solid var(--role);
+  outline-offset: 2px;
 }
 
 .icon {
-  font-size: 1.6rem;
-  line-height: 1;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile {
+    transition: none;
+  }
 }
 
 .name {

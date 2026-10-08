@@ -19,11 +19,22 @@ import { PageShell } from '../../../ui/shared/PageShell';
 import { StatusNote } from '../../../ui/shared/StatusNote';
 import { POP_FILL, POP_ON } from '../../../ui/shared/PopShape';
 import type { PopColour } from '../../../ui/shared/PopShape';
+import { StarRow } from '../../../ui/shared/StarRow';
 import styles from './quest.module.css';
 
 // US-3.24 / ADR-012 — the quest map is a navigation surface: each stop's node
 // takes the next palette colour, so the path reads as a run of bright beads.
 const NODE_COLOURS: readonly PopColour[] = ['tomato', 'mustard', 'cornflower', 'peach'];
+
+// A flat padlock instead of the emoji, for locked stops.
+function LockGlyph() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+      <rect x="4" y="11" width="16" height="11" rx="3" fill="currentColor" />
+    </svg>
+  );
+}
 
 export default function ExplorerMapPage() {
   const params = useParams<{ arrangementId: string }>();
@@ -79,7 +90,7 @@ export default function ExplorerMapPage() {
           const body = (
             <>
               <span className={styles.node} aria-hidden="true" style={nodeStyle}>
-                {p.unlocked ? (isReward ? '★' : i + 1) : '🔒'}
+                {p.unlocked ? (isReward ? '★' : i + 1) : <LockGlyph />}
               </span>
               <span className={styles.text}>
                 <span className={styles.label}>{section.label}</span>
@@ -90,9 +101,7 @@ export default function ExplorerMapPage() {
                   {p.unlocked && !isReward && !isCurrent && p.attempted && 'Play again'}
                 </span>
                 {p.attempted && (
-                  <span className={styles.stars} aria-label={`${p.bestStars} stars`}>
-                    {'⭐'.repeat(p.bestStars)}
-                  </span>
+                  <StarRow stars={p.bestStars} className={styles.stars} />
                 )}
               </span>
             </>

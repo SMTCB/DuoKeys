@@ -24,6 +24,7 @@ import { Card } from '../../../ui/shared/Card';
 import { Button } from '../../../ui/shared/Button';
 import { Pill } from '../../../ui/shared/Pill';
 import { EmptyState } from '../../../ui/shared/EmptyState';
+import { PopShape, type PopColour, type PopShapeName } from '../../../ui/shared/PopShape';
 import { LibraryControl } from '../../../ui/studio/LibraryControl';
 import { ScanReview, type ScanSummary } from '../../../ui/studio/ScanReview';
 import css from '../../../ui/shared/ListRow.module.css';
@@ -278,12 +279,12 @@ function RenameForm({
   );
 }
 
-const TILES: { id: OptionId | 'library'; icon: string; name: string; hint: string }[] = [
-  { id: 'library', icon: '📚', name: 'Song library', hint: '570+ piano pieces to search' },
-  { id: 'paste', icon: '📋', name: 'Paste chords', hint: 'From a chord chart you like' },
-  { id: 'midi', icon: '🎹', name: 'Upload MIDI', hint: 'A .mid or .midi file' },
-  { id: 'score', icon: '🎼', name: 'Upload a score', hint: 'MusicXML, PDF or picture' },
-  { id: 'starter', icon: '⭐', name: 'Starter pieces', hint: 'Short pieces to begin with' },
+const TILES: { id: OptionId | 'library'; shape: PopShapeName; colour: PopColour; name: string; hint: string }[] = [
+  { id: 'library', shape: 'square', colour: 'cornflower', name: 'Song library', hint: '570+ piano pieces to search' },
+  { id: 'paste', shape: 'circle', colour: 'tomato', name: 'Paste chords', hint: 'From a chord chart you like' },
+  { id: 'midi', shape: 'quarter', colour: 'mustard', name: 'Upload MIDI', hint: 'A .mid or .midi file' },
+  { id: 'score', shape: 'arch', colour: 'peach', name: 'Upload a score', hint: 'MusicXML, PDF or picture' },
+  { id: 'starter', shape: 'half', colour: 'cornflower', name: 'Starter pieces', hint: 'Short pieces to begin with' },
 ];
 
 export default function SongsHubPage() {
@@ -342,7 +343,7 @@ export default function SongsHubPage() {
           <li key={t.id}>
             {optionId === undefined ? (
               <Link href="/studio/library" className={options.tile}>
-                <span className={options.icon} aria-hidden="true">{t.icon}</span>
+                <PopShape shape={t.shape} colour={t.colour} size={36} className={options.icon} />
                 <span className={options.name}>{t.name}</span>
                 <span className={options.hint}>{t.hint}</span>
               </Link>
@@ -353,7 +354,7 @@ export default function SongsHubPage() {
                 aria-expanded={open === optionId}
                 onClick={() => setOpen((cur) => (cur === optionId ? undefined : optionId))}
               >
-                <span className={options.icon} aria-hidden="true">{t.icon}</span>
+                <PopShape shape={t.shape} colour={t.colour} size={36} className={options.icon} />
                 <span className={options.name}>{t.name}</span>
                 <span className={options.hint}>{t.hint}</span>
               </button>

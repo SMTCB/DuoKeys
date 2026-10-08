@@ -103,9 +103,9 @@ export default function NoteNinjaPage() {
             <NoteStaff pitches={[currentPitch]} />
           </div>
           {lastResult && <RewardBurst />}
-          {lastResult?.band === 'fast' && <span className={stage.bandFast}>Fast! ⚡</span>}
-          {lastResult?.band === 'correct' && <span className={stage.bandCorrect}>Nice! ✅</span>}
-          {lastResult?.band === 'hinted' && <span className={stage.bandHinted}>Got it! ✅</span>}
+          {lastResult?.band === 'fast' && <span className={stage.bandFast}>Fast!</span>}
+          {lastResult?.band === 'correct' && <span className={stage.bandCorrect}>Nice!</span>}
+          {lastResult?.band === 'hinted' && <span className={stage.bandHinted}>Got it!</span>}
           {hintShown && !lastResult && (
             <p className={stage.hint}>Hint: it&apos;s {midiPitchToNoteName(currentPitch)} — find it on the keyboard.</p>
           )}

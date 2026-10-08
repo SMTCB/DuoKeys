@@ -8,6 +8,7 @@
 import type { ReactNode } from 'react';
 import { PopShape } from './PopShape';
 import { RewardBurst } from './RewardBurst';
+import { StarRow } from './StarRow';
 import styles from './ResultCard.module.css';
 
 export function ResultCard({
@@ -31,9 +32,7 @@ export function ResultCard({
         <PopShape shape="quarter" colour="tomato" size={56} className={styles.shapeB} />
         <div className={styles.badge}>
           {hasBurst ? <RewardBurst /> : null}
-          <span className={styles.stars} role="img" aria-label={`${stars} ${stars === 1 ? 'star' : 'stars'}`}>
-            {'⭐'.repeat(stars)}
-          </span>
+          <StarRow stars={stars} size={30} className={styles.stars} />
         </div>
         <h2 className={styles.title}>{title}</h2>
         {children ? <div className={styles.body}>{children}</div> : null}

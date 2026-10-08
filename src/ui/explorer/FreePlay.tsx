@@ -74,7 +74,7 @@ export function FreePlay() {
   return (
     <section className={stage.stage}>
       <p className={stage.title}>Play anything!</p>
-      <div className={stage.bigNote}>{lastPitch !== undefined ? midiPitchToNoteName(lastPitch) : '🎹'}</div>
+      <div className={stage.bigNote}>{lastPitch !== undefined ? midiPitchToNoteName(lastPitch) : '♪'}</div>
       {lastPitch !== undefined && (
         <div className={stage.noteViews}>
           <NoteKeys pitches={[lastPitch]} />

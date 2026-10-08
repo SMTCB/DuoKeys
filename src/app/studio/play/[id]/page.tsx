@@ -325,7 +325,7 @@ export default function StudioPlayPage() {
       {attemptStatus === 'playing' && loopRange && (
         <Card>
           <div className={controls.loopStatus} role="status">
-            <Pill tone="solid">🔁 Pass {passNumber}</Pill>
+            <Pill tone="solid">Pass {passNumber}</Pill>
             {autoRampEnabled && <Pill mono>Tempo {Math.round(tempoScale * 100)}%</Pill>}
             {lastPassGrade && <Pill tone="neutral">Last pass {Math.round(lastPassGrade.accuracy * 100)}% accurate</Pill>}
           </div>

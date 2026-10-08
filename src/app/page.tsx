@@ -16,6 +16,7 @@ import { StatusNote } from '../ui/shared/StatusNote';
 import { Card } from '../ui/shared/Card';
 import { Button } from '../ui/shared/Button';
 import { AVATARS } from '../ui/shared/avatars';
+import { PopShape, type PopColour, type PopShapeName } from '../ui/shared/PopShape';
 import { useSyncStore } from '../runtime/stores/syncStore';
 import styles from './family.module.css';
 
@@ -83,9 +84,9 @@ export default function HomePage() {
   }
 
   const canAdd = profiles.length < MAX_PROFILES;
-  const roleChoices: { value: Profile['role']; icon: string; label: string }[] = [
-    { value: 'explorer', icon: '🎮', label: 'Kid' },
-    { value: 'student', icon: '🎼', label: 'Adult' },
+  const roleChoices: { value: Profile['role']; shape: PopShapeName; colour: PopColour; label: string }[] = [
+    { value: 'explorer', shape: 'circle', colour: 'tomato', label: 'Kid' },
+    { value: 'student', shape: 'arch', colour: 'peach', label: 'Adult' },
   ];
 
   return (
@@ -189,7 +190,7 @@ export default function HomePage() {
                 onClick={() => setRole(choice.value)}
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '8rem', borderRadius: '1.25rem' }}
               >
-                <span style={{ fontSize: '1.75rem', lineHeight: 1 }} aria-hidden="true">{choice.icon}</span>
+                <PopShape shape={choice.shape} colour={choice.colour} size={30} />
                 <span>{choice.label}</span>
               </Button>
             ))}

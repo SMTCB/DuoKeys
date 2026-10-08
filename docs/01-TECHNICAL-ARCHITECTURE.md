@@ -1562,7 +1562,15 @@ of what that artifact specifies.
   after the attempt, so the practice surface is still calm while playing. `EmptyState`
   gives the empty Studio lists (songs, progressions, library search) three shapes beside a
   title and a hint; the not-found page uses the same shapes. The doc set's `_doc.css` and
-  the Build Board take the same palette and type.
+  the Build Board take the same palette and type. The trail is one dashed line down the
+  middle of the map, and each stop is wider than half the column so the line runs behind
+  every card. Stars are drawn by `StarRow` (`src/ui/shared`): always three, earned ones
+  mustard and the rest ink outlines, with the count in the label. A locked stop shows a
+  flat padlock. The Songs "ways to add" tiles use `PopShape`s instead of emoji and press
+  like the home cards. The other emoji pictograms are gone too: the loading note, the
+  piano chooser and the Kid/Adult choice use flat shapes, and Note Ninja's bands and the
+  Studio pass pill are words only. The profile avatars stay emoji by design; check marks
+  and sharps are text, not pictures.
 
 ---
 
