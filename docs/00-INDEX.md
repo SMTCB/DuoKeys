@@ -109,8 +109,8 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-DUO-002 dual matchers | M | TA-MAT-001 | US-4.02 | TS-U-MAT-021, TS-G-010 |
 | FR-DUO-003 asymmetric parts | M | TA-DAT-001 | US-4.03 | TS-M-011 |
 | FR-DUO-004 shared result | S | TA-GRD-001 | US-4.04 | TS-M-011 |
-| FR-PRO-001 profiles | M | TA-DAT-004 | US-2.01 | TS-U-DAT-001, 002, TS-U-PRO-010, TS-I-DAT-006, TS-E-005 |
-| FR-PRO-002 progression | M | TA-DAT-003 | US-2.12 | TS-U-PRO-001…005, TS-I-DAT-004, TS-E-004 |
+| FR-PRO-001 profiles | M | TA-DAT-004 | US-2.01 | TS-U-DAT-001, 002, TS-U-PRO-010, TS-I-DAT-006, TS-E-005 (pass) |
+| FR-PRO-002 progression | M | TA-DAT-003 | US-2.12 | TS-U-PRO-001…005, TS-I-DAT-004, TS-E-004 (pass, seeded attempts) |
 | FR-PRO-003 history | M | TA-DAT-002 | US-1.14 | TS-I-DAT-001, 002 |
 | FR-PRO-004 dashboard | S | TA-GRD-004, TA-SYN-001 | US-4.06, US-4.07 | TS-U-GRD-010 |
 | FR-PRO-005 recording | C | TA-DAT-002 | US-4.05 | — |
@@ -130,7 +130,7 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-SYS-004 disconnect | M | TA-MID-005 | US-4.09 | TS-I-MID-003/004, TS-M-013 |
 | FR-SYS-005 unsupported browser | M | — | US-4.10 | TS-I-MID-005 |
 | FR-SYS-006 PWA | S | TA-APP-004 | US-4.08 | — |
-| FR-SYS-007 accessibility | M | NFR-008/009/011 | ongoing | TS-E-013, TS-E-014 |
+| FR-SYS-007 accessibility | M | NFR-008/009/011 | ongoing | TS-E-013, TS-E-014 (pass, Explorer path) |
 | FR-SYS-008 privacy | M | NFR-010 | US-2.05 | TS-I-SYN-004 |
 
 ---

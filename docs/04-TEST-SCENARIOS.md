@@ -389,6 +389,17 @@ update in a diff is a review blocker.
 
 Playwright, with a mock MIDI backend injected at the composition root.
 
+**Status (2026-10-08).** `TS-E-004`, `TS-E-005` and `TS-E-014` are written and
+pass, in `test/e2e/`. They run in CI on `main` against the production build
+(`next start`), and locally against the dev server. The mock MIDI backend does
+not exist yet, so `TS-E-004` seeds finished attempts straight into IndexedDB
+instead of playing a section. Every scenario that needs notes played
+(`TS-E-001`, `003`, `006`, `007`, `010`, `011`, `013`, `015`) waits on that
+backend. Every test blocks Supabase at the network layer, so a local
+`.env.local` never receives test data. `TS-E-005` now covers the family
+screen's tile and four-digit PIN (FR-PRO-001). The PIN is a door-latch, not a
+password, so the scenario's "no password" still holds.
+
 | ID | Scenario | Verifies |
 |---|---|---|
 | `TS-E-001` | First run: connect → create profile → calibrate → play, in under 3 minutes | FR-SYS-003 |
