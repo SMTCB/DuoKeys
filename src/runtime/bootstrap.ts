@@ -42,6 +42,25 @@ export function setEnqueueListener(listener: () => void): void {
   enqueueListener = listener;
 }
 
+const DATA_GENERATION_KEY = 'duokeys.dataGeneration';
+const DATA_GENERATION = 'family-pin-1';
+
+/**
+ * One-time clean slate for the family-PIN profile screen: profiles made before PINs existed (and
+ * the sync cursor that went with them) are dropped the first time this version loads on a device.
+ * The IndexedDB open that follows queues behind the delete, so it never sees the old data.
+ */
+function startFreshOnce(): void {
+  try {
+    if (window.localStorage.getItem(DATA_GENERATION_KEY) === DATA_GENERATION) return;
+    window.localStorage.clear();
+    window.indexedDB.deleteDatabase('duokeys');
+    window.localStorage.setItem(DATA_GENERATION_KEY, DATA_GENERATION);
+  } catch {
+    /* blocked storage: carry on with whatever is there */
+  }
+}
+
 /** Lazily constructed and memoized — WebAudioBackend opens an AudioContext, so this must run client-side and only once. */
 export function getAdapters(): Adapters {
   if (typeof window === 'undefined') {
@@ -52,6 +71,7 @@ export function getAdapters(): Adapters {
     );
   }
   if (!adapters) {
+    startFreshOnce();
     const rawStorage = new IdbBackend();
     adapters = {
       midi: new WebMidiBackend(),

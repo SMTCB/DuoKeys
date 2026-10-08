@@ -8,6 +8,7 @@ import { create } from 'zustand';
 import { getAdapters } from '../bootstrap';
 import type { Profile } from '../../core/profile/types';
 import { createProfile } from '../../core/profile/createProfile';
+import { isPinCorrect } from '../../core/profile/pin';
 import { useSessionStore } from './sessionStore';
 
 export const MAX_PROFILES = 4; // FR-PRO-001 — two to four profiles per family device
@@ -38,7 +39,9 @@ interface ProfileState {
   loaded: boolean;
 
   loadProfiles(): Promise<void>;
-  addProfile(displayName: string, role: Profile['role'], avatar: string): Promise<Profile>;
+  addProfile(displayName: string, role: Profile['role'], avatar: string, pin: string): Promise<Profile>;
+  /** True when `typed` opens this family member (FR-PRO-001). */
+  checkPin(id: string, typed: string): Promise<boolean>;
   selectProfile(id: string): void;
   /** Re-activates the profile chosen before a reload, if it still exists. */
   restoreActiveProfile(): Promise<void>;
@@ -53,17 +56,22 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     set({ profiles, loaded: true });
   },
 
-  async addProfile(displayName: string, role: Profile['role'], avatar: string): Promise<Profile> {
+  async addProfile(displayName: string, role: Profile['role'], avatar: string, pin: string): Promise<Profile> {
     const { profiles } = get();
     if (profiles.length >= MAX_PROFILES) {
       throw new Error(`profileStore: a family device holds at most ${MAX_PROFILES} profiles (FR-PRO-001)`);
     }
     const profile = createProfile({ id: crypto.randomUUID(), displayName, role, avatar });
     await getAdapters().storage.put('profiles', profile);
+    await getAdapters().storage.put('settings', { profileId: profile.id, updatedAtMs: Date.now(), pin });
     set({ profiles: [...profiles, profile] });
     useSessionStore.getState().setProfile(profile);
     rememberActive(profile.id);
     return profile;
+  },
+
+  async checkPin(id: string, typed: string): Promise<boolean> {
+    return isPinCorrect(await getAdapters().storage.get('settings', id), typed);
   },
 
   selectProfile(id: string): void {

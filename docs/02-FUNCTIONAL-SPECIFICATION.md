@@ -486,9 +486,12 @@ score. The together score is celebratory, not competitive.
 
 **Realised by:** `TA-DAT-004`
 
-Two to four profiles, each with a name, avatar, role (`explorer` | `student`),
-calibration offset and tolerance scale. Switching is one tap from the home screen,
-with no password — this is a family device.
+Two to four family members, each with an emoji, a name, a role (`explorer` for a kid,
+`student` for an adult), a four-digit PIN, calibration offset and tolerance scale. The home
+screen is "Who's playing?": one tile per member and a "New family member" button (emoji, name,
+kid or adult, PIN). Tapping a tile asks for that member's PIN. The PIN is a door-latch on a
+shared screen, not security; it is kept in the member's `settings` record (`settings.pin`) so it
+syncs with no schema change. A member with no PIN set (older data) lets anyone in.
 
 ### FR-PRO-002 — Per-profile progression (`M`)
 
@@ -574,7 +577,7 @@ invent them algorithmically — bad fingering advice is worse than none.
 
 **Realised by:** `TA-SYN-002`
 
-One shared household login on the profile screen: a family name and a 4–6 digit PIN typed once per device (the first use of a name creates the account). It is a family door-latch, not real security. The child never has credentials. The username is wrapped in an address that cannot receive mail (`name@household.duokeys`) because Supabase Auth wants an email; the PIN is padded to a password (`duokeys-1234`) and hashed by Supabase Auth, not stored by the app.
+There is no sign-in screen. The app signs in silently as one household account (name `family`, key baked into the build as `NEXT_PUBLIC_HOUSEHOLD_KEY`), so any copy built with the same Supabase project and key — localhost and the deployed site — shares one library: family members, PINs, progress and saved songs. The first use creates the account. The household key is not a secret from anyone with the build; it is a family door-latch, not real security (the per-member PIN is separate, `FR-PRO-001`). The username is wrapped in an address that cannot receive mail (`name@household.duokeys`) because Supabase Auth wants an email.
 
 ### FR-SYN-002 — Background sync (`M`)
 

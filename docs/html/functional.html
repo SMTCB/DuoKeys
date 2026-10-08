@@ -321,7 +321,7 @@
   <div class="req">
     <h3 id="FR-PRO-001" data-toc="Multiple local profiles"><span class="aid">FR-PRO-001</span> Multiple local profiles <span class="pri M">M</span></h3>
     <p class="by"><b>Realised by</b> TA-DAT-004</p>
-    <p>Two to four profiles, each with a name, avatar, role (<code>explorer</code> | <code>student</code>), calibration offset and tolerance scale. Switching is one tap from the home screen, with no password — this is a family device.</p>
+    <p>Two to four family members, each with an emoji, a name, a role (<code>explorer</code> for a kid, <code>student</code> for an adult), a four-digit PIN, calibration offset and tolerance scale. The home screen is &ldquo;Who&rsquo;s playing?&rdquo;: one tile per member and a &ldquo;New family member&rdquo; button (emoji, name, kid or adult, PIN). Tapping a tile asks for that member&rsquo;s PIN. The PIN is a door-latch on a shared screen, not security; it is kept in the member&rsquo;s <code>settings</code> record (<code>settings.pin</code>) so it syncs with no schema change. A member with no PIN set (older data) lets anyone in.</p>
   </div>
 
   <div class="req">
@@ -391,7 +391,7 @@
   <div class="req">
     <h3 id="FR-SYN-001" data-toc="Household account"><span class="aid">FR-SYN-001</span> Household account <span class="pri M">M</span></h3>
     <p class="by"><b>Realised by</b> TA-SYN-002</p>
-    <p>One shared household login on the profile screen: a family name and a 4–6 digit PIN typed once per device (the first use of a name creates the account). It is a family door-latch, not real security. The child never has credentials. The username is wrapped in an address that cannot receive mail (name@household.duokeys) because Supabase Auth wants an email; the PIN is padded to a password (duokeys-1234) and hashed by Supabase Auth, not stored by the app.</p>
+    <p>There is no sign-in screen. The app signs in silently as one household account (name <code>family</code>, key baked into the build as <code>NEXT_PUBLIC_HOUSEHOLD_KEY</code>), so any copy built with the same Supabase project and key — localhost and the deployed site — shares one library: family members, PINs, progress and saved songs. The first use creates the account. The household key is not a secret from anyone with the build; it is a family door-latch, not real security (the per-member PIN is separate, FR-PRO-001). The username is wrapped in an address that cannot receive mail (name@household.duokeys) because Supabase Auth wants an email.</p>
   </div>
 
   <div class="req">

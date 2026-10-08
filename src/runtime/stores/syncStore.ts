@@ -29,6 +29,14 @@ interface SyncState {
   syncNow(): Promise<void>;
 }
 
+// The family signs in once, silently, with a key baked into the build (FR-SYN-001). Every device built
+// with the same key lands on the same account, which is what makes localhost and the deployed
+// site one library. A door-latch for a family app: the key is visible to anyone who opens the site.
+const HOUSEHOLD_NAME = 'family';
+const HOUSEHOLD_KEY = process.env.NEXT_PUBLIC_HOUSEHOLD_KEY;
+const HOUSEHOLD_RETRY_MS = 60_000;
+let lastHouseholdTryMs = 0;
+
 const FLUSH_DEBOUNCE_MS = 2_000;
 const FLUSH_INTERVAL_MS = 60_000;
 
@@ -131,7 +139,12 @@ export const useSyncStore = create<SyncState>((set, get) => ({
 
   async syncNow(): Promise<void> {
     if (!engine) return;
-    const user = await getAdapters().sync.currentUser().catch(() => null);
+    let user = await getAdapters().sync.currentUser().catch(() => null);
+    if (!user && HOUSEHOLD_KEY && navigator.onLine && Date.now() - lastHouseholdTryMs > HOUSEHOLD_RETRY_MS) {
+      lastHouseholdTryMs = Date.now();
+      await getAdapters().sync.signInWithPassword(HOUSEHOLD_NAME, HOUSEHOLD_KEY).catch(() => undefined);
+      user = await getAdapters().sync.currentUser().catch(() => null);
+    }
     if (!user) {
       set({ status: 'signed-out', email: undefined });
       return;

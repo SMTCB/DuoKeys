@@ -954,8 +954,7 @@ IndexedDB          ◀──pull── Supabase   (only on a fresh device)
 
 ### TA-SYN-002 — Auth
 
-Household family name and 4–6 digit PIN (`signInWithPassword`, PIN padded to `duokeys-<pin>`; magic link remains on the port but the panel no longer offers it), adult only. The child never has credentials. One
-Supabase user owns all profiles in the household. The username becomes `name@household.duokeys`, an address that cannot receive mail, so no email service or redirect allow-list is involved; Supabase must have "Confirm email" turned off.
+Silent household sign-in, no screen: `syncNow` calls `signInWithPassword('family', NEXT_PUBLIC_HOUSEHOLD_KEY)` whenever there is no user (throttled to once a minute, online only). The password is `duokeys-<key>`; the first call creates the account, so Supabase must have "Confirm email" turned off. One Supabase user owns all family members; the per-member PIN lives in `settings.pin` (`TA-APP-003` home screen) and is never an auth credential. The username becomes `name@household.duokeys`, an address that cannot receive mail. A one-time local wipe (`startFreshOnce`, localStorage `duokeys.dataGeneration`) clears an origin's old data the first time a new data generation loads, so both origins start together from the shared account.
 
 ### TA-SYN-003 — Conflict policy
 
@@ -1060,11 +1059,11 @@ transaction (B sees none of A's rows and cannot write under A's profile; `attemp
 update/delete refused for the owner; stale write skipped, newer applied; anon
 refused). It does not go through PostgREST/JWT.
 
-The `SyncBackend` adapter (`SupabaseBackend`, `adapters/sync/`) and household name and PIN
-sign-in (`US-2.02`, `SyncPanel` on the Studio screen) are built and selected when
+The `SyncBackend` adapter (`SupabaseBackend`, `adapters/sync/`) and silent household
+sign-in (`US-2.02`, no screen) are built and selected when
 `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` are set; otherwise
 `FakeSyncBackend`. **Not yet verified:** a live end-to-end push/pull with a real
-signed-in user. Both the local and the deployed site must be built with the same Supabase URL and anon key and signed in with the same household username, which is what makes them one library.
+signed-in user. Both the local and the deployed site must be built with the same Supabase URL and anon key and given the same `NEXT_PUBLIC_HOUSEHOLD_KEY`, which is what makes them one library.
 
 ---
 

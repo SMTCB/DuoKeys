@@ -8,7 +8,6 @@
 
 import { PageShell } from '../../ui/shared/PageShell';
 import { ActionCard } from '../../ui/shared/ActionCard';
-import { SyncPanel } from '../../ui/studio/SyncPanel';
 
 export default function StudioHomePage() {
   return (
@@ -17,7 +16,6 @@ export default function StudioHomePage() {
       <ActionCard href="/studio/learn" icon="🎓" title="Learn" description="A gentle roadmap back to the piano, with warm-ups and exercises." />
       <ActionCard href="/studio/free-play" icon="🌿" title="Free play" description="Sit down and unwind. Chords, and something easy suggested for you." />
       <ActionCard href="/studio/songs" icon="🎵" title="Songs" description="My songs, add one you love, and the song library." />
-      <SyncPanel />
     </PageShell>
   );
 }

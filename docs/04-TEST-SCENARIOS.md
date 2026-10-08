@@ -219,6 +219,7 @@ grading.
 | `TS-U-CNT-050` | `omrClient` reports "not running" without throwing, posts the file under its name, unzips the result and turns a refusal into a plain message | TA-CNT-007, FR-STU-017 |
 | `TS-U-CNT-051` | `detectKey` finds G major and A minor from short tunes, says nothing about a handful of notes and spells flat keys with flats; `transposeArrangement` moves every note without touching the original and `transposeLimits` stops at the keyboard edges | TA-REN-003, FR-STU-016 |
 | `TS-U-SYN-010` | A household name becomes, and a PIN is padded to a 6+ character password, one stable mail-proof address (case and spaces ignored) and is shown back plainly | TA-SYN-002, FR-SYN-001 |
+| `TS-U-PRO-010` | A family PIN is exactly four digits, is read off settings (malformed ignored), and a member with no PIN lets anyone in | FR-PRO-001 |
 | `TS-U-CNT-052` | `layoutScore` puts E4 and G2 on the bottom lines, spells black keys as asked, spaces notes by time, splits hands at middle C and lists the played track's groups in matcher order | TA-REN-003, FR-STU-016 |
 | `TS-U-CNT-045` | `pickFreePlay` stays in a chosen key, and `sameProgressionInKey` finds the same degrees in another key and nothing for a typed-in progression | TA-CNT-007, FR-STU-015, FR-STU-018 |
 | `TS-U-CNT-044` | A styled progression puts each chord marker on notes of that chord even when the chords are not evenly spaced in the file (`I-IV-V`) | TA-CNT-006, FR-STU-015 |
@@ -465,7 +466,7 @@ critical-path behaviour has a manual confirmation.
 | FR-STU-019 | TS-I-DAT-011 | — |
 | FR-DUO-001 | TS-E-015 | TS-M-012 |
 | FR-DUO-002 | TS-U-MAT-021, TS-G-010 | TS-M-011 |
-| FR-PRO-001 | TS-U-DAT-001, 002, TS-I-DAT-006, TS-E-005 | — |
+| FR-PRO-001 | TS-U-DAT-001, 002, TS-U-PRO-010, TS-I-DAT-006, TS-E-005 | — |
 | FR-PRO-002 | TS-U-PRO-001…005, TS-I-DAT-004, TS-E-004 | — |
 | FR-PRO-003 | TS-I-DAT-001, 002 | — |
 | FR-PRO-006 | TS-U-DAT-003, TS-I-DAT-007, TS-I-SYN-011 | — |

@@ -107,7 +107,7 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-DUO-002 dual matchers | M | TA-MAT-001 | US-4.02 | TS-U-MAT-021, TS-G-010 |
 | FR-DUO-003 asymmetric parts | M | TA-DAT-001 | US-4.03 | TS-M-011 |
 | FR-DUO-004 shared result | S | TA-GRD-001 | US-4.04 | TS-M-011 |
-| FR-PRO-001 profiles | M | TA-DAT-004 | US-2.01 | TS-U-DAT-001, 002, TS-I-DAT-006, TS-E-005 |
+| FR-PRO-001 profiles | M | TA-DAT-004 | US-2.01 | TS-U-DAT-001, 002, TS-U-PRO-010, TS-I-DAT-006, TS-E-005 |
 | FR-PRO-002 progression | M | TA-DAT-003 | US-2.12 | TS-U-PRO-001…005, TS-I-DAT-004, TS-E-004 |
 | FR-PRO-003 history | M | TA-DAT-002 | US-1.14 | TS-I-DAT-001, 002 |
 | FR-PRO-004 dashboard | S | TA-GRD-004, TA-SYN-001 | US-4.06, US-4.07 | TS-U-GRD-010 |
