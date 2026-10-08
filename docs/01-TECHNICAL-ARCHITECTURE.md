@@ -170,6 +170,11 @@ do not add up and asks for a speed when the scan found none.
 **Consequences:** A score page goes only to localhost, so `NFR-010` still holds. Nothing
 is stored by the service. The result is a draft: rhythm in busy bars and the tempo are
 often wrong, which is why the check screen exists. Plain-language limits are shown to the user.
+**Where it works (Oct 2026):** the service answers only pages served from `http://localhost` or
+`127.0.0.1` (its CORS rule), so scanning works when the app runs on the same computer
+(`npm run dev` or a local build) and does **not** work from the deployed Vercel address, whose
+origin is refused. Opening the service to the Vercel origin is possible but would also need the
+browser's local-network permission prompt; it is left undone and is a new ADR if wanted.
 
 ---
 
