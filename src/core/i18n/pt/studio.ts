@@ -81,6 +81,12 @@ export const PT_STUDIO: Record<string, string> = {
   Simple: 'Simples',
   Fuller: 'Mais cheia',
   'Just the chords': 'Só os acordes',
+  'Minutes of music, both hands.': 'Minutos de música, as duas mãos.',
+  'A few chords in a rhythm.': 'Alguns acordes num ritmo.',
+  'Browse every chord, or type your own.': 'Veja todos os acordes ou escreva os seus.',
+  'Pick one to start.': 'Escolha uma opção para começar.',
+  'Loop a few easy chords on their own, in a rhythm. Pick a feeling and a key if you like.':
+    'Repita alguns acordes fáceis sozinhos, num ritmo. Escolha um sentimento e um tom, se quiser.',
   'Or loop a few easy chords on their own, in a rhythm, using the feeling and key above. Each suggestion uses only a few easy chords.':
     'Ou repita alguns acordes fáceis sozinhos, num ritmo, usando o sentimento e o tom acima. Cada sugestão usa só alguns acordes fáceis.',
   'Another one': 'Outra',

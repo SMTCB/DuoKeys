@@ -99,6 +99,27 @@
   border-radius: var(--r-md);
 }
 
+button.tile {
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tileSelected {
+  outline: 4px solid var(--app-ink);
+  outline-offset: 3px;
+}
+
+.tileTick {
+  position: absolute;
+  bottom: 0.8rem;
+  right: 0.9rem;
+  font-family: var(--display);
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
 .tileShape {
   position: absolute;
   top: 0.9rem;

@@ -16,6 +16,8 @@ export type PopCorner = 'tl' | 'tr' | 'br' | 'bl';
 
 export function ActionCard({
   href,
+  onSelect,
+  selected,
   icon,
   title,
   description,
@@ -26,7 +28,11 @@ export function ActionCard({
   corner,
   meta,
 }: {
-  href: string;
+  href?: string;
+  /** Makes the tile a button that chooses it instead of leaving the page (a choice, not a link). */
+  onSelect?: () => void;
+  /** With `onSelect`: this is the chosen tile. Said with a tick and a thicker ink outline, never colour alone (NFR-008). */
+  selected?: boolean;
   /** A short text picture (a number, a letter) drawn in the display face. */
   icon?: ReactNode;
   title: string;
@@ -46,8 +52,9 @@ export function ActionCard({
       ['--tile-bg' as string]: POP_FILL[colour],
       ['--tile-on' as string]: POP_ON[colour],
     } as CSSProperties;
-    return (
-      <Link href={href} className={[styles.tile, styles[`corner_${corner ?? 'tl'}`]].join(' ')} style={style}>
+    const tileClass = [styles.tile, styles[`corner_${corner ?? 'tl'}`], selected ? styles.tileSelected : undefined].filter(Boolean).join(' ');
+    const inner = (
+      <>
         {shape ? <PopShape shape={shape} colour={shapeColour} size={48} className={styles.tileShape} /> : null}
         {icon !== undefined ? (
           <span className={styles.tileIcon} aria-hidden="true">
@@ -57,12 +64,29 @@ export function ActionCard({
         <span className={styles.tileTitle}>{title}</span>
         {description ? <span className={styles.tileDescription}>{description}</span> : null}
         {meta ? <span className={styles.tileMeta}>{meta}</span> : null}
+        {selected ? (
+          <span className={styles.tileTick} aria-hidden="true">
+            ✓
+          </span>
+        ) : null}
+      </>
+    );
+    if (onSelect) {
+      return (
+        <button type="button" onClick={onSelect} aria-pressed={selected === true} className={tileClass} style={style}>
+          {inner}
+        </button>
+      );
+    }
+    return (
+      <Link href={href ?? '#'} className={tileClass} style={style}>
+        {inner}
       </Link>
     );
   }
 
   return (
-    <Link href={href} className={[styles.card, corner ? styles[`corner_${corner}`] : undefined].filter(Boolean).join(' ')}>
+    <Link href={href ?? '#'} className={[styles.card, corner ? styles[`corner_${corner}`] : undefined].filter(Boolean).join(' ')}>
       <span className={styles.icon} aria-hidden="true">
         {shape ? <PopShape shape={shape} colour={shapeColour} size={44} /> : icon}
       </span>
