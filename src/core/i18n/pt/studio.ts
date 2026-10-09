@@ -67,9 +67,6 @@ export const PT_STUDIO: Record<string, string> = {
   'Sit down, relax, make something that sounds like music. Nothing is graded and nothing runs out.':
     'Sente, relaxe, faça algo que soe como música. Nada é avaliado e nada acaba.',
   'Back to Studio': 'Voltar ao Estúdio',
-  'Studio': 'Estúdio',
-  'Songs': 'Músicas',
-  'Learn': 'Aprender',
   'Make me a song': 'Faça uma música para mim',
   'A few minutes of music written for you from easy chords: an intro, verses and choruses, a bridge and an ending. The left hand plays a bass line, the right hand a simple tune. Pick a feeling and a key if you like.':
     'Alguns minutos de música escrita para você com acordes fáceis: uma introdução, versos e refrões, uma ponte e um final. A mão esquerda toca uma linha de baixo, a direita uma melodia simples. Escolha um sentimento e um tom, se quiser.',
