@@ -198,6 +198,8 @@ Note Ninja, styling.
 | `US-3.22` | As an adult, I can open Studio and find three tracks (Learn, Free play, Songs); get an easy progression and rhythm suggested with one tap; and add a song that is not in the library, by pasting its chords or importing a MIDI or MusicXML file, and find it again in "my songs", so that I can sit down, unwind and still learn the songs I care about. | FR-STU-017, FR-STU-018, FR-STU-019 | TA-APP-003, TA-CNT-007 | 5 |
 | `US-3.23` | As a user, I see a bolder, playful look (a cream ground, colour-block tiles in tomato, mustard, peach and cornflower, chunky display type and ink outlines) on the family screen and the Explorer and Studio homes, while every screen with the piano, falling notes or a score stays calm and uses only one note colour per role, so that the app feels inviting without making the practice screens hard to read. | — | TA-APP-006 | 3 |
 | `US-3.24` | As a user, I see the same playful look carried onto the quest map (cream stop cards with colour nodes and a dashed trail), the result card after a piece (a role-coloured block with stars and flat shapes), the empty lists in Studio and the not-found page, while the practice screens stay calm, so that the bold look reaches every reward and navigation moment and not only the homes. | — | TA-APP-006 | 3 |
+| `US-3.25` | As an adult, I can ask Free play to make me a whole simple song from a feeling, a key, a length and how busy it should be, with the left hand's bass line and the right hand's tune both written out and verses and choruses that come back; flip a switch while playing to stop waiting for me and play in time; and flip another to make up my own right hand over the left hand, with the notes that fit lit on the keys, so that free play lasts minutes instead of twenty seconds and I can grow from reading a tune to inventing one. | FR-STU-020 | TA-CNT-008, TA-REN-001 | 5 |
+| `US-3.26` | As a child who does not read English, I can choose Português on the family screen (and the first visit follows the browser's language) and then see every screen, game, result and message in Portuguese, with note names as Dó Ré Mi, so that I can play on my own; and as an adult I can switch back to English at any time without losing anything saved. | FR-SYS-009 | TA-APP-007 | 8 |
 
 **Exit criteria**
 - You use it for your own practice for a week and prefer it to the alternative.
@@ -258,10 +260,10 @@ original brief is delivered.
 | 0 | Hardware spike | 6 | 1–2 days |
 | 1 | Walking skeleton | 34 | ~1 week |
 | 2 | Child's loop | 60 | ~2 weeks |
-| 3 | Adult's loop | 82 | ~2 weeks |
+| 3 | Adult's loop | 95 | ~2 weeks |
 | 4 | Duet & dashboard | 35 | ~2 weeks |
 | 5 | iPad (optional) | 16 | ~1 week |
-| | **v1 total (0–4)** | **217** | **~7 weeks** |
+| | **v1 total (0–4)** | **230** | **~7 weeks** |
 
 Points are load-bearing only *within* a sprint; the calendar estimates assume
 part-time evening work, which is the realistic mode for this project.
@@ -291,4 +293,4 @@ Every `M`-priority functional requirement is delivered by at least one story:
 | FR-DUO-002 | 4 | FR-SYS-003 | 1 |
 | FR-SYS-002 | 0, 1 | FR-SYS-004 | 4 |
 | FR-SYS-005 | 4 | FR-SYS-007 | 1–4 (ongoing) |
-| FR-SYS-008 | 2 | | |
+| FR-SYS-008 | 2 | FR-SYS-009 | 3 |

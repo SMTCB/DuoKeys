@@ -5,11 +5,13 @@
 
 import { FreePlay } from '../../../ui/explorer/FreePlay';
 import { PageShell } from '../../../ui/shared/PageShell';
+import { useT } from '../../../ui/i18n/useT';
 
 export default function FreePlayPage() {
+  const t = useT();
   return (
     <PageShell>
-      <h1>Free Play</h1>
+      <h1>{t('Free Play')}</h1>
       <FreePlay />
     </PageShell>
   );

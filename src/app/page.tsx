@@ -18,6 +18,8 @@ import { Button } from '../ui/shared/Button';
 import { AVATARS } from '../ui/shared/avatars';
 import { PopShape, type PopColour, type PopShapeName } from '../ui/shared/PopShape';
 import { useSyncStore } from '../runtime/stores/syncStore';
+import { useT } from '../ui/i18n/useT';
+import { LanguageSwitch } from '../ui/i18n/LanguageSwitch';
 import styles from './family.module.css';
 
 const fieldStyle = { font: 'inherit', padding: '0.7rem 0.9rem', minHeight: '44px', width: '100%', boxSizing: 'border-box' } as const;
@@ -25,6 +27,7 @@ const pinStyle = { ...fieldStyle, fontSize: '1.5rem', letterSpacing: '0.5rem', m
 
 export default function HomePage() {
   const router = useRouter();
+  const t = useT();
   const profiles = useProfileStore((s) => s.profiles);
   const loaded = useProfileStore((s) => s.loaded);
   const loadProfiles = useProfileStore((s) => s.loadProfiles);
@@ -85,15 +88,17 @@ export default function HomePage() {
 
   const canAdd = profiles.length < MAX_PROFILES;
   const roleChoices: { value: Profile['role']; shape: PopShapeName; colour: PopColour; label: string }[] = [
-    { value: 'explorer', shape: 'circle', colour: 'tomato', label: 'Kid' },
-    { value: 'student', shape: 'arch', colour: 'peach', label: 'Adult' },
+    { value: 'explorer', shape: 'circle', colour: 'tomato', label: t('Kid') },
+    { value: 'student', shape: 'arch', colour: 'peach', label: t('Adult') },
   ];
 
   return (
     <PageShell tone={asking || isAdding ? 'calm' : 'bold'}>
-      {loaded ? <h1>Who&apos;s playing?</h1> : <h1>DuoKeys</h1>}
+      {loaded ? <h1>{t("Who's playing?")}</h1> : <h1>DuoKeys</h1>}
 
       {!loaded && <StatusNote />}
+
+      <LanguageSwitch />
 
       {loaded && !isAdding && !asking && (
         <>
@@ -117,7 +122,7 @@ export default function HomePage() {
           {canAdd && (
             <div>
               <Button accent="coral" variant="secondary" onClick={() => setIsAdding(true)}>
-                + New family member
+                {t('+ New family member')}
               </Button>
             </div>
           )}
@@ -131,7 +136,7 @@ export default function HomePage() {
             <h2 style={{ margin: 0 }}>{asking.displayName}</h2>
           </div>
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '1rem' }}>
-            Type your PIN
+            {t('Type your PIN')}
             <input
               autoFocus
               type="password"
@@ -143,10 +148,10 @@ export default function HomePage() {
               style={pinStyle}
             />
           </label>
-          {isWrongPin && <p role="status">Not that one. Try again.</p>}
+          {isWrongPin && <p role="status">{t('Not that one. Try again.')}</p>}
           <div style={{ marginTop: '1rem' }}>
             <Button variant="secondary" accent="coral" onClick={() => setAsking(undefined)}>
-              Back
+              {t('Back')}
             </Button>
           </div>
         </Card>
@@ -154,10 +159,10 @@ export default function HomePage() {
 
       {loaded && isAdding && (
         <Card>
-          <h2>New family member</h2>
+          <h2>{t('New family member')}</h2>
 
-          <p>Choose an emoji:</p>
-          <div role="group" aria-label="Emoji" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <p>{t('Choose an emoji:')}</p>
+          <div role="group" aria-label={t('Emoji')} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {AVATARS.map((a) => (
               <Button
                 key={a.emoji}
@@ -165,7 +170,7 @@ export default function HomePage() {
                 variant={avatar === a.emoji ? 'primary' : 'secondary'}
                 onClick={() => setAvatar(a.emoji)}
                 aria-pressed={avatar === a.emoji}
-                aria-label={a.name}
+                aria-label={t(a.name)}
               >
                 {a.emoji}
               </Button>
@@ -173,12 +178,12 @@ export default function HomePage() {
           </div>
 
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '1rem' }}>
-            Name
-            <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="First name" style={fieldStyle} />
+            {t('Name')}
+            <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder={t('First name')} style={fieldStyle} />
           </label>
 
-          <p>Kid or adult?</p>
-          <div role="radiogroup" aria-label="Kid or adult" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <p>{t('Kid or adult?')}</p>
+          <div role="radiogroup" aria-label={t('Kid or adult?')} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             {roleChoices.map((choice) => (
               <Button
                 key={choice.value}
@@ -197,7 +202,7 @@ export default function HomePage() {
           </div>
 
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '1rem' }}>
-            Choose a {PIN_LENGTH}-digit PIN
+            {t('Choose a {count}-digit PIN', { count: PIN_LENGTH })}
             <input
               type="password"
               inputMode="numeric"
@@ -211,10 +216,10 @@ export default function HomePage() {
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', marginTop: '1rem' }}>
             <Button accent={role === 'student' ? 'indigo' : 'amber'} onClick={() => void handleAdd()} disabled={!displayName.trim() || !isValidPin(newPin)}>
-              Add
+              {t('Add')}
             </Button>
             <Button variant="secondary" accent="coral" onClick={() => setIsAdding(false)}>
-              Cancel
+              {t('Cancel')}
             </Button>
           </div>
         </Card>

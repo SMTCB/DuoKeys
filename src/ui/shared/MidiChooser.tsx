@@ -2,6 +2,7 @@
 // tile + title + one big button per device + a connection line that says its
 // state in words as well as a dot (NFR-008).
 
+import { useT } from '../i18n/useT';
 import styles from './MidiChooser.module.css';
 
 export function MidiChooser({
@@ -13,6 +14,7 @@ export function MidiChooser({
   connectionState: string;
   onSelect: (inputId: string) => void;
 }) {
+  const t = useT();
   return (
     <div className={styles.chooser}>
       <div className={styles.lead}>
@@ -24,7 +26,7 @@ export function MidiChooser({
             <rect x="16.8" y="5" width="5" height="11" rx="1" fill="currentColor" />
           </svg>
         </span>
-        <span className={styles.title}>{inputs.length > 0 ? 'Tap your piano to start' : 'Choose your piano'}</span>
+        <span className={styles.title}>{inputs.length > 0 ? t('Tap your piano to start') : t('Choose your piano')}</span>
       </div>
       <div className={styles.list}>
         {inputs.map((input) => (
@@ -39,10 +41,10 @@ export function MidiChooser({
       <span className={styles.status}>
         <span className={`${styles.dot} ${connectionState === 'connected' ? styles.dotOn : ''}`} aria-hidden="true" />
         {connectionState === 'connected'
-          ? 'Piano connected'
+          ? t('Piano connected')
           : inputs.length > 0
-            ? 'Piano found, not started yet'
-            : 'No piano found. Plug it in and switch it on.'}
+            ? t('Piano found, not started yet')
+            : t('No piano found. Plug it in and switch it on.')}
       </span>
     </div>
   );

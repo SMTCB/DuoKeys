@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { generateSightReadingArrangement } from '../../../core/content/sightReading';
 import { useGeneratedContentStore } from '../../../runtime/stores/generatedContentStore';
+import { useT } from '../../../ui/i18n/useT';
 import { PageShell } from '../../../ui/shared/PageShell';
 import { Card } from '../../../ui/shared/Card';
 import { Button } from '../../../ui/shared/Button';
@@ -20,6 +21,7 @@ const KEY_OPTIONS = ['C', 'G', 'F'];
 const BAR_OPTIONS = [4, 8, 12];
 
 export default function SightReadingPage() {
+  const t = useT();
   const router = useRouter();
   const put = useGeneratedContentStore((s) => s.put);
   const [keySig, setKeySig] = useState('C');
@@ -39,27 +41,27 @@ export default function SightReadingPage() {
 
   return (
     <PageShell>
-      <h1>Sight-Reading</h1>
+      <h1>{t('Sight-Reading')}</h1>
       <Card>
-        <p>A fresh phrase every time — never one you have already memorised.</p>
+        <p>{t('A fresh phrase every time — never one you have already memorised.')}</p>
         <div className={controls.stack}>
           <Segmented
             name="keySig"
-            legend="Key"
+            legend={t('Key')}
             options={KEY_OPTIONS.map((k) => ({ value: k, label: k }))}
             value={keySig}
             onChange={setKeySig}
           />
           <Segmented
             name="bars"
-            legend="Length"
-            options={BAR_OPTIONS.map((b) => ({ value: b, label: `${b} bars` }))}
+            legend={t('Length')}
+            options={BAR_OPTIONS.map((b) => ({ value: b, label: t('{bars} bars', { bars: b }) }))}
             value={bars}
             onChange={setBars}
           />
           <label className={controls.tempo}>
             <span className={controls.tempoLabel}>
-              Tempo <span className={controls.readout}>{tempoBpm} bpm</span>
+              {t('Tempo')} <span className={controls.readout}>{t('{bpm} bpm', { bpm: tempoBpm })}</span>
             </span>
             <input
               type="range"
@@ -72,7 +74,7 @@ export default function SightReadingPage() {
           </label>
           <div>
             <Button accent="indigo" onClick={handleGenerate}>
-              Generate a phrase
+              {t('Generate a phrase')}
             </Button>
           </div>
         </div>

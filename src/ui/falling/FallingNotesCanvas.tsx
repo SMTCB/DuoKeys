@@ -10,6 +10,9 @@
 // that lives in two octaves fills the screen instead of hugging one edge.
 // Below the hit line a small keybed shows which keys are wanted now and which
 // were just played right, so a correct note is visibly recognised.
+//
+// FR-STU-020 — with `glow`, the keys that fit the chord under the line light up for
+// making up your own part: chord notes filled with a dot, other notes that fit ringed.
 
 'use client';
 
@@ -17,10 +20,11 @@ import { useEffect, useRef } from 'react';
 import type { MasterClock } from '../../core/time/masterClock';
 import type { ChordMarker, ContentNote } from '../../core/content/types';
 import type { MatcherState } from '../../core/match/types';
+import { harmonyAt, type HarmonyWindow } from '../../core/content/freePlaySong';
 import { asTicks } from '../../core/time/types';
 import { pitchToX, type KeyboardRange } from './pitchToX';
 import { fitKeyboardRange } from './fitRange';
-import { noteName } from './noteName';
+import { useNoteName } from '../i18n/useT';
 import styles from './FallingNotesCanvas.module.css';
 
 export interface FallingNotesCanvasProps {
@@ -41,6 +45,14 @@ export interface FallingNotesCanvasProps {
   pixelsPerSecond?: number;
   /** FR-STU-013 lead-sheet mode — chord symbols drawn as falling text, reusing this same renderer. */
   chordMarkers?: readonly ChordMarker[];
+  /** FR-STU-020 — light the keys between `low` and `high` that fit the chord now sounding. */
+  glow?: FitGlow | undefined;
+}
+
+export interface FitGlow {
+  windows: readonly HarmonyWindow[];
+  low: number;
+  high: number;
 }
 
 const CANVAS_WIDTH = 960;
@@ -60,8 +72,13 @@ export function FallingNotesCanvas({
   lookAheadSeconds,
   pixelsPerSecond = DEFAULT_PIXELS_PER_SECOND,
   chordMarkers,
+  glow,
 }: FallingNotesCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // FR-SYS-009 — letters in English, solfège in Portuguese; read at draw time so a language change needs no remount.
+  const nameOf = useNoteName();
+  const nameRef = useRef(nameOf);
+  nameRef.current = nameOf;
   const matcherRef = useRef<MatcherState | undefined>(matcherState);
   matcherRef.current = matcherState;
   const pressedRef = useRef<readonly number[]>([]);
@@ -87,10 +104,13 @@ export function FallingNotesCanvas({
     }
     groupStartTick.current = starts;
     range.current = fitKeyboardRange(
-      notes.map((n) => n.pitch as number),
+      [...notes.map((n) => n.pitch as number), ...(glow ? [glow.low, glow.high] : [])],
       keyboardRange,
     );
-  }, [notes, keyboardRange]);
+  }, [notes, keyboardRange, glow]);
+
+  const glowRef = useRef<FitGlow | undefined>(glow);
+  glowRef.current = glow;
 
   const markersRef = useRef<readonly ChordMarker[]>([]);
   markersRef.current = chordMarkers ?? [];
@@ -134,6 +154,20 @@ export function FallingNotesCanvas({
       for (let p = fitted.low as number; p <= (fitted.high as number); p++) {
         const k = pitchToX(p as never, fitted);
         if (k.isWhite && Math.round(k.x) % 2 === 0) ctx.fillRect(k.x * unit, 0, unit, HIT_LINE_Y);
+      }
+
+      // FR-STU-020 — the lanes of the keys that fit now are tinted all the way up, so the eye finds them before the keybed.
+      const fit = glowRef.current;
+      const nowWindow = fit ? harmonyAt(fit.windows, clock.audioToTicks(clock.nowAudio()) as number) : undefined;
+      const glowKeys = fit && nowWindow ? fitKeys(nowWindow, fit.low, fit.high) : undefined;
+      if (glowKeys) {
+        ctx.fillStyle = roleColour;
+        for (const [p, isChordTone] of glowKeys) {
+          const k = pitchToX(p as never, fitted);
+          ctx.globalAlpha = isChordTone ? 0.16 : 0.08;
+          ctx.fillRect(k.x * unit, 0, k.widthUnits * unit, HIT_LINE_Y);
+        }
+        ctx.globalAlpha = 1;
       }
 
       // Hit line
@@ -207,7 +241,7 @@ export function FallingNotesCanvas({
           ctx.fillStyle = '#ffffff';
           ctx.font = `700 ${Math.min(16, pxWidth * 0.45)}px ${displayFont}`;
           ctx.textAlign = 'center';
-          ctx.fillText(noteName(note.pitch as number), pxX + 1 + pxWidth / 2, pxY - 7);
+          ctx.fillText(nameRef.current(note.pitch as number), pxX + 1 + pxWidth / 2, pxY - 7);
         }
         ctx.globalAlpha = 1;
       }
@@ -244,7 +278,7 @@ export function FallingNotesCanvas({
         wantedColour: roleColour,
         doneColour,
         inkColour,
-      });
+      }, nameRef.current, glowKeys);
     };
 
     rafId = requestAnimationFrame(draw);
@@ -277,6 +311,16 @@ function pitchesDone(
   return done;
 }
 
+/** Each key in range that fits the window, true for the chord's own notes. */
+function fitKeys(window: HarmonyWindow, low: number, high: number): Map<number, boolean> {
+  const keys = new Map<number, boolean>();
+  for (let p = low; p <= high; p++) {
+    const pc = p % 12;
+    if (window.fitPitchClasses.includes(pc)) keys.set(p, window.chordPitchClasses.includes(pc));
+  }
+  return keys;
+}
+
 function drawKeybed(
   ctx: CanvasRenderingContext2D,
   range: KeyboardRange,
@@ -286,6 +330,8 @@ function drawKeybed(
   played: ReadonlySet<number>,
   pressed: ReadonlySet<number>,
   colours: { wantedColour: string; doneColour: string; inkColour: string },
+  noteName: (pitch: number, withOctave?: boolean) => string,
+  glow?: ReadonlyMap<number, boolean>,
 ): void {
   const top = CANVAS_HEIGHT - KEYBED_HEIGHT;
   for (const pass of ['white', 'black'] as const) {
@@ -315,6 +361,29 @@ function drawKeybed(
       ctx.lineWidth = isExact ? 3 : 1;
       ctx.strokeRect(k.x * unit, top, w, h);
       ctx.globalAlpha = 1;
+      const glowing = glow?.get(p);
+      if (glowing !== undefined && !isWanted && !isDone && !isHeld) {
+        // A chord note is tinted and dotted, another note that fits is ringed: shape, not only colour (NFR-008).
+        const cx = k.x * unit + w / 2;
+        const cy = top + h - (k.isWhite ? 26 : 12);
+        const radius = Math.max(3, Math.min(7, w * 0.28));
+        if (glowing) {
+          ctx.globalAlpha = 0.3;
+          ctx.fillStyle = colours.wantedColour;
+          ctx.fillRect(k.x * unit, top, w, h);
+          ctx.globalAlpha = 1;
+        }
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        if (glowing) {
+          ctx.fillStyle = k.isWhite ? colours.wantedColour : '#ffffff';
+          ctx.fill();
+        } else {
+          ctx.strokeStyle = k.isWhite ? colours.wantedColour : '#ffffff';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      }
       if ((isWanted || isDone) && w >= 18) {
         ctx.fillStyle = '#ffffff';
         ctx.font = `700 ${Math.min(15, w * 0.45)}px sans-serif`;

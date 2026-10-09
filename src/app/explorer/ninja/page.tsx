@@ -8,7 +8,7 @@
 import { useEffect, useState } from 'react';
 import { useNoteNinjaStore } from '../../../runtime/stores/noteNinjaStore';
 import { useSessionStore } from '../../../runtime/stores/sessionStore';
-import { midiPitchToNoteName } from '../../../core/content/noteName';
+import { useNoteName, useT } from '../../../ui/i18n/useT';
 import { getAdapters } from '../../../runtime/bootstrap';
 import { NoteKeys } from '../../../ui/shared/NoteKeys';
 import { NoteStaff } from '../../../ui/shared/NoteStaff';
@@ -23,6 +23,8 @@ const HINT_DELAY_MS = 6000;
 const ADVANCE_DELAY_MS = 900;
 
 export default function NoteNinjaPage() {
+  const t = useT();
+  const noteName = useNoteName();
   const profile = useSessionStore((s) => s.profile);
   const midiInputs = useNoteNinjaStore((s) => s.midiInputs);
   const midiConnectionState = useNoteNinjaStore((s) => s.midiConnectionState);
@@ -82,7 +84,7 @@ export default function NoteNinjaPage() {
 
   return (
     <PageShell>
-      <h1>Note Ninja</h1>
+      <h1>{t('Note Ninja')}</h1>
 
       {!started && (
         <Card>
@@ -96,18 +98,18 @@ export default function NoteNinjaPage() {
 
       {started && currentPitch !== undefined && (
         <div className={stage.stage}>
-          <Pill mono>Streak {streak}</Pill>
-          <div className={stage.bigNote}>{midiPitchToNoteName(currentPitch)}</div>
+          <Pill mono>{t('Streak {streak}', { streak })}</Pill>
+          <div className={stage.bigNote}>{noteName(currentPitch)}</div>
           <div className={stage.noteViews}>
             <NoteKeys pitches={[currentPitch]} />
             <NoteStaff pitches={[currentPitch]} />
           </div>
           {lastResult && <RewardBurst />}
-          {lastResult?.band === 'fast' && <span className={stage.bandFast}>Fast!</span>}
-          {lastResult?.band === 'correct' && <span className={stage.bandCorrect}>Nice!</span>}
-          {lastResult?.band === 'hinted' && <span className={stage.bandHinted}>Got it!</span>}
+          {lastResult?.band === 'fast' && <span className={stage.bandFast}>{t('Fast!')}</span>}
+          {lastResult?.band === 'correct' && <span className={stage.bandCorrect}>{t('Nice!')}</span>}
+          {lastResult?.band === 'hinted' && <span className={stage.bandHinted}>{t('Got it!')}</span>}
           {hintShown && !lastResult && (
-            <p className={stage.hint}>Hint: it&apos;s {midiPitchToNoteName(currentPitch)} — find it on the keyboard.</p>
+            <p className={stage.hint}>{t("Hint: it's {note} — find it on the keyboard.", { note: noteName(currentPitch) })}</p>
           )}
         </div>
       )}

@@ -15,6 +15,7 @@ import { useParams } from 'next/navigation';
 import { useSessionStore } from '../../../../runtime/stores/sessionStore';
 import { getAdapters } from '../../../../runtime/bootstrap';
 import { FallingNotesCanvas } from '../../../../ui/falling/FallingNotesCanvas';
+import { useT } from '../../../../ui/i18n/useT';
 import { PageShell } from '../../../../ui/shared/PageShell';
 import { StatusNote } from '../../../../ui/shared/StatusNote';
 import { Card } from '../../../../ui/shared/Card';
@@ -24,6 +25,7 @@ import type { Arrangement } from '../../../../core/content/types';
 import { describeRushDrag } from '../../../../core/grade/grade';
 
 export default function StudioSongPage() {
+  const t = useT();
   const params = useParams<{ id: string }>();
   const profile = useSessionStore((s) => s.profile);
   const midiInputs = useSessionStore((s) => s.midiInputs);
@@ -68,7 +70,7 @@ export default function StudioSongPage() {
 
   // FR-STU-013 — the melody track; the lead sheet's harmony comes from
   // arrangement.chordMarkers, not from a separate lh/accomp track.
-  const track = arrangement?.tracks.find((t) => t.role === 'melody' || t.role === 'rh') ?? arrangement?.tracks[0];
+  const track = arrangement?.tracks.find((tr) => tr.role === 'melody' || tr.role === 'rh') ?? arrangement?.tracks[0];
   const notesForDisplay = activeNotes ?? track?.notes ?? [];
 
   async function handleSelectMidi(inputId: string): Promise<void> {
@@ -77,7 +79,7 @@ export default function StudioSongPage() {
     await startArrangement(arrangement, track.id, crypto.randomUUID(), new Date().toISOString(), undefined, 'wait');
   }
 
-  if (loadError) return <PageShell><StatusNote tone="problem">Could not load this song: {loadError}</StatusNote></PageShell>;
+  if (loadError) return <PageShell><StatusNote tone="problem">{t('Could not load this song: {error}', { error: t(loadError) })}</StatusNote></PageShell>;
   if (!arrangement || !track) return <PageShell><StatusNote /></PageShell>;
 
   return (
@@ -95,10 +97,10 @@ export default function StudioSongPage() {
           <div className={controls.bar}>
             <Segmented
               name="view"
-              legend="Show"
+              legend={t('Show')}
               options={[
-                { value: 'falling' as const, label: 'Falling notes' },
-                { value: 'score' as const, label: 'Music score' },
+                { value: 'falling' as const, label: t('Falling notes') },
+                { value: 'score' as const, label: t('Music score') },
               ]}
               value={view}
               onChange={setView}
@@ -122,8 +124,8 @@ export default function StudioSongPage() {
       )}
 
       {attemptStatus === 'complete' && grade && (
-        <ResultCard stars={grade.stars} title={`${Math.round(grade.accuracy * 100)}% of the notes`}>
-          <p>You are {describeRushDrag(grade.rushDragMs)}.</p>
+        <ResultCard stars={grade.stars} title={t('{percent}% of the notes', { percent: Math.round(grade.accuracy * 100) })}>
+          <p>{t('You are {how}.', { how: t(describeRushDrag(grade.rushDragMs)) })}</p>
         </ResultCard>
       )}
     </PageShell>

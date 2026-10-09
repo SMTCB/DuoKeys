@@ -7,6 +7,7 @@
 'use client';
 
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useT } from '../i18n/useT';
 import type { Arrangement, ContentNote } from '../../core/content/types';
 import { detectKey } from '../../core/content/detectKey';
 import {
@@ -59,8 +60,9 @@ export function ScrollingScore({
   /** The notes the matcher is actually expecting for `trackId` (a quest section, say), if fewer than the whole track. */
   notes?: ContentNote[] | undefined;
 }) {
+  const t = useT();
   const shown = useMemo(
-    () => (notes ? { ...arrangement, tracks: arrangement.tracks.map((t) => (t.id === trackId ? { ...t, notes } : t)) } : arrangement),
+    () => (notes ? { ...arrangement, tracks: arrangement.tracks.map((tr) => (tr.id === trackId ? { ...tr, notes } : tr)) } : arrangement),
     [arrangement, trackId, notes],
   );
   const sharps = preferSharps ?? detectKey(shown)?.isSharpKey ?? true;
@@ -83,7 +85,7 @@ export function ScrollingScore({
   const offset = Math.max(0, nowX - frameWidth * NOW_FRACTION - 20);
 
   return (
-    <div ref={frameRef} className={styles.frame} role="img" aria-label="The music score, moving along as you play">
+    <div ref={frameRef} className={styles.frame} role="img" aria-label={t('The music score, moving along as you play')}>
       <svg
         className={styles.strip}
         width={layout.widthPx}

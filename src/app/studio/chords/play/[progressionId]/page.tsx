@@ -13,7 +13,7 @@ import { sameProgressionInKey } from '../../../../../core/content/freePlay';
 import { asPitchClass } from '../../../../../core/content/chordTypes';
 import { useSessionStore } from '../../../../../runtime/stores/sessionStore';
 import { useChordExplorerStore } from '../../../../../runtime/stores/chordExplorerStore';
-import { noteName } from '../../../../../ui/falling/noteName';
+import { useT, useNoteName } from '../../../../../ui/i18n/useT';
 import { ProgressionNav } from '../../../../../ui/shared/ProgressionNav';
 import { progressionPosition } from '../../../../../core/content/progressionPosition';
 import { chordSymbolOfId } from '../../../../../core/content/chordSymbols';
@@ -48,6 +48,8 @@ const TEMPO_MAX = 100;
 const TEMPO_STEP = 5;
 
 export default function ChordProgressionPlayPage() {
+  const t = useT();
+  const noteName = useNoteName();
   const params = useParams<{ progressionId: string }>();
   const restartOnKeyChange = useRef(false);
   // Held in state so a key change can swap it without re-rendering the route (which would drop a game in play).
@@ -163,12 +165,12 @@ export default function ChordProgressionPlayPage() {
   }
   const keyPicker = progression && !progression.isUserAdded && (
     <label className={controls.tempo}>
-      <span className={controls.tempoLabel}>Key</span>
-      <select value={String(progression.key)} onChange={(e) => changeKey(e.target.value)} aria-label="Key">
+      <span className={controls.tempoLabel}>{t('Key')}</span>
+      <select value={String(progression.key)} onChange={(e) => changeKey(e.target.value)} aria-label={t('Key')}>
         {KEY_NAMES.map((name, i) => (
           <option key={name} value={String(i)}>
             {name}
-            {progression.mode === 'minor' ? ' minor' : ''}
+            {progression.mode === 'minor' ? ` ${t('minor')}` : ''}
           </option>
         ))}
       </select>
@@ -193,33 +195,30 @@ export default function ChordProgressionPlayPage() {
   if (!progression || !arrangement) {
     return (
       <PageShell>
-        <p>That progression is not in your library.</p>
-        <Link href="/studio/chords">Back to the chord explorer</Link>
+        <p>{t('That progression is not in your library.')}</p>
+        <Link href="/studio/chords">{t('Back to the chord explorer')}</Link>
       </PageShell>
     );
   }
 
   return (
     <PageShell>
-      <h1>{progression.name}</h1>
+      <h1>{t(progression.name)}</h1>
       <p>
-        <Link href="/studio/chords">← Chord explorer</Link>
+        <Link href="/studio/chords">← {t('Chord explorer')}</Link>
       </p>
       <p style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center', margin: 0 }}>
         <Pill tone="neutral">
-          Key of {KEY_NAMES[progression.key as number]}
-          {progression.mode === 'minor' ? ' minor' : ''}
+          {t('Key of {key}', { key: `${KEY_NAMES[progression.key as number] ?? ''}${progression.mode === 'minor' ? ` ${t('minor')}` : ''}` })}
         </Pill>
         {progression.moods.map((m) => (
-          <Pill key={m} tone="neutral">{m}</Pill>
+          <Pill key={m} tone="neutral">{t(m)}</Pill>
         ))}
         <strong>{progression.chordIds.map((id) => chordSymbolOfId(id)).join('  ')}</strong>
       </p>
       {isNumeralName && (
         <p>
-          {progression.name} is the pattern: each number is a step of the scale (I is the home chord, V the tension
-          chord that wants to go home). Capitals are major chords, small letters minor. The chords above are that
-          pattern in this key.
+          {t('{name} is the pattern: each number is a step of the scale (I is the home chord, V the tension chord that wants to go home). Capitals are major chords, small letters minor. The chords above are that pattern in this key.', { name: progression.name })}
         </p>
       )}
 
@@ -228,27 +227,27 @@ export default function ChordProgressionPlayPage() {
           {hasStyles && (
             <Segmented
               name="rhythm"
-              legend="Rhythm (the pattern the chords are played in)"
+              legend={t('Rhythm (the pattern the chords are played in)')}
               options={([{ id: 'block', label: 'Block chords' }, ...CHORD_STYLES] as { id: StyleChoice; label: string }[]).map((choice) => ({
                 value: choice.id,
-                label: choice.label,
+                label: t(choice.label),
               }))}
               value={style}
               onChange={setStyle}
             />
           )}
           {keyPicker}
-          {styleError && <p>That rhythm could not be loaded — block chords will play instead.</p>}
-          {isStyleLoading && <p>Loading the rhythm…</p>}
+          {styleError && <p>{t('That rhythm could not be loaded — block chords will play instead.')}</p>}
+          {isStyleLoading && <p>{t('Loading the rhythm…')}</p>}
           <label className={controls.check}>
             <input type="checkbox" checked={holdAtLine} onChange={(e) => setHoldAtLine(e.target.checked)} />
-            Stop the chord at the line until I play it
+            {t('Stop the chord at the line until I play it')}
           </label>
           <label className={controls.check}>
             <input type="checkbox" checked={anyOctave} onChange={(e) => setAnyOctave(e.target.checked)} />
-            Any octave counts (play the right letter wherever it is easiest)
+            {t('Any octave counts (play the right letter wherever it is easiest)')}
           </label>
-          <p>The chords wait for you — there is no timer.</p>
+          <p>{t('The chords wait for you — there is no timer.')}</p>
           <MidiChooser inputs={midiInputs} connectionState={midiConnectionState} onSelect={(id) => void start(id)} />
         </Card>
       )}
@@ -258,10 +257,10 @@ export default function ChordProgressionPlayPage() {
           <div className={controls.bar}>
             <Segmented
               name="view"
-              legend="Show"
+              legend={t('Show')}
               options={[
-                { value: 'falling' as const, label: 'Falling notes' },
-                { value: 'score' as const, label: 'Music score' },
+                { value: 'falling' as const, label: t('Falling notes') },
+                { value: 'score' as const, label: t('Music score') },
               ]}
               value={shownView}
               onChange={setView}
@@ -269,7 +268,7 @@ export default function ChordProgressionPlayPage() {
             {keyPicker}
             <label className={controls.tempo}>
               <span className={controls.tempoLabel}>
-                Speed <span className={controls.readout}>{Math.round(tempoScale * 100)}%</span>
+                {t('Speed')} <span className={controls.readout}>{Math.round(tempoScale * 100)}%</span>
               </span>
               <input
                 type="range"
@@ -295,7 +294,7 @@ export default function ChordProgressionPlayPage() {
 
       {attemptStatus === 'playing' && matcherState && matcherState.pending.length > 0 && (
         <p aria-live="polite">
-          <strong>Play now:</strong>{' '}
+          <strong>{t('Play now:')}</strong>{' '}
           {[...matcherState.pending].sort((a, b) => (a as number) - (b as number)).map((p) => noteName(p as number, !anyOctave)).join(' · ')}
         </p>
       )}
@@ -326,14 +325,14 @@ export default function ChordProgressionPlayPage() {
       {attemptStatus === 'complete' && grade && (
         <ResultCard
           stars={grade.stars}
-          title={`${Math.round(grade.accuracy * 100)}% of the chord notes`}
+          title={t('{percent}% of the chord notes', { percent: Math.round(grade.accuracy * 100) })}
           actions={
             <Button accent="indigo" onClick={() => void start()}>
-              Play it again
+              {t('Play it again')}
             </Button>
           }
         >
-          <p>Round finished.</p>
+          <p>{t('Round finished.')}</p>
         </ResultCard>
       )}
     </PageShell>

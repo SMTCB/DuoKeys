@@ -11,6 +11,7 @@
 import { useEffect, useState } from 'react';
 import { getAdapters } from '../../runtime/bootstrap';
 import type { ContentIndex } from '../../adapters/ports';
+import { useT } from '../../ui/i18n/useT';
 import { PageShell } from '../../ui/shared/PageShell';
 import { StatusNote } from '../../ui/shared/StatusNote';
 import { ActionCard, ActionGrid } from '../../ui/shared/ActionCard';
@@ -21,6 +22,7 @@ const PIECE_COLOURS: PopColour[] = ['mustard', 'peach', 'cream', 'cornflower'];
 const PIECE_CORNERS: PopCorner[] = ['tl', 'tr', 'br', 'bl'];
 
 export default function ExplorerListPage() {
+  const t = useT();
   const [index, setIndex] = useState<ContentIndex | undefined>();
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export default function ExplorerListPage() {
 
   return (
     <PageShell tone="bold">
-      <h1>What shall we play?</h1>
+      <h1>{t('What shall we play?')}</h1>
       <ActionGrid>
         <ActionCard
           variant="tile"
@@ -46,8 +48,8 @@ export default function ExplorerListPage() {
           shapeColour="mustard"
           corner="tl"
           href="/explorer/ninja"
-          title="Note Ninja"
-          description="Find the note, fast!"
+          title={t('Note Ninja')}
+          description={t('Find the note, fast!')}
         />
         <ActionCard
           variant="tile"
@@ -56,11 +58,11 @@ export default function ExplorerListPage() {
           shapeColour="peach"
           corner="tr"
           href="/explorer/free-play"
-          title="Free Play"
-          description="Press any key and make music."
+          title={t('Free Play')}
+          description={t('Press any key and make music.')}
         />
       </ActionGrid>
-      <h2>Pieces</h2>
+      <h2>{t('Pieces')}</h2>
       <ActionGrid min="small">
         {index.pieces.map((piece, i) => (
           <ActionCard
@@ -70,7 +72,7 @@ export default function ExplorerListPage() {
             corner={PIECE_CORNERS[i % PIECE_CORNERS.length] ?? 'tl'}
             href={`/explorer/${piece.defaultArrangementId}`}
             icon={i + 1}
-            title={piece.title}
+            title={t(piece.title)}
           />
         ))}
       </ActionGrid>

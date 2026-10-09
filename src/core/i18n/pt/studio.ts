@@ -1,0 +1,286 @@
+// Studio (the adult's side): chords, free play, songs, play pages, library.
+export const PT_STUDIO: Record<string, string> = {
+  // Chord explorer
+  Chords: 'Acordes',
+  Progressions: 'Progressões',
+  'My progressions': 'Minhas progressões',
+  '✓ Piano connected': '✓ Piano conectado',
+  'Piano found, tap it to connect': 'Piano encontrado, toque nele para conectar',
+  'No piano found': 'Nenhum piano encontrado',
+  Key: 'Tom',
+  'chord {n} of {total}': 'acorde {n} de {total}',
+  'Play this chord': 'Toque este acorde',
+  '✓ Nice!': '✓ Muito bem!',
+  'Next chord': 'Próximo acorde',
+  'Play with falling notes': 'Tocar com notas que caem',
+  'Chord explorer sections': 'Seções do explorador de acordes',
+  'Chords that belong in {key}': 'Acordes que pertencem a {key}',
+  'Press one to see it on the keys, then play it.': 'Aperte um para vê-lo nas teclas e depois toque.',
+  'All {count} chords on {key}': 'Todos os {count} acordes em {key}',
+  Mode: 'Modo',
+  All: 'Todos',
+  Major: 'Maior',
+  Minor: 'Menor',
+  Modal: 'Modal',
+  Mood: 'Sentimento',
+  'Any mood': 'Qualquer sentimento',
+  '{count} progressions in {key}': '{count} progressões em {key}',
+  Play: 'Tocar',
+  'Show {count} more': 'Mostrar mais {count}',
+  'Add your own progression': 'Adicione sua própria progressão',
+  'Type chords from a chart, like': 'Digite acordes de uma cifra, como',
+  'or numerals in the key chosen above, like': 'ou numerais no tom escolhido acima, como',
+  'In a minor key the numerals follow the natural minor scale (VII is G in A minor).':
+    'Em um tom menor, os numerais seguem a escala menor natural (VII é Sol em Lá menor).',
+  'Name (optional)': 'Nome (opcional)',
+  'Numerals in {key}': 'Numerais em {key}',
+  'Add to my library': 'Adicionar à minha biblioteca',
+  'Added “{title}” to the list below.': '“{title}” foi adicionada à lista abaixo.',
+  'Nothing yet': 'Nada ainda',
+  'Add a progression above and it will wait here.': 'Adicione uma progressão acima e ela ficará aqui.',
+  'Remove {name}': 'Remover {name}',
+  Remove: 'Remover',
+  minor: 'menor',
+  'That progression is not in your library.': 'Essa progressão não está na sua biblioteca.',
+  'Back to the chord explorer': 'Voltar ao explorador de acordes',
+  'Chord explorer': 'Explorador de acordes',
+  'Key of {key}': 'Tom de {key}',
+  '{name} is the pattern: each number is a step of the scale (I is the home chord, V the tension chord that wants to go home). Capitals are major chords, small letters minor. The chords above are that pattern in this key.':
+    '{name} é o padrão: cada número é um degrau da escala (I é o acorde de casa, V o acorde de tensão que quer voltar para casa). Maiúsculas são acordes maiores, minúsculas são menores. Os acordes acima são esse padrão neste tom.',
+  'Rhythm (the pattern the chords are played in)': 'Ritmo (o padrão em que os acordes são tocados)',
+  'That rhythm could not be loaded — block chords will play instead.':
+    'Esse ritmo não pôde ser carregado — vão tocar acordes em bloco.',
+  'Loading the rhythm…': 'Carregando o ritmo…',
+  'Stop the chord at the line until I play it': 'Parar o acorde na linha até eu tocá-lo',
+  'Any octave counts (play the right letter wherever it is easiest)':
+    'Qualquer oitava vale (toque a nota certa onde for mais fácil)',
+  'The chords wait for you — there is no timer.': 'Os acordes esperam por você — não há cronômetro.',
+  Speed: 'Velocidade',
+  'Play now:': 'Toque agora:',
+  '{percent}% of the chord notes': '{percent}% das notas dos acordes',
+  'Play it again': 'Tocar de novo',
+  'Round finished.': 'Rodada terminada.',
+  'Block chords': 'Acordes em bloco',
+
+  // Free play
+  'Free play': 'Toque livre',
+  'Sit down, relax, make something that sounds like music. Nothing is graded and nothing runs out.':
+    'Sente, relaxe, faça algo que soe como música. Nada é avaliado e nada acaba.',
+  'Back to Studio': 'Voltar ao Estúdio',
+  'Make me a song': 'Faça uma música para mim',
+  'A few minutes of music written for you from easy chords: an intro, verses and choruses, a bridge and an ending. The left hand plays a bass line, the right hand a simple tune. Pick a feeling and a key if you like.':
+    'Alguns minutos de música escrita para você com acordes fáceis: uma introdução, versos e refrões, uma ponte e um final. A mão esquerda toca uma linha de baixo, a direita uma melodia simples. Escolha um sentimento e um tom, se quiser.',
+  'How do you feel?': 'Como você se sente?',
+  'Surprise me': 'Surpreenda-me',
+  'Any key': 'Qualquer tom',
+  'How long?': 'Quanto tempo?',
+  Short: 'Curta',
+  'A song': 'Uma música',
+  Long: 'Longa',
+  'How busy?': 'Quão cheia?',
+  Simple: 'Simples',
+  Fuller: 'Mais cheia',
+  'Just the chords': 'Só os acordes',
+  'Or loop a few easy chords on their own, in a rhythm, using the feeling and key above. Each suggestion uses only a few easy chords.':
+    'Ou repita alguns acordes fáceis sozinhos, num ritmo, usando o sentimento e o tom acima. Cada sugestão usa só alguns acordes fáceis.',
+  'Another one': 'Outra',
+  'Play something for me': 'Toque algo para mim',
+  'Your chords, in the key of {key}': 'Seus acordes, no tom de {key}',
+  'Feels:': 'Sensação:',
+  'No easy {mood} chords in {key}, so this one feels different. Pick another key or tap “Another one”.':
+    'Não há acordes fáceis {mood} em {key}, então este soa diferente. Escolha outro tom ou toque em “Outra”.',
+  'Rhythm:': 'Ritmo:',
+  'The rhythm is the pattern the chords are played in, all at once (block chords) or as a groove. It is picked at random; you can change it on the next screen. Play the chords with one hand or both. They fall and wait for you, so there is no hurry.':
+    'O ritmo é o padrão em que os acordes são tocados, todos de uma vez (acordes em bloco) ou como uma batida. É escolhido ao acaso; você pode mudá-lo na próxima tela. Toque os acordes com uma mão ou com as duas. Eles caem e esperam por você, então não há pressa.',
+  'Play it': 'Tocar',
+  'Chord library': 'Biblioteca de acordes',
+  'Pick a key, browse its chords and 100+ progressions, or type your own.':
+    'Escolha um tom, veja seus acordes e mais de 100 progressões, ou digite a sua.',
+  'There are no easy progressions to write a song from.': 'Não há progressões fáceis para escrever uma música.',
+  'Back to Free play': 'Voltar ao Toque livre',
+  'Keep going (don’t wait for me)': 'Continuar tocando (não espere por mim)',
+  'Make up my own right hand (light up the notes that fit)':
+    'Inventar minha própria mão direita (acender as notas que combinam)',
+  'about {min} min at full speed': 'cerca de {min} min na velocidade total',
+  'The song, part by part': 'A música, parte por parte',
+  'Both hands are written out: the left plays the chords as a bass line, the right plays a simple tune. The verse and chorus come back, so by the second time round you know where you are going.':
+    'As duas mãos estão escritas: a esquerda toca os acordes como linha de baixo, a direita toca uma melodia simples. O verso e o refrão voltam, então na segunda vez você já sabe para onde vai.',
+  'Chords:': 'Acordes:',
+  'You can flip both switches while you play.': 'Você pode mudar as duas opções enquanto toca.',
+  chord: 'acorde',
+  'your right hand: any lit key': 'sua mão direita: qualquer tecla acesa',
+  '{percent}% of the bass notes': '{percent}% das notas do baixo',
+  '{percent}% of the notes': '{percent}% das notas',
+  'New song, same feeling': 'Música nova, mesmo sentimento',
+  'That’s the whole song. Play it again and it will be the same tune; a new one is written each time you ask.':
+    'Essa é a música toda. Toque de novo e será a mesma melodia; uma nova é escrita cada vez que você pedir.',
+
+  // Studio home and Learn
+  '✓ Done': '✓ Feito',
+  'Mark done': 'Marcar como feito',
+  Learn: 'Aprender',
+  'A gentle path back to the piano. Do as much or as little as you feel like; there is no order you have to keep.':
+    'Um caminho suave de volta ao piano. Faça tanto ou tão pouco quanto quiser; não há ordem obrigatória.',
+  '{bpm} bpm': '{bpm} bpm',
+  Start: 'Começar',
+  '{bars} bars': '{bars} compassos',
+  'A gentle roadmap back to the piano, with warm-ups and exercises.':
+    'Um roteiro suave de volta ao piano, com aquecimentos e exercícios.',
+  'Sit down and unwind. Chords, and something easy suggested for you.':
+    'Sente e relaxe. Acordes e algo fácil sugerido para você.',
+  Songs: 'Músicas',
+  'My songs, add one you love, and the song library.':
+    'Minhas músicas, adicione uma que você ama e a biblioteca de músicas.',
+
+  // Song library
+  '✓ In my songs': '✓ Nas minhas músicas',
+  'Add to my songs': 'Adicionar às minhas músicas',
+  'Could not load the song library: {error}': 'Não foi possível carregar a biblioteca de músicas: {error}',
+  'Song library': 'Biblioteca de músicas',
+  '{count} piano and harpsichord pieces from the': '{count} peças de piano e cravo do',
+  'Add what you like to “my songs”, then play it as falling notes.':
+    'Adicione o que gostar às “minhas músicas” e toque como notas que caem.',
+  'My songs': 'Minhas músicas',
+  'Find a song': 'Encontre uma música',
+  'Search by title, composer or opus': 'Busque por título, compositor ou opus',
+  'Title, composer or opus — e.g. chopin nocturne': 'Título, compositor ou opus — ex.: chopin noturno',
+  Style: 'Estilo',
+  'All styles': 'Todos os estilos',
+  Difficulty: 'Dificuldade',
+  'All levels': 'Todos os níveis',
+  'Level is estimated from how many notes each bar holds.': 'O nível é estimado pelo número de notas em cada compasso.',
+  'Nothing matches — try fewer words.': 'Nada encontrado — tente menos palavras.',
+  'Showing the first {shown} of {total} — type more to narrow it down.':
+    'Mostrando as primeiras {shown} de {total} — digite mais para filtrar.',
+  '{count} found.': '{count} encontradas.',
+  'No songs found': 'Nenhuma música encontrada',
+  'Try a shorter search, or set the level back to All levels.':
+    'Tente uma busca mais curta ou volte o nível para Todos os níveis.',
+
+  // Play pages
+  'Left hand': 'Mão esquerda',
+  'Right hand': 'Mão direita',
+  'Both hands': 'Ambas as mãos',
+  'Stop the notes at the line until I play them': 'Parar as notas na linha até eu tocá-las',
+  'Any octave counts (play the right letter on any part of the keyboard)':
+    'Qualquer oitava vale (toque a nota certa em qualquer parte do teclado)',
+  Practise: 'Praticar',
+  'The other hand': 'A outra mão',
+  Silent: 'Em silêncio',
+  'Played by the sampler': 'Tocada pelo sampler',
+  Loop: 'Repetição',
+  'Repeat a few measures': 'Repetir alguns compassos',
+  Measures: 'Compassos',
+  'Loop from measure': 'Repetir a partir do compasso',
+  to: 'até',
+  'Loop to measure': 'Repetir até o compasso',
+  'of {total}': 'de {total}',
+  'Speed up a little after each clean pass': 'Acelerar um pouco após cada passagem limpa',
+  'Pass {n}': 'Passagem {n}',
+  Tempo: 'Andamento',
+  'Last pass {percent}% accurate': 'Última passagem {percent}% certa',
+  'Stop looping': 'Parar a repetição',
+  'Move the key': 'Mudar o tom',
+  'As written': 'Como escrito',
+  '{n} higher': '{n} acima',
+  '{n} lower': '{n} abaixo',
+  'Waiting for you. Play:': 'Esperando por você. Toque:',
+  'You are {how}.': 'Você está {how}.',
+  'Could not load this song: {error}': 'Não foi possível carregar esta música: {error}',
+
+  // Sight-reading
+  'Sight-Reading': 'Leitura à primeira vista',
+  'A fresh phrase every time — never one you have already memorised.':
+    'Uma frase nova toda vez — nunca uma que você já decorou.',
+  Length: 'Tamanho',
+  'Generate a phrase': 'Gerar uma frase',
+  'Where this piece is in your repertoire': 'Onde esta peça está no seu repertório',
+
+  // Songs hub
+  'Song name': 'Nome da música',
+  'Artist (optional)': 'Artista (opcional)',
+  'Add a song by pasting its chords': 'Adicione uma música colando suas cifras',
+  'Copy the chords from a chart you like. DuoKeys does not fetch songs for you.':
+    'Copie os acordes de uma cifra de que você gosta. O DuoKeys não busca músicas para você.',
+  'Chords from the chart': 'Acordes da cifra',
+  'Paste the chord lines. Lyrics are fine, they are skipped.':
+    'Cole as linhas de acordes. A letra pode vir junto, ela é ignorada.',
+  'Found {count} chords in {sections} sections.': 'Encontrei {count} acordes em {sections} seções.',
+  'Found {count} chords.': 'Encontrei {count} acordes.',
+  'Could not read: {list}.': 'Não consegui ler: {list}.',
+  'No chords found yet.': 'Nenhum acorde encontrado ainda.',
+  'Save to My songs': 'Salvar em Minhas músicas',
+  'The scan could not be turned into a song: {reason}': 'A digitalização não pôde virar uma música: {reason}',
+  unreadable: 'ilegível',
+  'That score is too big (the limit is 400 KB).': 'Essa partitura é grande demais (o limite é 400 KB).',
+  'That file is too big (the limit is 400 KB).': 'Esse arquivo é grande demais (o limite é 400 KB).',
+  'Save the picture as a PNG or JPG first.': 'Salve a imagem como PNG ou JPG primeiro.',
+  'Choose a .musicxml, .xml, .mxl, .pdf, .png or .jpg file.': 'Escolha um arquivo .musicxml, .xml, .mxl, .pdf, .png ou .jpg.',
+  'Choose a .mid or .midi file.': 'Escolha um arquivo .mid ou .midi.',
+  'That file could not be read.': 'Esse arquivo não pôde ser lido.',
+  'That score is too big once unzipped (the limit is 400 KB).':
+    'Essa partitura é grande demais depois de descompactada (o limite é 400 KB).',
+  'Add a song from a score': 'Adicionar uma música de uma partitura',
+  'Add a song from a MIDI file': 'Adicionar uma música de um arquivo MIDI',
+  'Upload the score as a MusicXML file, or a PDF or picture of printed piano music. DuoKeys turns its notes into falling notes you can play.':
+    'Envie a partitura como arquivo MusicXML, ou um PDF ou foto de música de piano impressa. O DuoKeys transforma as notas em notas que caem para você tocar.',
+  'Upload a MIDI file. Its notes become falling notes you can play.':
+    'Envie um arquivo MIDI. As notas dele viram notas que caem para você tocar.',
+  'Leave the name empty to use the file name.': 'Deixe o nome vazio para usar o nome do arquivo.',
+  'Leave empty to use the file name': 'Deixe vazio para usar o nome do arquivo',
+  'Score file (.musicxml, .xml, .mxl, .pdf, .png or .jpg)': 'Arquivo da partitura (.musicxml, .xml, .mxl, .pdf, .png ou .jpg)',
+  'MIDI file (.mid or .midi)': 'Arquivo MIDI (.mid ou .midi)',
+  'Reading the score. This can take a minute.': 'Lendo a partitura. Isso pode levar um minuto.',
+  'Reading a PDF or picture needs the DuoKeys score reader running on this computer. It is free, needs Docker, and nothing leaves your computer. In a terminal, from the DuoKeys folder:':
+    'Ler um PDF ou uma foto precisa do leitor de partituras do DuoKeys rodando neste computador. É grátis, precisa do Docker e nada sai do seu computador. Em um terminal, na pasta do DuoKeys:',
+  'Then choose the file again. A MusicXML file from MuseScore needs none of this.':
+    'Depois escolha o arquivo de novo. Um arquivo MusicXML do MuseScore não precisa de nada disso.',
+  'Save name': 'Salvar nome',
+  'Choose how to get a song.': 'Escolha como conseguir uma música.',
+  'Ways to add a song': 'Maneiras de adicionar uma música',
+  'Starter pieces': 'Peças para começar',
+  '✓ “{title}” is saved in My songs.': '✓ “{title}” foi salva em Minhas músicas.',
+  'Nothing here yet': 'Nada aqui ainda',
+  'Pick one of the options above to add a song.': 'Escolha uma das opções acima para adicionar uma música.',
+  Mine: 'Minha',
+  Rename: 'Renomear',
+  Library: 'Biblioteca',
+
+  // Scan review
+  '{list} and {count} more': '{list} e mais {count}',
+  'Check the scanned score': 'Confira a partitura digitalizada',
+  'Check what was read': 'Confira o que foi lido',
+  'Read {bars} bars and {notes} notes.': 'Li {bars} compassos e {notes} notas.',
+  'Every bar adds up. It is still worth listening to the first page before you rely on it.':
+    'Todos os compassos fecham. Ainda vale ouvir a primeira página antes de confiar nela.',
+  'Bars {list} hold too many beats, so a note or rhythm was misread.':
+    'Os compassos {list} têm tempos demais, então uma nota ou ritmo foi lido errado.',
+  'Bars {list} hold too few beats, so a note may be missing.':
+    'Os compassos {list} têm tempos de menos, então pode faltar uma nota.',
+  'You can save it and play on. Those bars may sound wrong. Scanning works best on clean, printed piano music.':
+    'Você pode salvar e continuar. Esses compassos podem soar errados. A digitalização funciona melhor com música de piano impressa e limpa.',
+  'The scan found no speed. Beats per minute': 'A digitalização não achou o andamento. Batidas por minuto',
+  Discard: 'Descartar',
+
+  // Grading sentences (core/grade/grade.ts)
+  'right on the beat': 'bem no tempo',
+  'Your note lengths matched what was written.': 'A duração das suas notas combinou com o que está escrito.',
+  'Your timing between notes was very even.': 'Seu tempo entre as notas foi muito regular.',
+  'Your timing between notes was uneven — try a slower, steadier tempo.':
+    'Seu tempo entre as notas foi irregular — tente um andamento mais lento e firme.',
+  'Your timing between notes was reasonably even.': 'Seu tempo entre as notas foi razoavelmente regular.',
+
+  // Core labels
+  Triads: 'Tríades',
+  '7ths & 9ths': '7ªs e 9ªs',
+  Other: 'Outros',
+  Pop: 'Pop',
+  'Pop 2': 'Pop 2',
+  Soul: 'Soul',
+  'Hip-hop': 'Hip-hop',
+  Intro: 'Introdução',
+  Verse: 'Verso',
+  Chorus: 'Refrão',
+  Bridge: 'Ponte',
+  Ending: 'Final',
+};

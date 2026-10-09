@@ -18,6 +18,7 @@ import { useSongLibraryStore } from '../../../runtime/stores/songLibraryStore';
 import { bytesToBase64, useCustomSongStore } from '../../../runtime/stores/customSongStore';
 import { MAX_CUSTOM_BYTES, parseChordChart, type CustomSongKind } from '../../../core/content/customSong';
 import { parseMusicXmlWithReport, withTempo } from '../../../core/content/parseMusicXml';
+import { useT } from '../../../ui/i18n/useT';
 import { PageShell } from '../../../ui/shared/PageShell';
 import { StatusNote } from '../../../ui/shared/StatusNote';
 import { Card } from '../../../ui/shared/Card';
@@ -49,14 +50,15 @@ function NameFields({
   setArtist(v: string): void;
   placeholder?: string;
 }) {
+  const t = useT();
   return (
     <>
       <label style={labelStyle}>
-        Song name
+        {t('Song name')}
         <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={placeholder ?? 'Wonderwall'} style={field} />
       </label>
       <label style={labelStyle}>
-        Artist (optional)
+        {t('Artist (optional)')}
         <input value={artist} onChange={(e) => setArtist(e.target.value)} placeholder="Oasis" style={field} />
       </label>
     </>
@@ -64,6 +66,7 @@ function NameFields({
 }
 
 function PastePanel({ onAdded }: { onAdded: (title: string) => void }) {
+  const t = useT();
   const add = useCustomSongStore((s) => s.add);
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
@@ -84,11 +87,11 @@ function PastePanel({ onAdded }: { onAdded: (title: string) => void }) {
   return (
     <Card>
       <div className={options.panel}>
-        <h2>Add a song by pasting its chords</h2>
-        <p className={options.note}>Copy the chords from a chart you like. DuoKeys does not fetch songs for you.</p>
+        <h2>{t('Add a song by pasting its chords')}</h2>
+        <p className={options.note}>{t('Copy the chords from a chart you like. DuoKeys does not fetch songs for you.')}</p>
         <NameFields title={title} artist={artist} setTitle={setTitle} setArtist={setArtist} />
         <label style={labelStyle}>
-          Chords from the chart
+          {t('Chords from the chart')}
           <textarea
             value={chart}
             onChange={(e) => setChart(e.target.value)}
@@ -99,19 +102,19 @@ function PastePanel({ onAdded }: { onAdded: (title: string) => void }) {
         </label>
         <p role="status" className={options.note}>
           {chart.trim() === ''
-            ? 'Paste the chord lines. Lyrics are fine, they are skipped.'
+            ? t('Paste the chord lines. Lyrics are fine, they are skipped.')
             : preview.chordIds.length > 0
-              ? `Found ${preview.chordIds.length} chords${preview.sections.length > 0 ? ` in ${preview.sections.length} sections` : ''}.${
-                  preview.unsupported.length > 0 ? ` Could not read: ${[...new Set(preview.unsupported)].join(', ')}.` : ''
+              ? `${preview.sections.length > 0 ? t('Found {count} chords in {sections} sections.', { count: preview.chordIds.length, sections: preview.sections.length }) : t('Found {count} chords.', { count: preview.chordIds.length })}${
+                  preview.unsupported.length > 0 ? ` ${t('Could not read: {list}.', { list: [...new Set(preview.unsupported)].join(', ') })}` : ''
                 }`
-              : 'No chords found yet.'}
+              : t('No chords found yet.')}
         </p>
         <div>
           <Button accent="indigo" onClick={() => void save()} disabled={!title.trim() || preview.chordIds.length === 0}>
-            Save to My songs
+            {t('Save to My songs')}
           </Button>
         </div>
-        {problem && <p role="alert">{problem}</p>}
+        {problem && <p role="alert">{t(problem)}</p>}
       </div>
     </Card>
   );
@@ -119,6 +122,7 @@ function PastePanel({ onAdded }: { onAdded: (title: string) => void }) {
 
 /** One panel for both file kinds: a MIDI file, or a score exported as MusicXML / compressed MusicXML. */
 function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: string) => void }) {
+  const t = useT();
   const add = useCustomSongStore((s) => s.add);
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
@@ -144,21 +148,21 @@ function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: s
     }
     try {
       const { source, report } = parseMusicXmlWithReport(result.musicXml, { id: 'scan' });
-      const noteCount = source.tracks.reduce((sum, t) => sum + t.notes.filter((n) => !n.rest).length, 0);
+      const noteCount = source.tracks.reduce((sum, tr) => sum + tr.notes.filter((n) => !n.rest).length, 0);
       setScan({
         xml: result.musicXml,
         name: file.name,
         summary: { ...report, noteCount, tempoBpm: source.tempoBpm },
       });
     } catch (e) {
-      setProblem(`The scan could not be turned into a song: ${e instanceof Error ? e.message : 'unreadable'}`);
+      setProblem(t('The scan could not be turned into a song: {reason}', { reason: e instanceof Error ? t(e.message) : t('unreadable') }));
     }
   }
 
   async function saveScan(tempoBpm: number | undefined): Promise<void> {
     if (!scan) return;
     const data = tempoBpm === undefined ? scan.xml : withTempo(scan.xml, tempoBpm);
-    if (data.length > MAX_CUSTOM_BYTES) return setProblem('That score is too big (the limit is 400 KB).');
+    if (data.length > MAX_CUSTOM_BYTES) return setProblem(t('That score is too big (the limit is 400 KB).'));
     setIsSaving(true);
     const r = await add({ title: title.trim() || scan.name.replace(/\.[^.]+$/, ''), artist, kind: 'musicxml', data });
     setIsSaving(false);
@@ -173,7 +177,7 @@ function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: s
   async function save(file: File | undefined): Promise<void> {
     if (!file) return;
     if (isScore && /\.(pdf|png|jpe?g)$/i.test(file.name)) return readScan(file);
-    if (file.size > MAX_CUSTOM_BYTES) return setProblem('That file is too big (the limit is 400 KB).');
+    if (file.size > MAX_CUSTOM_BYTES) return setProblem(t('That file is too big (the limit is 400 KB).'));
     const isXml = /\.(musicxml|xml)$/i.test(file.name);
     const isMxl = /\.mxl$/i.test(file.name);
     const isMidi = /\.(mid|midi)$/i.test(file.name);
@@ -181,9 +185,9 @@ function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: s
       return setProblem(
         isScore
           ? /\.(heic|gif)$/i.test(file.name)
-            ? 'Save the picture as a PNG or JPG first.'
-            : 'Choose a .musicxml, .xml, .mxl, .pdf, .png or .jpg file.'
-          : 'Choose a .mid or .midi file.',
+            ? t('Save the picture as a PNG or JPG first.')
+            : t('Choose a .musicxml, .xml, .mxl, .pdf, .png or .jpg file.')
+          : t('Choose a .mid or .midi file.'),
       );
     }
     let data: string;
@@ -191,9 +195,9 @@ function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: s
       const bytes = new Uint8Array(await file.arrayBuffer());
       data = isMidi ? bytesToBase64(bytes) : isMxl ? await mxlToMusicXml(bytes) : await file.text();
     } catch (e) {
-      return setProblem(e instanceof Error ? e.message : 'That file could not be read.');
+      return setProblem(e instanceof Error ? e.message : t('That file could not be read.'));
     }
-    if (!isMidi && data.length > MAX_CUSTOM_BYTES) return setProblem('That score is too big once unzipped (the limit is 400 KB).');
+    if (!isMidi && data.length > MAX_CUSTOM_BYTES) return setProblem(t('That score is too big once unzipped (the limit is 400 KB).'));
     const r = await add({ title: title.trim() || file.name.replace(/\.[^.]+$/, ''), artist, kind: isMidi ? 'midi' : 'musicxml', data });
     if (!r.ok) return setProblem(r.error);
     setProblem(undefined);
@@ -205,16 +209,16 @@ function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: s
   return (
     <Card>
       <div className={options.panel}>
-        <h2>{isScore ? 'Add a song from a score' : 'Add a song from a MIDI file'}</h2>
+        <h2>{isScore ? t('Add a song from a score') : t('Add a song from a MIDI file')}</h2>
         <p className={options.note}>
           {isScore
-            ? 'Upload the score as a MusicXML file, or a PDF or picture of printed piano music. DuoKeys turns its notes into falling notes you can play.'
-            : 'Upload a MIDI file. Its notes become falling notes you can play.'}{' '}
-          Leave the name empty to use the file name.
+            ? t('Upload the score as a MusicXML file, or a PDF or picture of printed piano music. DuoKeys turns its notes into falling notes you can play.')
+            : t('Upload a MIDI file. Its notes become falling notes you can play.')}{' '}
+          {t('Leave the name empty to use the file name.')}
         </p>
-        <NameFields title={title} artist={artist} setTitle={setTitle} setArtist={setArtist} placeholder="Leave empty to use the file name" />
+        <NameFields title={title} artist={artist} setTitle={setTitle} setArtist={setArtist} placeholder={t('Leave empty to use the file name')} />
         <label style={labelStyle}>
-          {isScore ? 'Score file (.musicxml, .xml, .mxl, .pdf, .png or .jpg)' : 'MIDI file (.mid or .midi)'}
+          {isScore ? t('Score file (.musicxml, .xml, .mxl, .pdf, .png or .jpg)') : t('MIDI file (.mid or .midi)')}
           <input
             type="file"
             accept={isScore ? '.musicxml,.xml,.mxl,.pdf,.png,.jpg,.jpeg' : '.mid,.midi'}
@@ -225,21 +229,20 @@ function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: s
             style={field}
           />
         </label>
-        {isReading && <p role="status">Reading the score. This can take a minute.</p>}
+        {isReading && <p role="status">{t('Reading the score. This can take a minute.')}</p>}
         {needsReader && (
           <div role="alert" className={options.note}>
             <p>
-              Reading a PDF or picture needs the DuoKeys score reader running on this computer. It is free, needs Docker, and
-              nothing leaves your computer. In a terminal, from the DuoKeys folder:
+              {t('Reading a PDF or picture needs the DuoKeys score reader running on this computer. It is free, needs Docker, and nothing leaves your computer. In a terminal, from the DuoKeys folder:')}
             </p>
             <pre style={{ overflowX: 'auto' }}>
               docker build -t duokeys-omr tools/omr{'\n'}docker run --rm -p 127.0.0.1:8765:8765 duokeys-omr
             </pre>
-            <p>Then choose the file again. A MusicXML file from MuseScore needs none of this.</p>
+            <p>{t('Then choose the file again. A MusicXML file from MuseScore needs none of this.')}</p>
           </div>
         )}
         {scan && <ScanReview summary={scan.summary} isSaving={isSaving} onSave={(bpm) => void saveScan(bpm)} onCancel={() => setScan(undefined)} />}
-        {problem && <p role="alert">{problem}</p>}
+        {problem && <p role="alert">{t(problem)}</p>}
       </div>
     </Card>
   );
@@ -256,7 +259,8 @@ function RenameForm({
   onSave(title: string, artist: string): Promise<{ ok: true } | { ok: false; error: string }>;
   onDone(): void;
 }) {
-  const [t, setT] = useState(title);
+  const t = useT();
+  const [nm, setNm] = useState(title);
   const [a, setA] = useState(artist);
   const [problem, setProblem] = useState<string | undefined>();
   const field = { font: 'inherit', padding: '0.5rem 0.7rem', minHeight: '44px' } as const;
@@ -265,15 +269,15 @@ function RenameForm({
       style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
       onSubmit={(e) => {
         e.preventDefault();
-        void onSave(t, a).then((r) => (r.ok ? onDone() : setProblem(r.error)));
+        void onSave(nm, a).then((r) => (r.ok ? onDone() : setProblem(r.error)));
       }}
     >
-      <input aria-label="Song name" value={t} onChange={(e) => setT(e.target.value)} style={field} />
-      <input aria-label="Artist (optional)" value={a} onChange={(e) => setA(e.target.value)} placeholder="Artist (optional)" style={field} />
-      {problem && <p role="alert">{problem}</p>}
+      <input aria-label={t('Song name')} value={nm} onChange={(e) => setNm(e.target.value)} style={field} />
+      <input aria-label={t('Artist (optional)')} value={a} onChange={(e) => setA(e.target.value)} placeholder={t('Artist (optional)')} style={field} />
+      {problem && <p role="alert">{t(problem)}</p>}
       <div style={{ display: 'flex', gap: '0.5rem' }}>
-        <Button accent="indigo" type="submit">Save name</Button>
-        <Button accent="indigo" variant="secondary" type="button" onClick={onDone}>Cancel</Button>
+        <Button accent="indigo" type="submit">{t('Save name')}</Button>
+        <Button accent="indigo" variant="secondary" type="button" onClick={onDone}>{t('Cancel')}</Button>
       </div>
     </form>
   );
@@ -288,6 +292,7 @@ const TILES: { id: OptionId | 'library'; shape: PopShapeName; colour: PopColour;
 ];
 
 export default function SongsHubPage() {
+  const t = useT();
   const [index, setIndex] = useState<ContentIndex | undefined>();
   const [open, setOpen] = useState<OptionId | undefined>();
   const [justAdded, setJustAdded] = useState<string | undefined>();
@@ -331,21 +336,21 @@ export default function SongsHubPage() {
 
   return (
     <PageShell>
-      <h1>Songs</h1>
+      <h1>{t('Songs')}</h1>
       <p>
-        Choose how to get a song. <Link href="/studio">Back to Studio</Link>
+        {t('Choose how to get a song.')} <Link href="/studio">{t('Back to Studio')}</Link>
       </p>
 
-      <ul className={options.tiles} aria-label="Ways to add a song">
-        {TILES.map((t) => {
-          const optionId = t.id === 'library' ? undefined : t.id;
+      <ul className={options.tiles} aria-label={t('Ways to add a song')}>
+        {TILES.map((tile) => {
+          const optionId = tile.id === 'library' ? undefined : tile.id;
           return (
-          <li key={t.id}>
+          <li key={tile.id}>
             {optionId === undefined ? (
               <Link href="/studio/library" className={options.tile}>
-                <PopShape shape={t.shape} colour={t.colour} size={36} className={options.icon} />
-                <span className={options.name}>{t.name}</span>
-                <span className={options.hint}>{t.hint}</span>
+                <PopShape shape={tile.shape} colour={tile.colour} size={36} className={options.icon} />
+                <span className={options.name}>{t(tile.name)}</span>
+                <span className={options.hint}>{t(tile.hint)}</span>
               </Link>
             ) : (
               <button
@@ -354,9 +359,9 @@ export default function SongsHubPage() {
                 aria-expanded={open === optionId}
                 onClick={() => setOpen((cur) => (cur === optionId ? undefined : optionId))}
               >
-                <PopShape shape={t.shape} colour={t.colour} size={36} className={options.icon} />
-                <span className={options.name}>{t.name}</span>
-                <span className={options.hint}>{t.hint}</span>
+                <PopShape shape={tile.shape} colour={tile.colour} size={36} className={options.icon} />
+                <span className={options.name}>{t(tile.name)}</span>
+                <span className={options.hint}>{t(tile.hint)}</span>
               </button>
             )}
           </li>
@@ -368,14 +373,14 @@ export default function SongsHubPage() {
       {open === 'midi' && <FilePanel way="midi" onAdded={added} />}
       {open === 'score' && <FilePanel way="score" onAdded={added} />}
       {open === 'starter' && (
-        <section aria-label="Starter pieces" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <h2>Starter pieces</h2>
+        <section aria-label={t('Starter pieces')} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <h2>{t('Starter pieces')}</h2>
           <ul className={css.list}>
             {index.pieces.map((piece) => (
               <li key={piece.id} className={css.row}>
                 <span className={css.tile} aria-hidden="true">♪</span>
                 <div className={css.body}>
-                  <Link className={css.title} href={`/studio/play/${piece.defaultArrangementId}`}>{piece.title}</Link>
+                  <Link className={css.title} href={`/studio/play/${piece.defaultArrangementId}`}>{t(piece.title)}</Link>
                 </div>
                 <LibraryControl profileId={profile.id} arrangementId={piece.defaultArrangementId} />
               </li>
@@ -384,10 +389,10 @@ export default function SongsHubPage() {
         </section>
       )}
 
-      <section aria-label="My songs" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        <h2>My songs ({total})</h2>
-        {justAdded && <p role="status">✓ “{justAdded}” is saved in My songs.</p>}
-        {total === 0 && <EmptyState title="Nothing here yet">Pick one of the options above to add a song.</EmptyState>}
+      <section aria-label={t('My songs')} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <h2>{t('My songs')} ({total})</h2>
+        {justAdded && <p role="status">{t('✓ “{title}” is saved in My songs.', { title: justAdded })}</p>}
+        {total === 0 && <EmptyState title={t('Nothing here yet')}>{t('Pick one of the options above to add a song.')}</EmptyState>}
         <ul className={css.list}>
           {customSongs.map((s) => (
             <li key={s.id} className={css.row}>
@@ -397,7 +402,7 @@ export default function SongsHubPage() {
                   <RenameForm
                     title={s.title}
                     artist={s.artist}
-                    onSave={(t, a) => renameCustom(s.id, t, a)}
+                    onSave={(nm, a) => renameCustom(s.id, nm, a)}
                     onDone={() => setRenaming(undefined)}
                   />
                 ) : (
@@ -406,12 +411,12 @@ export default function SongsHubPage() {
                     {s.artist && <span className={css.composer}>{s.artist}</span>}
                   </>
                 )}
-                <span className={css.meta}><Pill tone="neutral">{KIND_LABEL[s.kind]}</Pill><Pill>Mine</Pill></span>
+                <span className={css.meta}><Pill tone="neutral">{t(KIND_LABEL[s.kind])}</Pill><Pill>{t('Mine')}</Pill></span>
               </div>
               <div className={css.actions}>
-                <Link href={`/studio/play/${encodeURIComponent(s.id)}`}><Button accent="indigo">Play</Button></Link>
-                <Button accent="indigo" variant="secondary" onClick={() => setRenaming(s.id)}>Rename</Button>
-                <Button accent="indigo" variant="secondary" onClick={() => void removeCustom(s.id)}>Remove</Button>
+                <Link href={`/studio/play/${encodeURIComponent(s.id)}`}><Button accent="indigo">{t('Play')}</Button></Link>
+                <Button accent="indigo" variant="secondary" onClick={() => setRenaming(s.id)}>{t('Rename')}</Button>
+                <Button accent="indigo" variant="secondary" onClick={() => void removeCustom(s.id)}>{t('Remove')}</Button>
               </div>
               <LibraryControl profileId={profile.id} arrangementId={s.id} />
             </li>
@@ -420,13 +425,13 @@ export default function SongsHubPage() {
             <li key={s.id} className={css.row}>
               <span className={css.tile} aria-hidden="true">{s.composer.trim().charAt(0).toUpperCase() || '♪'}</span>
               <div className={css.body}>
-                <Link className={css.title} href={`/studio/play/${s.id}`}>{s.title}{s.opus ? ` · ${s.opus}` : ''}</Link>
+                <Link className={css.title} href={`/studio/play/${s.id}`}>{t(s.title)}{s.opus ? ` · ${s.opus}` : ''}</Link>
                 <span className={css.composer}>{s.composer}</span>
-                <span className={css.meta}><Pill tone="neutral">Library</Pill></span>
+                <span className={css.meta}><Pill tone="neutral">{t('Library')}</Pill></span>
               </div>
               <div className={css.actions}>
-                <Link href={`/studio/play/${s.id}`}><Button accent="indigo">Play</Button></Link>
-                <Button accent="indigo" variant="secondary" onClick={() => void removeSong(s.id)}>Remove</Button>
+                <Link href={`/studio/play/${s.id}`}><Button accent="indigo">{t('Play')}</Button></Link>
+                <Button accent="indigo" variant="secondary" onClick={() => void removeSong(s.id)}>{t('Remove')}</Button>
               </div>
               <LibraryControl profileId={profile.id} arrangementId={s.id} />
             </li>

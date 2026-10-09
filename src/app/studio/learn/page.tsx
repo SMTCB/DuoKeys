@@ -11,6 +11,7 @@ import { generateHanonArrangement, HANON_PATTERNS } from '../../../core/content/
 import { useLearnStore } from '../../../runtime/stores/learnStore';
 import { useSessionStore } from '../../../runtime/stores/sessionStore';
 import { useGeneratedContentStore } from '../../../runtime/stores/generatedContentStore';
+import { useT } from '../../../ui/i18n/useT';
 import { PageShell } from '../../../ui/shared/PageShell';
 import { Card } from '../../../ui/shared/Card';
 import { Button } from '../../../ui/shared/Button';
@@ -58,16 +59,18 @@ const STAGES: { label: string; blurb: string; steps: Step[] }[] = [
 
 // A tick is a private note to self (FR-STU-019): one tap on, one tap off, nothing counted.
 function TickButton({ stepId }: { stepId: string }) {
+  const t = useT();
   const isDone = useLearnStore((s) => s.done.includes(stepId));
   const toggle = useLearnStore((s) => s.toggle);
   return (
     <Button accent="indigo" variant="secondary" onClick={() => void toggle(stepId)} aria-pressed={isDone}>
-      {isDone ? '✓ Done' : 'Mark done'}
+      {isDone ? t('✓ Done') : t('Mark done')}
     </Button>
   );
 }
 
 export default function LearnPage() {
+  const t = useT();
   const router = useRouter();
   const put = useGeneratedContentStore((s) => s.put);
   const profileId = useSessionStore((s) => s.profile.id);
@@ -87,26 +90,26 @@ export default function LearnPage() {
 
   return (
     <PageShell>
-      <h1>Learn</h1>
+      <h1>{t('Learn')}</h1>
       <p>
-        A gentle path back to the piano. Do as much or as little as you feel like; there is no order you have to keep.{' '}
-        <Link href="/studio">Back to Studio</Link>
+        {t('A gentle path back to the piano. Do as much or as little as you feel like; there is no order you have to keep.')}{' '}
+        <Link href="/studio">{t('Back to Studio')}</Link>
       </p>
 
       {STAGES.map((stage, i) => (
         <Card key={stage.label}>
-          <h2>{stage.label}</h2>
-          <p>{stage.blurb}</p>
+          <h2>{t(stage.label)}</h2>
+          <p>{t(stage.blurb)}</p>
           {i === 0 && (
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
               {HANON_PATTERNS.map((p) => (
                 <li key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'space-between' }}>
                   <span>
-                    <strong>{p.title}</strong> <Pill tone="neutral">{WARM_UP_BPM} bpm</Pill>
+                    <strong>{t(p.title)}</strong> <Pill tone="neutral">{t('{bpm} bpm', { bpm: WARM_UP_BPM })}</Pill>
                   </span>
                   <span style={{ display: 'flex', gap: '0.5rem' }}>
                     <Button accent="indigo" variant="secondary" onClick={() => startDrill(p.id)}>
-                      Start
+                      {t('Start')}
                     </Button>
                     <TickButton stepId={`drill:${p.id}`} />
                   </span>
@@ -117,13 +120,13 @@ export default function LearnPage() {
           {stage.steps.map((step) => (
             <div key={step.title} style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.5rem' }}>
               <strong>
-                {step.title} <Pill tone="neutral">{step.minutes}</Pill>
+                {t(step.title)} <Pill tone="neutral">{t(step.minutes)}</Pill>
               </strong>
-              <span>{step.why}</span>
+              <span>{t(step.why)}</span>
               {step.href && (
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   <Link href={step.href}>
-                    <Button accent="indigo">{step.cta ?? 'Open'}</Button>
+                    <Button accent="indigo">{t(step.cta ?? 'Open')}</Button>
                   </Link>
                   <TickButton stepId={`step:${step.title}`} />
                 </div>

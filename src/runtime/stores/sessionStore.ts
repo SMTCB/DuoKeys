@@ -48,6 +48,8 @@ interface SessionState {
   clock: MasterClock | undefined;
   matcherState: MatcherState | undefined;
   attemptStatus: AttemptStatus;
+  /** How the attempt in progress is being played; switchMode changes it mid-attempt. */
+  practiceMode: PracticeMode;
   grade: Grade | undefined;
   tempoScale: number;
 
@@ -83,6 +85,11 @@ interface SessionState {
     mode?: PracticeMode,
   ): Promise<void>;
   setTempoScale(scale: number): void;
+  /**
+   * FR-STU-020 — switch between waiting for each chord and playing on in time, mid-attempt.
+   * Notes already played stay played; the new matcher expects what is still ahead of the music.
+   */
+  switchMode(mode: PracticeMode): void;
   setLoopRange(range: { startTick: Ticks; endTick: Ticks } | undefined): void;
   setAutoRamp(enabled: boolean): void;
   setAccompanimentMode(mode: AccompanimentMode): void;
@@ -147,6 +154,9 @@ let currentAttemptMeta:
 let unsubscribeMessage: (() => void) | undefined;
 let loopPollId: number | undefined;
 let holdPollId: number | undefined;
+let endPollId: number | undefined;
+/** The tick at which the practised notes have all finished sounding; past it a timed attempt ends by itself. */
+let lastNoteEndTick = 0;
 /** TA-MAT-002 — the onset tick of each matcher group, in matcher order, for holding the stream on the pending one. */
 let groupTicks: number[] = [];
 /** FR-STU-005 — scoped once in startArrangement, re-scheduled unchanged on each loop pass. */
@@ -163,6 +173,13 @@ function stopHoldPolling(): void {
   if (holdPollId !== undefined) {
     cancelAnimationFrame(holdPollId);
     holdPollId = undefined;
+  }
+}
+
+function stopEndPolling(): void {
+  if (endPollId !== undefined) {
+    cancelAnimationFrame(endPollId);
+    endPollId = undefined;
   }
 }
 
@@ -208,6 +225,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   clock: undefined,
   matcherState: undefined,
   attemptStatus: 'idle',
+  practiceMode: 'wait',
   grade: undefined,
   tempoScale: 1,
 
@@ -333,6 +351,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     openArticulation = new Map();
     stopLoopPolling();
     stopHoldPolling();
+    stopEndPolling();
 
     allExpected = notesInScope.map((n: ContentNote) => ({
       id: n.id,
@@ -344,6 +363,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     const tickOfGroup = new Map<string, number>();
     for (const e of allExpected) if (!tickOfGroup.has(e.groupId)) tickOfGroup.set(e.groupId, e.atTick as number);
     groupTicks = [...tickOfGroup.values()];
+    lastNoteEndTick = notesInScope.reduce((end, n) => Math.max(end, (n.startTick as number) + (n.durationTicks as number)), 0);
 
     const clock = new MasterClock(adapters.audio, arrangement.tempoMap);
     const startTick = loopRange
@@ -383,6 +403,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       clock,
       matcherState: matcher.state(),
       attemptStatus: 'playing',
+      practiceMode: mode,
       grade: undefined,
       profile,
       tempoScale: 1,
@@ -392,6 +413,42 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
     if (loopRange) startLoopPolling(set, get);
     if (isHolding) startHoldPolling(get);
+    if (mode === 'timed' && !loopRange) startEndPolling(set, get);
+  },
+
+  switchMode(mode: PracticeMode): void {
+    const { clock, attemptStatus, practiceMode, profile, arrangement } = get();
+    if (mode === practiceMode) return;
+    if (attemptStatus !== 'playing' || !clock || !arrangement || !currentAttemptMeta) {
+      set({ practiceMode: mode });
+      return;
+    }
+    const played = new Set(perNote.filter((r) => r.outcome === 'correct').map((r) => r.expectedId));
+    // Held, the clock sits on the pending chord, so "from here" includes it; flowing, it is wherever the music is.
+    const fromTick = clock.audioToTicks(clock.nowAudio()) as number;
+    const ahead = allExpected.filter((e) => !played.has(e.id) && (e.atTick as number) >= fromTick);
+    stopHoldPolling();
+    stopEndPolling();
+    if (clock.isHeld) clock.resume();
+    matcher =
+      mode === 'timed'
+        ? new TimedMatcher(
+            { now: () => clock.nowAudio(), ticksToSeconds: (t) => clock.ticksToAudio(t) },
+            arrangement.tempoMap[0]?.bpm ?? 120,
+            profile.toleranceScale,
+          )
+        : new WaitMatcher({ anyOctave: get().anyOctave });
+    matcher.expect(ahead);
+    const tickOfGroup = new Map<string, number>();
+    for (const e of ahead) if (!tickOfGroup.has(e.groupId)) tickOfGroup.set(e.groupId, e.atTick as number);
+    groupTicks = [...tickOfGroup.values()];
+    currentAttemptMeta = { ...currentAttemptMeta, mode };
+    // The views count groups from the matcher's first one, so they get the same notes it is now expecting.
+    const aheadIds = new Set(ahead.map((e) => e.id));
+    set({ practiceMode: mode, matcherState: matcher.state(), activeNotes: get().activeNotes?.filter((n) => aheadIds.has(n.id)) });
+    if (get().loopRange) return;
+    if (mode === 'timed') startEndPolling(set, get);
+    else if (get().holdAtLine && get().accompanimentMode !== 'sampler') startHoldPolling(get);
   },
 
   setTempoScale(scale: number): void {
@@ -420,6 +477,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   endSession(): void {
     stopLoopPolling();
     stopHoldPolling();
+    stopEndPolling();
     set({
       attemptStatus: 'idle',
       clock: undefined,
@@ -473,6 +531,25 @@ function startHoldPolling(get: () => SessionState): void {
   holdPollId = requestAnimationFrame(poll);
 }
 
+// FR-STU-020 — playing in time, the music does not wait: once it has passed the last
+// note (and a moment for the final chord to ring), the attempt ends whether or not
+// every note was played.
+const END_RING_TICKS = 480;
+
+function startEndPolling(set: (partial: Partial<SessionState>) => void, get: () => SessionState): void {
+  const poll = (): void => {
+    const clock = get().clock;
+    if (!clock || get().attemptStatus !== 'playing' || get().loopRange) return;
+    if ((clock.audioToTicks(clock.nowAudio()) as number) >= lastNoteEndTick + END_RING_TICKS) {
+      endPollId = undefined;
+      void finishAttempt(set, get);
+      return;
+    }
+    endPollId = requestAnimationFrame(poll);
+  };
+  endPollId = requestAnimationFrame(poll);
+}
+
 function startLoopPolling(set: (partial: Partial<SessionState>) => void, get: () => SessionState): void {
   const poll = (): void => {
     const clock = get().clock;
@@ -523,8 +600,10 @@ async function finishAttempt(
   get: () => SessionState,
 ): Promise<void> {
   stopHoldPolling();
+  stopEndPolling();
   const meta = currentAttemptMeta;
   if (!meta) return;
+  currentAttemptMeta = undefined; // the matcher completing and the end poll can both arrive; grade once
 
   const grade = computeGrade(reconcileMissed(allExpected, perNote), allExpected.length, {
     explorerFloor: get().profile.role === 'explorer',

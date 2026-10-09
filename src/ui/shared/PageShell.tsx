@@ -12,6 +12,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Logo } from './Logo';
+import { useT } from '../i18n/useT';
 import styles from './PageShell.module.css';
 
 type Role = 'explorer' | 'studio' | 'shared';
@@ -66,14 +67,15 @@ function roleOfPath(pathname: string | null): Role {
  * decorative near the notes (ADR-012).
  */
 export function PageShell({ children, tone = 'calm' }: { children: ReactNode; tone?: 'bold' | 'calm' }) {
+  const t = useT();
   const role = roleOfPath(usePathname());
-  const roleLabel = ROLE_LABEL[role];
+  const roleLabel = ROLE_LABEL[role] === undefined ? undefined : t(ROLE_LABEL[role]);
   const shellClass = [styles.shell, tone === 'bold' ? styles.bold : styles.calm, styles[role]].join(' ');
   return (
     <main className={shellClass} style={ROLE_VARS[role]}>
       <div className={styles.inner}>
         <header className={styles.topbar}>
-          <Link href="/" className={styles.brand} aria-label="DuoKeys — choose who is playing">
+          <Link href="/" className={styles.brand} aria-label={t('DuoKeys — choose who is playing')}>
             <Logo size={36} />
           </Link>
           {roleLabel ? (

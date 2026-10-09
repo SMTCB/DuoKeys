@@ -5,7 +5,9 @@
 'use client';
 
 import { useState } from 'react';
+import type { Translator } from '../../core/i18n/translate';
 import { Button } from '../shared/Button';
+import { useT } from '../i18n/useT';
 import options from './SongOptions.module.css';
 
 export interface ScanSummary {
@@ -20,7 +22,8 @@ export interface ScanSummary {
   tempoBpm: number;
 }
 
-const barList = (bars: number[]): string => (bars.length > 8 ? `${bars.slice(0, 8).join(', ')} and ${bars.length - 8} more` : bars.join(', '));
+const barList = (t: Translator, bars: number[]): string =>
+  bars.length > 8 ? t('{list} and {count} more', { list: bars.slice(0, 8).join(', '), count: bars.length - 8 }) : bars.join(', ');
 
 export function ScanReview({
   summary,
@@ -33,29 +36,30 @@ export function ScanReview({
   onSave(tempoBpm: number | undefined): void;
   onCancel(): void;
 }) {
+  const t = useT();
   const [tempo, setTempo] = useState(String(summary.hasTempo ? summary.tempoBpm : 80));
   const tempoBpm = Number(tempo);
   const isTempoValid = summary.hasTempo || (Number.isFinite(tempoBpm) && tempoBpm >= 30 && tempoBpm <= 240);
   const problems = summary.overlongBars.length + summary.shortBars.length;
 
   return (
-    <div className={options.panel} aria-label="Check the scanned score">
-      <h3>Check what was read</h3>
+    <div className={options.panel} aria-label={t('Check the scanned score')}>
+      <h3>{t('Check what was read')}</h3>
       <p role="status">
-        Read {summary.bars} bars and {summary.noteCount} notes.
+        {t('Read {bars} bars and {notes} notes.', { bars: summary.bars, notes: summary.noteCount })}
       </p>
       {problems === 0 ? (
-        <p className={options.note}>Every bar adds up. It is still worth listening to the first page before you rely on it.</p>
+        <p className={options.note}>{t('Every bar adds up. It is still worth listening to the first page before you rely on it.')}</p>
       ) : (
         <ul className={options.note}>
-          {summary.overlongBars.length > 0 && <li>Bars {barList(summary.overlongBars)} hold too many beats, so a note or rhythm was misread.</li>}
-          {summary.shortBars.length > 0 && <li>Bars {barList(summary.shortBars)} hold too few beats, so a note may be missing.</li>}
-          <li>You can save it and play on. Those bars may sound wrong. Scanning works best on clean, printed piano music.</li>
+          {summary.overlongBars.length > 0 && <li>{t('Bars {list} hold too many beats, so a note or rhythm was misread.', { list: barList(t, summary.overlongBars) })}</li>}
+          {summary.shortBars.length > 0 && <li>{t('Bars {list} hold too few beats, so a note may be missing.', { list: barList(t, summary.shortBars) })}</li>}
+          <li>{t('You can save it and play on. Those bars may sound wrong. Scanning works best on clean, printed piano music.')}</li>
         </ul>
       )}
       {!summary.hasTempo && (
         <label style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-          The scan found no speed. Beats per minute
+          {t('The scan found no speed. Beats per minute')}
           <input
             type="number"
             inputMode="numeric"
@@ -69,10 +73,10 @@ export function ScanReview({
       )}
       <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
         <Button accent="indigo" onClick={() => onSave(summary.hasTempo ? undefined : tempoBpm)} disabled={isSaving || !isTempoValid}>
-          Save to My songs
+          {t('Save to My songs')}
         </Button>
         <Button accent="indigo" variant="secondary" onClick={onCancel} disabled={isSaving}>
-          Discard
+          {t('Discard')}
         </Button>
       </div>
     </div>

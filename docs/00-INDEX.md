@@ -13,7 +13,7 @@ a six-year-old and an adult beginner to play — separately, and together.
 |---|---|---|---|
 | 01 | [Technical Architecture](01-TECHNICAL-ARCHITECTURE.md) | `TECH` | 12 ADRs, ports & adapters, clock, MIDI pipeline, matcher, grading, renderers, data model, sync, content pipeline, 12 NFRs, 8 risks |
 | 02 | [Functional Specification](02-FUNCTIONAL-SPECIFICATION.md) | `FUNC` | 52 requirements across 7 modules (4 proposed, unscheduled), prioritised MoSCoW |
-| 03 | [Sprint Plan & User Stories](03-SPRINT-PLAN.md) | `SPRINT` | 6 sprints, 72 user stories, each mapped to FR and TA IDs |
+| 03 | [Sprint Plan & User Stories](03-SPRINT-PLAN.md) | `SPRINT` | 6 sprints, 80 user stories, each mapped to FR and TA IDs |
 | 04 | [Test Scenarios](04-TEST-SCENARIOS.md) | `TEST` | ~130 scenarios across 5 tiers, with a coverage matrix |
 | 05 | [Engineering Handbook](05-ENGINEERING-HANDBOOK.md) | `ENG` | Pre-build checklist, repo scaffold, Definition of Done, conventions, content authoring guide, Sprint 0 kit |
 
@@ -105,6 +105,7 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-STU-017 custom songs | S | TA-CNT-007, TA-APP-003, TA-DAT-003 | US-3.22 | TS-U-CNT-030…035, 047…050, TS-I-DAT-010, TS-M-017 |
 | FR-STU-018 free play | S | TA-CNT-007, TA-CNT-006, TA-APP-003 | US-3.22 | TS-U-CNT-036…041, 045, TS-M-017 |
 | FR-STU-019 learn roadmap | S | TA-APP-003, TA-CNT-007, TA-DAT-003 | US-3.22 | TS-I-DAT-011 |
+| FR-STU-020 make me a song | S | TA-CNT-008, TA-REN-001, TA-APP-003 | US-3.25 | TS-U-CNT-053…058, TS-I-MID-006, TS-M-019 |
 | FR-DUO-001 split + transpose | M | TA-DAT-001 | US-4.01 | TS-E-015, TS-M-012 |
 | FR-DUO-002 dual matchers | M | TA-MAT-001 | US-4.02 | TS-U-MAT-021, TS-G-010 |
 | FR-DUO-003 asymmetric parts | M | TA-DAT-001 | US-4.03 | TS-M-011 |
@@ -132,6 +133,7 @@ Reading down: what each functional requirement is built from and verified by.
 | FR-SYS-006 PWA | S | TA-APP-004 | US-4.08 | — |
 | FR-SYS-007 accessibility | M | NFR-008/009/011 | ongoing | TS-E-013, TS-E-014 (pass, Explorer path) |
 | FR-SYS-008 privacy | M | NFR-010 | US-2.05 | TS-I-SYN-004 |
+| FR-SYS-009 Portuguese | M | TA-APP-007, NFR-008 | US-3.26 | TS-U-LOC-001…005, TS-M-020 |
 
 ---
 
@@ -1161,3 +1163,34 @@ replaced by a key tile: a cream rounded square with three white keys and two bla
 the outer keys cornflower (Studio) and mustard (Explorer). Changed in `Logo.tsx` and the
 favicon `src/app/icon.svg`; the logo lockups in the Design Reference artifact are redrawn.
 Checked in the browser on the Studio home (cornflower) and the Explorer home (cream).
+
+## Update — Free play makes a whole song (2026-10-09)
+
+`US-3.25` under new `FR-STU-020` and new `TA-CNT-008`, no ADR. Free play's new first
+card, "Make me a song", writes a song of one to four minutes from the progression
+catalogue (intro, verses and choruses that return, a bridge, a slowing ending) with the
+left hand's bass pattern and the right hand's tune both written out, seeded so a song can
+be replayed from its URL. Two switches work while playing: "Keep going" moves between
+wait and in-time mid-attempt (`sessionStore.switchMode`, keeping what was played; a timed
+attempt now ends on its own), and "Make up my own right hand" restarts on the left hand
+with the notes that fit the bar lit on the lanes and keys (filled dot for chord notes, ring
+for the others, `NFR-008`). No language model is used. Typecheck, lint and 362 unit tests
+pass (new `TS-U-CNT-053`…`058`, `TS-I-MID-006`). Checked in the browser: the Free play
+card and the song page (title, key, mood, form strip, switches). Not checked: playing it,
+which needs the piano (`TS-M-019`).
+
+## Update — Portuguese (2026-10-09)
+
+`US-3.26` under new `FR-SYS-009` and new `TA-APP-007`, no ADR. The children do not read
+English, so the family screen now has an English / Português switch (first visit follows
+the browser language, choice kept in localStorage `duokeys.locale`) and every screen is
+translated, including text that arrives from data: moods, rhythm names, piece and
+generated-song titles, grading sentences and import errors. English text is the
+dictionary key, so a missing entry shows English, never a blank. Note names are solfège
+in Portuguese. New `src/core/i18n/` (pure), `localeStore`, `src/ui/i18n/`. System's
+count moves 8 → 9 requirements (Must 7 → 8, total 57 → 58); Sprint 3 moves 87 → 95
+points and the v1 total 222 → 230. Typecheck, lint and 371 unit tests pass (new
+`TS-U-LOC-001`…`005`, including a guard that every `t('…')` literal has a Portuguese
+entry). Checked in the browser: the family screen switch and the Studio Songs page in
+Portuguese. Not checked: every page by eye, and a child reading it at the piano
+(`TS-M-020`). Known gap: the browser tab title and the initial `<html lang>` stay English.

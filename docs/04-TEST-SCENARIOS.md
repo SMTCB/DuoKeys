@@ -222,6 +222,12 @@ grading.
 | `TS-U-PRO-010` | A family PIN is exactly four digits, is read off settings (malformed ignored), and a member with no PIN lets anyone in | FR-PRO-001 |
 | `TS-U-CNT-052` | `layoutScore` puts E4 and G2 on the bottom lines, spells black keys as asked, spaces notes by time, splits hands at middle C and lists the played track's groups in matcher order | TA-REN-003, FR-STU-016 |
 | `TS-U-CNT-045` | `pickFreePlay` stays in a chosen key, and `sameProgressionInKey` finds the same degrees in another key and nothing for a typed-in progression | TA-CNT-007, FR-STU-015, FR-STU-018 |
+| `TS-U-CNT-053` | `composeSong` writes the same song for the same seed and different songs for other seeds | TA-CNT-008, FR-STU-020 |
+| `TS-U-CNT-054` | `composeSong` lays out intro, verses, choruses, bridge and ending; every song runs over two minutes, short < song < long; chorus and bridge stay in the verse's key; the ending slows | TA-CNT-008, FR-STU-020 |
+| `TS-U-CNT-055` | Both hands are written: left hand below middle C, right hand from middle C to G5, each key once per group, sorted, `groupId` = `t<tick>` | TA-CNT-008, FR-STU-020 |
+| `TS-U-CNT-056` | The tune lands on a chord note at the start of every bar, and a returning verse is played exactly as the first | TA-CNT-008, FR-STU-020 |
+| `TS-U-CNT-057` | A chosen key and mood are kept (and set the tempo); an empty catalogue writes nothing; only 2-, 3-, 4- and 8-chord progressions are used | TA-CNT-008, FR-STU-020 |
+| `TS-U-CNT-058` | `fitPitchClasses` keeps the chord and the pentatonic notes that do not rub; one harmony window per bar; `harmonyAt` and `partAt` find the bar and part | TA-CNT-008, TA-REN-001, FR-STU-020 |
 | `TS-U-CNT-044` | A styled progression puts each chord marker on notes of that chord even when the chords are not evenly spaced in the file (`I-IV-V`) | TA-CNT-006, FR-STU-015 |
 | `TS-U-CNT-043` | `progressionPosition` reports the chord and round of the group being played, stays on the last group past the end, and is undefined with no markers | FR-STU-015 |
 | `TS-U-CNT-042` | `chordsToMusicXml` writes one whole-note measure per chord group on a two-stave part, puts notes at or above 60 on the treble and the rest on the bass, and carries the chord symbol | TA-REN-003, FR-STU-015 |
@@ -254,6 +260,16 @@ require borrowing time from an adjacent note, a materially harder problem
 than tie-merging), not an oversight. The ID stays open rather than being
 renumbered or withdrawn, per this repo's ID-stability convention, until
 grace-note resolution is scoped as its own story.
+
+### Localisation — `TS-U-LOC-*`
+
+| ID | Scenario | Verifies |
+|---|---|---|
+| `TS-U-LOC-001` | `translate` returns the English text for `en` and for a key with no Portuguese entry, translates known keys for `pt`, and fills `{param}` placeholders | TA-APP-007, FR-SYS-009 |
+| `TS-U-LOC-002` | `PT_PATTERNS` translate data-borne text with numbers ("Bars 1–4", "Hanon No. 1", "C major") | TA-APP-007, FR-SYS-009 |
+| `TS-U-LOC-003` | `localeFromLanguageTag` picks `pt` for any tag starting `pt` (any case) and `en` for everything else, including no tag; `pitchName` gives Dó for middle C in `pt` and C in `en` | TA-APP-007, FR-SYS-009 |
+| `TS-U-LOC-004` | **Coverage guard.** Every literal passed to `t()` anywhere in `src` has a Portuguese entry or matches a pattern | TA-APP-007, FR-SYS-009 |
+| `TS-U-LOC-005` | `translateSongTitle` leaves English and unknown titles alone and writes a generated title noun-first in `pt`; `translateInstrument` translates "for Harpsichord" word by word | TA-APP-007, TA-CNT-008, FR-SYS-009 |
 
 ---
 
@@ -355,6 +371,7 @@ Status: `TS-I-SYN-001`–`003`, `005`–`008`, `010`, `011` have automated tests
 | `TS-I-MID-003` | Mid-session disconnect pauses and preserves the in-progress attempt | FR-SYS-004, TA-MID-005 |
 | `TS-I-MID-004` | Reconnect resumes without losing state | FR-SYS-004 |
 | `TS-I-MID-005` | Absent `requestMIDIAccess` shows the unsupported-browser explanation | FR-SYS-005 |
+| `TS-I-MID-006` | Switching from waiting to playing in time mid-attempt keeps the played note, releases the hold and ends the attempt by itself after the last note; switching back holds the stream on the next unplayed note | FR-STU-020, TA-CNT-008 |
 
 *Status:* `TS-I-MID-002` is half automated (`src/runtime/stores/midiMemory.test.ts`): the chosen input is written to the profile and listed first after a reload. Reopening it with no tap is not built yet.
 
@@ -445,6 +462,8 @@ These cannot be automated. Run at each sprint exit.
 | `TS-M-016` | **Manual, not yet run.** On the chord screen with the piano connected: pressing a chord or a progression's Play shows its keys on the keybed pinned at the top without scrolling; Next chord steps through the progression; the three tabs each show only their own content | 3 | FR-STU-015 |
 | `TS-M-018` | **Manual, not yet run.** On the chord screen with the piano connected: falling notes stop on the line until the chord is played; played notes turn green and stay at the line until the next chord lands, with upcoming chords pale and dashed, the keybed keeping the played keys green, and the Key picker moving the progression to another key; the Speed slider slows them; the bars fill the width; Music score shows the chords and moves left to right only when the right keys are played | 3 | FR-STU-015 |
 | `TS-M-017` | **Manual, not yet run.** On a second device signed in to the same account: profiles appear after sync; a pasted chart and an imported MIDI file are added to "my songs", play at the piano in wait mode, and are still there after a reload; "Play something for me" opens a progression with its rhythm chosen | 3 | FR-STU-017, FR-STU-018 |
+| `TS-M-020` | **Manual, not yet run.** With a child at the piano on the family screen: choose Português; open the Explorer home, a quest and a result card, and Free play; the child can follow every screen without help, note names read Dó Ré Mi, and switching back to English changes nothing that was saved | TA-APP-007, FR-SYS-009 |
+| `TS-M-019` | **Manual, not yet run.** At the piano, a generated song ("A song", Simple) plays in wait mode with both hands; "Keep going" switched on and off mid-verse keeps the stream moving and then holds it again; "Make up my own right hand" restarts on the left hand with the fitting keys lit, and the lit keys sound right over each chord | 3 | FR-STU-020 |
 
 ---
 
@@ -475,6 +494,7 @@ critical-path behaviour has a manual confirmation.
 | FR-STU-017 | TS-U-CNT-030…035, 047…050, TS-I-DAT-010 | TS-M-017 |
 | FR-STU-018 | TS-U-CNT-036…041, 045 | TS-M-017 |
 | FR-STU-019 | TS-I-DAT-011 | — |
+| FR-STU-020 | TS-U-CNT-053…058, TS-I-MID-006 | TS-M-019 |
 | FR-DUO-001 | TS-E-015 | TS-M-012 |
 | FR-DUO-002 | TS-U-MAT-021, TS-G-010 | TS-M-011 |
 | FR-PRO-001 | TS-U-DAT-001, 002, TS-U-PRO-010, TS-I-DAT-006, TS-E-005 | — |
@@ -495,3 +515,4 @@ critical-path behaviour has a manual confirmation.
 | FR-SYS-005 | TS-I-MID-005 | — |
 | FR-SYS-007 | TS-E-013, TS-E-014 | — |
 | FR-SYS-008 | TS-I-SYN-004 | — |
+| FR-SYS-009 | TS-U-LOC-001…005 | TS-M-020 |

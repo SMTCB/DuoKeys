@@ -784,6 +784,7 @@ needs no reading.
   matcher moves on, so notes stop on the line until played correctly. A
   per-session toggle turns it off; the sampler accompaniment also disables it,
   because that audio is scheduled in advance.
+- **Notes that fit.** An optional `glow` prop (`HarmonyWindow[]` and a pitch range, `TA-CNT-008`) tints the lanes and keys that fit the bar under the line: chord tones with a stronger tint and a filled dot, other fitting notes with a fainter tint and a ring, so the cue is shape as well as colour (`NFR-008`).
 - Fall speed is the tempo-scale slider (`FR-STU-004`) on the chord screen; the
   canvas also takes a `pixelsPerSecond` prop, with no UI yet.
 
@@ -1379,6 +1380,19 @@ system or network: bytes come in through the adapter.
 
 `US-3.22` (`FR-STU-017`–`019`). Pure `core/content/customSong.ts` (chart parser, `custom:` ids, chart / MIDI / MusicXML to Arrangement) and `core/content/freePlay.ts` (easy-progression filter and a seeded-random picker); `runtime/stores/customSongStore.ts` keeps songs in the profile's `settings.customSongs` (so they sync with no table; MIDI bytes as base64, 400 KB cap); a file is built into an arrangement before it is saved and refused if it does not play, and a MusicXML piece whose bar count is odd falls back to one-bar sections. A PDF or picture of a score (`ADR-010`) goes through `adapters/content/omrClient.ts` to the optional local Audiveris service in `tools/omr`; the MusicXML that returns is read by `parseMusicXmlWithReport` (pure), which also reports bars with too many or too few beats and whether a tempo was found, and `withTempo` writes the speed the player chose before the song is saved (`ui/studio/ScanReview.tsx` is the check screen). <code>runtime/stores/learnStore.ts</code> keeps the Learn page's ticked steps in <code>settings.learnDone</code> (<code>FR-STU-019</code>). `profileStore` now remembers the active profile id in localStorage (a per-device convenience, never synced) so a direct page load sees that profile's songs, and the profile picker refreshes after a sync round (`syncStore.syncRound`).
 
+
+### TA-CNT-008 — Free-play song generator
+
+`US-3.25` (`FR-STU-020`). Pure `core/content/freePlaySong.ts`. `composeSong(catalogue, { mood?, key?, length, level, seed })` returns a `FreePlaySong`: title, key, mode, moods, bpm, the list of parts, an `Arrangement` with `both` / `rh` / `lh` tracks, the per-bar `harmony` windows and the right-hand range. Randomness is a seeded mulberry32 (`seededRandom`), never `Math.random()` (`ADR-005`); the page draws the seed and puts it in the URL, so a song can be replayed exactly.
+
+- **Form.** `short`: intro, verse, chorus, outro. `song`: intro, V, C, V, C, bridge, C, outro. `long`: intro, V, C, V, C, B, V, C, C, outro. The intro is the left hand alone over the verse's first four bars; the outro is two tonic bars ending on a right-hand chord, with a second tempo-map entry at 0.85× one bar in. `barsPerChord` gives two-chord progressions two bars a chord and eight-chord ones a bar each, so every pass is eight bars or so.
+- **Harmony.** The verse is drawn from `songProgressions` (catalogue progressions of 2, 3, 4 or 8 plain chords, narrowed by mood and key); chorus and bridge are other progressions in the same key and mode, the bridge preferring one that does not start on the tonic. Tempo by mood: 72 bpm for slow moods, 96 for quick ones, otherwise 84.
+- **Left hand.** Chord roots in C2–B2. Patterns `hold`, `halves`, `pulse`, `walk`, `roll`, `lilt`; level 1 plays verse `halves`, chorus `walk`, bridge `pulse`, level 2 verse `walk`, chorus `roll`, bridge `lilt`.
+- **Right hand.** Middle C to G5. Each section's tune is built once from short rhythm motifs in an *a b a cadence* shape and replayed whenever the section returns, starting from the same pitch. Strong beats snap to a chord tone in the direction of the step; steps that would leave the range reflect back.
+- **Notes that fit.** `fitPitchClasses(mode, key, chordPcs)` is the key's major or minor pentatonic minus any note a semitone under a chord tone, plus the chord tones. `harmony` holds one `HarmonyWindow` per bar; `harmonyAt` and `partAt` find the window and part at a tick by binary search.
+- **Mode switch.** `sessionStore.switchMode('wait' | 'timed')` changes matcher mid-attempt: notes already correct keep their results, the new matcher is given only the notes at or after the current tick, hold polling and the held clock are released or started to suit, and the attempt's `mode` is updated. A timed attempt now ends on its own (`startEndPolling`) once the clock passes the last note's end plus a beat, and `finishAttempt` grades once.
+- **Page.** `/studio/free-play/song?seed&length&level[&mood][&key]` (`freePlaySongHref`). The improvise switch restarts on the `lh` track and passes `harmony` to the canvas glow (`TA-REN-001`).
+
 ---
 
 ## 11. Application shell
@@ -1421,6 +1435,7 @@ here — that is the whole of ADR-002's cost.
 /studio/chords/play/[progressionId]  a progression as falling notes (FR-STU-015); ?style= preselects the rhythm
 /studio/learn                 track 1 — roadmap and slow Hanon drills (FR-STU-019)
 /studio/free-play             track 2 — "play something for me" (FR-STU-018)
+/studio/free-play/song        a generated song, both hands written out (FR-STU-020, TA-CNT-008)
 /studio/songs                 track 3 — my songs, add a song, library (FR-STU-017)
 /studio/songs/[id]             lead-sheet song mode (FR-STU-013)
 /studio/library                 song library — search, add to my songs (FR-STU-016, TA-CNT-006)
@@ -1578,6 +1593,38 @@ of what that artifact specifies.
   one shared keyboard. It is drawn once in `LogoMark` and copied into the favicon
   (`src/app/icon.svg`); it reads down to 16 px, so the old "drop the notch below
   24 px" rule and the `hasNotch` prop are gone.
+
+### TA-APP-007 — Localisation (English and Portuguese)
+
+`US-3.26` (`FR-SYS-009`). The children do not read English, so every screen can be
+shown in Brazilian Portuguese. English text is the key: a caller writes
+`t('Free play')` and the Portuguese dictionary is looked up by that exact string, so
+a missing entry falls back to the English source and a gap is never a blank screen.
+
+- **Pure core (`src/core/i18n/`).** `translate(locale, key, params?)` replaces
+  `{param}` placeholders; `translatorFor(locale)` binds it. The dictionary is split by
+  area (`pt/shared.ts`, `pt/explorer.ts`, `pt/studio.ts`, `pt/content.ts`) and merged in
+  `pt.ts`. Data-borne text that has a number in it ("Bars 1–4", "12 ms behind the beat",
+  "C major", Hanon exercises, some import errors) goes through `PT_PATTERNS`, a list of
+  regular expressions with `$1`-style templates. `pitchName` writes note names in solfège
+  in Portuguese (Dó Ré Mi Fá Sol Lá Si); chord symbols and key letters stay as letters.
+  `songTitle.ts` turns the generated song names of `TA-CNT-008` into Portuguese (noun
+  first, adjective agreeing in gender) and translates Mutopia's instrument line. `core/`
+  stays free of React, DOM and storage: the locale is passed in.
+- **Runtime and UI.** `localeStore` (Zustand) holds the locale: first visit follows
+  `navigator.language` (anything starting `pt`), the choice is kept in localStorage
+  `duokeys.locale`, and it is resolved after mount so server and first client render
+  match. It also sets `document.documentElement.lang`. `useT()`, `useLocale()` and
+  `useNoteName()` (`src/ui/i18n/useT.ts`) are the only things a component imports.
+  `LanguageSwitch` (English / Português, flag-free, both words always visible) sits on
+  the family screen under the profile list.
+- **What is not translated.** Stored identifiers stay English (mood filter values, the
+  Learn step ids), so changing language never touches saved data. The page metadata and
+  the initial `<html lang>` of `src/app/layout.tsx` are the static English values until
+  the store runs.
+- **Guard.** A unit test scans `src` for every `t('literal')` and fails if one has no
+  Portuguese entry (`TS-U-LOC-004`). Strings passed to `t()` as a variable are not seen
+  by that scan; those sources are listed in `pt/content.ts`.
 
 ---
 

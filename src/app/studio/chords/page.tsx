@@ -19,6 +19,7 @@ import { diatonicChordIds } from '../../../core/content/chordCatalogue';
 import { GROUP_LABELS, GROUP_OF_QUALITY, type ChordGroup } from '../../../core/content/chordQualities';
 import { chordSymbolOfId } from '../../../core/content/chordSymbols';
 import { asPitchClass } from '../../../core/content/chordTypes';
+import { useT } from '../../../ui/i18n/useT';
 import { PageShell } from '../../../ui/shared/PageShell';
 import { StatusNote } from '../../../ui/shared/StatusNote';
 import { Card } from '../../../ui/shared/Card';
@@ -35,6 +36,7 @@ const PAGE_SIZE = 12;
 type Tab = 'chords' | 'progressions' | 'mine';
 
 export default function ChordExplorerPage() {
+  const t = useT();
   const catalogue = useChordExplorerStore((s) => s.catalogue);
   const midiInputs = useChordExplorerStore((s) => s.midiInputs);
   const midiConnectionState = useChordExplorerStore((s) => s.midiConnectionState);
@@ -129,9 +131,9 @@ export default function ChordExplorerPage() {
     : undefined;
 
   const tabs: { id: Tab; label: string; count: number }[] = [
-    { id: 'chords', label: 'Chords', count: chordCount },
-    { id: 'progressions', label: 'Progressions', count: progressionsInKey.length },
-    { id: 'mine', label: 'My progressions', count: myProgressions.length },
+    { id: 'chords', label: t('Chords'), count: chordCount },
+    { id: 'progressions', label: t('Progressions'), count: progressionsInKey.length },
+    { id: 'mine', label: t('My progressions'), count: myProgressions.length },
   ];
 
   const chordButton = (id: string, label: string) => (
@@ -149,15 +151,15 @@ export default function ChordExplorerPage() {
   return (
     <PageShell>
       <div className={styles.top}>
-        <h1>Chords</h1>
+        <h1>{t('Chords')}</h1>
         <div className={styles.row}>
           <span role="status">
             <Pill tone={isPianoConnected ? 'solid' : 'neutral'}>
               {isPianoConnected
-                ? '✓ Piano connected'
+                ? t('✓ Piano connected')
                 : midiInputs.length > 0
-                  ? 'Piano found, tap it to connect'
-                  : 'No piano found'}
+                  ? t('Piano found, tap it to connect')
+                  : t('No piano found')}
             </Pill>
           </span>
           {midiInputs.map((input) => (
@@ -171,7 +173,7 @@ export default function ChordExplorerPage() {
       <Card>
         <Segmented
           name="key"
-          legend="Key"
+          legend={t('Key')}
           options={NOTE_NAMES.map((name, i) => ({ value: i, label: name }))}
           value={selectedKey as number}
           onChange={(i) => setKey(asPitchClass(i))}
@@ -184,14 +186,14 @@ export default function ChordExplorerPage() {
             <div className={styles.nowText}>
               <span className={styles.sub}>
                 {currentProgression
-                  ? `${currentProgression.name} · chord ${currentChordIndex + 1} of ${currentProgression.chordIds.length}`
-                  : 'Play this chord'}
+                  ? `${t(currentProgression.name)} · ${t('chord {n} of {total}', { n: currentChordIndex + 1, total: currentProgression.chordIds.length })}`
+                  : t('Play this chord')}
               </span>
               <strong className={styles.nowChord}>{chordSymbolOfId(currentChord.id)}</strong>
             </div>
             {matchResult?.kind === 'complete' && (
               <span role="status">
-                <Pill tone="solid">✓ Nice!</Pill>
+                <Pill tone="solid">{t('✓ Nice!')}</Pill>
               </span>
             )}
           </div>
@@ -202,31 +204,31 @@ export default function ChordExplorerPage() {
             {currentProgression && (
               <div className={styles.row}>
                 <Button accent="indigo" variant="secondary" onClick={advanceProgression}>
-                  Next chord
+                  {t('Next chord')}
                 </Button>
                 <Link href={`/studio/chords/play/${encodeURIComponent(currentProgression.id)}`}>
-                  <Button accent="indigo" variant="secondary">Play with falling notes</Button>
+                  <Button accent="indigo" variant="secondary">{t('Play with falling notes')}</Button>
                 </Link>
               </div>
             )}
         </div>
       )}
 
-      <div role="tablist" aria-label="Chord explorer sections" className={styles.tabs}>
-        {tabs.map((t) => (
+      <div role="tablist" aria-label={t('Chord explorer sections')} className={styles.tabs}>
+        {tabs.map((tb) => (
           <button
-            key={t.id}
+            key={tb.id}
             type="button"
             role="tab"
-            id={`tab-${t.id}`}
-            aria-selected={tab === t.id}
-            aria-controls={`panel-${t.id}`}
+            id={`tab-${tb.id}`}
+            aria-selected={tab === tb.id}
+            aria-controls={`panel-${tb.id}`}
             className={styles.tab}
-            onClick={() => setTab(t.id)}
+            onClick={() => setTab(tb.id)}
           >
-            {tab === t.id ? '✓ ' : ''}
-            {t.label}
-            <span className={styles.count}>{t.count}</span>
+            {tab === tb.id ? '✓ ' : ''}
+            {tb.label}
+            <span className={styles.count}>{tb.count}</span>
           </button>
         ))}
       </div>
@@ -234,16 +236,16 @@ export default function ChordExplorerPage() {
       {tab === 'chords' && (
         <div role="tabpanel" id="panel-chords" aria-labelledby="tab-chords" className={styles.column}>
           <Card>
-            <h2 className={styles.cardTitle}>Chords that belong in {keyName}</h2>
-            <p className={styles.sub}>Press one to see it on the keys, then play it.</p>
+            <h2 className={styles.cardTitle}>{t('Chords that belong in {key}', { key: keyName ?? '' })}</h2>
+            <p className={styles.sub}>{t('Press one to see it on the keys, then play it.')}</p>
             <div className={styles.row}>{diatonicChords.map((chord) => chordButton(chord.id, chordSymbolOfId(chord.id)))}</div>
           </Card>
           <Card>
-            <h2 className={styles.cardTitle}>All {chordCount} chords on {keyName}</h2>
+            <h2 className={styles.cardTitle}>{t('All {count} chords on {key}', { count: chordCount, key: keyName ?? '' })}</h2>
             {(['triad', 'seventh', 'other'] as const).map((group) => (
               <details key={group} open={group === 'triad'} className={styles.group}>
                 <summary className={styles.summary}>
-                  {GROUP_LABELS[group]}
+                  {t(GROUP_LABELS[group])}
                   <span className={styles.count}>{chordsByGroup[group].length}</span>
                 </summary>
                 <div className={styles.row}>{chordsByGroup[group].map((chord) => chordButton(chord.id, chord.symbol))}</div>
@@ -259,12 +261,12 @@ export default function ChordExplorerPage() {
             <div className={styles.filters}>
               <Segmented
                 name="modeFilter"
-                legend="Mode"
+                legend={t('Mode')}
                 options={[
-                  { value: 'all' as const, label: 'All' },
-                  { value: 'major' as const, label: 'Major' },
-                  { value: 'minor' as const, label: 'Minor' },
-                  { value: 'modal' as const, label: 'Modal' },
+                  { value: 'all' as const, label: t('All') },
+                  { value: 'major' as const, label: t('Major') },
+                  { value: 'minor' as const, label: t('Minor') },
+                  { value: 'modal' as const, label: t('Modal') },
                 ]}
                 value={modeFilter}
                 onChange={(mode) => {
@@ -273,7 +275,7 @@ export default function ChordExplorerPage() {
                 }}
               />
               <label className={styles.mood}>
-                Mood
+                {t('Mood')}
                 <select
                   value={moodFilter ?? ''}
                   onChange={(e) => {
@@ -281,13 +283,13 @@ export default function ChordExplorerPage() {
                     setShownCount(PAGE_SIZE);
                   }}
                 >
-                  <option value="">Any mood</option>
+                  <option value="">{t('Any mood')}</option>
                   {availableMoods.map((mood) => (
-                    <option key={mood} value={mood}>{mood}</option>
+                    <option key={mood} value={mood}>{t(mood)}</option>
                   ))}
                 </select>
                 <span className={styles.sub}>
-                  {progressions.length} progressions in {keyName}
+                  {t('{count} progressions in {key}', { count: progressions.length, key: keyName ?? '' })}
                 </span>
               </label>
             </div>
@@ -297,8 +299,8 @@ export default function ChordExplorerPage() {
                   <div className={styles.rowText}>
                     <div className={styles.symbols}>{progression.chordIds.map(chordSymbolOfId).join('  ')}</div>
                     <div className={styles.sub}>
-                      {progression.name}
-                      {progression.moods.length > 0 && ` · ${progression.moods.join(', ')}`}
+                      {t(progression.name)}
+                      {progression.moods.length > 0 && ` · ${progression.moods.map((m) => t(m)).join(', ')}`}
                     </div>
                   </div>
                   <div className={styles.row}>
@@ -308,10 +310,10 @@ export default function ChordExplorerPage() {
                       aria-pressed={selectedProgressionId === progression.id}
                       onClick={() => startProgression(progression.id)}
                     >
-                      Play
+                      {t('Play')}
                     </Button>
                     <Link href={`/studio/chords/play/${encodeURIComponent(progression.id)}`}>
-                      <Button accent="indigo" variant="secondary">Falling notes</Button>
+                      <Button accent="indigo" variant="secondary">{t('Falling notes')}</Button>
                     </Link>
                   </div>
                 </div>
@@ -320,7 +322,7 @@ export default function ChordExplorerPage() {
             {progressions.length > shownCount && (
               <p>
                 <Button accent="indigo" variant="secondary" onClick={() => setShownCount((n) => n + PAGE_SIZE)}>
-                  Show {Math.min(PAGE_SIZE, progressions.length - shownCount)} more
+                  {t('Show {count} more', { count: Math.min(PAGE_SIZE, progressions.length - shownCount) })}
                 </Button>
               </p>
             )}
@@ -331,21 +333,20 @@ export default function ChordExplorerPage() {
       {tab === 'mine' && (
         <div role="tabpanel" id="panel-mine" aria-labelledby="tab-mine" className={styles.column}>
           <Card>
-            <h2 className={styles.cardTitle}>Add your own progression</h2>
+            <h2 className={styles.cardTitle}>{t('Add your own progression')}</h2>
             <p className={styles.sub}>
-              Type chords from a chart — <code>C G Am F</code>, <code>Dm7 G7 Cmaj7</code>, <code>Bb/D</code> — or
-              numerals in the key chosen above, like <code>I V vi IV</code>. In a minor key the numerals follow the
-              natural minor scale (VII is G in A minor).
+              {t('Type chords from a chart, like')} <code>C G Am F</code>, <code>Dm7 G7 Cmaj7</code>, <code>Bb/D</code> — {t('or numerals in the key chosen above, like')} <code>I V vi IV</code>.{' '}
+              {t('In a minor key the numerals follow the natural minor scale (VII is G in A minor).')}
             </p>
             <div className={styles.form}>
               <input
-                aria-label="Name (optional)"
-                placeholder="Name (optional)"
+                aria-label={t('Name (optional)')}
+                placeholder={t('Name (optional)')}
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
               />
               <textarea
-                aria-label="Chords"
+                aria-label={t('Chords')}
                 placeholder="C G Am F"
                 rows={2}
                 value={newText}
@@ -353,34 +354,34 @@ export default function ChordExplorerPage() {
               />
               <Segmented
                 name="numeralMode"
-                legend={`Numerals in ${keyName}`}
+                legend={t('Numerals in {key}', { key: keyName ?? '' })}
                 options={[
-                  { value: 'major' as const, label: 'Major' },
-                  { value: 'minor' as const, label: 'Minor' },
+                  { value: 'major' as const, label: t('Major') },
+                  { value: 'minor' as const, label: t('Minor') },
                 ]}
                 value={newMode}
                 onChange={setNewMode}
               />
               <div>
                 <Button accent="indigo" onClick={() => void handleAdd()}>
-                  Add to my library
+                  {t('Add to my library')}
                 </Button>
               </div>
-              {addError && <p role="alert">{addError}</p>}
-              {justAdded && !addError && <p role="status">Added “{justAdded}” to the list below.</p>}
+              {addError && <p role="alert">{t(addError)}</p>}
+              {justAdded && !addError && <p role="status">{t('Added “{title}” to the list below.', { title: justAdded })}</p>}
             </div>
           </Card>
           <Card>
             <h2 className={styles.cardTitle}>
-              My progressions <span className={styles.count}>{myProgressions.length}</span>
+              {t('My progressions')} <span className={styles.count}>{myProgressions.length}</span>
             </h2>
-            {myProgressions.length === 0 && <EmptyState title="Nothing yet">Add a progression above and it will wait here.</EmptyState>}
+            {myProgressions.length === 0 && <EmptyState title={t('Nothing yet')}>{t('Add a progression above and it will wait here.')}</EmptyState>}
             <div>
               {myProgressions.map((progression) => (
                 <div key={progression.id} className={styles.progRow}>
                   <div className={styles.rowText}>
                     <div className={styles.symbols}>{progression.chordIds.map(chordSymbolOfId).join('  ')}</div>
-                    <div className={styles.sub}>{progression.name}</div>
+                    <div className={styles.sub}>{t(progression.name)}</div>
                   </div>
                   <div className={styles.row}>
                     <Button
@@ -389,18 +390,18 @@ export default function ChordExplorerPage() {
                       aria-pressed={selectedProgressionId === progression.id}
                       onClick={() => startProgression(progression.id)}
                     >
-                      Play
+                      {t('Play')}
                     </Button>
                     <Link href={`/studio/chords/play/${encodeURIComponent(progression.id)}`}>
-                      <Button accent="indigo" variant="secondary">Falling notes</Button>
+                      <Button accent="indigo" variant="secondary">{t('Falling notes')}</Button>
                     </Link>
                     <Button
                       accent="indigo"
                       variant="secondary"
-                      aria-label={`Remove ${progression.name}`}
+                      aria-label={t('Remove {name}', { name: progression.name })}
                       onClick={() => void removeUserProgression(progression.id)}
                     >
-                      Remove
+                      {t('Remove')}
                     </Button>
                   </div>
                 </div>

@@ -15,6 +15,7 @@ import { useGeneratedContentStore } from '../../../../runtime/stores/generatedCo
 import { getAdapters } from '../../../../runtime/bootstrap';
 import { FallingNotesCanvas } from '../../../../ui/falling/FallingNotesCanvas';
 import { ScrollingScore } from '../../../../ui/score/ScrollingScore';
+import { useT, useNoteName } from '../../../../ui/i18n/useT';
 import { PageShell } from '../../../../ui/shared/PageShell';
 import { StatusNote } from '../../../../ui/shared/StatusNote';
 import { Card } from '../../../../ui/shared/Card';
@@ -25,6 +26,7 @@ import { Pill } from '../../../../ui/shared/Pill';
 import controls from '../../../../ui/shared/Controls.module.css';
 import { ResultCard } from '../../../../ui/shared/ResultCard';
 import { usePieceTitle } from '../../../../ui/shared/usePieceTitle';
+import type { Translator } from '../../../../core/i18n/translate';
 import type { Arrangement, Track } from '../../../../core/content/types';
 import { ticksPerMeasure } from '../../../../core/content/toMusicXml';
 import { asTicks } from '../../../../core/time/types';
@@ -35,7 +37,6 @@ import { parseSmf } from '../../../../core/midi/smf';
 import { smfToArrangement } from '../../../../core/content/songLibrary';
 import { detectKey, keyName, prefersSharps } from '../../../../core/content/detectKey';
 import { transposeArrangement, transposeLimits } from '../../../../core/content/transpose';
-import { noteName } from '../../../../ui/falling/noteName';
 import { describeArticulation, describeEvenness, describeRushDrag } from '../../../../core/grade/grade';
 
 type StudioView = 'falling' | 'score';
@@ -46,14 +47,16 @@ const TEMPO_STEP = 5;
 
 // FR-STU-005 — a plain-language label for a track's hand/role, since the
 // child-facing icon-based labelling (Explorer) doesn't apply to Studio.
-function trackLabel(track: Track): string {
-  if (track.hand === 'L') return 'Left hand';
-  if (track.hand === 'R') return 'Right hand';
-  if (track.id === 'both') return 'Both hands';
-  return track.role;
+function trackLabel(t: Translator, track: Track): string {
+  if (track.hand === 'L') return t('Left hand');
+  if (track.hand === 'R') return t('Right hand');
+  if (track.id === 'both') return t('Both hands');
+  return t(track.role);
 }
 
 export default function StudioPlayPage() {
+  const t = useT();
+  const noteName = useNoteName();
   const params = useParams<{ id: string }>();
   const arrangementId = decodeURIComponent(params.id);
   const getGenerated = useGeneratedContentStore((s) => s.get);
@@ -170,7 +173,7 @@ export default function StudioPlayPage() {
   );
   useEffect(() => setSemitones(0), [arrangementId]);
 
-  const track = arrangement?.tracks.find((t) => t.id === selectedTrackId) ?? arrangement?.tracks[0];
+  const track = arrangement?.tracks.find((tr) => tr.id === selectedTrackId) ?? arrangement?.tracks[0];
   const notesForDisplay = useMemo(() => activeNotes ?? track?.notes ?? [], [activeNotes, track]);
 
   // FR-STU-003 — measure range picker; ticksPerMeasure is the same helper
@@ -220,22 +223,22 @@ export default function StudioPlayPage() {
   const shownView: StudioView = view;
   const pieceTitle = usePieceTitle(arrangement?.pieceId);
 
-  if (loadError) return <PageShell><StatusNote tone="problem">Could not load this piece: {loadError}</StatusNote></PageShell>;
+  if (loadError) return <PageShell><StatusNote tone="problem">{t('Could not load this piece: {error}', { error: t(loadError) })}</StatusNote></PageShell>;
   if (!arrangement || !track) return <PageShell><StatusNote /></PageShell>;
 
   return (
     <PageShell>
-      <h1>{customTitle ?? (arrangementId.startsWith('mutopia-') ? (arrangement.sections[0]?.label ?? arrangement.id) : (pieceTitle ?? arrangement.id))}</h1>
+      <h1>{t(customTitle ?? (arrangementId.startsWith('mutopia-') ? (arrangement.sections[0]?.label ?? arrangement.id) : (pieceTitle ?? arrangement.id)))}</h1>
 
       {attemptStatus === 'idle' && (
         <Card>
           <div className={controls.stack}>
             <Segmented
               name="mode"
-              legend="How should we play?"
+              legend={t('How should we play?')}
               options={[
-                { value: 'wait' as const, label: 'Wait for me' },
-                { value: 'timed' as const, label: 'Keep the beat' },
+                { value: 'wait' as const, label: t('Wait for me') },
+                { value: 'timed' as const, label: t('Keep the beat') },
               ]}
               value={mode}
               onChange={setMode}
@@ -243,30 +246,30 @@ export default function StudioPlayPage() {
             {mode === 'wait' && (
               <label className={controls.check}>
                 <input type="checkbox" checked={holdAtLine} onChange={(e) => setHoldAtLine(e.target.checked)} />
-                Stop the notes at the line until I play them
+                {t('Stop the notes at the line until I play them')}
               </label>
             )}
             {mode === 'wait' && (
               <label className={controls.check}>
                 <input type="checkbox" checked={anyOctave} onChange={(e) => setAnyOctave(e.target.checked)} />
-                Any octave counts (play the right letter on any part of the keyboard)
+                {t('Any octave counts (play the right letter on any part of the keyboard)')}
               </label>
             )}
             {arrangement.tracks.length > 1 && (
               <>
                 <Segmented
                   name="track"
-                  legend="Practise"
-                  options={arrangement.tracks.map((t) => ({ value: t.id, label: trackLabel(t) }))}
+                  legend={t('Practise')}
+                  options={arrangement.tracks.map((tr) => ({ value: tr.id, label: trackLabel(t, tr) }))}
                   value={selectedTrackId ?? track?.id ?? ''}
                   onChange={(id) => setSelectedTrackId(id)}
                 />
                 <Segmented
                   name="accompaniment"
-                  legend="The other hand"
+                  legend={t('The other hand')}
                   options={[
-                    { value: 'silent' as const, label: 'Silent' },
-                    { value: 'sampler' as const, label: 'Played by the sampler' },
+                    { value: 'silent' as const, label: t('Silent') },
+                    { value: 'sampler' as const, label: t('Played by the sampler') },
                   ]}
                   value={accompaniment}
                   onChange={setAccompaniment}
@@ -275,13 +278,13 @@ export default function StudioPlayPage() {
             )}
 
             <fieldset className={controls.group}>
-              <legend className={controls.legend}>Loop</legend>
+              <legend className={controls.legend}>{t('Loop')}</legend>
               <label className={controls.check}>
                 <input type="checkbox" checked={loopEnabled} onChange={(e) => setLoopEnabled(e.target.checked)} />
-                Repeat a few measures
+                {t('Repeat a few measures')}
               </label>
               <div className={controls.range}>
-                <span className={controls.rangeLabel}>Measures</span>
+                <span className={controls.rangeLabel}>{t('Measures')}</span>
                 <input
                   type="number"
                   min={1}
@@ -289,9 +292,9 @@ export default function StudioPlayPage() {
                   value={loopFromMeasure}
                   disabled={!loopEnabled}
                   onChange={(e) => setLoopFromMeasure(Number(e.target.value))}
-                  aria-label="Loop from measure"
+                  aria-label={t('Loop from measure')}
                 />
-                <span className={controls.faint}>to</span>
+                <span className={controls.faint}>{t('to')}</span>
                 <input
                   type="number"
                   min={1}
@@ -299,9 +302,9 @@ export default function StudioPlayPage() {
                   value={loopToMeasure}
                   disabled={!loopEnabled}
                   onChange={(e) => setLoopToMeasure(Number(e.target.value))}
-                  aria-label="Loop to measure"
+                  aria-label={t('Loop to measure')}
                 />
-                <span className={controls.faint}>of {totalMeasures}</span>
+                <span className={controls.faint}>{t('of {total}', { total: totalMeasures })}</span>
               </div>
               {loopEnabled && (
                 <label className={controls.check}>
@@ -310,7 +313,7 @@ export default function StudioPlayPage() {
                     checked={autoRampChecked}
                     onChange={(e) => setAutoRampChecked(e.target.checked)}
                   />
-                  Speed up a little after each clean pass
+                  {t('Speed up a little after each clean pass')}
                 </label>
               )}
             </fieldset>
@@ -327,12 +330,12 @@ export default function StudioPlayPage() {
       {attemptStatus === 'playing' && loopRange && (
         <Card>
           <div className={controls.loopStatus} role="status">
-            <Pill tone="solid">Pass {passNumber}</Pill>
-            {autoRampEnabled && <Pill mono>Tempo {Math.round(tempoScale * 100)}%</Pill>}
-            {lastPassGrade && <Pill tone="neutral">Last pass {Math.round(lastPassGrade.accuracy * 100)}% accurate</Pill>}
+            <Pill tone="solid">{t('Pass {n}', { n: passNumber })}</Pill>
+            {autoRampEnabled && <Pill mono>{t('Tempo')} {Math.round(tempoScale * 100)}%</Pill>}
+            {lastPassGrade && <Pill tone="neutral">{t('Last pass {percent}% accurate', { percent: Math.round(lastPassGrade.accuracy * 100) })}</Pill>}
           </div>
           <Button accent="indigo" variant="secondary" onClick={() => void stopLoop()}>
-            Stop looping
+            {t('Stop looping')}
           </Button>
         </Card>
       )}
@@ -341,30 +344,30 @@ export default function StudioPlayPage() {
         <div className={controls.bar}>
           <Segmented
             name="view"
-            legend="Show"
+            legend={t('Show')}
             options={[
-              { value: 'falling' as const, label: 'Falling notes' },
-              { value: 'score' as const, label: 'Music score' },
+              { value: 'falling' as const, label: t('Falling notes') },
+              { value: 'score' as const, label: t('Music score') },
             ]}
             value={shownView}
             onChange={setView}
           />
           <label className={controls.tempo}>
             <span className={controls.tempoLabel}>
-              Key{shownKey ? ` (${shownKey})` : ''}
+              {t('Key')}{shownKey ? ` (${t(shownKey)})` : ''}
             </span>
-            <select value={String(semitones)} onChange={(e) => changeSemitones(Number(e.target.value))} aria-label="Move the key">
+            <select value={String(semitones)} onChange={(e) => changeSemitones(Number(e.target.value))} aria-label={t('Move the key')}>
               {Array.from({ length: 25 }, (_, i) => i - 12).map((n) => (
                 <option key={n} value={String(n)} disabled={n < limits.down || n > limits.up}>
-                  {n === 0 ? 'As written' : n > 0 ? `${n} higher` : `${-n} lower`}
-                  {detectedKey ? ` — ${keyName((detectedKey.tonicPitchClass + n + 120) % 12, detectedKey.mode)}` : ''}
+                  {n === 0 ? t('As written') : n > 0 ? t('{n} higher', { n }) : t('{n} lower', { n: -n })}
+                  {detectedKey ? ` — ${t(keyName((detectedKey.tonicPitchClass + n + 120) % 12, detectedKey.mode))}` : ''}
                 </option>
               ))}
             </select>
           </label>
           <label className={controls.tempo}>
             <span className={controls.tempoLabel}>
-              Tempo <span className={controls.readout}>{Math.round(tempoScale * 100)}%</span>
+              {t('Tempo')} <span className={controls.readout}>{Math.round(tempoScale * 100)}%</span>
             </span>
             <input
               type="range"
@@ -380,7 +383,7 @@ export default function StudioPlayPage() {
 
       {attemptStatus === 'playing' && mode === 'wait' && holdAtLine && matcherState && matcherState.pending.length > 0 && (
         <p aria-live="polite">
-          <strong>Waiting for you. Play:</strong>{' '}
+          <strong>{t('Waiting for you. Play:')}</strong>{' '}
           {[...matcherState.pending].sort((a, b) => (a as number) - (b as number)).map((p) => noteName(p as number, !anyOctave)).join(' · ')}
         </p>
       )}
@@ -406,10 +409,10 @@ export default function StudioPlayPage() {
       )}
 
       {attemptStatus === 'complete' && grade && (
-        <ResultCard stars={grade.stars} title={`${Math.round(grade.accuracy * 100)}% of the notes`}>
-          <p>You are {describeRushDrag(grade.rushDragMs)}.</p>
-          {describeArticulation(grade) && <p>{describeArticulation(grade)}</p>}
-          {grade.evennessCv !== undefined && <p>{describeEvenness(grade.evennessCv)}</p>}
+        <ResultCard stars={grade.stars} title={t('{percent}% of the notes', { percent: Math.round(grade.accuracy * 100) })}>
+          <p>{t('You are {how}.', { how: t(describeRushDrag(grade.rushDragMs)) })}</p>
+          {describeArticulation(grade) && <p>{t(describeArticulation(grade) ?? '')}</p>}
+          {grade.evennessCv !== undefined && <p>{t(describeEvenness(grade.evennessCv))}</p>}
         </ResultCard>
       )}
     </PageShell>

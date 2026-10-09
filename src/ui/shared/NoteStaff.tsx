@@ -2,6 +2,8 @@
 // Explorer screens. Whole notes only: no rhythm to read, just where the note sits.
 // Sharps are drawn with a ♯ in front of the natural below them.
 
+import { useT } from '../i18n/useT';
+
 const HALF = 9; // vertical distance between a line and the next space
 const STEP_TOP = 42; // highest step in view (a few steps above the treble staff), grown for higher notes
 const STEP_BOTTOM = 14; // lowest step in view, grown for lower notes
@@ -38,6 +40,7 @@ function ledgerSteps(step: number): number[] {
 }
 
 export function NoteStaff({ pitches }: { pitches: readonly number[] }) {
+  const t = useT();
   const sorted = [...new Set(pitches)].sort((a, b) => a - b);
   const top = Math.max(STEP_TOP, ...sorted.map((p) => stepOf(p) + 3));
   const bottom = Math.min(STEP_BOTTOM, ...sorted.map((p) => stepOf(p) - 3));
@@ -57,7 +60,7 @@ export function NoteStaff({ pitches }: { pitches: readonly number[] }) {
     <svg
       viewBox={`0 0 ${WIDTH + 20} ${height}`}
       role="img"
-      aria-label="The note on a piano score"
+      aria-label={t('The note on a piano score')}
       style={{ width: '100%', maxWidth: 260, height: 'auto' }}
     >
       {TREBLE_LINES.map((s) => line(s, `t${s}`))}

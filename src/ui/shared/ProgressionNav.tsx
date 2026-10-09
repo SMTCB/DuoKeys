@@ -1,6 +1,7 @@
 // FR-STU-015 — "where am I in the progression": one chip per chord, the one being
 // played marked, finished ones ticked, and which round of the loop it is.
 
+import { useT } from '../i18n/useT';
 import styles from './ProgressionNav.module.css';
 
 export function ProgressionNav({
@@ -14,8 +15,9 @@ export function ProgressionNav({
   round: number;
   totalRounds: number;
 }) {
+  const t = useT();
   return (
-    <ol className={styles.nav} aria-label="Progression">
+    <ol className={styles.nav} aria-label={t('Progression')}>
       {symbols.map((symbol, i) => {
         const state = i === currentIndex ? styles.current : i < currentIndex ? styles.done : '';
         return (
@@ -27,7 +29,7 @@ export function ProgressionNav({
       })}
       {totalRounds > 1 && (
         <li className={styles.round}>
-          Round {round} of {totalRounds}
+          {t('Round {round} of {total}', { round, total: totalRounds })}
         </li>
       )}
     </ol>

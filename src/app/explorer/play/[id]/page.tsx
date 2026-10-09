@@ -9,6 +9,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import controls from '../../../../ui/shared/Controls.module.css';
 import { Segmented } from '../../../../ui/shared/Segmented';
+import { useT } from '../../../../ui/i18n/useT';
 import { ScrollingScore } from '../../../../ui/score/ScrollingScore';
 import Link from 'next/link';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
@@ -28,6 +29,7 @@ import type { Arrangement } from '../../../../core/content/types';
 
 export default function ExplorerPlayPage() {
   const router = useRouter();
+  const t = useT();
   const params = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const sectionId = searchParams.get('section') ?? undefined;
@@ -90,20 +92,20 @@ export default function ExplorerPlayPage() {
     await startArrangement(arrangement, track.id, crypto.randomUUID(), new Date().toISOString(), sectionId, mode);
   }
 
-  if (loadError) return <PageShell><StatusNote tone="problem">Could not load this piece: {loadError}</StatusNote></PageShell>;
+  if (loadError) return <PageShell><StatusNote tone="problem">{t('Could not load this piece: {error}', { error: loadError })}</StatusNote></PageShell>;
   if (!arrangement || !track) return <PageShell><StatusNote /></PageShell>;
 
   return (
     <PageShell>
       <Link href={`/explorer/${arrangement.id}`} className={stage.back}>
-        ← Quest map
+        {t('← Quest map')}
       </Link>
-      <h1>{pieceTitle ?? arrangement.id}</h1>
+      <h1>{pieceTitle !== undefined ? t(pieceTitle) : arrangement.id}</h1>
 
       {attemptStatus === 'idle' && (
         <Card>
           <div className={`${stage.stage} ${stage.left}`}>
-            <p className={stage.title}>How should we play?</p>
+            <p className={stage.title}>{t('How should we play?')}</p>
             <div className={stage.modes}>
               <label className={stage.mode}>
                 <input
@@ -113,8 +115,8 @@ export default function ExplorerPlayPage() {
                   checked={mode === 'wait'}
                   onChange={() => setMode('wait')}
                 />
-                <span className={stage.modeName}>Wait for me</span>
-                <span className={stage.modeHint}>It waits for your key</span>
+                <span className={stage.modeName}>{t('Wait for me')}</span>
+                <span className={stage.modeHint}>{t('It waits for your key')}</span>
               </label>
               <label className={stage.mode}>
                 <input
@@ -124,8 +126,8 @@ export default function ExplorerPlayPage() {
                   checked={mode === 'timed'}
                   onChange={() => setMode('timed')}
                 />
-                <span className={stage.modeName}>Keep the beat</span>
-                <span className={stage.modeHint}>Play along in time</span>
+                <span className={stage.modeName}>{t('Keep the beat')}</span>
+                <span className={stage.modeHint}>{t('Play along in time')}</span>
               </label>
             </div>
             <MidiChooser
@@ -141,10 +143,10 @@ export default function ExplorerPlayPage() {
         <div className={controls.bar}>
           <Segmented
             name="view"
-            legend="Show"
+            legend={t('Show')}
             options={[
-              { value: 'falling' as const, label: 'Falling notes' },
-              { value: 'score' as const, label: 'Music score' },
+              { value: 'falling' as const, label: t('Falling notes') },
+              { value: 'score' as const, label: t('Music score') },
             ]}
             value={view}
             onChange={setView}
@@ -168,7 +170,7 @@ export default function ExplorerPlayPage() {
       {attemptStatus === 'complete' && grade && (
         <ResultCard
           stars={grade.stars}
-          title={grade.stars >= 3 ? 'Amazing playing!' : grade.stars === 2 ? 'Great playing!' : 'You did it!'}
+          title={grade.stars >= 3 ? t('Amazing playing!') : grade.stars === 2 ? t('Great playing!') : t('You did it!')}
           hasBurst
           actions={
             arcActive ? (
@@ -179,7 +181,7 @@ export default function ExplorerPlayPage() {
                   router.push(`/explorer/${arrangement.id}/session`);
                 }}
               >
-                Continue your session
+                {t('Continue your session')}
               </Button>
             ) : undefined
           }

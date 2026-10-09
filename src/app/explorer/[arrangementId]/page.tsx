@@ -15,6 +15,7 @@ import { getAdapters } from '../../../runtime/bootstrap';
 import { computeProgression, type SectionProgress } from '../../../core/progression/progression';
 import type { Arrangement } from '../../../core/content/types';
 import type { Attempt } from '../../../core/data/attempt';
+import { useT } from '../../../ui/i18n/useT';
 import { PageShell } from '../../../ui/shared/PageShell';
 import { StatusNote } from '../../../ui/shared/StatusNote';
 import { POP_FILL, POP_ON } from '../../../ui/shared/PopShape';
@@ -38,6 +39,7 @@ function LockGlyph() {
 
 export default function ExplorerMapPage() {
   const params = useParams<{ arrangementId: string }>();
+  const t = useT();
   const profile = useSessionStore((s) => s.profile);
   const [arrangement, setArrangement] = useState<Arrangement | undefined>();
   const [progress, setProgress] = useState<SectionProgress[] | undefined>();
@@ -65,7 +67,7 @@ export default function ExplorerMapPage() {
     };
   }, [profile.id, params.arrangementId]);
 
-  if (loadError) return <PageShell><StatusNote tone="problem">Could not load this piece: {loadError}</StatusNote></PageShell>;
+  if (loadError) return <PageShell><StatusNote tone="problem">{t('Could not load this piece: {error}', { error: loadError })}</StatusNote></PageShell>;
   if (!arrangement || !progress) return <PageShell><StatusNote /></PageShell>;
 
   // The first unlocked section with no attempt yet is "where you are".
@@ -73,7 +75,7 @@ export default function ExplorerMapPage() {
 
   return (
     <PageShell tone="bold">
-      <h1>Quest Map</h1>
+      <h1>{t('Quest Map')}</h1>
       <ol className={styles.path}>
         {progress.map((p, i) => {
           const section = arrangement.sections.find((s) => s.id === p.sectionId);
@@ -93,12 +95,12 @@ export default function ExplorerMapPage() {
                 {p.unlocked ? (isReward ? '★' : i + 1) : <LockGlyph />}
               </span>
               <span className={styles.text}>
-                <span className={styles.label}>{section.label}</span>
+                <span className={styles.label}>{t(section.label)}</span>
                 <span className={styles.sub}>
-                  {!p.unlocked && 'Locked'}
-                  {p.unlocked && isReward && 'Reward'}
-                  {p.unlocked && !isReward && isCurrent && 'Start here'}
-                  {p.unlocked && !isReward && !isCurrent && p.attempted && 'Play again'}
+                  {!p.unlocked && t('Locked')}
+                  {p.unlocked && isReward && t('Reward')}
+                  {p.unlocked && !isReward && isCurrent && t('Start here')}
+                  {p.unlocked && !isReward && !isCurrent && p.attempted && t('Play again')}
                 </span>
                 {p.attempted && (
                   <StarRow stars={p.bestStars} className={styles.stars} />

@@ -3,7 +3,7 @@
 // (pitchToX, TA-REN-002). The lit key carries a dot as well as the colour (NFR-008).
 
 import { asMidiPitch } from '../../core/midi/decode';
-import { noteName } from '../falling/noteName';
+import { useNoteName, useT } from '../i18n/useT';
 import { pitchToX } from '../falling/pitchToX';
 
 const UNIT = 40;
@@ -18,6 +18,8 @@ export function keysWindowStart(pitches: readonly number[]): number {
 }
 
 export function NoteKeys({ pitches }: { pitches: readonly number[] }) {
+  const noteName = useNoteName();
+  const t = useT();
   const start = Math.max(21, keysWindowStart(pitches.length > 0 ? pitches : [60]));
   const range = { low: asMidiPitch(start), high: asMidiPitch(Math.min(108, start + 24)) };
   const lit = new Set(pitches);
@@ -76,7 +78,7 @@ export function NoteKeys({ pitches }: { pitches: readonly number[] }) {
     <svg
       viewBox={`0 0 ${width + 2} ${WHITE_HEIGHT + 2}`}
       role="img"
-      aria-label="Piano keys with the note highlighted"
+      aria-label={t('Piano keys with the note highlighted')}
       style={{ width: '100%', maxWidth: 420, height: 'auto' }}
     >
       {draw(true)}

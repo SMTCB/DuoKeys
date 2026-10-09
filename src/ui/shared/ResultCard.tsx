@@ -9,6 +9,7 @@ import type { ReactNode } from 'react';
 import { PopShape } from './PopShape';
 import { RewardBurst } from './RewardBurst';
 import { StarRow } from './StarRow';
+import { useT } from '../i18n/useT';
 import styles from './ResultCard.module.css';
 
 export function ResultCard({
@@ -25,8 +26,9 @@ export function ResultCard({
   actions?: ReactNode;
   hasBurst?: boolean;
 }) {
+  const t = useT();
   return (
-    <section className={styles.card} aria-label="Result">
+    <section className={styles.card} aria-label={t('Result')}>
       <div className={styles.block}>
         <PopShape shape="circle" colour="cream" size={72} className={styles.shapeA} />
         <PopShape shape="quarter" colour="tomato" size={56} className={styles.shapeB} />

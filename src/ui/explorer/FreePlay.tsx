@@ -13,7 +13,7 @@ import { getAdapters } from '../../runtime/bootstrap';
 import type { MidiInputInfo, MidiConnectionState, VoiceHandle } from '../../adapters/ports';
 import { MidiDecoder, type MidiPitch } from '../../core/midi/decode';
 import { VELOCITY_FLOOR } from '../../core/match/types';
-import { midiPitchToNoteName } from '../../core/content/noteName';
+import { useNoteName, useT } from '../i18n/useT';
 import { NoteKeys } from '../shared/NoteKeys';
 import { NoteStaff } from '../shared/NoteStaff';
 import { MidiChooser } from '../shared/MidiChooser';
@@ -21,6 +21,8 @@ import { Card } from '../shared/Card';
 import stage from '../shared/Stage.module.css';
 
 export function FreePlay() {
+  const t = useT();
+  const noteName = useNoteName();
   const [midiInputs, setMidiInputs] = useState<MidiInputInfo[]>([]);
   const [connectionState, setConnectionState] = useState<MidiConnectionState>('disconnected');
   const [connected, setConnected] = useState(false);
@@ -73,8 +75,8 @@ export function FreePlay() {
 
   return (
     <section className={stage.stage}>
-      <p className={stage.title}>Play anything!</p>
-      <div className={stage.bigNote}>{lastPitch !== undefined ? midiPitchToNoteName(lastPitch) : '♪'}</div>
+      <p className={stage.title}>{t('Play anything!')}</p>
+      <div className={stage.bigNote}>{lastPitch !== undefined ? noteName(lastPitch) : '♪'}</div>
       {lastPitch !== undefined && (
         <div className={stage.noteViews}>
           <NoteKeys pitches={[lastPitch]} />

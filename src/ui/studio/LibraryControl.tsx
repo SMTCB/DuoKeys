@@ -6,6 +6,7 @@
 
 import { useLibraryStore } from '../../runtime/stores/libraryStore';
 import type { LibraryStatus } from '../../core/data/library';
+import { useT } from '../i18n/useT';
 import css from '../shared/ListRow.module.css';
 
 const STATUS_LABEL: Record<LibraryStatus, string> = {
@@ -16,12 +17,13 @@ const STATUS_LABEL: Record<LibraryStatus, string> = {
 const STATUSES: LibraryStatus[] = ['wantToLearn', 'learning', 'learned'];
 
 export function LibraryControl({ profileId, arrangementId }: { profileId: string; arrangementId: string }) {
+  const t = useT();
   const status = useLibraryStore((s) => s.entries.get(arrangementId)?.status);
   const setStatus = useLibraryStore((s) => s.setStatus);
   const clearStatus = useLibraryStore((s) => s.clearStatus);
 
   return (
-    <div className={css.actions} role="group" aria-label="Where this piece is in your repertoire">
+    <div className={css.actions} role="group" aria-label={t('Where this piece is in your repertoire')}>
       {STATUSES.map((candidate) => (
         <button
           key={candidate}
@@ -35,7 +37,7 @@ export function LibraryControl({ profileId, arrangementId }: { profileId: string
           }
         >
           {status === candidate ? '✓ ' : ''}
-          {STATUS_LABEL[candidate]}
+          {t(STATUS_LABEL[candidate])}
         </button>
       ))}
     </div>

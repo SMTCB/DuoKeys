@@ -13,6 +13,7 @@ import { useSessionArcStore } from '../../../../runtime/stores/sessionArcStore';
 import { getAdapters } from '../../../../runtime/bootstrap';
 import { computeProgression, type SectionProgress } from '../../../../core/progression/progression';
 import { FreePlay } from '../../../../ui/explorer/FreePlay';
+import { useT } from '../../../../ui/i18n/useT';
 import { PageShell } from '../../../../ui/shared/PageShell';
 import { StatusNote } from '../../../../ui/shared/StatusNote';
 import { Card } from '../../../../ui/shared/Card';
@@ -22,6 +23,7 @@ import type { Attempt } from '../../../../core/data/attempt';
 
 export default function SessionArcPage() {
   const params = useParams<{ arrangementId: string }>();
+  const t = useT();
   const profile = useSessionStore((s) => s.profile);
   const plan = useSessionArcStore((s) => s.plan);
   const currentIndex = useSessionArcStore((s) => s.currentIndex);
@@ -60,19 +62,19 @@ export default function SessionArcPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile.id, params.arrangementId]);
 
-  if (loadError) return <PageShell><StatusNote tone="problem">Could not load this piece: {loadError}</StatusNote></PageShell>;
+  if (loadError) return <PageShell><StatusNote tone="problem">{t('Could not load this piece: {error}', { error: loadError })}</StatusNote></PageShell>;
   if (!arrangement || !plan) return <PageShell><StatusNote /></PageShell>;
 
   const step = plan[currentIndex];
-  if (!step) return <PageShell><p>Session complete!</p></PageShell>;
+  if (!step) return <PageShell><p>{t('Session complete!')}</p></PageShell>;
 
   return (
     <PageShell>
-      <h1>Session</h1>
+      <h1>{t('Session')}</h1>
       <div
         style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}
         role="img"
-        aria-label={`Step ${currentIndex + 1} of ${plan.length}`}
+        aria-label={t('Step {step} of {total}', { step: currentIndex + 1, total: plan.length })}
       >
         {plan.map((_, i) => (
           <span
@@ -95,7 +97,7 @@ export default function SessionArcPage() {
           <FreePlay />
           <p>
             <Button accent="amber" onClick={advance}>
-              Continue
+              {t('Continue')}
             </Button>
           </p>
         </Card>
@@ -107,7 +109,7 @@ export default function SessionArcPage() {
             href={`/explorer/play/${arrangement.id}?section=${step.sectionId}`}
             style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: '1.1rem' }}
           >
-            Start this quest →
+            {t('Start this quest →')}
           </Link>
         </Card>
       )}

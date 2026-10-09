@@ -28,7 +28,7 @@
   <div id="filterMeta"></div>
   <nav id="toc" aria-label="Contents"></nav>
   <div class="foot">
-    47 requirements<br>31 must · 11 should · 4 could<br>
+    58 requirements<br>36 must · 17 should · 5 could<br>
     <button id="themeBtn" type="button">auto</button>
   </div>
 </aside>
@@ -49,12 +49,12 @@
       <thead><tr><th>Prefix</th><th>Module</th><th>Count</th></tr></thead>
       <tbody>
         <tr><td><code>FR-EXP-*</code></td><td><a href="#explorer">Explorer — the child's experience</a></td><td class="n">9</td></tr>
-        <tr><td><code>FR-STU-*</code></td><td><a href="#studio">Studio — the adult's experience</a></td><td class="n">19</td></tr>
+        <tr><td><code>FR-STU-*</code></td><td><a href="#studio">Studio — the adult's experience</a></td><td class="n">20</td></tr>
         <tr><td><code>FR-DUO-*</code></td><td><a href="#duet">Duet — four hands together</a></td><td class="n">4</td></tr>
         <tr><td><code>FR-PRO-*</code></td><td><a href="#profiles">Profiles, progression and rewards</a></td><td class="n">5</td></tr>
         <tr><td><code>FR-CON-*</code></td><td><a href="#content">Content and repertoire</a></td><td class="n">5</td></tr>
         <tr><td><code>FR-SYN-*</code></td><td><a href="#sync">Accounts and sync</a></td><td class="n">5</td></tr>
-        <tr><td><code>FR-SYS-*</code></td><td><a href="#system">System, device, settings, shell</a></td><td class="n">8</td></tr>
+        <tr><td><code>FR-SYS-*</code></td><td><a href="#system">System, device, settings, shell</a></td><td class="n">9</td></tr>
       </tbody>
     </table>
   </div>
@@ -271,7 +271,20 @@
     <h3 id="FR-STU-018" data-toc="Free play"><span class="aid">FR-STU-018</span> Free play — "play something for me" <span class="pri S">S</span></h3>
     <p class="by"><b>Realised by</b> TA-CNT-007 · TA-CNT-006 · TA-APP-003 · US-3.22</p>
     <p>The adult can sit down at the piano and be given something easy to play with no decisions: pick a feeling or leave it on "Surprise me", and the app chooses a short progression of at most four easy chords (major, minor, seventh, suspended) and a rhythm to play them in. "Another one" never repeats the last suggestion. Playing opens the chord-progression page with the rhythm already chosen; the chords fall and wait, there is no score and no timer. A Key picker (&ldquo;Any key&rdquo; or one of the twelve) fixes the scale of the suggestion; choosing a key after a suggestion moves that same progression there, so the mood is kept, and the suggestion names its key. The suggestion is labelled in plain words (the key, what it feels like, the rhythm and what a rhythm is), and says so when the chosen feeling has no easy chords in the chosen key. The chord-progression page repeats the key and feeling, and explains the Roman numerals in the progression&rsquo;s name. The piano line says &ldquo;found, not started yet&rdquo; until a piano is tapped, never &ldquo;disconnected&rdquo;.</p>
-    <p>Limits: this is a suggestion generator over the shipped progression catalogue, not a composer. There is no mode in which the app plays the other hand.</p>
+    <p>Limits: this is a suggestion generator over the shipped progression catalogue, not a composer; the longer, written-out song is FR-STU-020. There is no mode in which the app plays the other hand.</p>
+  </div>
+
+  <div class="req">
+    <h3 id="FR-STU-020" data-toc="Make me a song"><span class="aid">FR-STU-020</span> Free play — "make me a song" <span class="pri S">S</span></h3>
+    <p class="by"><b>Realised by</b> TA-CNT-008 · TA-REN-001 · TA-APP-003 · US-3.25</p>
+    <p>The adult can ask Free play for a whole simple song instead of one short progression. They pick a feeling and a key (or leave both on &ldquo;Surprise me&rdquo; / &ldquo;Any key&rdquo;), how long (&ldquo;Short&rdquo; about a minute, &ldquo;A song&rdquo; about three, &ldquo;Long&rdquo; about four) and how busy (&ldquo;Simple&rdquo; or &ldquo;Fuller&rdquo;), and the app writes a song from the shipped progression catalogue: an intro, verses and choruses that come back, a bridge in the long forms, and an ending that slows down. Every part stays in one key; the chorus and bridge use other progressions from the same key so the song moves without leaving home.</p>
+    <p>Both hands are written out. The left hand plays the chords as a bass line below middle C, in a pattern chosen by part and busyness (held roots, halves, a walk, a broken chord). The right hand plays a simple tune between middle C and G5 that lands on a chord note at the start of every bar and moves mostly by step; a section that comes back is played the same way, so by the second verse the tune is familiar. The same request and seed always give the same song; &ldquo;New song, same feeling&rdquo; draws another.</p>
+    <p>The page names the song, its key and feeling, roughly how long it lasts, and the form as a strip of parts with the current part marked by a symbol as well as by colour (NFR-008). Two switches can be flipped at any point while playing:</p>
+    <ul>
+      <li><b>Keep going (don't wait for me).</b> Off, the notes wait at the line as everywhere else. On, the music plays in time and does not wait; switching back holds the stream at the next note not yet played. Notes already played keep counting either way, and the attempt ends on its own once the music passes the last note.</li>
+      <li><b>Make up my own right hand.</b> On, only the left hand is asked for, the written tune is hidden, and the keys that fit the current bar glow: the chord's notes with a filled dot, the other pentatonic notes that do not rub against the chord with a ring. This restarts the song from the beginning.</li>
+    </ul>
+    <p>Limits: the song is generated by fixed rules from the catalogue, not by a language model, and it has no lyrics. The app never plays either hand for the user. The tune is deliberately plain: no syncopation, no leaps wider than a fifth on a strong beat.</p>
   </div>
 
   <div class="req">
@@ -467,6 +480,13 @@
     <p>First names only, no child email address, no third-party analytics, no audio ever leaves the device.</p>
   </div>
 
+  <div class="req">
+    <h3 id="FR-SYS-009" data-toc="Portuguese"><span class="aid">FR-SYS-009</span> Portuguese <span class="pri M">M</span></h3>
+    <p class="by"><b>Realised by</b> TA-APP-007 · NFR-008 · US-3.26</p>
+    <p>The children do not read English, so the whole app can be shown in Brazilian Portuguese. The family screen offers &ldquo;English&rdquo; and &ldquo;Português&rdquo; side by side, each named in its own language; the first visit follows the browser's language (anything starting <code>pt</code>), and the choice is remembered on that device. Every screen is covered: the Explorer quest map, games and results, and the Studio home, Learn, Free play, Songs, the chord library and sight-reading, plus text that comes from data (feelings such as &ldquo;Joyful&rdquo;, rhythm names, piece and generated-song titles, grading sentences, import errors). Note names are written in solfège (Dó Ré Mi Fá Sol Lá Si); chord symbols such as &ldquo;Am7&rdquo; and key letters stay as letters. Changing language never changes saved data, progress or profiles. A phrase with no translation shows in English rather than blank. The no-failure rule is unchanged: encouragement and &ldquo;try this one again&rdquo; wording are translated, not softened or hardened.</p>
+    <p>Limits: two languages only (no per-profile language, no right-to-left, no plural engine); the browser tab title and the page's initial <code>lang</code> attribute are English until the app has started; music-theory and licence text from third parties (composer names, Mutopia licence labels) is shown as published.</p>
+  </div>
+
   <!-- ================================================================ -->
   <h2 id="summary" data-toc="Requirement summary"><span class="num">08</span>Requirement summary</h2>
 
@@ -474,13 +494,13 @@
     <thead><tr><th>Module</th><th>Must</th><th>Should</th><th>Could</th><th>Total</th></tr></thead>
     <tbody>
       <tr><td><a href="#explorer">Explorer</a></td><td class="n">5</td><td class="n">3</td><td class="n">1</td><td class="n">9</td></tr>
-      <tr><td><a href="#studio">Studio</a></td><td class="n">8</td><td class="n">9</td><td class="n">2</td><td class="n">19</td></tr>
+      <tr><td><a href="#studio">Studio</a></td><td class="n">8</td><td class="n">10</td><td class="n">2</td><td class="n">20</td></tr>
       <tr><td><a href="#duet">Duet</a></td><td class="n">3</td><td class="n">1</td><td class="n">0</td><td class="n">4</td></tr>
       <tr><td><a href="#profiles">Profiles</a></td><td class="n">4</td><td class="n">1</td><td class="n">1</td><td class="n">6</td></tr>
       <tr><td><a href="#content">Content</a></td><td class="n">4</td><td class="n">0</td><td class="n">1</td><td class="n">5</td></tr>
       <tr><td><a href="#sync">Sync</a></td><td class="n">4</td><td class="n">1</td><td class="n">0</td><td class="n">5</td></tr>
-      <tr><td><a href="#system">System</a></td><td class="n">7</td><td class="n">1</td><td class="n">0</td><td class="n">8</td></tr>
-      <tr class="tot"><td><strong>Total</strong></td><td class="n">35</td><td class="n">16</td><td class="n">5</td><td class="n">56</td></tr>
+      <tr><td><a href="#system">System</a></td><td class="n">8</td><td class="n">1</td><td class="n">0</td><td class="n">9</td></tr>
+      <tr class="tot"><td><strong>Total</strong></td><td class="n">36</td><td class="n">17</td><td class="n">5</td><td class="n">58</td></tr>
     </tbody>
   </table></div>
   <div class="note"><p><span class="k">Correction</span>System's Must count was previously misstated as 6/8 — corrected to 7/8 here; FR-SYS-001–005 and 007–008 are all M, only FR-SYS-006 is S.</p></div>

@@ -4,15 +4,17 @@
 
 import type { ReactNode } from 'react';
 import { PopShape } from './PopShape';
+import { useT } from '../i18n/useT';
 import styles from './StatusNote.module.css';
 
 export function StatusNote({ tone = 'loading', children }: { tone?: 'loading' | 'problem'; children?: ReactNode }) {
+  const t = useT();
   return (
     <div className={styles.note} role="status">
       <span className={`${styles.tile} ${tone === 'loading' ? styles.pulse : ''}`} aria-hidden="true">
         {tone === 'loading' ? <PopShape shape="circle" colour="mustard" size={28} /> : <PopShape shape="arch" colour="peach" size={28} />}
       </span>
-      <span className={styles.text}>{children ?? 'Loading…'}</span>
+      <span className={styles.text}>{children ?? t('Loading…')}</span>
     </div>
   );
 }
