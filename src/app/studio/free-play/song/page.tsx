@@ -149,6 +149,15 @@ export default function FreePlaySongPage() {
     if (attemptStatus === 'playing') void start({ improvise: on });
   }
 
+  // The key is part of the request, so choosing one writes the same song again in it (same seed) and the address follows.
+  function chooseKey(key: number): void {
+    if (!request) return;
+    const next = { ...request, key: asPitchClass(key) };
+    endSession();
+    setRequest(next);
+    window.history.replaceState(null, '', freePlaySongHref(next));
+  }
+
   function anotherSong(): void {
     if (!request) return;
     const next = { ...request, seed: newSeed() };
@@ -176,6 +185,7 @@ export default function FreePlaySongPage() {
   const isFlowing = practiceMode === 'timed';
   // The notes still wanted in the current chord, split by hand, for the line above the falling notes.
   const pendingGroupId = matcherState ? [...new Set(track.notes.map((n) => n.groupId))][matcherState.groupIndex] : undefined;
+  const chordNotes = currentChord ? currentChord.chordPitchClasses.map((c) => noteName(60 + (c as number), false)).join(' · ') : '';
   const handNotes = (hand: 'L' | 'R'): string =>
     [...new Set(track.notes.filter((n) => n.groupId === pendingGroupId && n.hand === hand && matcherState?.pending.includes(n.pitch)).map((n) => n.pitch as number))]
       .sort((a, b) => a - b)
@@ -222,7 +232,7 @@ export default function FreePlaySongPage() {
         ))}
         <span>{t('about {min} min at full speed', { min: Math.max(1, Math.round(totalSeconds / 60)) })}</span>
       </p>
-      <ol aria-label={t('The song, part by part')} style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', listStyle: 'none', padding: 0 }}>
+      <ol aria-label={t('The song, part by part')} style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', listStyle: 'none', padding: 0, margin: 0 }}>
         {song.parts.map((part, i) => {
           const isNow = part === currentPart;
           return (
@@ -237,25 +247,32 @@ export default function FreePlaySongPage() {
       </ol>
 
       {attemptStatus === 'idle' && (
-        <Card>
+        <Card tint="mustard">
+          <h2>{t('The goal')}</h2>
           <p>
-            <strong>{t('The goal:')}</strong>{' '}
-            {t('play the chords of this song from start to finish, about {min} min. The verse and chorus come back, so you know what is coming.', { min: Math.max(1, Math.round(totalSeconds / 60)) })}
+            {t('Play the chords of this song from start to finish, about {min} min. The verse and chorus come back, so you know what is coming.', { min: Math.max(1, Math.round(totalSeconds / 60)) })}
           </p>
+          <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <strong>{t('Key')}</strong>
+            <select value={String(song.key as number)} onChange={(e) => chooseKey(Number(e.target.value))}>
+              {KEY_NAMES.map((name, i) => (
+                <option key={name} value={String(i)}>{name}</option>
+              ))}
+            </select>
+          </label>
           <p>
-            {t('Chords:')}{' '}
+            <strong>{t('Chords:')}</strong>{' '}
             {[...new Set(song.parts.slice(1, -1).map((p) => p.progressionId))]
               .map((id) => catalogue.progressions.find((p) => p.id === id)?.chordIds.map(chordSymbolOfId).join(' '))
               .join('  ·  ')}
           </p>
           {switches}
-          <p>{t('You can change how you play at any time.')}</p>
           <MidiChooser inputs={midiInputs} connectionState={midiConnectionState} onSelect={(id) => void start({ inputId: id })} />
         </Card>
       )}
 
       {attemptStatus === 'playing' && clock && (
-        <Card>
+        <Card tint="mustard">
           <div className={controls.bar}>
             <Segmented
               name="view"
@@ -281,18 +298,18 @@ export default function FreePlaySongPage() {
               />
             </label>
           </div>
-          {switches}
+          <div style={{ marginTop: '1.25rem' }}>{switches}</div>
         </Card>
       )}
 
       {attemptStatus === 'playing' && (
         <p aria-live="polite">
           {currentPart && <strong>{t(currentPart.label)}</strong>}
-          {currentSymbol && <> · {t('chord')} <strong>{currentSymbol}</strong></>}
+          {currentSymbol && <> · {t('chord')} <strong>{currentSymbol}</strong>{chordNotes && <> ({chordNotes})</>}</>}
           {!isFlowing && matcherState && matcherState.pending.length > 0 && (
             <>
               {' '}· {t('Left hand:')} <strong>{handNotes('L') || '–'}</strong>
-              {' '}· {t('Right hand:')} <strong>{isImprovising ? t('any lit key') : handNotes('R') || '–'}</strong>
+              {' '}· {t('Right hand:')} <strong>{isImprovising ? t('any lit key') : handNotes('R') || t('rests')}</strong>
             </>
           )}
           {isFlowing && isImprovising && <> · {t('Right hand:')} <strong>{t('any lit key')}</strong></>}

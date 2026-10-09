@@ -205,8 +205,8 @@ export function FallingNotesCanvas({
         const groupNumber = groupOrder.current.get(note.groupId) ?? 0;
         const isPinned = groupNumber === pinnedGroup;
         if (!isPinned && endSeconds - nowAudio < -0.5) continue; // fully past the line
-        // A chord that has been played clears away once it crosses the line, so only what is still to play stays on screen.
-        if (!isPinned && progress !== undefined && groupNumber < doneGroups && secondsUntilHit < 0.02) continue;
+        // A played note keeps flowing through the line, shrinking, for as long as it is meant to be held; chord-screen chords clear at the line instead.
+        if (!isPinned && progress !== undefined && groupNumber < doneGroups && (stageChords ? secondsUntilHit < 0.02 : endSeconds <= nowAudio)) continue;
 
         const { x, isWhite, widthUnits } = pitchToX(note.pitch, fitted);
         const pxX = x * unit;

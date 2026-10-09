@@ -74,10 +74,11 @@ export const PT_STUDIO: Record<string, string> = {
     'A mão esquerda toca os acordes (barras escuras, E). Com a mão direita, toque qualquer tecla acesa: todas combinam.',
   'The left hand plays the chords as a bass line (dark bars, L). The right hand plays a simple tune (light bars, R).':
     'A mão esquerda toca os acordes como um baixo (barras escuras, E). A mão direita toca uma melodia simples (barras claras, D).',
-  'The goal:': 'O objetivo:',
-  'play the chords of this song from start to finish, about {min} min. The verse and chorus come back, so you know what is coming.':
-    'toque os acordes desta música do início ao fim, cerca de {min} min. A estrofe e o refrão voltam, por isso você sabe o que vem.',
+  'The goal': 'O objetivo',
+  'Play the chords of this song from start to finish, about {min} min. The verse and chorus come back, so you know what is coming.':
+    'Toque os acordes desta música do início ao fim, cerca de {min} min. A estrofe e o refrão voltam, por isso você sabe o que vem.',
   'You can change how you play at any time.': 'Você pode mudar a forma de tocar a qualquer momento.',
+  rests: 'descansa',
   'Left hand:': 'Mão esquerda:',
   'Right hand:': 'Mão direita:',
   'any lit key': 'qualquer tecla acesa',
