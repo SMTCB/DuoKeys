@@ -136,7 +136,7 @@ export default function FreePlayPage() {
       {choice === undefined && <p>{t('Pick one to start.')}</p>}
 
       {choice !== undefined && (
-        <Card>
+        <Card tint={choice === 'song' ? 'mustard' : 'peach'}>
           <h2>{choice === 'song' ? t('Make me a song') : t('Just the chords')}</h2>
           <p>
             {choice === 'song'
@@ -150,8 +150,8 @@ export default function FreePlayPage() {
             onChange={setMood}
             options={[{ value: ANY, label: t('Surprise me') }, ...moods.map((m) => ({ value: m, label: t(m) }))]}
           />
-          <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginTop: '0.75rem' }}>
-            {t('Key')}
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'flex-start', marginTop: '1rem' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{t('Key')}</span>
             <select value={keyChoice} onChange={(e) => chooseKey(e.target.value)}>
               <option value={ANY}>{t('Any key')}</option>
               {KEY_NAMES.map((name, i) => (
@@ -161,16 +161,16 @@ export default function FreePlayPage() {
           </label>
           {choice === 'song' && (
             <>
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '0.75rem' }}>
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '1rem' }}>
                 <Segmented
                   name="length"
                   legend={t('How long?')}
                   value={length}
                   onChange={setLength}
                   options={[
-                    { value: 'short' as const, label: t('Short') },
-                    { value: 'song' as const, label: t('A song') },
-                    { value: 'long' as const, label: t('Long') },
+                    { value: 'short' as const, label: t('Short · about 1 min') },
+                    { value: 'song' as const, label: t('Medium · 2–3 min') },
+                    { value: 'long' as const, label: t('Long · 3–4 min') },
                   ]}
                 />
                 <Segmented
@@ -184,7 +184,7 @@ export default function FreePlayPage() {
                   ]}
                 />
               </div>
-              <div style={{ marginTop: '0.75rem' }}>
+              <div style={{ marginTop: '1.25rem' }}>
                 <Button accent="indigo" onClick={makeSong}>
                   {t('Make me a song')}
                 </Button>

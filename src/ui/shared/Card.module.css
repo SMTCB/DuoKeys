@@ -6,3 +6,20 @@
   border-radius: var(--r-lg);
   padding: 1.5rem;
 }
+
+/* A card that opens from a tile takes the tile's colour; the chosen pill goes ink, like the tile's outline. */
+.tintMustard,
+.tintPeach {
+  --role: var(--app-ink);
+  --role-tint: var(--app-ink);
+  --role-deep: var(--cream);
+  border-width: 3px;
+}
+
+.tintMustard {
+  background: color-mix(in srgb, var(--mustard) 38%, var(--cream));
+}
+
+.tintPeach {
+  background: color-mix(in srgb, var(--peach) 34%, var(--cream));
+}
