@@ -65,8 +65,11 @@ function roleOfPath(pathname: string | null): Role {
  * may use colour-block tiles. Everything else, and every practice screen, is
  * `calm` (the default): a cream ground, a thin role stripe, and nothing
  * decorative near the notes (ADR-012).
+ *
+ * `back` draws a "← where you came from" pill under the top bar, so every screen
+ * below a home has one way up that looks the same.
  */
-export function PageShell({ children, tone = 'calm' }: { children: ReactNode; tone?: 'bold' | 'calm' }) {
+export function PageShell({ children, tone = 'calm', back }: { children: ReactNode; tone?: 'bold' | 'calm'; back?: { href: string; label: string } }) {
   const t = useT();
   const role = roleOfPath(usePathname());
   const roleLabel = ROLE_LABEL[role] === undefined ? undefined : t(ROLE_LABEL[role]);
@@ -84,6 +87,11 @@ export function PageShell({ children, tone = 'calm' }: { children: ReactNode; to
             </Link>
           ) : null}
         </header>
+        {back ? (
+          <Link href={back.href} className={styles.back}>
+            <span aria-hidden="true">←</span> {back.label}
+          </Link>
+        ) : null}
         {children}
       </div>
     </main>

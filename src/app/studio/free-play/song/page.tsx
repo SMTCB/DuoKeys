@@ -189,11 +189,8 @@ export default function FreePlaySongPage() {
   );
 
   return (
-    <PageShell>
+    <PageShell back={{ href: '/studio/free-play', label: t('Free play') }}>
       <h1>{songTitle}</h1>
-      <p>
-        <Link href="/studio/free-play">← {t('Free play')}</Link>
-      </p>
       <p style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center', margin: 0 }}>
         <Pill tone="neutral">{t('Key of {key}', { key: keyLabel })}</Pill>
         {song.moods.map((m) => (

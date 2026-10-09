@@ -83,7 +83,7 @@ export default function StudioSongPage() {
   if (!arrangement || !track) return <PageShell><StatusNote /></PageShell>;
 
   return (
-    <PageShell>
+    <PageShell back={{ href: '/studio/songs', label: t('Songs') }}>
       <h1>{arrangement.id}</h1>
 
       {attemptStatus === 'idle' && (

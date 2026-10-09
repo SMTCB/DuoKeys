@@ -1561,7 +1561,7 @@ of what that artifact specifies.
   homes (the Studio home sits on cornflower), `calm` everywhere else, and it sets `--on-role`,
   `--play-note` and `--play-note-deep` per role. `ActionCard` has a `row` look (a cream card
   with an ink outline and a `PopShape` picture) and a `tile` look (a colour block with one
-  large rounded corner), laid out by `ActionGrid` / `ActionList`; a tile with `onSelect` is a toggle button (`aria-pressed`, a ✓ and a thicker outline when chosen, used by Free play); `Card` takes an optional `tint` (mustard or peach) so a panel that opens from a tile wears its colour, with ink-filled chosen pills; cards, buttons and the
+  large rounded corner), laid out by `ActionGrid` / `ActionList`; a tile with `onSelect` is a toggle button (`aria-pressed`, a ✓ and a thicker outline when chosen, used by Free play); `Card` takes an optional `tint` (mustard, peach or cornflower) so a panel that opens from a tile wears its colour, with ink-filled chosen pills (the chord library's tabs too); `PageShell` takes an optional `back` (`{ href, label }`), an ink-outlined "← label" pill under the top bar, so every screen below a home has one way up and it looks the same; cards, buttons and the
   family tiles press down into a hard ink shadow (`--press-shadow`), with no movement under
   reduced motion (`NFR-011`). The logo and favicon are redrawn in the palette. Practice
   surfaces read only `--play-*` and ink: `FallingNotesCanvas` (ink hit line), `ChordKeybed`

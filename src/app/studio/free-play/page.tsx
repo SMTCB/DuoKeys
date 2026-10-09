@@ -91,12 +91,9 @@ export default function FreePlayPage() {
     : '';
 
   return (
-    <PageShell>
+    <PageShell back={{ href: '/studio', label: t('Studio') }}>
       <h1>{t('Free play')}</h1>
-      <p>
-        {t('Sit down, relax, make something that sounds like music. Nothing is graded and nothing runs out.')}{' '}
-        <Link href="/studio">{t('Back to Studio')}</Link>
-      </p>
+      <p>{t('Sit down, relax, make something that sounds like music. Nothing is graded and nothing runs out.')}</p>
 
       <ActionGrid>
         <ActionCard

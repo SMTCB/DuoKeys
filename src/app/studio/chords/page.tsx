@@ -149,7 +149,7 @@ export default function ChordExplorerPage() {
   );
 
   return (
-    <PageShell>
+    <PageShell back={{ href: '/studio/free-play', label: t('Free play') }}>
       <div className={styles.top}>
         <h1>{t('Chords')}</h1>
         <div className={styles.row}>
@@ -170,7 +170,7 @@ export default function ChordExplorerPage() {
         </div>
       </div>
 
-      <Card>
+      <Card tint="cornflower">
         <Segmented
           name="key"
           legend={t('Key')}

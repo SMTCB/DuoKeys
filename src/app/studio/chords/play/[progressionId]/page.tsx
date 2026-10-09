@@ -202,11 +202,8 @@ export default function ChordProgressionPlayPage() {
   }
 
   return (
-    <PageShell>
+    <PageShell back={{ href: '/studio/chords', label: t('Chord explorer') }}>
       <h1>{t(progression.name)}</h1>
-      <p>
-        <Link href="/studio/chords">← {t('Chord explorer')}</Link>
-      </p>
       <p style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center', margin: 0 }}>
         <Pill tone="neutral">
           {t('Key of {key}', { key: `${KEY_NAMES[progression.key as number] ?? ''}${progression.mode === 'minor' ? ` ${t('minor')}` : ''}` })}

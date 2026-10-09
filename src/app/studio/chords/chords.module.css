@@ -18,9 +18,13 @@
 }
 
 .tab[aria-selected='true'] {
-  background: var(--role-tint);
-  border-color: var(--role);
-  color: var(--role-deep);
+  background: var(--app-ink);
+  border-color: var(--app-ink);
+  color: var(--cream);
+}
+
+.tab[aria-selected='true'] .count {
+  color: inherit;
 }
 
 .count {

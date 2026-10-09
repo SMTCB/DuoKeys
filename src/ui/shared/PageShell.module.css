@@ -81,3 +81,29 @@
   background: currentColor;
   margin-right: 0.5rem;
 }
+
+/* One way up from any sub-screen: an ink-outlined cream pill, kept small so it never competes with the title. */
+.back {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  margin-bottom: -0.5rem;
+  padding: 0 1.1rem;
+  border-radius: 99px;
+  border: 2px solid var(--app-ink);
+  background: var(--app-surface);
+  color: var(--app-ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.back:hover {
+  background: var(--app-surface-2);
+}
+
+.back:focus-visible {
+  outline: 3px solid var(--role);
+  outline-offset: 2px;
+}

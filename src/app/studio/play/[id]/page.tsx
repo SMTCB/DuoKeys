@@ -227,7 +227,7 @@ export default function StudioPlayPage() {
   if (!arrangement || !track) return <PageShell><StatusNote /></PageShell>;
 
   return (
-    <PageShell>
+    <PageShell back={{ href: '/studio/songs', label: t('Songs') }}>
       <h1>{t(customTitle ?? (arrangementId.startsWith('mutopia-') ? (arrangement.sections[0]?.label ?? arrangement.id) : (pieceTitle ?? arrangement.id)))}</h1>
 
       {attemptStatus === 'idle' && (

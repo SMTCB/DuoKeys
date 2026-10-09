@@ -40,7 +40,7 @@ export default function SightReadingPage() {
   }
 
   return (
-    <PageShell>
+    <PageShell back={{ href: '/studio/learn', label: t('Learn') }}>
       <h1>{t('Sight-Reading')}</h1>
       <Card>
         <p>{t('A fresh phrase every time — never one you have already memorised.')}</p>

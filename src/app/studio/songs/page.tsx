@@ -335,11 +335,9 @@ export default function SongsHubPage() {
   }
 
   return (
-    <PageShell>
+    <PageShell back={{ href: '/studio', label: t('Studio') }}>
       <h1>{t('Songs')}</h1>
-      <p>
-        {t('Choose how to get a song.')} <Link href="/studio">{t('Back to Studio')}</Link>
-      </p>
+      <p>{t('Choose how to get a song.')}</p>
 
       <ul className={options.tiles} aria-label={t('Ways to add a song')}>
         {TILES.map((tile) => {

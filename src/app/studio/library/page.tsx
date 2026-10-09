@@ -93,12 +93,12 @@ export default function SongLibraryPage() {
   if (!songs) return <PageShell><StatusNote /></PageShell>;
 
   return (
-    <PageShell>
+    <PageShell back={{ href: '/studio/songs', label: t('Songs') }}>
       <h1>{t('Song library')}</h1>
       <p>
         {t('{count} piano and harpsichord pieces from the', { count: songs.length })}{' '}
         <a href="https://www.mutopiaproject.org" target="_blank" rel="noreferrer">Mutopia Project</a>.{' '}
-        {t('Add what you like to “my songs”, then play it as falling notes.')} <Link href="/studio">{t('Back to Studio')}</Link>
+        {t('Add what you like to “my songs”, then play it as falling notes.')}
       </p>
 
       {saved.length > 0 && (

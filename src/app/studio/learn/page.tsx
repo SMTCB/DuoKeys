@@ -89,12 +89,9 @@ export default function LearnPage() {
   }
 
   return (
-    <PageShell>
+    <PageShell back={{ href: '/studio', label: t('Studio') }}>
       <h1>{t('Learn')}</h1>
-      <p>
-        {t('A gentle path back to the piano. Do as much or as little as you feel like; there is no order you have to keep.')}{' '}
-        <Link href="/studio">{t('Back to Studio')}</Link>
-      </p>
+      <p>{t('A gentle path back to the piano. Do as much or as little as you feel like; there is no order you have to keep.')}</p>
 
       {STAGES.map((stage, i) => (
         <Card key={stage.label}>
