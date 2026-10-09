@@ -1153,3 +1153,11 @@ empty state, the not-found page and the doc pages in light and dark. Not checked
 or reward quest stop (needs attempts) and the result card reached by actually playing
 (needs the piano). The Songs screen's option tiles still use emoji pictures; left for a
 later pass.
+
+## Update — new logo mark (2026-10-09)
+
+Follow-up to `US-3.24` under `TA-APP-006`, no FR, no ADR. The split-keybed logo is
+replaced by a key tile: a cream rounded square with three white keys and two black keys,
+the outer keys cornflower (Studio) and mustard (Explorer). Changed in `Logo.tsx` and the
+favicon `src/app/icon.svg`; the logo lockups in the Design Reference artifact are redrawn.
+Checked in the browser on the Studio home (cornflower) and the Explorer home (cream).

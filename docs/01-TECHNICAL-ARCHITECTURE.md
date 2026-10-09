@@ -1496,7 +1496,7 @@ of what that artifact specifies.
   existed.
 - **Role shell and picture cards (`US-3.21`).** `PageShell` is the one place
   that carries the identity onto every route: the logo lockup (`Logo.tsx`,
-  the split-keybed mark), a role pill, and a soft wash of the role colour taken
+  the key-tile mark since the `US-3.24` follow-up; it was a split keybed), a role pill, and a soft wash of the role colour taken
   from the route (`/explorer` amber, `/studio` indigo, everything else coral),
   exposed to children as `--role`, `--role-deep` and `--role-tint`. `ActionCard`
   is the picture-tile link used on the Explorer and Studio homes; the picture
@@ -1571,6 +1571,13 @@ of what that artifact specifies.
   piano chooser and the Kid/Adult choice use flat shapes, and Note Ninja's bands and the
   Studio pass pill are words only. The profile avatars stay emoji by design; check marks
   and sharps are text, not pictures.
+- **New logo mark (`US-3.24` follow-up).** The split keybed (two rounded halves
+  with a seam) read as something other than a keyboard, so the mark is now a key
+  tile: a cream rounded square with three white keys and two black keys, the
+  outer keys cornflower (Studio, the adult) and mustard (Explorer, the child) on
+  one shared keyboard. It is drawn once in `LogoMark` and copied into the favicon
+  (`src/app/icon.svg`); it reads down to 16 px, so the old "drop the notch below
+  24 px" rule and the `hasNotch` prop are gone.
 
 ---
 

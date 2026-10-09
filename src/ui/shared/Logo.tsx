@@ -1,18 +1,24 @@
-// US-3.21 — the DuoKeys brand mark from the Design Reference (TA-APP-006):
-// the Duet screen's split keybed — Studio half (adult), Explorer half (child),
-// a thin seam in the shared colour, and a dark notch for a black key. The notch
-// drops off below ~24px, as the usage notes say.
-// US-3.23 / ADR-012 — redrawn in the Pop palette (cornflower / mustard / tomato,
-// ink notch) with the wordmark in the display face; the wordmark follows the
-// page ground (--on-ground) so it reads on the cornflower Studio home.
+// US-3.21 — the DuoKeys brand mark (TA-APP-006), shown in PageShell and as the
+// favicon (src/app/icon.svg). US-3.23 / ADR-012 — Pop palette, wordmark in the
+// display face, following the page ground (--on-ground) so it reads on the
+// cornflower Studio home.
+// US-3.24 follow-up — the key tile: three white keys and two black keys in a
+// cream tile, the outer keys cornflower (Studio, the adult) and mustard
+// (Explorer, the child) sharing one keyboard. Replaces the split keybed, whose
+// two rounded halves read as something other than a keyboard. It holds at 16 px.
 
-export function LogoMark({ size = 36, hasNotch = true }: { size?: number; hasNotch?: boolean }) {
+const INK = '#380D02';
+
+export function LogoMark({ size = 36 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 40 40" aria-hidden="true" focusable="false">
-      <rect x="3" y="5" width="16" height="30" rx="7" fill="#4A72AF" stroke="#380D02" strokeWidth="2" />
-      <rect x="21" y="5" width="16" height="30" rx="7" fill="#FCD77A" stroke="#380D02" strokeWidth="2" />
-      <rect x="18" y="5" width="4" height="30" rx="2" fill="#EB533E" />
-      {hasNotch && size >= 24 ? <rect x="14" y="5" width="12" height="15" rx="3" fill="#380D02" /> : null}
+      <rect x="4" y="4" width="32" height="32" rx="9" fill="#FFF8E8" stroke={INK} strokeWidth="2.5" />
+      <path d="M5.3 13 a7.7 7.7 0 0 1 7.7 -7.7 H14.7 V34.7 H13 a7.7 7.7 0 0 1 -7.7 -7.7Z" fill="#4A72AF" />
+      <path d="M25.3 5.3 H27 a7.7 7.7 0 0 1 7.7 7.7 V27 a7.7 7.7 0 0 1 -7.7 7.7 H25.3Z" fill="#FCD77A" />
+      <line x1="14.7" y1="5" x2="14.7" y2="35" stroke={INK} strokeWidth="2" />
+      <line x1="25.3" y1="5" x2="25.3" y2="35" stroke={INK} strokeWidth="2" />
+      <rect x="11.2" y="4" width="7" height="17" rx="2" fill={INK} />
+      <rect x="21.8" y="4" width="7" height="17" rx="2" fill={INK} />
     </svg>
   );
 }
