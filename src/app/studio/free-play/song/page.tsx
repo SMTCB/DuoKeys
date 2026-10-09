@@ -174,16 +174,40 @@ export default function FreePlaySongPage() {
   const currentChord = attemptStatus === 'playing' ? harmonyAt(song.harmony, nowTick) : undefined;
   const currentSymbol = currentChord ? song.arrangement.chordMarkers?.filter((m) => (m.atTick as number) <= nowTick).at(-1)?.symbol : undefined;
   const isFlowing = practiceMode === 'timed';
+  // The notes still wanted in the current chord, split by hand, for the line above the falling notes.
+  const pendingGroupId = matcherState ? [...new Set(track.notes.map((n) => n.groupId))][matcherState.groupIndex] : undefined;
+  const handNotes = (hand: 'L' | 'R'): string =>
+    [...new Set(track.notes.filter((n) => n.groupId === pendingGroupId && n.hand === hand && matcherState?.pending.includes(n.pitch)).map((n) => n.pitch as number))]
+      .sort((a, b) => a - b)
+      .map((p) => noteName(p))
+      .join(' · ');
 
+  // Two ways to play, named up front; either can be switched while playing.
+  const modeChoice = (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-start' }}>
+      <Segmented
+        name="song-mode"
+        legend={t('How do you want to play?')}
+        options={[
+          { value: 'song' as const, label: t('Play the song') },
+          { value: 'improvise' as const, label: t('Chords and improvise') },
+        ]}
+        value={isImprovising ? 'improvise' : 'song'}
+        onChange={(v) => toggleImprovise(v === 'improvise')}
+      />
+      <p style={{ margin: 0 }}>
+        {isImprovising
+          ? t('Your left hand plays the chords (dark bars, L). With your right hand, play any lit key: they all fit.')
+          : t('The left hand plays the chords as a bass line (dark bars, L). The right hand plays a simple tune (light bars, R).')}
+      </p>
+    </div>
+  );
   const switches = (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'flex-start' }}>
+      {modeChoice}
       <label className={controls.check}>
         <input type="checkbox" checked={isFlowing} onChange={(e) => switchMode(e.target.checked ? 'timed' : 'wait')} />
         {t('Keep going (don’t wait for me)')}
-      </label>
-      <label className={controls.check}>
-        <input type="checkbox" checked={isImprovising} onChange={(e) => toggleImprovise(e.target.checked)} />
-        {t('Make up my own right hand (light up the notes that fit)')}
       </label>
     </div>
   );
@@ -215,7 +239,8 @@ export default function FreePlaySongPage() {
       {attemptStatus === 'idle' && (
         <Card>
           <p>
-            {t('Both hands are written out: the left plays the chords as a bass line, the right plays a simple tune. The verse and chorus come back, so by the second time round you know where you are going.')}
+            <strong>{t('The goal:')}</strong>{' '}
+            {t('play the chords of this song from start to finish, about {min} min. The verse and chorus come back, so you know what is coming.', { min: Math.max(1, Math.round(totalSeconds / 60)) })}
           </p>
           <p>
             {t('Chords:')}{' '}
@@ -224,7 +249,7 @@ export default function FreePlaySongPage() {
               .join('  ·  ')}
           </p>
           {switches}
-          <p>{t('You can flip both switches while you play.')}</p>
+          <p>{t('You can change how you play at any time.')}</p>
           <MidiChooser inputs={midiInputs} connectionState={midiConnectionState} onSelect={(id) => void start({ inputId: id })} />
         </Card>
       )}
@@ -266,11 +291,11 @@ export default function FreePlaySongPage() {
           {currentSymbol && <> · {t('chord')} <strong>{currentSymbol}</strong></>}
           {!isFlowing && matcherState && matcherState.pending.length > 0 && (
             <>
-              {' '}· <strong>{t('Play now:')}</strong>{' '}
-              {[...matcherState.pending].sort((a, b) => (a as number) - (b as number)).map((p) => noteName(p as number)).join(' · ')}
+              {' '}· {t('Left hand:')} <strong>{handNotes('L') || '–'}</strong>
+              {' '}· {t('Right hand:')} <strong>{isImprovising ? t('any lit key') : handNotes('R') || '–'}</strong>
             </>
           )}
-          {isImprovising && <> · {t('your right hand: any lit key')}</>}
+          {isFlowing && isImprovising && <> · {t('Right hand:')} <strong>{t('any lit key')}</strong></>}
         </p>
       )}
 
@@ -282,6 +307,7 @@ export default function FreePlaySongPage() {
           matcherState={matcherState}
           pressedPitches={pressedPitches}
           glow={glow}
+          handLabels={{ L: t('L'), R: t('R') }}
           {...(song.arrangement.chordMarkers ? { chordMarkers: song.arrangement.chordMarkers } : {})}
         />
       )}

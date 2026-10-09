@@ -47,6 +47,8 @@ export interface FallingNotesCanvasProps {
   chordMarkers?: readonly ChordMarker[];
   /** FR-STU-020 — light the keys between `low` and `high` that fit the chord now sounding. */
   glow?: FitGlow | undefined;
+  /** The tag drawn on a bar for each hand (default L and R); the Portuguese screens say E and D. */
+  handLabels?: { L: string; R: string } | undefined;
 }
 
 export interface FitGlow {
@@ -73,6 +75,7 @@ export function FallingNotesCanvas({
   pixelsPerSecond = DEFAULT_PIXELS_PER_SECOND,
   chordMarkers,
   glow,
+  handLabels,
 }: FallingNotesCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // FR-SYS-009 — letters in English, solfège in Portuguese; read at draw time so a language change needs no remount.
@@ -111,6 +114,8 @@ export function FallingNotesCanvas({
 
   const glowRef = useRef<FitGlow | undefined>(glow);
   glowRef.current = glow;
+  const handLabelsRef = useRef(handLabels);
+  handLabelsRef.current = handLabels;
 
   const markersRef = useRef<readonly ChordMarker[]>([]);
   markersRef.current = chordMarkers ?? [];
@@ -159,12 +164,14 @@ export function FallingNotesCanvas({
       // FR-STU-020 — the lanes of the keys that fit now are tinted all the way up, so the eye finds them before the keybed.
       const fit = glowRef.current;
       const nowWindow = fit ? harmonyAt(fit.windows, clock.audioToTicks(clock.nowAudio()) as number) : undefined;
-      const glowKeys = fit && nowWindow ? fitKeys(nowWindow, fit.low, fit.high) : undefined;
+      // One light for every key that fits: chord notes and the safe extras look the same, so "any lit key" is the whole rule.
+      const fitting = fit && nowWindow ? fitKeys(nowWindow, fit.low, fit.high) : undefined;
+      const glowKeys = fitting ? new Map([...fitting.keys()].map((p) => [p, true] as const)) : undefined;
       if (glowKeys) {
         ctx.fillStyle = roleColour;
-        for (const [p, isChordTone] of glowKeys) {
+        for (const p of glowKeys.keys()) {
           const k = pitchToX(p as never, fitted);
-          ctx.globalAlpha = isChordTone ? 0.16 : 0.08;
+          ctx.globalAlpha = 0.14;
           ctx.fillRect(k.x * unit, 0, k.widthUnits * unit, HIT_LINE_Y);
         }
         ctx.globalAlpha = 1;
@@ -212,7 +219,8 @@ export function FallingNotesCanvas({
 
         const isFuture = stageChords && progress !== undefined && groupNumber > progress.groupIndex;
         ctx.globalAlpha = isFuture ? 0.4 : 1;
-        ctx.fillStyle = isDone ? doneColour : isWhite ? roleColour : roleDeepColour;
+        // Left-hand bars are the dark shade and right-hand bars the light one, each tagged L or R so colour is never the only cue (NFR-008).
+        ctx.fillStyle = isDone ? doneColour : note.hand === 'L' ? roleDeepColour : note.hand === 'R' ? roleColour : isWhite ? roleColour : roleDeepColour;
         ctx.beginPath();
         ctx.roundRect(pxX + 1, pxY - pxHeight, pxWidth, pxHeight, 6);
         ctx.fill();
@@ -235,6 +243,12 @@ export function FallingNotesCanvas({
           ctx.font = `700 ${Math.min(18, pxWidth - 4)}px ${displayFont}`;
           ctx.textAlign = 'center';
           ctx.fillText('✓', pxX + 1 + pxWidth / 2, pxY - pxHeight + 20);
+        }
+        if (note.hand !== undefined && !isDone && pxWidth >= 18 && pxHeight >= 48) {
+          ctx.fillStyle = '#ffffff';
+          ctx.font = `800 ${Math.min(13, pxWidth * 0.4)}px ${displayFont}`;
+          ctx.textAlign = 'center';
+          ctx.fillText(handLabelsRef.current?.[note.hand] ?? note.hand, pxX + 1 + pxWidth / 2, pxY - pxHeight + 16);
         }
         // The note's letter sits at the bottom of the bar, the end that reaches the line first.
         if (pxWidth >= 22 && pxHeight >= 24) {

@@ -12,6 +12,8 @@ export interface ContentNote {
   durationTicks: Ticks;
   groupId: string;
   trackId: string;
+  /** Which hand plays it, when the piece says (free-play songs); the falling notes label and shade by it. */
+  hand?: 'L' | 'R';
   finger?: 1 | 2 | 3 | 4 | 5;
 }
 

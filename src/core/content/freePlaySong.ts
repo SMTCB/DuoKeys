@@ -579,9 +579,9 @@ function toTracks(placed: readonly PlacedNote[]): Track[] {
     seen.add(slot);
     const groupId = `t${n.startTick}`;
     const base = { pitch: asMidiPitch(n.pitch), startTick: asTicks(n.startTick), durationTicks: asTicks(Math.max(1, n.durationTicks)), groupId };
-    both.push({ ...base, id: `n${i}`, trackId: 'both' });
-    if (n.hand === 'R') rh.push({ ...base, id: `r${i}`, trackId: 'rh' });
-    else lh.push({ ...base, id: `l${i}`, trackId: 'lh' });
+    both.push({ ...base, id: `n${i}`, trackId: 'both', hand: n.hand });
+    if (n.hand === 'R') rh.push({ ...base, id: `r${i}`, trackId: 'rh', hand: 'R' });
+    else lh.push({ ...base, id: `l${i}`, trackId: 'lh', hand: 'L' });
   });
   return [
     { id: 'both', role: 'melody', notes: both },

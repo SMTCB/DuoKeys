@@ -67,6 +67,22 @@ export const PT_STUDIO: Record<string, string> = {
   'Sit down, relax, make something that sounds like music. Nothing is graded and nothing runs out.':
     'Sente, relaxe, faça algo que soe como música. Nada é avaliado e nada acaba.',
   'Back to Studio': 'Voltar ao Estúdio',
+  'How do you want to play?': 'Como quer tocar?',
+  'Play the song': 'Tocar a música',
+  'Chords and improvise': 'Acordes e improviso',
+  'Your left hand plays the chords (dark bars, L). With your right hand, play any lit key: they all fit.':
+    'A mão esquerda toca os acordes (barras escuras, E). Com a mão direita, toque qualquer tecla acesa: todas combinam.',
+  'The left hand plays the chords as a bass line (dark bars, L). The right hand plays a simple tune (light bars, R).':
+    'A mão esquerda toca os acordes como um baixo (barras escuras, E). A mão direita toca uma melodia simples (barras claras, D).',
+  'The goal:': 'O objetivo:',
+  'play the chords of this song from start to finish, about {min} min. The verse and chorus come back, so you know what is coming.':
+    'toque os acordes desta música do início ao fim, cerca de {min} min. A estrofe e o refrão voltam, por isso você sabe o que vem.',
+  'You can change how you play at any time.': 'Você pode mudar a forma de tocar a qualquer momento.',
+  'Left hand:': 'Mão esquerda:',
+  'Right hand:': 'Mão direita:',
+  'any lit key': 'qualquer tecla acesa',
+  L: 'E',
+  R: 'D',
   'Make me a song': 'Faça uma música para mim',
   'A few minutes of music written for you from easy chords: an intro, verses and choruses, a bridge and an ending. The left hand plays a bass line, the right hand a simple tune. Pick a feeling and a key if you like.':
     'Alguns minutos de música escrita para você com acordes fáceis: uma introdução, versos e refrões, uma ponte e um final. A mão esquerda toca uma linha de baixo, a direita uma melodia simples. Escolha um sentimento e um tom, se quiser.',
