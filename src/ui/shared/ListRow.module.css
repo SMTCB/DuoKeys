@@ -45,6 +45,8 @@
   font-family: var(--display);
   font-size: 1.05rem;
   font-weight: 700;
+  /* Links inside a tinted card inherit the card's inverted role colour; a row is always cream, so its title is ink. */
+  color: var(--app-ink);
   overflow-wrap: anywhere;
 }
 
