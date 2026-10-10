@@ -235,12 +235,12 @@ export default function ChordExplorerPage() {
 
       {tab === 'chords' && (
         <div role="tabpanel" id="panel-chords" aria-labelledby="tab-chords" className={styles.column}>
-          <Card>
+          <Card tint="cornflower">
             <h2 className={styles.cardTitle}>{t('Chords that belong in {key}', { key: keyName ?? '' })}</h2>
             <p className={styles.sub}>{t('Press one to see it on the keys, then play it.')}</p>
             <div className={styles.row}>{diatonicChords.map((chord) => chordButton(chord.id, chordSymbolOfId(chord.id)))}</div>
           </Card>
-          <Card>
+          <Card tint="cornflower">
             <h2 className={styles.cardTitle}>{t('All {count} chords on {key}', { count: chordCount, key: keyName ?? '' })}</h2>
             {(['triad', 'seventh', 'other'] as const).map((group) => (
               <details key={group} open={group === 'triad'} className={styles.group}>
@@ -257,7 +257,7 @@ export default function ChordExplorerPage() {
 
       {tab === 'progressions' && (
         <div role="tabpanel" id="panel-progressions" aria-labelledby="tab-progressions">
-          <Card>
+          <Card tint="cornflower">
             <div className={styles.filters}>
               <Segmented
                 name="modeFilter"
@@ -332,7 +332,7 @@ export default function ChordExplorerPage() {
 
       {tab === 'mine' && (
         <div role="tabpanel" id="panel-mine" aria-labelledby="tab-mine" className={styles.column}>
-          <Card>
+          <Card tint="cornflower">
             <h2 className={styles.cardTitle}>{t('Add your own progression')}</h2>
             <p className={styles.sub}>
               {t('Type chords from a chart, like')} <code>C G Am F</code>, <code>Dm7 G7 Cmaj7</code>, <code>Bb/D</code> — {t('or numerals in the key chosen above, like')} <code>I V vi IV</code>.{' '}
@@ -371,7 +371,7 @@ export default function ChordExplorerPage() {
               {justAdded && !addError && <p role="status">{t('Added “{title}” to the list below.', { title: justAdded })}</p>}
             </div>
           </Card>
-          <Card>
+          <Card tint="cornflower">
             <h2 className={styles.cardTitle}>
               {t('My progressions')} <span className={styles.count}>{myProgressions.length}</span>
             </h2>

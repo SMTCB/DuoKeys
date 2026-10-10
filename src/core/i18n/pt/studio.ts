@@ -117,6 +117,7 @@ export const PT_STUDIO: Record<string, string> = {
     'O ritmo é o padrão em que os acordes são tocados, todos de uma vez (acordes em bloco) ou como uma batida. É escolhido ao acaso; você pode mudá-lo na próxima tela. Toque os acordes com uma mão ou com as duas. Eles caem e esperam por você, então não há pressa.',
   'Play it': 'Tocar',
   'Chord library': 'Biblioteca de acordes',
+  'Browse every chord and ready-made progression in any key, hear them on the keys, or type in chords of your own.': 'Veja todos os acordes e sequências prontas em qualquer tom, ouça-os nas teclas ou escreva os seus próprios acordes.',
   'Pick a key, browse its chords and 100+ progressions, or type your own.':
     'Escolha um tom, veja seus acordes e mais de 100 progressões, ou digite a sua.',
   'There are no easy progressions to write a song from.': 'Não há progressões fáceis para escrever uma música.',

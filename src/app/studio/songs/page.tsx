@@ -25,7 +25,8 @@ import { Card } from '../../../ui/shared/Card';
 import { Button } from '../../../ui/shared/Button';
 import { Pill } from '../../../ui/shared/Pill';
 import { EmptyState } from '../../../ui/shared/EmptyState';
-import { PopShape, type PopColour, type PopShapeName } from '../../../ui/shared/PopShape';
+import type { PopColour, PopShapeName } from '../../../ui/shared/PopShape';
+import { ActionCard, ActionGrid, type PopCorner } from '../../../ui/shared/ActionCard';
 import { LibraryControl } from '../../../ui/studio/LibraryControl';
 import { ScanReview, type ScanSummary } from '../../../ui/studio/ScanReview';
 import css from '../../../ui/shared/ListRow.module.css';
@@ -65,7 +66,9 @@ function NameFields({
   );
 }
 
-function PastePanel({ onAdded }: { onAdded: (title: string) => void }) {
+type Tint = 'mustard' | 'peach' | 'cornflower';
+
+function PastePanel({ onAdded, tint }: { onAdded: (title: string) => void; tint: Tint }) {
   const t = useT();
   const add = useCustomSongStore((s) => s.add);
   const [title, setTitle] = useState('');
@@ -85,7 +88,7 @@ function PastePanel({ onAdded }: { onAdded: (title: string) => void }) {
   }
 
   return (
-    <Card>
+    <Card tint={tint}>
       <div className={options.panel}>
         <h2>{t('Add a song by pasting its chords')}</h2>
         <p className={options.note}>{t('Copy the chords from a chart you like. DuoKeys does not fetch songs for you.')}</p>
@@ -121,7 +124,7 @@ function PastePanel({ onAdded }: { onAdded: (title: string) => void }) {
 }
 
 /** One panel for both file kinds: a MIDI file, or a score exported as MusicXML / compressed MusicXML. */
-function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: string) => void }) {
+function FilePanel({ way, onAdded, tint }: { way: 'midi' | 'score'; onAdded: (title: string) => void; tint: Tint }) {
   const t = useT();
   const add = useCustomSongStore((s) => s.add);
   const [title, setTitle] = useState('');
@@ -207,7 +210,7 @@ function FilePanel({ way, onAdded }: { way: 'midi' | 'score'; onAdded: (title: s
   }
 
   return (
-    <Card>
+    <Card tint={tint}>
       <div className={options.panel}>
         <h2>{isScore ? t('Add a song from a score') : t('Add a song from a MIDI file')}</h2>
         <p className={options.note}>
@@ -283,12 +286,13 @@ function RenameForm({
   );
 }
 
-const TILES: { id: OptionId | 'library'; shape: PopShapeName; colour: PopColour; name: string; hint: string }[] = [
-  { id: 'library', shape: 'square', colour: 'cornflower', name: 'Song library', hint: '570+ piano pieces to search' },
-  { id: 'paste', shape: 'circle', colour: 'tomato', name: 'Paste chords', hint: 'From a chord chart you like' },
-  { id: 'midi', shape: 'quarter', colour: 'mustard', name: 'Upload MIDI', hint: 'A .mid or .midi file' },
-  { id: 'score', shape: 'arch', colour: 'peach', name: 'Upload a score', hint: 'MusicXML, PDF or picture' },
-  { id: 'starter', shape: 'half', colour: 'cornflower', name: 'Starter pieces', hint: 'Short pieces to begin with' },
+// Same logic as Free play: the tile's colour is the colour of the card it opens.
+const TILES: { id: OptionId | 'library'; shape: PopShapeName; shapeColour: PopColour; colour: Tint; corner: PopCorner; name: string; hint: string }[] = [
+  { id: 'library', shape: 'square', shapeColour: 'mustard', colour: 'cornflower', corner: 'tl', name: 'Song library', hint: '570+ piano pieces to search' },
+  { id: 'paste', shape: 'circle', shapeColour: 'tomato', colour: 'mustard', corner: 'tr', name: 'Paste chords', hint: 'From a chord chart you like' },
+  { id: 'midi', shape: 'quarter', shapeColour: 'cornflower', colour: 'peach', corner: 'br', name: 'Upload MIDI', hint: 'A .mid or .midi file' },
+  { id: 'score', shape: 'arch', shapeColour: 'mustard', colour: 'cornflower', corner: 'bl', name: 'Upload a score', hint: 'MusicXML, PDF or picture' },
+  { id: 'starter', shape: 'half', shapeColour: 'cornflower', colour: 'mustard', corner: 'tl', name: 'Starter pieces', hint: 'Short pieces to begin with' },
 ];
 
 export default function SongsHubPage() {
@@ -329,6 +333,8 @@ export default function SongsHubPage() {
 
   if (!index) return <PageShell><StatusNote /></PageShell>;
 
+  const openTint: Tint = TILES.find((tl) => tl.id === open)?.colour ?? 'mustard';
+
   function added(title: string): void {
     setJustAdded(title);
     setOpen(undefined);
@@ -339,52 +345,58 @@ export default function SongsHubPage() {
       <h1>{t('Songs')}</h1>
       <p>{t('Choose how to get a song.')}</p>
 
-      <ul className={options.tiles} aria-label={t('Ways to add a song')}>
+      <ActionGrid>
         {TILES.map((tile) => {
           const optionId = tile.id === 'library' ? undefined : tile.id;
-          return (
-          <li key={tile.id}>
-            {optionId === undefined ? (
-              <Link href="/studio/library" className={options.tile}>
-                <PopShape shape={tile.shape} colour={tile.colour} size={36} className={options.icon} />
-                <span className={options.name}>{t(tile.name)}</span>
-                <span className={options.hint}>{t(tile.hint)}</span>
-              </Link>
-            ) : (
-              <button
-                type="button"
-                className={options.tile}
-                aria-expanded={open === optionId}
-                onClick={() => setOpen((cur) => (cur === optionId ? undefined : optionId))}
-              >
-                <PopShape shape={tile.shape} colour={tile.colour} size={36} className={options.icon} />
-                <span className={options.name}>{t(tile.name)}</span>
-                <span className={options.hint}>{t(tile.hint)}</span>
-              </button>
-            )}
-          </li>
+          return optionId === undefined ? (
+            <ActionCard
+              key={tile.id}
+              variant="tile"
+              href="/studio/library"
+              shape={tile.shape}
+              shapeColour={tile.shapeColour}
+              corner={tile.corner}
+              colour={tile.colour}
+              title={t(tile.name)}
+              description={t(tile.hint)}
+            />
+          ) : (
+            <ActionCard
+              key={tile.id}
+              variant="tile"
+              onSelect={() => setOpen((cur) => (cur === optionId ? undefined : optionId))}
+              selected={open === optionId}
+              shape={tile.shape}
+              shapeColour={tile.shapeColour}
+              corner={tile.corner}
+              colour={tile.colour}
+              title={t(tile.name)}
+              description={t(tile.hint)}
+            />
           );
         })}
-      </ul>
+      </ActionGrid>
 
-      {open === 'paste' && <PastePanel onAdded={added} />}
-      {open === 'midi' && <FilePanel way="midi" onAdded={added} />}
-      {open === 'score' && <FilePanel way="score" onAdded={added} />}
+      {open === 'paste' && <PastePanel onAdded={added} tint={openTint} />}
+      {open === 'midi' && <FilePanel way="midi" onAdded={added} tint={openTint} />}
+      {open === 'score' && <FilePanel way="score" onAdded={added} tint={openTint} />}
       {open === 'starter' && (
-        <section aria-label={t('Starter pieces')} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <h2>{t('Starter pieces')}</h2>
-          <ul className={css.list}>
-            {index.pieces.map((piece) => (
-              <li key={piece.id} className={css.row}>
-                <span className={css.tile} aria-hidden="true">♪</span>
-                <div className={css.body}>
-                  <Link className={css.title} href={`/studio/play/${piece.defaultArrangementId}`}>{t(piece.title)}</Link>
-                </div>
-                <LibraryControl profileId={profile.id} arrangementId={piece.defaultArrangementId} />
-              </li>
-            ))}
-          </ul>
-        </section>
+        <Card tint={openTint}>
+          <section aria-label={t('Starter pieces')} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <h2>{t('Starter pieces')}</h2>
+            <ul className={css.list}>
+              {index.pieces.map((piece) => (
+                <li key={piece.id} className={css.row}>
+                  <span className={css.tile} aria-hidden="true">♪</span>
+                  <div className={css.body}>
+                    <Link className={css.title} href={`/studio/play/${piece.defaultArrangementId}`}>{t(piece.title)}</Link>
+                  </div>
+                  <LibraryControl profileId={profile.id} arrangementId={piece.defaultArrangementId} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        </Card>
       )}
 
       <section aria-label={t('My songs')} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>

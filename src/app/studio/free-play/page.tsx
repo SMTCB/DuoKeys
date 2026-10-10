@@ -38,7 +38,7 @@ export default function FreePlayPage() {
   const [keyChoice, setKeyChoice] = useState<string>(ANY);
   const [length, setLength] = useState<SongLength>('song');
   const [level, setLevel] = useState<SongLevel>(1);
-  const [choice, setChoice] = useState<'song' | 'chords' | undefined>();
+  const [choice, setChoice] = useState<'song' | 'chords' | 'library' | undefined>();
   const router = useRouter();
 
   useEffect(() => {
@@ -120,7 +120,8 @@ export default function FreePlayPage() {
         />
         <ActionCard
           variant="tile"
-          href="/studio/chords"
+          onSelect={() => setChoice('library')}
+          selected={choice === 'library'}
           shape="arch"
           shapeColour="mustard"
           corner="tr"
@@ -133,8 +134,17 @@ export default function FreePlayPage() {
       {choice === undefined && <p>{t('Pick one to start.')}</p>}
 
       {choice !== undefined && (
-        <Card tint={choice === 'song' ? 'mustard' : 'peach'}>
-          <h2>{choice === 'song' ? t('Make me a song') : t('Just the chords')}</h2>
+        <Card tint={choice === 'song' ? 'mustard' : choice === 'chords' ? 'peach' : 'cornflower'}>
+          <h2>{choice === 'song' ? t('Make me a song') : choice === 'chords' ? t('Just the chords') : t('Chord library')}</h2>
+          {choice === 'library' ? (
+            <>
+              <p>{t('Browse every chord and ready-made progression in any key, hear them on the keys, or type in chords of your own.')}</p>
+              <Link href="/studio/chords">
+                <Button accent="indigo">{t('Open the chord library')}</Button>
+              </Link>
+            </>
+          ) : (
+          <>
           <p>
             {choice === 'song'
               ? t('A few minutes of music written for you from easy chords: an intro, verses and choruses, a bridge and an ending. The left hand plays a bass line, the right hand a simple tune. Pick a feeling and a key if you like.')
@@ -229,6 +239,8 @@ export default function FreePlayPage() {
                 </div>
               )}
             </>
+          )}
+          </>
           )}
         </Card>
       )}
