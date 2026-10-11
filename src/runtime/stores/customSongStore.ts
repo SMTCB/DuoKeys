@@ -13,6 +13,7 @@ import {
 } from '../../core/content/customSong';
 import type { Arrangement } from '../../core/content/types';
 import { useSessionStore } from './sessionStore';
+import { DEFAULT_PROFILE } from '../defaultProfile';
 
 interface CustomSongState {
   songs: CustomSong[];
@@ -41,6 +42,22 @@ async function save(profileId: string, customSongs: CustomSong[]): Promise<void>
   await storage.put('settings', { ...existing, profileId, updatedAtMs: Date.now(), customSongs });
 }
 
+/**
+ * Songs saved while no family member was chosen landed on the fallback profile and could never
+ * sync. Once a real profile is active, move them onto it so they show up and sync.
+ */
+async function adoptOrphanedSongs(profileId: string): Promise<void> {
+  if (profileId === DEFAULT_PROFILE.id) return;
+  const { storage } = getAdapters();
+  const orphaned = await storage.get<Record<string, unknown>>('settings', DEFAULT_PROFILE.id);
+  const stray = customSongsOf(orphaned);
+  if (stray.length === 0) return;
+  const mine = customSongsOf(await storage.get('settings', profileId));
+  const known = new Set(mine.map((s) => s.id));
+  await save(profileId, [...mine, ...stray.filter((s) => !known.has(s.id))]);
+  await storage.put('settings', { ...orphaned, profileId: DEFAULT_PROFILE.id, updatedAtMs: Date.now(), customSongs: [] });
+}
+
 /** Reads one custom song off the current profile and builds its arrangement. */
 export async function loadCustomArrangement(id: string): Promise<Arrangement> {
   const settings = await getAdapters().storage.get('settings', useSessionStore.getState().profile.id);
@@ -55,7 +72,9 @@ export const useCustomSongStore = create<CustomSongState>((set, get) => ({
   songs: [],
 
   async load() {
-    const settings = await getAdapters().storage.get('settings', useSessionStore.getState().profile.id);
+    const profileId = useSessionStore.getState().profile.id;
+    await adoptOrphanedSongs(profileId);
+    const settings = await getAdapters().storage.get('settings', profileId);
     set({ songs: customSongsOf(settings) });
   },
 

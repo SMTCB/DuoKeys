@@ -8,7 +8,7 @@
 
 import type { Cursor, OutboxOp, StorageBackend, SyncBackend, SyncUser } from '../adapters/ports';
 import { EPOCH_CURSOR } from '../adapters/sync/supabaseBackend';
-import type { PulledChange } from '../adapters/sync/mapping';
+import { isSyncableValue, type PulledChange } from '../adapters/sync/mapping';
 
 /** Small key/value persistence for the cursor and backfill flag (localStorage in the browser). */
 export interface KeyValueStore {
@@ -76,7 +76,13 @@ export class SyncEngine {
   /** Returns true once the outbox is empty. A partial push keeps the unsent tail for next time (TS-I-SYN-003). */
   private async flush(): Promise<boolean> {
     for (;;) {
-      const all = await this.deps.storage.query<OutboxOp>('outbox', 'seq', {});
+      const queued = await this.deps.storage.query<OutboxOp>('outbox', 'seq', {});
+      // Drop writes made under the fallback profile: the server can never accept them, and they would block everything behind.
+      const all: OutboxOp[] = [];
+      for (const op of queued) {
+        if (op.op === 'put' && !isSyncableValue((op.payload as { value?: unknown }).value)) await this.deps.storage.delete('outbox', String(op.seq));
+        else all.push(op);
+      }
       if (all.length === 0) return true;
       const batch = all.sort((a, b) => a.seq - b.seq).slice(0, BATCH);
       const { accepted } = await this.deps.backend.push(batch);

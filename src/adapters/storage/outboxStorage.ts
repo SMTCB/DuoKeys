@@ -5,7 +5,7 @@
 
 import type { KeyRange, OutboxOp, StorageBackend, StoreName, Tx } from '../ports';
 import { keyOf } from './keyOf';
-import { isSyncedStore, SYNCED_STORES, type DeleteEnvelope, type PutEnvelope, type SyncedStore } from '../sync/mapping';
+import { isSyncableValue, isSyncedStore, SYNCED_STORES, type DeleteEnvelope, type PutEnvelope, type SyncedStore } from '../sync/mapping';
 
 /** The first key field of each synced store — matchesRange filters on it, so `{}` returns every row. */
 const INDEX_OF: Record<SyncedStore, string> = { profiles: 'id', attempts: 'id', library: 'profileId', settings: 'profileId', flashcards: 'profileId' };
@@ -57,7 +57,7 @@ export class OutboxStorage implements StorageBackend {
   }
 
   async put<T>(store: StoreName, value: T): Promise<void> {
-    if (!isSyncedStore(store)) return this.inner.put(store, value);
+    if (!isSyncedStore(store) || !isSyncableValue(value)) return this.inner.put(store, value);
     const envelope: PutEnvelope<T> = { value, atMs: this.nowMs() };
     const queued = await this.op(store, 'put', envelope).catch(() => undefined);
     // Sync is additive (ADR-003): if the queue is unusable, the local write still lands.

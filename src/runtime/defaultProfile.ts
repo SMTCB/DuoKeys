@@ -6,12 +6,13 @@
 
 import type { Profile } from '../core/profile/types';
 import { asMidiPitch } from '../core/midi/decode';
+import { FALLBACK_PROFILE_ID } from '../adapters/sync/mapping';
 
 // sessionStore's initial value before a family profile is chosen at `/`
 // (US-2.01) — never written to storage itself, just the in-memory fallback
 // until profileStore.selectProfile()/addProfile() calls setProfile().
 export const DEFAULT_PROFILE: Profile = {
-  id: 'default-explorer',
+  id: FALLBACK_PROFILE_ID,
   displayName: 'Explorer',
   role: 'explorer',
   keyboardRange: { low: asMidiPitch(21), high: asMidiPitch(108) },

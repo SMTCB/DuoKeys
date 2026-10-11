@@ -34,6 +34,18 @@ export const TABLE_OF: Record<SyncedStore, string> = {
   flashcards: 'flashcards',
 };
 
+/** The id of the in-memory profile used before a family member is chosen (runtime/defaultProfile.ts). */
+export const FALLBACK_PROFILE_ID = 'default-explorer';
+
+/**
+ * False for a record that belongs to the fallback profile. The server keys everything by a
+ * uuid profile, so such a record can never be accepted; queuing it would stall every later
+ * push behind it.
+ */
+export function isSyncableValue(value: unknown): boolean {
+  return (value as { profileId?: unknown } | undefined)?.profileId !== FALLBACK_PROFILE_ID;
+}
+
 export interface PutEnvelope<T = unknown> {
   value: T;
   atMs: number;

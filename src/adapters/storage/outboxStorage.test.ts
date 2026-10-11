@@ -28,6 +28,16 @@ describe('OutboxStorage (TS-I-SYN-001)', () => {
     expect((await queued(inner))[0]).toMatchObject({ store: 'flashcards', op: 'put' });
   });
 
+  it('does not queue a write made under the fallback profile, which the server could never accept', async () => {
+    const inner = new FakeStorageBackend();
+    const storage = new OutboxStorage(inner);
+    await storage.put('settings', { profileId: 'default-explorer', updatedAtMs: 1, customSongs: [] });
+    expect(await inner.get('settings', 'default-explorer')).toBeDefined();
+    expect(await queued(inner)).toEqual([]);
+    await storage.put('settings', { profileId: 'a6caa393-34ce-4a62-8655-e097f2812f67', updatedAtMs: 1 });
+    expect(await queued(inner)).toHaveLength(1);
+  });
+
   it('queues a delete with the store key', async () => {
     const inner = new FakeStorageBackend();
     const storage = new OutboxStorage(inner, undefined, () => 1);

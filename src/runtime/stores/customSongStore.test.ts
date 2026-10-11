@@ -46,6 +46,18 @@ describe('custom songs', () => {
     expect(arrangement.id).toBe(id);
   });
 
+  it('moves songs saved under the fallback profile onto the real profile when it is chosen', async () => {
+    useSessionStore.getState().setProfile(profile('default-explorer'));
+    const added = await useCustomSongStore.getState().add({ title: 'Stray', artist: '', kind: 'chart', data: 'C G Am F' });
+    expect(added.ok).toBe(true);
+
+    useSessionStore.getState().setProfile(profile('p1'));
+    await useCustomSongStore.getState().load();
+    expect(useCustomSongStore.getState().songs.map((s) => s.title)).toEqual(['Stray']);
+    const leftover = await storage.get<{ customSongs?: unknown[] }>('settings', 'default-explorer');
+    expect(leftover?.customSongs).toEqual([]);
+  });
+
   it('brings songs back after a reload, keeps profiles apart, and removes them', async () => {
     const added = await useCustomSongStore.getState().add({ title: 'Mine', artist: '', kind: 'chart', data: 'C G Am F' });
     const id = added.ok ? added.song.id : '';
