@@ -26,6 +26,7 @@ export function LanguageSwitch() {
           style={{
             font: 'inherit',
             fontWeight: 600,
+            minHeight: 44,
             padding: '8px 16px',
             borderRadius: 999,
             cursor: 'pointer',
