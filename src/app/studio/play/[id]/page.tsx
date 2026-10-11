@@ -15,6 +15,7 @@ import { useGeneratedContentStore } from '../../../../runtime/stores/generatedCo
 import { getAdapters } from '../../../../runtime/bootstrap';
 import { FallingNotesCanvas } from '../../../../ui/falling/FallingNotesCanvas';
 import { ScrollingScore } from '../../../../ui/score/ScrollingScore';
+import { PageScore } from '../../../../ui/score/PageScore';
 import { useT, useNoteName } from '../../../../ui/i18n/useT';
 import { PageShell } from '../../../../ui/shared/PageShell';
 import { StatusNote } from '../../../../ui/shared/StatusNote';
@@ -36,10 +37,11 @@ import { loadSongBytes, loadSongIndex } from '../../../../adapters/content/stati
 import { parseSmf } from '../../../../core/midi/smf';
 import { smfToArrangement } from '../../../../core/content/songLibrary';
 import { detectKey, keyName, prefersSharps } from '../../../../core/content/detectKey';
+import { withBothHands } from '../../../../core/content/bothHands';
 import { transposeArrangement, transposeLimits } from '../../../../core/content/transpose';
 import { describeArticulation, describeEvenness, describeRushDrag } from '../../../../core/grade/grade';
 
-type StudioView = 'falling' | 'score';
+type StudioView = 'falling' | 'score' | 'page';
 
 const TEMPO_MIN = 30;
 const TEMPO_MAX = 100;
@@ -148,8 +150,9 @@ export default function StudioPlayPage() {
     load
       .then((a) => {
         if (!cancelled) {
-          setArrangement(a);
-          setSelectedTrackId(a.tracks[0]?.id);
+          const withBoth = withBothHands(a);
+          setArrangement(withBoth);
+          setSelectedTrackId(withBoth.tracks[0]?.id);
         }
       })
       .catch((e: unknown) => {
@@ -348,6 +351,7 @@ export default function StudioPlayPage() {
             options={[
               { value: 'falling' as const, label: t('Falling notes') },
               { value: 'score' as const, label: t('Music score') },
+              { value: 'page' as const, label: t('Whole score') },
             ]}
             value={shownView}
             onChange={setView}
@@ -407,6 +411,8 @@ export default function StudioPlayPage() {
           isFinished={attemptStatus === 'complete'}
         />
       )}
+
+      {shownView === 'page' && <PageScore arrangement={arrangement} preferSharps={sharps} />}
 
       {attemptStatus === 'complete' && grade && (
         <ResultCard stars={grade.stars} title={t('{percent}% of the notes', { percent: Math.round(grade.accuracy * 100) })}>

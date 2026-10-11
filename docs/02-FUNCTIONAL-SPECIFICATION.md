@@ -193,7 +193,9 @@ of the loop.
 
 Practise one hand while the other is muted, silent, or played back by the sampler.
 Played-back accompaniment is what makes hands-separate practice musical rather than
-lonely.
+lonely. A piece read from a score also offers "Both hands", as a library song does:
+the two hands merged and grouped by start tick, so a chord split across them is one
+decision in wait mode.
 
 ### FR-STU-006 — Articulation and duration feedback (`S`)
 
@@ -372,7 +374,7 @@ stay static assets, downloaded on play.
 hands, Right hand and Left hand (two note tracks are read as right then left;
 a single track is split at middle C). Notes that begin together form one
 group, so a chord, or both hands landing together, is one decision in wait mode.
-The play screen shows the piece in one of two views, switched by a "Show" control: falling notes, or Music score. The score is a grand staff that slides from right to left, the note being waited for sitting on a dashed line; it steps along each time a chord is played, and notes already played fade, so it works for chords and two hands as well as a single line. Spacing follows time, so a quarter note is always the same width. The hand being practised is drawn solid and the other hand lighter. Rests are not drawn and note lengths are shown by head and stem only, with no beams or key signature (each sharp or flat is written beside its note). The piece's key is worked out from its notes (Krumhansl–Schmuckler, longest notes counting most) and shown beside a Key control that moves the whole piece up or down by up to twelve semitones, staying on the keyboard; moving it mid-play starts again on the moved notes. The key is a best guess: a MusicXML key signature is not read and a MIDI file has none.
+The play screen shows the piece in one of three views, switched by a "Show" control: falling notes, Music score, or Whole score. The score is a grand staff that slides from right to left, the note being waited for sitting on a dashed line; it steps along each time a chord is played, and notes already played fade, so it works for chords and two hands as well as a single line. Spacing follows time, so a quarter note is always the same width. The hand being practised is drawn solid and the other hand lighter. Whole score lays the same notes out as a page: rows of bars, treble over bass, numbered, as many bars to a row as fit the width, using the same layout so a note sits on the same line in both views. Rests are not drawn and note lengths are shown by head and stem only, with no beams or key signature (each sharp or flat is written beside its note). The piece's key is worked out from its notes (Krumhansl–Schmuckler, longest notes counting most) and shown beside a Key control that moves the whole piece up or down by up to twelve semitones, staying on the keyboard; moving it mid-play starts again on the moved notes. The key is a best guess: a MusicXML key signature is not read and a MIDI file has none.
 
 > **Limits.** Only MIDI is mirrored, so there is no engraved score for a
 > song — MIDI carries no beaming, voices or articulation marks. Mutopia's MIDI

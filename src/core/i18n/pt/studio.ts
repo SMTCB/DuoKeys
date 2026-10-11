@@ -82,8 +82,6 @@ export const PT_STUDIO: Record<string, string> = {
   'Left hand:': 'Mão esquerda:',
   'Right hand:': 'Mão direita:',
   'any lit key': 'qualquer tecla acesa',
-  L: 'E',
-  R: 'D',
   'Make me a song': 'Faça uma música para mim',
   'A few minutes of music written for you from easy chords: an intro, verses and choruses, a bridge and an ending. The left hand plays a bass line, the right hand a simple tune. Pick a feeling and a key if you like.':
     'Alguns minutos de música escrita para você com acordes fáceis: uma introdução, versos e refrões, uma ponte e um final. A mão esquerda toca uma linha de baixo, a direita uma melodia simples. Escolha um sentimento e um tom, se quiser.',
@@ -307,4 +305,8 @@ export const PT_STUDIO: Record<string, string> = {
   Chorus: 'Refrão',
   Bridge: 'Ponte',
   Ending: 'Final',
+  'Whole score': 'Partitura inteira',
+  'The whole music score': 'A partitura inteira',
+  'R': 'D',
+  'L': 'E',
 };

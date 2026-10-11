@@ -19,22 +19,22 @@ import {
 } from '../../core/content/scoreLayout';
 import styles from './ScrollingScore.module.css';
 
-const SPACE = 5; // half a staff space in px: one diatonic step
-const TREBLE_BOTTOM_Y = 90;
-const BASS_BOTTOM_Y = 190;
+export const SPACE = 5; // half a staff space in px: one diatonic step
+export const TREBLE_BOTTOM_Y = 90;
+export const BASS_BOTTOM_Y = 190;
 const HEIGHT = 240;
 const NOW_FRACTION = 0.25;
-const HEAD_RX = 6;
+export const HEAD_RX = 6;
 
-const bottomOf = (staff: StaffName): { step: number; y: number } =>
+export const bottomOf = (staff: StaffName): { step: number; y: number } =>
   staff === 'treble' ? { step: TREBLE_BOTTOM_STEP, y: TREBLE_BOTTOM_Y } : { step: BASS_BOTTOM_STEP, y: BASS_BOTTOM_Y };
 
-const yOf = (note: PlacedNote): number => {
+export const yOf = (note: PlacedNote): number => {
   const b = bottomOf(note.staff);
   return b.y - (note.step - b.step) * SPACE;
 };
 
-function ledgerYs(note: PlacedNote): number[] {
+export function ledgerYs(note: PlacedNote): number[] {
   const b = bottomOf(note.staff);
   const rel = note.step - b.step; // 0 = bottom line, 8 = top line
   const ys: number[] = [];
